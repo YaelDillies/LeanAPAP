@@ -1,0 +1,8 @@
+[package]
+name = "LeanAPAP"
+version = "0.1"
+lean_version = "leanprover-community/lean:3.50.3"
+path = "src"
+
+[dependencies]
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "4681620dafca6a7d710f437bd10fb69428ec2209"}

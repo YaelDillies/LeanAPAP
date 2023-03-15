@@ -1,12 +1,21 @@
+---
+# Feel free to add content and custom Front Matter to this file.
+# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+
+# layout: home
+---
+
 # Arithmetic Progressions - Almost Periodicity
-
-[![.github/workflows/push_main.yml](https://github.com/YaelDillies/LeanAPAP/actions/workflows/push_main.yml/badge.svg)](https://github.com/YaelDillies/LeanAPAP/actions/workflows/push_main.yml)
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/YaelDillies/LeanAPAP)
 
 The purpose of this community-owned repository is to *digitise* some mathematical definitions, theorem statements and theorem proofs. Digitisation, or formalisation, is a process where the source material, typically a mathematical textbook or a pdf file or website or video, is transformed into definitions in a target system consisting of a computer implementation of a logical theory (such as set theory or type theory).
 
-Much of the project infrastructure has been adapted from the [sphere eversion project](https://leanprover-community.github.io/sphere-eversion/), the [liquid tensor experiment](https://github.com/leanprover-community/liquid/), and the [unit fractions project](https://github.com/b-mehta/unit-fractions/).
+Much of the project infrastructure has been adapted from the [sphere eversion project](https://leanprover-community.github.io/sphere-eversion/), the [liquid tensor experiment](https://leanprover-community.github.io/lean-liquid/), and the [unit fractions project](https://github.com/b-mehta/unit-fractions/).
+
+## Current progress
+
+The project is not yet finished. The following table details live which files are unfinished, and how many 'sorries' (unproven statements) remain in each file.
+
+{% include sorries.md %}
 
 ## The source
 
@@ -76,21 +85,10 @@ There are two pieces of functionality that help a lot when browsing through Lean
 ## Building the blueprint locally
 
 To build the web version of the blueprint locally, you need a working LaTeX installation.
-Furthermore, you need some dependencies.  Under Linux, you should be able to get the prepackaged ones with something like:
+Furthermore, you need some packages:
 ```
-sudo apt install graphviz libgraphviz-dev libjpeg-dev pandoc
+sudo apt install graphviz libgraphviz-dev pandoc
 pip3 install invoke
-```
-
-Under Mac OS, you should be able to get these with:
-```
-brew install graphviz pandoc
-pip3 install pygraphviz invoke
-```
-([This stackoverflow answer](https://stackoverflow.com/a/70439868/) may help to fix an error installing `pygraphviz`.
-
-A couple of dependencies must be installed from source, for now (`leanblueprint` is not yet released, and the released `plastex` is out of date):
-```
 cd .. # go to a folder where you are happy to clone git repos
 git clone https://github.com/plastex/plastex
 pip3 install ./plastex
@@ -139,4 +137,3 @@ on the perfectoid project website.
 `[untangled]` : https://randall-holmes.github.io/Nfproof/untangled.pdf
 
 [untangled]: https://randall-holmes.github.io/Nfproof/untangled.pdf
-# LeanAPAP
