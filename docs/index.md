@@ -54,7 +54,7 @@ to install Lean and a supporting toolchain.
 After that, download and open a copy of the repository
 by executing the following command in a terminal:
 ```
-leanproject get LeanAPAP
+leanproject get YaelDillies/LeanAPAP
 code LeanAPAP
 ```
 For detailed instructions on how to work with Lean projects,
