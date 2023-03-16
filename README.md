@@ -136,7 +136,7 @@ on the perfectoid project website.
 
 ## Source reference
 
-`[untangled]` : https://randall-holmes.github.io/Nfproof/untangled.pdf
+`[BS]` : https://arxiv.org/abs/2302.07211
 
-[untangled]: https://randall-holmes.github.io/Nfproof/untangled.pdf
+[BS]: https://arxiv.org/abs/2302.07211
 # LeanAPAP
