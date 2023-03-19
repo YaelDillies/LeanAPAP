@@ -1,0 +1,59 @@
+\chapter{Finite field model}
+
+\begin{lemma}\label{global_dichotomy}
+Let $\epsilon >0$. If $A,C\subseteq G$, where $C$ has density at least $\gamma$, then either
+\begin{enumerate}
+\item  $\abs{\langle \mu_A\ast \mu_A,\mu_C\rangle -1}\leq \epsilon$ or
+\item $\norm{\mu_A\circ \mu_A-1}_p \geq \epsilon/2$ for some $p\ll\log(2.\gamma)$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+If the first alternative fails, then by H\"{o}lder's inequality, for any $p\geq 1$
+\[\epsilon < \abs{ \langle \mu_A \ast \mu_A - 1, \mu_C \rangle } \leq \norm{\mu_A\ast \mu_A-1}_p\gamma^{-1/p}.\]
+In particular if we choose $p=2\lceil K\lo{\gamma}\rceil$ for some large constant $K$ then we deduce that
+\[\norm{\mu_A\ast \mu_A-1}_{p}\geq \tfrac{1}{2}\epsilon.\]
+It remains to note that, since $p$ is even,
+\[\norm{\mu_A\ast \mu_A-1}_{p}^p=(\widehat{\mu_A}^2\ind{\neq \zeroGhat})^{(p)}(\zeroGhat)\leq(\Abs{\widehat{\mu_A}}^2\ind{\neq \zeroGhat})^{(p)}(\zeroGhat)=\norm{\mu_A\circ \mu_A-1}_p^p. \qedhere \]
+\end{proof}
+
+
+\begin{proposition}\label{di_in_ff}
+Let $\epsilon \in (0,1)$. If $A,C\subseteq \bbf_q^n$, where $C$ has density at least $\gamma$, then either
+\begin{enumerate}
+\item $\abs{\langle \mu_A\ast \mu_A,\mu_C\rangle -1}\leq \epsilon$ or
+\item there is a subspace $V$ of codimension 
+\[\ll_\epsilon \log(2/\gamma)^4\log(2/\alpha)^4\]
+such that $\norm{\ind{A}\ast \mu_V}_\infty \geq (1+\Omega(\epsilon))\alpha$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}\uses{global_dichotomy,global_drc,unbalancing,ap_in_ff}
+By Lemma~\ref{lem-ff1}, if the first alternative fails then $\norm{\mu_A\circ \mu_A-1}_p\geq \epsilon/2$ for some $p\ll \lo{\gamma}$. By Lemma~\ref{lem-key-spec} (applied to $f=\mu_A\circ \mu_A-1$) we deduce that $\norm{\mu_A\circ \mu_A}_p\geq 1+\epsilon/4$ for some $p\ll_\epsilon \lo{\gamma}$. Hence, by Corollary~\ref{cor-key}, there are $A_1,A_2$, both of density 
+\[\geq \alpha^{O_\epsilon(\lo{\gamma})},\]
+such that $\langle \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle \geq 1-\epsilon/32$, where $S=\{x : \mu_A\circ \mu_A(x)\geq 1+\epsilon/8\}$ . By Theorem~\ref{th-ap} there is a subspace $V$ of the required codimension such that
+\[\langle \mu_V\ast \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle \geq 1-\tfrac{1}{16}\epsilon.\]
+By definition of $S$, it follows that
+\begin{align*}
+1+\Omega(\epsilon)
+&\leq (1+\epsilon/8)(1-\epsilon/16)\\
+&\leq \langle \mu_V\ast \mu_{A_1}\circ \mu_{A_2},\mu_A\circ \mu_A\rangle\\
+&\leq \norm{\mu_V\ast \mu_A}_\infty \norm{\mu_{A}\ast \mu_{A_2}\circ \mu_{A_1}}_1\\
+&= \norm{\mu_V\ast \ind{A}}_\infty \alpha^{-1},
+\end{align*}
+and the proof is complete.
+\end{proof}
+
+\begin{theorem}\label{3aps_in_ff_count}
+If $A\subseteq \mathbb{F}_q^n$ has density $\alpha$ then
+\[\langle \ind{A}\ast \ind{A},\ind{2\cdot A}\rangle \gg \exp(-O(\log(1/\alpha)^9)).\]
+\end{theorem}
+\begin{proof}\uses{di_in_ff}
+Test.
+\end{proof}
+
+\begin{theorem}\label{3aps_in_ff}
+If $A\subseteq \bbf_q^n$ has only trivial three-term arithmetic progressions then
+\[\alpha \leq \exp(-n^{1/9}).\]
+\end{theorem}
+\begin{proof}\uses{3aps_in_ff_count}
+Test.
+\end{proof}

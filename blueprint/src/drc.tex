@@ -1,0 +1,59 @@
+\chapter{Dependent random choice}
+
+\begin{lemma}\label{gen_drc}
+Let $p\geq 2$ be an even integer. Let $B_1,B_2\subseteq G$ and $\mu=\mu_{B_1}\circ\mu_{B_2}$. For any finite set $A\subseteq G$ with density $\alpha$ and function $f:G\to\bbr_{\geq 0}$ there exist $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that
+\[\langle \mu_{A_1}\circ \mu_{A_2}, f\rangle\leq 2\frac{\langle (\mu_A\circ \mu_A)^p,f\rangle_\mu}{\norm{\mu_A\circ \mu_A}_{p(\mu)}^p}\]
+and
+\[\min\brac{\mu_{B_1}(A_1),\mu_{B_2}(A_2)}\geq \frac{1}{4}\alpha^{2p}\norm{\mu_A\circ \mu_A}_{p(\mu)}^{2p}.\]
+\end{lemma}
+\begin{proof}
+For $s\in G^{p}$ let $A_1(s)=B_1\cap (A+s_1)\cap\cdots\cap (A+s_{p})$, and similarly for $A_2(s)$. Note that
+\begin{align*}
+\langle (\mu_A\circ \mu_A)^p, f\rangle_\mu
+&=\bbe_{\substack{b_1\in B_1\\ b_2\in B_2}}\mu_A\circ \mu_A(b_1-b_2)^{p}f(b_1-b_2)\\
+&=\bbe_{\substack{b_1\in B_1\\ b_2\in B_2}}\brac{\alpha^{-2}\bbe_{t\in G}\ind{A+t}(b_1)\ind{A+t}(b_2)}^{p}f(b_1-b_2)\\
+&=\alpha^{-2p}\bbe_{\substack{b_1\in B_1\\ b_2\in B_2}}\bbe_{s\in G^p}\ind{A_1(s)}(b_1)\ind{A_2(s)}(b_2)f(b_1-b_2)\\
+&=\alpha^{-2p}\beta_1^{-1}\beta_2^{-1}\bbe_{s}\langle \ind{A_1(s)}\circ \ind{A_2(s)}, f\rangle,
+\end{align*}
+where $\beta_i = \mu(B_i)$.
+In particular, applying this with $f\equiv 1$ we see that, if $\alpha_i(s)=\abs{A_i(s)}/\abs{G}$, then 
+\[\norm{\mu_A\circ \mu_A}_{p(\mu)}^p=\alpha^{-2p}\beta_1^{-1}\beta_2^{-1}\bbe_s \alpha_1(s)\alpha_2(s)\]
+and 
+\[\frac{\langle (\mu_A\circ \mu_A)^p,f\rangle_\mu}{\norm{\mu_A\circ \mu_A}_{p(\mu)}^p}=\frac{\bbe_{s}\langle \ind{A_1(s)}\circ \ind{A_2(s)}, f\rangle}{\bbe_s \alpha_1(s)\alpha_2(s)}=\eta,\]
+say. Note that, if 
+\[M=\tfrac{1}{2}\alpha^p(\beta_1\beta_2)^{1/2}\norm{\mu_A\circ \mu_A}_{p(\mu)}^p,\]
+then 
+\begin{align*}
+\bbe_s 1_{\alpha_1(s)\alpha_2(s)<M^2}\alpha_1(s)\alpha_2(s) 
+&< M\brac{\bbe_s \bbe_{x\in G}1_{A_1(s)}(x)}^{1/2}\brac{\bbe_s \bbe_{x\in G}1_{A_2(s)}(x)}^{1/2}\\
+&= M\alpha^p(\beta_1\beta_2)^{1/2}=\frac{1}{2}\bbe_s \alpha_1(s)\alpha_2(s)
+\end{align*}
+and so
+\[\bbe_s\langle \ind{A_1(s)}\circ \ind{A_2(s)},f\rangle =\eta \bbe \alpha_1(s)\alpha_2(s)\\
+< 2\eta \bbe_s \alpha_1(s)\alpha_2(s)1_{\alpha_1(s)\alpha_2(s)\geq M^2}.\]
+In particular there must exist some $s$ such that 
+\[\langle \ind{A_1(s)}\circ \ind{A_2(s)},f\rangle< 2\eta \alpha_1(s)\alpha_2(s)1_{\alpha_1(s)\alpha_2(s)\geq M^2},\]
+and the claim follows (note that the left-hand side is trivially $\geq 0$ and hence such an $s$ must satisfy $\alpha_1(s)\alpha_2(s)\geq M^2$). 
+\end{proof}
+
+\begin{lemma}\label{local_drc}
+Let $p\geq 1$ be an integer and $\epsilon,\delta>0$. Let $B_1,B_2\subseteq G$, and let $\mu=\mu_{B_1}\circ\mu_{B_2}$. For any finite set $A\subseteq G$ with density $\alpha$, if 
+\[S=\{ x\in G: \mu_A\circ \mu_A(x)>(1-\epsilon)\norm{\mu_A\circ \mu_A}_{p(\mu)}\},\]
+then there are $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that 
+\[\langle \mu_{A_1}\circ\mu_{A_2},\ind{S}\rangle \geq 1-\delta\]
+and
+\[\min\brac{\mu_{B_1}(A_1),\mu_{B_2}(A_2)}\gg \brac{\alpha\norm{\mu_A\circ \mu_A}_{p(\mu)}}^{p+O_{\epsilon,\delta}(1)}.\]
+\end{lemma}
+\begin{proof}\uses{gen_drc}
+Test.
+\end{proof}
+
+\begin{corollary}\label{global_drc}
+Let $p\geq 1$ be an integer and $\epsilon>0$. If $A\subseteq G$ is such that $\norm{\mu_A\circ \mu_A}_p \geq 1+\epsilon$ and $S=\{ x : \mu_A\circ \mu_A(x)>1+\epsilon/2\}$, then there are $A_1,A_2\subseteq G$, both of density
+\[\gg \alpha^{p+O_\epsilon(1)},\]
+such that
+\[\langle \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle \geq 1-\epsilon/8.\]
+\end{corollary}
+\begin{proof}\uses{local_drc}
+Test.
+\end{proof}
