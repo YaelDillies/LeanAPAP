@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   update_con_nf_branch_and_build:
@@ -14,7 +14,7 @@ jobs:
           fetch-depth: 0
 
       - name: update branch
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         uses: leanprover-contrib/update-versions-action@master
 
       - uses: satackey/action-docker-layer-caching@v0.0.11

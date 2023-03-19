@@ -64,7 +64,7 @@ def doc(ctx):
     import print_docs
     del print_docs.extra_doc_files[:]
     print_docs.copy_yaml_bib_files = lambda p: None
-    print_docs.library_link_roots['LeanAPAP'] = 'https://github.com/YaelDillies/LeanAPAP/blob/main/src/'
+    print_docs.library_link_roots['LeanAPAP'] = 'https://github.com/YaelDillies/LeanAPAP/blob/master/src/'
     print_docs.main()
 
     print("Cleaning up doc-gen files")
