@@ -21,10 +21,10 @@ jobs:
         continue-on-error: true
 
       - name: build docker container
-        run: docker build -t LeanAPAP .
+        run: docker build -t leanapap .
 
       - name: build project
-        run: docker run --rm -v ${{ github.workspace }}:/src LeanAPAP
+        run: docker run --rm -v ${{ github.workspace }}:/src leanapap
 
       - name: remove .gitignore for gh-pages
         run: rm docs/.gitignore
