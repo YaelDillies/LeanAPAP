@@ -1,3 +1,4 @@
+import analysis.inner_product_space.pi_L2
 import analysis.normed_space.pi_Lp
 import analysis.special_functions.log.basic
 import analysis.special_functions.pow.real
@@ -97,6 +98,18 @@ notation `‖` f `‖_[` p `, ` w `]` := weight_Lpnorm p f w
 
 @[simp] lemma weight_Lpnorm_one (p : ℝ≥0) (f : Π i, α i) : ‖f‖_[p, 1] = ‖f‖_[p] :=
 by obtain rfl | hp := @eq_zero_or_pos _ _ p; simp [weight_Lpnorm, L0norm_eq_card, Lpnorm_eq_sum, *]
+
+/-! #### Inner product -/
+
+variables (𝕜 : Type*) [is_R_or_C 𝕜] [Π i, inner_product_space 𝕜 (α i)]
+
+@[reducible] noncomputable def L2inner (f g : Π i, α i) : 𝕜 :=
+inner ((pi_Lp.equiv 2 _).symm f) ((pi_Lp.equiv 2 _).symm g)
+
+notation `⟪`f`, `g`⟫_[`𝕜`]` := L2inner 𝕜 f g
+
+lemma L2inner_eq_sum (f g : Π i, α i) : ⟪f, g⟫_[𝕜] = ∑ i, inner (f i) (g i) :=
+pi_Lp.inner_apply _ _
 
 end Lpnorm
 

@@ -143,8 +143,8 @@ infix ` ○ `:70 := dconv
 section add_comm_group
 variables [add_comm_group α] [fintype α] [decidable_eq α]
 
-@[simp] lemma dconv_zero (f : α → ℂ) : f ∗ 0 = 0 := mul_zero (to_conv f)
-@[simp] lemma zero_dconv (f : α → ℂ) : 0 ∗ f = 0 := zero_mul (to_conv f)
+@[simp] lemma dconv_zero (f : α → ℂ) : f ○ 0 = 0 := sorry
+@[simp] lemma zero_dconv (f : α → ℂ) : 0 ○ f = 0 := sorry
 
 @[simp] lemma dconv_neg (f g : α → ℂ) : f ○ (-g) = -(f ○ g) := sorry
 @[simp] lemma neg_dconv (f g : α → ℂ) : (-f) ○ g = -(f ○ g) := sorry
