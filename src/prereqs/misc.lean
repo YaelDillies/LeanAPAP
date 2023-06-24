@@ -289,7 +289,11 @@ variables {α : Type*} [decidable_eq α] {k : ℕ}
 
 def wide_diag (k : ℕ) (s : finset α) : finset (fin k → α) := s.image (λ i _, i)
 
-def _root_.fintype_wide_diag [fintype α] (k : ℕ) : finset (fin k → α) := univ.wide_diag k
+lemma mem_wide_diag {s : finset α} {k : ℕ} {x : fin k → α} :
+  x ∈ s.wide_diag k ↔ ∃ i ∈ s, (λ _, i) = x := mem_image
+
+def _root_.fintype_wide_diag (α : Type*) [decidable_eq α] [fintype α] (k : ℕ) :
+  finset (fin k → α) := univ.wide_diag k
 
 @[simp] lemma card_wide_diag (hk : k ≠ 0) (s : finset α) : (s.wide_diag k).card = s.card :=
 begin

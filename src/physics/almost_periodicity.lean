@@ -1,5 +1,6 @@
-import prereqs.convolution
 import prereqs.misc
+import prereqs.convolution
+import algebra.order.chebyshev
 
 /-!
 # Almost-periodicity
@@ -60,24 +61,122 @@ begin
   exact (Lpnorm_sub_le_Lpnorm_sub_add_Lpnorm_sub hp).trans (add_le_add h₅₁ h₁),
 end
 
-lemma big_shifts_step1 {k : ℕ} {S : finset G} (L : finset (fin k → G)) :
-  ∑ x in L + S.wide_diag k, ∑ l in L, ∑ s in S.wide_diag k, ite (l + s = x) 1 0 = L.card * S.card :=
+lemma big_shifts_step1 {k : ℕ} {S : finset G} (L : finset (fin k → G)) (hk : k ≠ 0) :
+  ∑ x in L + S.wide_diag k, ∑ l in L, ∑ s in S.wide_diag k, ite (l + s = x) (1 : ℝ) 0 =
+    L.card * S.card :=
 begin
-  simp only [@sum_comm _ _ _ _ (L + _)],
-  simp only [sum_ite_eq],
+  norm_cast,
+  simp only [@sum_comm _ _ _ _ (L + _), sum_ite_eq],
   rw sum_const_nat,
   intros l hl,
-  rw [sum_const_nat, finset.card_wide_diag, mul_one],
-  sorry,
-  simp only [ite_eq_left_iff, nat.zero_ne_one],
-  exact λ f hf h, h (add_mem_add hl hf),
+  rw [sum_const_nat, mul_one, finset.card_wide_diag hk],
+  intros s hs,
+  rw if_pos,
+  exact add_mem_add hl hs,
 end
 
-lemma big_shifts {k : ℕ} {A S : finset G} (L : finset (fin k → G)) :
+lemma big_shifts_step2 {k : ℕ} {S : finset G} (L : finset (fin k → G)) (hk : k ≠ 0) :
+  (∑ x in L + S.wide_diag k, ∑ l in L, ∑ s in S.wide_diag k, ite (l + s = x) (1 : ℝ) 0) ^ 2 ≤
+    (L + S.wide_diag k).card * S.card * ∑ l₁ l₂ in L, ite (l₁ - l₂ ∈ fintype_wide_diag G k) 1 0 :=
+begin
+  refine sq_sum_le_card_mul_sum_sq.trans _,
+  simp_rw [sq, sum_mul, @sum_comm _ _ _ _ (L + S.wide_diag k), boole_mul, sum_ite_eq, mul_assoc],
+  refine mul_le_mul_of_nonneg_left _ (nat.cast_nonneg _),
+  have : ∀ f : (fin k → G) → (fin k → G) → ℝ,
+    ∑ x in L, ∑ y in S.wide_diag k, ite (x + y ∈ L + S.wide_diag k) (f x y) 0 =
+    ∑ x in L, ∑ y in S.wide_diag k, f x y,
+  { intro f,
+    refine sum_congr rfl (λ x hx, _),
+    refine sum_congr rfl (λ y hy, _),
+    rw if_pos,
+    exact add_mem_add hx hy },
+  rw this,
+  have : ∀ x y, ∑ s₁ s₂ in S.wide_diag k, ite (y + s₂ = x + s₁) (1 : ℝ) 0 = ite (x - y ∈
+    fintype_wide_diag G k) 1 0 * ∑ s₁ s₂ in S.wide_diag k, ite (s₂ = x + s₁ - y) 1 0,
+  { intros x y,
+    simp_rw [mul_sum],
+    refine sum_congr rfl (λ s₁ hs₁, _),
+    refine sum_congr rfl (λ s₂ hs₂, _),
+    rw [←ite_and_mul_zero, mul_one],
+    refine if_congr _ rfl rfl,
+    rw eq_sub_iff_add_eq',
+    rw and_iff_right_of_imp,
+    intro h,
+    simp only [mem_wide_diag] at hs₁ hs₂,
+    have : x - y = s₂ - s₁,
+    { rw [sub_eq_sub_iff_add_eq_add, ←h, add_comm] },
+    rw this,
+    obtain ⟨i, hi, rfl⟩ := hs₁,
+    obtain ⟨j, hj, rfl⟩ := hs₂,
+    exact mem_image.2 ⟨j - i, mem_univ _, rfl⟩ },
+  simp_rw [@sum_comm _ _ _ _ (S.wide_diag k) L, this, sum_ite_eq'],
+  have : ∑ x y in L, ite (x - y ∈ fintype_wide_diag G k) (1 : ℝ) 0 * ∑ z in S.wide_diag k, ite (x +
+    z - y ∈ S.wide_diag k) 1 0 ≤ ∑ x y in L, ite (x - y ∈ fintype_wide_diag G k) 1 0 * S.card,
+  { refine sum_le_sum (λ l₁ hl₁, _),
+    refine sum_le_sum (λ l₂ hl₂, _),
+    refine mul_le_mul_of_nonneg_left _ (by split_ifs; norm_num),
+    refine (sum_le_card_nsmul _ _ 1 _).trans_eq _,
+    { intros x hx, split_ifs; norm_num },
+    rw [card_wide_diag hk],
+    simp only [nsmul_one] },
+  refine this.trans _,
+  simp_rw [←sum_mul, mul_comm],
+end
+
+lemma card_pi_finset_const {α K : Type*} [fintype K] [decidable_eq K] (A : finset α) :
+  (fintype.pi_finset (λ _ : K, A)).card = A.card ^ fintype.card K :=
+by rw [fintype.card_pi_finset, prod_const, card_univ]
+
+lemma card_pi_finset_fin_const {α : Type*} {k : ℕ} (A : finset α) :
+  (fintype.pi_finset (λ _ : fin k, A)).card = A.card ^ k :=
+by rw [card_pi_finset_const, fintype.card_fin]
+
+lemma pi_finset_add {α : Type*} {δ : α → Type*} [Π a : α, decidable_eq (δ a)]
+  [Π a : α, has_add (δ a)] [fintype α] [decidable_eq α]
+  {s t : Π a : α, finset (δ a)} :
+  fintype.pi_finset s + fintype.pi_finset t = fintype.pi_finset (s + t) :=
+begin
+  ext i,
+  simp only [fintype.mem_pi_finset, pi.add_apply, mem_add],
+  split,
+  { rintro ⟨y, z, hy, hz, rfl⟩ a,
+    exact ⟨_, _, hy _, hz _, rfl⟩ },
+  intro h,
+  choose y z hy hz hi using h,
+  exact ⟨y, z, hy, hz, funext hi⟩,
+end
+
+lemma big_shifts {k : ℕ} {A S : finset G} (L : finset (fin k → G))
+  (hL : L ⊆ fintype.pi_finset (λ _, A)) :
   ∃ a : fin k → G, a ∈ L ∧
     L.card * S.card ≤ (A + S).card ^ k * (univ.filter (λ t : G, a + (λ _, t) ∈ L)).card :=
 begin
-  sorry,
+  have : (L + S.wide_diag k).card ≤ (A + S).card ^ k,
+  { refine (card_le_of_subset (add_subset_add_right hL)).trans _,
+    rw ←card_pi_finset_fin_const,
+    refine card_le_of_subset _,
+    intros i hi,
+    simp only [mem_add, mem_wide_diag, fintype.mem_pi_finset, exists_prop, exists_and_distrib_left,
+      exists_exists_and_eq_and] at hi ⊢,
+    obtain ⟨y, hy, a, ha, rfl⟩ := hi,
+    intros j,
+    exact ⟨y j, hy _, a, ha, rfl⟩ },
+  rsuffices ⟨a, ha, h⟩ : ∃ a : fin k → G, a ∈ L ∧
+    L.card * S.card ≤ (L + S.wide_diag k).card * (univ.filter (λ t : G, a + (λ _, t) ∈ L)).card,
+  { exact ⟨a, ha, h.trans (nat.mul_le_mul_right _ this)⟩ },
+  clear_dependent A,
+  by_contra',
+  have : L.card ^ 2 * S.card ≤ (L + S.wide_diag k).card *
+    ∑ l₁ l₂ in L, ite (l₁ - l₂ ∈ fintype_wide_diag G k) 1 0,
+  {
+
+  },
+
+  -- have : L.card • (L.card * S.card : ℝ) / (L + S.wide_diag k).card ≤
+  --   ∑ a b in L, ite (a - b ∈ fintype_wide_diag G k) (1 : ℝ) 0,
+  -- {
+
+  -- },
 end
 
 -- trivially true for other reasons for big ε
