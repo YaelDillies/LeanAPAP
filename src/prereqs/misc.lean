@@ -1,7 +1,10 @@
 import analysis.inner_product_space.pi_L2
 import analysis.special_functions.log.basic
 import analysis.special_functions.pow.real
+import mathlib.analysis.normed.group.basic
 import mathlib.analysis.normed_space.pi_Lp
+import mathlib.analysis.normed_space.ray
+import mathlib.analysis.special_functions.log.basic
 
 /-!
 # Miscellaneous definitions
@@ -34,7 +37,9 @@ variables [add_comm_group β]
 lemma translate_add_right (a : α) (f g : α → β) : τ a (f + g) = τ a f + τ a g := rfl
 lemma translate_sub_right (a : α) (f g : α → β) : τ a (f - g) = τ a f - τ a g := rfl
 lemma translate_neg_right (a : α) (f : α → β) : τ a (-f) = -τ a f := rfl
-lemma translate_sum (a : α) (f : ι → α → β) : τ a (∑ i, f i) = ∑ i, τ a (f i) := by ext; simp
+lemma translate_sum_right (a : α) (f : ι → α → β) : τ a (∑ i, f i) = ∑ i, τ a (f i) := by ext; simp
+@[simp] lemma translate_smul_right [has_smul γ β] [add_comm_group α] (a : α) (f : α → β) (c : γ) :
+  τ a (c • f) = c • τ a f := rfl
 
 end translate
 
@@ -87,10 +92,6 @@ begin
   { exact (curlog_pos hx₀ hx).le }
 end
 
--- to mathlib
-lemma log_le_log_of_le {x y : ℝ} (hx : 0 < x) (hxy : x ≤ y) : log x ≤ log y :=
-(log_le_log hx (hx.trans_le hxy)).2 hxy
-
 -- Might work with x = 0
 lemma log_one_div_le_curlog (hx : 0 < x) : log (1 / x) ≤ curlog x :=
 log_le_log_of_le (by positivity) (div_le_div_of_le hx.le (one_le_exp two_pos.le))
@@ -100,8 +101,7 @@ lemma log_inv_le_curlog (hx : 0 < x) : log (x⁻¹) ≤ curlog x :=
 by { rw ←one_div, exact log_one_div_le_curlog hx }
 
 -- This might work with x = 1, not sure
-lemma pow_neg_one_div_curlog (hx : 0 ≤ x) (hx' : x < 1) :
-  x ^ (- 1 / curlog x) ≤ exp 1 :=
+lemma pow_neg_one_div_curlog (hx : 0 ≤ x) (hx' : x < 1) : x ^ (- 1 / curlog x) ≤ exp 1 :=
 begin
   obtain rfl | hx := hx.eq_or_lt,
   { simp },
@@ -134,7 +134,7 @@ by rw ←one_div; exact pi_Lp.norm_eq_sum hp _
 
 lemma Lpnorm_eq_sum'' {p : ℝ} (hp : 0 < p) (f : Π i, α i) :
   ‖f‖_[p.to_nnreal] = (∑ i, ‖f i‖ ^ p) ^ p⁻¹ :=
-sorry
+by rw [Lpnorm_eq_sum']; simp [hp, hp.le]
 
 lemma Lpnorm_eq_sum {p : ℝ≥0} (hp : 0 < p) (f : Π i, α i) :
   ‖f‖_[p] = (∑ i, ‖f i‖ ^ (p : ℝ)) ^ (p⁻¹ : ℝ) :=
@@ -147,13 +147,48 @@ pi_Lp.norm_eq_card _
 
 lemma Linftynorm_eq_csupr (f : Π i, α i) : ‖f‖_[∞] = ⨆ i, ‖f i‖ := pi_Lp.norm_eq_csupr _
 
-lemma Lpnorm_add_le [fact (1 ≤ p)] (f g : Π i, α i) : ‖f + g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
-norm_add_le _ _
+@[simp] lemma Lpnorm_zero : ‖(0 : Π i, α i)‖_[p] = 0 :=
+begin
+  cases p, swap,
+  obtain rfl | hp := @eq_zero_or_pos _ _ p,
+  all_goals { simp [Linftynorm_eq_csupr, L0norm_eq_card, Lpnorm_eq_sum, *, ne_of_gt] },
+end
 
-@[simp] lemma Lpnorm_zero : ‖(0 : Π i, α i)‖_[p] = 0 := sorry
+section one_le
+variables {f g h : Π i, α i}
 
-lemma lpnorm_complex_smul {α : Type*} [fintype α] {p : ennreal} {k : ℂ} {f : α → ℂ} :
-  ‖k • f‖_[p] = k.abs • ‖f‖_[p] := sorry
+-- TODO: Remove the `1 ≤ p` condition
+lemma Lpnorm_sub_comm (hp : 1 ≤ p) (f g : Π i, α i) : ‖f - g‖_[p] = ‖g - f‖_[p] :=
+by haveI := fact.mk hp; exact norm_sub_rev _ _
+
+lemma Lpnorm_add_le (hp : 1 ≤ p) (f g : Π i, α i) : ‖f + g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
+by haveI := fact.mk hp; exact norm_add_le _ _
+
+lemma Lpnorm_sub_le (hp : 1 ≤ p) (f g : Π i, α i) : ‖f - g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
+by haveI := fact.mk hp; exact norm_sub_le _ _
+
+lemma Lpnorm_sub_le_Lpnorm_sub_add_Lpnorm_sub (hp : 1 ≤ p) :
+  ‖f - h‖_[p] ≤ ‖f - g‖_[p] + ‖g - h‖_[p] :=
+by haveI := fact.mk hp; exact norm_sub_le_norm_sub_add_norm_sub
+
+variables {𝕜 : Type*} [normed_field 𝕜] [Π i, normed_space 𝕜 (α i)]
+
+-- TODO: `p ≠ 0` is enough
+lemma Lpnorm_smul (hp : 1 ≤ p) (c : 𝕜) (f : Π i, α i) : ‖c • f‖_[p] = ‖c‖ * ‖f‖_[p] :=
+by haveI := fact.mk hp; exact norm_smul _ _
+
+-- TODO: Why is it so hard to use `Lpnorm_smul` directly? `function.has_smul` seems to have a hard
+-- time unifying `pi.has_smul`
+lemma Lpnorm_smul' {α : Type*} [normed_add_comm_group α] [normed_space 𝕜 α] (hp : 1 ≤ p) (c : 𝕜)
+  (f : ι → α) : ‖c • f‖_[p] = ‖c‖ * ‖f‖_[p] :=
+Lpnorm_smul hp _ _
+
+variables [Π i, normed_space ℝ (α i)]
+
+lemma Lpnorm_nsmul (hp : 1 ≤ p) (n : ℕ) (f : Π i, α i) : ‖n • f‖_[p] = n • ‖f‖_[p] :=
+by haveI := fact.mk hp; exact norm_nsmul _ _
+
+end one_le
 
 /-! #### Weighted Lp norm -/
 
@@ -193,9 +228,9 @@ begin
       nat.cast_inj],
     exact finset.card_congr (λ x _, x - a) (λ x hx, by simpa using hx)
       (λ x y _ _ h, by simpa using h) (λ x hx, ⟨x + a, by simpa using hx⟩) },
-  simp only [Lpnorm_eq_sum hp, ennreal.some_eq_coe, translate_apply],
-  congr' 1,
-  exact fintype.sum_equiv (equiv.sub_right _) _ _ (λ _, rfl),
+  { simp only [Lpnorm_eq_sum hp, ennreal.some_eq_coe, translate_apply],
+    congr' 1,
+    exact fintype.sum_equiv (equiv.sub_right _) _ _ (λ _, rfl) }
 end
 
 end Lpnorm
@@ -203,60 +238,38 @@ end Lpnorm
 /-! ### Indicator -/
 
 section mu
-variables {α : Type*} {s : finset α}
+variables {α : Type*} [decidable_eq α] {s : finset α} {p : ℝ≥0}
 
-noncomputable def mu [decidable_eq α] (s : finset α) : α → ℂ :=
-(s.card : ℂ)⁻¹ • λ x, ite (x ∈ s) 1 0
+noncomputable def mu (s : finset α) : α → ℂ := (s.card : ℂ)⁻¹ • λ x, ite (x ∈ s) 1 0
 
-@[simp] lemma mu_empty [decidable_eq α] : mu (∅ : finset α) = 0 := by ext; simp [mu]
+@[simp] lemma mu_empty : mu (∅ : finset α) = 0 := by ext; simp [mu]
 
-lemma ite_rpow {p : Prop} [decidable p] (x y r : ℝ) :
-  (ite p x y) ^ r = ite p (x ^ r) (y ^ r) :=
-by split_ifs; simp
+variables [fintype α]
 
-lemma Lpnorm_mu [fintype α] [decidable_eq α] {p : ℝ≥0} (hp : p ≠ 0) (hs : s.nonempty) :
-  ‖mu s‖_[p] = s.card ^ (p⁻¹ - 1 : ℝ) :=
+lemma Lpnorm_mu (hp : 1 ≤ p) (hs : s.nonempty) : ‖mu s‖_[p] = s.card ^ (p⁻¹ - 1 : ℝ) :=
 begin
   have : (s.card : ℝ) ≠ 0 := nat.cast_ne_zero.2 hs.card_pos.ne',
-  simp only [mu],
-  rw [lpnorm_complex_smul],
-  simp only [map_inv₀, complex.abs_cast_nat, smul_eq_mul],
-  rw Lpnorm_eq_sum hp.bot_lt,
-  simp only [complex.norm_eq_abs],
-  simp_rw [apply_ite complex.abs, map_one, map_zero, ite_rpow, real.zero_rpow
-    (nnreal.coe_ne_zero.2 hp), real.one_rpow, finset.sum_boole, finset.filter_mem_eq_inter,
-    finset.univ_inter, real.rpow_sub_one this, inv_mul_eq_div],
+  rw [mu, Lpnorm_smul'], swap,
+  { exact_mod_cast hp },
+  replace hp := zero_lt_one.trans_le hp,
+  simp only [map_inv₀, complex.abs_cast_nat, smul_eq_mul, Lpnorm_eq_sum hp, complex.norm_eq_abs],
+  have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) :=
+    λ x, by split_ifs; simp,
+  simp_rw [apply_ite complex.abs, map_one, map_zero, this, real.zero_rpow
+    (nnreal.coe_ne_zero.2 hp.ne'), real.one_rpow, finset.sum_boole, finset.filter_mem_eq_inter,
+    finset.univ_inter, real.rpow_sub_one ‹_›, inv_mul_eq_div],
 end
 
--- begin
---   -- classical,
-  -- have : (s.card : ℝ) ≠ 0 := nat.cast_ne_zero.2 hs.card_pos.ne',
-  -- have h : ∀ x, (s.card⁻¹ * complex.abs ((s : set α).indicator 1 x) : ℝ) ^ (p : ℝ) =
-  --   ite (x ∈ s) (s.card⁻¹ * complex.abs 1 ^ (p : ℝ)) (s.card⁻¹ * complex.abs 0 ^ (p : ℝ)),
-  -- { intro x,
-  --   rw [indicator_apply, apply_ite complex.abs, mul_ite],
-  --   -- split_ifs,
-  --   simp only [finset.mem_coe, pi.one_apply, absolute_value.map_one, mul_one,
-  --     absolute_value.map_zero, mul_zero, real.one_rpow],
-  --   -- split_ifs,
-  --   -- rw comp_indicator
-
-  --   -- rw [indicator_apply, apply_ite complex.abs, mul_ite],
-  --   -- simp,
-  --   -- -- rw ite_rpow,
-  --   -- rw apply_ite (λ _, _ ^ (p : ℝ)),
-  --   -- simp,
-
-  -- },
-  -- have h : ∀ x, (s.card⁻¹ * complex.abs ((s : set α).indicator 1 x) : ℝ) ^ (p : ℝ) =
-  --   (s : set α).indicator (s.card ^ (-p : ℝ)) x,
--- end
-
-lemma L1norm_mu_le_one [decidable_eq α] [fintype α] : ‖mu s‖_[1] ≤ 1 :=
+lemma Lpnorm_mu_le (hp : 1 ≤ p) : ‖mu s‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) :=
 begin
   obtain rfl | hs := s.eq_empty_or_nonempty,
-  { simp },
-  { exact (L1norm_mu hs).le }
+  { simp,
+    positivity },
+  { exact (Lpnorm_mu hp hs).le }
 end
+
+lemma L1norm_mu (hs : s.nonempty) : ‖mu s‖_[1] = 1 := by simpa using Lpnorm_mu le_rfl hs
+
+lemma L1norm_mu_le_one : ‖mu s‖_[1] ≤ 1 := by simpa using Lpnorm_mu_le le_rfl
 
 end mu

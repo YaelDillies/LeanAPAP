@@ -1,18 +1,13 @@
 import algebra.big_operators.order
 import analysis.mean_inequalities_pow
-import data.fintype.big_operators
 import data.complex.basic
 import data.fin.tuple.nat_antidiagonal
+import data.fintype.big_operators
 
 variables {G : Type*} {k m : ℕ}
 open_locale big_operators
 
 open finset fintype
-
-example {x y : ℂ} : (x / y).abs = x.abs / y.abs :=
-begin
-  rw map_div₀
-end
 
 lemma step_one {A : finset G} (hA : A.nonempty) (f : G → ℂ) (a : fin k → G)
   (hf : ∀ i : fin k, ∑ a in pi_finset (λ i : fin k, A), f (a i) = 0) :
@@ -44,16 +39,6 @@ calc
       positivity },
     rw [card_pi_finset, prod_const, finset.card_fin, nat.cast_pow, sum_div],
   end
-
-#check nat.antidiagonal_tuple
-
-postfix `̌`:1024 := star
-
-example (a : ℝ): ǎ = ǎ :=
-begin
-
-end
-
 
 lemma without_fucking_about_with_factorials_binary {m : ℕ} {x y : ℝ} :
   ∑ i in range (m + 1), (x ^ (2 * i) * y ^ (2 * (m - i)) * (2 * m).choose (2 * i)) ≤

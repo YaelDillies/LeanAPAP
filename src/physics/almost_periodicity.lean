@@ -26,18 +26,6 @@ lemma lemma28 {ε : ℝ} {m : ℕ} {A : finset G} {f : G → ℂ} {k : ℕ}
   A.card ^ k / 2 ≤ (L k m ε f A).card :=
 sorry
 
--- proved elsewhere soon
-lemma lpnorm_sub_comm {α : Type*} [fintype α] {p : ennreal} {f g : α → ℂ} (hp : 1 ≤ p) :
-  ‖f - g‖_[p] = ‖g - f‖_[p] := sorry
-lemma lpnorm_smul {α : Type*} [fintype α] {p : ennreal} {k : ℝ} {f : α → ℂ} (hp : 1 ≤ p) :
-  ‖k • f‖_[p] = k • ‖f‖_[p] := sorry
-lemma lpnorm_nsmul {α : Type*} [fintype α] {p : ennreal} {k : ℕ} {f : α → ℂ} (hp : 1 ≤ p) :
-  ‖k • f‖_[p] = k • ‖f‖_[p] := sorry
-lemma nsmul_translate {α : Type*} [add_comm_group α] {k : ℕ} {t : α} {f : α → ℂ} :
-  k • τ t f = τ t (k • f) := sorry
-lemma lpnorm_sub_le {α : Type*} [fintype α] {p : ennreal} (f g h : α → ℂ) (hp : 1 ≤ p) :
-  ‖f - h‖_[p] ≤ ‖f - g‖_[p] + ‖g - h‖_[p] := sorry
-
 lemma just_the_triangle_inequality {ε : ℝ} {m : ℕ} {A : finset G} {f : G → ℂ} {k : ℕ} {t : G}
   {a : fin k → G} (ha : a ∈ L k m ε f A) (ha' : a + (λ _, t) ∈ L k m ε f A) (hk : 0 < k)
   (hm : 1 ≤ m) :
@@ -64,7 +52,7 @@ begin
   { rw [h₄₁, translate_sub_right, translate_translate],
     simp },
   have h₅₁ : ‖τ (-t) (k • (mu A ∗ f)) - f₁‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m],
-  { rwa [lpnorm_sub_comm hp, ←h₄, ←h₃] },
+  { rwa [Lpnorm_sub_comm hp, ←h₄, ←h₃] },
   have : (0 : ℝ) < k, by positivity,
   refine le_of_mul_le_mul_left _ this,
   rw [←nsmul_eq_mul, ←lpnorm_nsmul hp, nsmul_sub, nsmul_translate, mul_assoc, mul_left_comm,

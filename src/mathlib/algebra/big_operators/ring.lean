@@ -26,3 +26,11 @@ lemma pow_sum (s : finset α) (f : α → β) (n : ℕ) :
 by convert @prod_univ_sum' (fin n) _ _ _ _ _ _ (λ i, s) (λ i d, f d); simp
 
 end finset
+
+namespace fintype
+variables {α β : Type*} [fintype α] [comm_semiring β] [decidable_eq α]
+
+lemma pow_sum (f : α → β) (n : ℕ) : (∑ a, f a) ^ n = ∑ p : fin n → α, ∏ i, f (p i) :=
+by simp [finset.pow_sum]
+
+end fintype
