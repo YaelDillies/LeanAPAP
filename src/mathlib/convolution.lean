@@ -159,7 +159,9 @@ lemma dconv_apply_neg (f g : α → ℂ) (a : α) : (f ○ g) (-a) = conj ((g �
 lemma dconv_apply_sub (f g : α → ℂ) (a b : α) :
   (f ○ g) (a - b) = ∑ t, f (a + t) * conj (g (b + t)) := sorry
 
-lemma dconv_def (f g : α → ℂ) (a : α) : (f ○ g) a = ∑ t, f (a + t) * conj (g t) := sorry
-lemma dconv_def' (f g : α → ℂ) (a : α) : (f ○ g) a = ∑ t, f t * conj (g (t - a)) := sorry
+lemma dconv_def (f g : α → ℂ) (a : α) :
+  (f ○ g) a = ∑ x in univ.filter (λ x : α × α, x.1 - x.2 = a), f x.1 * conj (g x.2) := sorry
+lemma dconv_eq_sum_add_conj (f g : α → ℂ) (a : α) : (f ○ g) a = ∑ t, f (a + t) * conj (g t) := sorry
+lemma dconv_eq_sum_conj_sub (f g : α → ℂ) (a : α) : (f ○ g) a = ∑ t, f t * conj (g (t - a)) := sorry
 
 end add_comm_group
