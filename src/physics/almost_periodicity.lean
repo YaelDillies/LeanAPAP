@@ -67,11 +67,11 @@ lemma _root_.finset.wide_diag_card {k : ℕ} (hk : k ≠ 0) {S : finset G} :
   (S.wide_diag k).card = S.card :=
 begin
   cases k,
-
-  rw finset.wide_diag,
-  rw card_image_of_injective,
+  { simpa using hk },
+  rw [finset.wide_diag, card_image_of_injective],
   intros i j h,
   dsimp at h,
+  exact congr_fun h 0,
 end
 
 lemma big_shifts_step1 {k : ℕ} {S : finset G} (L : finset (fin k → G)) :
