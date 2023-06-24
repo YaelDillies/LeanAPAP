@@ -17,7 +17,7 @@ variables {G : Type*} [fintype G] [decidable_eq G] [add_comm_group G] {ν : G �
 lemma pow_inner_nonneg (hf : f = g ○ g) (hν : coe ∘ ν = h ○ h) (k : ℕ) :
   (0 : ℂ) ≤ ⟪f ^ k, coe ∘ ν⟫_[ℂ] :=
 begin
-  suffices : ⟪f ^ k, coe ∘ ν⟫_[ℂ] = ∑ z : fin k → G, ‖∑ x, (∏ i, g (x + z i)) * h x‖ ^ 2,
+  suffices : ⟪f ^ k, coe ∘ ν⟫_[ℂ] = ∑ z : fin k → G, ‖∑ x, (∏ i, conj (g (x + z i))) * h x‖ ^ 2,
   { rw this,
     exact sum_nonneg (λ z _, by simp) },
   rw [hf, hν, L2inner_eq_sum],
@@ -25,8 +25,8 @@ begin
   simp_rw [dconv_apply h, mul_sum],
   --TODO: Please make `conv` work here :(
   have : ∀ x, ∀ yz ∈ univ.filter (λ yz : G × G, yz.1 - yz.2 = x),
-    conj ((g ○ g) x) ^ k * (conj (h yz.1) * h yz.2) =
-      conj ((g ○ g) (yz.1 - yz.2)) ^ k * (conj (h yz.1) * h yz.2),
+    conj ((g ○ g) x) ^ k * (h yz.1 * conj (h yz.2)) =
+      conj ((g ○ g) (yz.1 - yz.2)) ^ k * (h yz.1 * conj (h yz.2)),
   { simp only [mem_filter, mem_univ, true_and],
     rintro _ _ rfl,
     refl },

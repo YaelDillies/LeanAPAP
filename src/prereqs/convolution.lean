@@ -1,11 +1,12 @@
-import data.complex.basic
+import algebra.star.pi
+import prereqs.misc
 
 /-!
 # Convolution
 
 ## TODO
 
-Multiplicativise. Probably ugly and not very useful.
+Multiplicativise? Probably ugly and not very useful.
 Include convolution on `α → ℝ`. Generalise to star rings?
 -/
 
@@ -19,6 +20,19 @@ In this section, for a finite group `α`, we define a type synonym `with_conv α
 `α → ℂ`. We endow that type synonym with the ring structure given by pointwise addition and
 convolution as multiplication.
 -/
+
+instance function.star_ring {ι α : Type*} [non_unital_semiring α] [star_ring α] :
+  star_ring (ι → α) :=
+pi.star_ring
+
+@[simp] lemma pi.conj_apply {ι : Type*} {α : ι → Type*} [Π i, comm_semiring (α i)]
+  [Π i, star_ring (α i)] (f : Π i, α i) (i : ι) :
+  @star_ring_end (Π i, α i) _ (@pi.star_ring ι α _ _) f i = conj (f i) :=
+rfl
+
+noncomputable instance function.star_ring' {ι : Type*} : star_ring (ι → ℂ) :=
+pi.star_ring
+
 
 variables (α : Type*)
 
@@ -73,7 +87,9 @@ section add_comm_group
 variables [add_comm_group α] [fintype α] [decidable_eq α]
 
 instance : comm_ring (with_conv α) :=
-{ mul_comm := sorry,
+{ mul_comm := λ f g, funext $ λ a, sum_bij (λ x _, x.swap) (λ x hx, by simpa [add_comm] using hx)
+    (λ _ _, mul_comm _ _) (λ _ _ _ _, prod.swap_inj.1)
+    (λ x hx, ⟨x.swap, by simpa [add_comm] using hx, x.swap_swap.symm⟩),
   ..with_conv.ring }
 
 end add_comm_group
@@ -95,6 +111,25 @@ notation f ` ∗ `:70 g:70 := function.conv f g
 
 @[simp] lemma of_conv_mul (f g : with_conv α) : of_conv (f * g) = of_conv f ∗ of_conv g := rfl
 
+lemma conv_apply (f g : α → ℂ) (a : α) :
+  (f ∗ g) a = ∑ x in univ.filter (λ x : α × α, x.1 + x.2 = a), f x.1 * g x.2 := rfl
+
+lemma conv_eq_sum_sub (f g : α → ℂ) (a : α) : (f ∗ g) a = ∑ t, f (a - t) * g t :=
+begin
+  rw conv_apply,
+  refine sum_bij (λ x _, x.2) (λ x _, mem_univ _) _ _
+    (λ b _, ⟨(a - b, b), mem_filter.2 ⟨mem_univ _, sub_add_cancel _ _⟩, rfl⟩);
+    simp only [mem_filter, mem_univ, true_and, prod.forall],
+  { rintro b c rfl,
+    rw add_sub_cancel },
+  { rintro b c x h rfl rfl,
+    simpa [prod.ext_iff] using h }
+end
+
+lemma conv_eq_sum_add (f g : α → ℂ) (a : α) : (f ∗ g) a = ∑ t, f (a + t) * g (-t) :=
+(conv_eq_sum_sub _ _ _).trans $ fintype.sum_equiv (equiv.neg _) _ _ $ λ t,
+  by simp only [sub_eq_add_neg, equiv.neg_apply, neg_neg]
+
 lemma conv_assoc (f g h : α → ℂ) : f ∗ g ∗ h = f ∗ (g ∗ h) := mul_assoc (to_conv f) _ _
 
 @[simp] lemma conv_zero (f : α → ℂ) : f ∗ 0 = 0 := mul_zero (to_conv f)
@@ -109,19 +144,33 @@ lemma add_conv (f g h : α → ℂ) : (f + g) ∗ h = f ∗ h + g ∗ h := congr
 lemma conv_sub (f g h : α → ℂ) : f ∗ (g - h) = f ∗ g - f ∗ h := congr_arg of_conv (mul_sub _ _ _)
 lemma sub_conv (f g h : α → ℂ) : (f - g) ∗ h = f ∗ h - g ∗ h := congr_arg of_conv (sub_mul _ _ _)
 
-lemma conv_def (f g : α → ℂ) (a : α) : (f ∗ g) a = ∑ t, f (a - t) * g t := sorry
-
-lemma conv_apply_add (f g : α → ℂ) (a b : α) : (f ∗ g) (a + b) = ∑ t, f (a + t) * g (b - t) := sorry
-
-
 end add_group
 
 section add_comm_group
 variables [add_comm_group α] [fintype α] [decidable_eq α]
 
+lemma conv_apply_add (f g : α → ℂ) (a b : α) : (f ∗ g) (a + b) = ∑ t, f (a + t) * g (b - t) :=
+begin
+  rw conv_eq_sum_sub,
+  exact fintype.sum_equiv (equiv.sub_left b) _ _ (λ t, by simp [add_sub_assoc, ←sub_add]),
+end
+
 lemma conv_comm (f g : α → ℂ) : f ∗ g = g ∗ f := mul_comm (to_conv f) _
 
-lemma conv_def' (f g : α → ℂ) (a : α) : (f ∗ g) a = ∑ t, f t * g (a - t) := sorry
+lemma conv_eq_sum_sub' (f g : α → ℂ) (a : α) : (f ∗ g) a = ∑ t, f t * g (a - t) :=
+by { rw conv_eq_sum_sub, exact fintype.sum_equiv (equiv.sub_left a) _ _ (λ t, by simp) }
+
+@[simp] lemma conj_conv (f g : α → ℂ) : conj (f ∗ g) = conj f ∗ conj g :=
+funext $ λ a, by simp only [pi.conj_apply, conv_apply, map_sum, map_mul]
+
+@[simp] lemma conjneg_conv (f g : α → ℂ) : conjneg (f ∗ g) = conjneg f ∗ conjneg g :=
+begin
+  funext a,
+  simp only [conv_apply, conjneg_apply, map_sum, map_mul],
+  convert equiv.sum_comp_finset (equiv.neg (α × α)) _ rfl using 2,
+  rw [←equiv.coe_to_embedding, ←map_eq_image (equiv.neg (α × α)).symm.to_embedding, map_filter],
+  simp [function.comp, ←neg_eq_iff_eq_neg, add_comm],
+end
 
 end add_comm_group
 
@@ -146,25 +195,52 @@ infix ` ○ `:70 := dconv
 section add_comm_group
 variables [add_comm_group α] [fintype α] [decidable_eq α]
 
-@[simp] lemma dconv_zero (f : α → ℂ) : f ○ 0 = 0 := sorry
-@[simp] lemma zero_dconv (f : α → ℂ) : 0 ○ f = 0 := sorry
+lemma dconv_apply (f g : α → ℂ) (a : α) :
+  (f ○ g) a = ∑ x in univ.filter (λ x : α × α, x.1 - x.2 = a), f x.1 * conj (g x.2) := rfl
 
-@[simp] lemma dconv_neg (f g : α → ℂ) : f ○ (-g) = -(f ○ g) := sorry
-@[simp] lemma neg_dconv (f g : α → ℂ) : (-f) ○ g = -(f ○ g) := sorry
+@[simp] lemma conv_conjneg (f g : α → ℂ) : f ∗ conjneg g = f ○ g :=
+funext $ λ a, sum_bij (λ x _, (x.1, -x.2)) (λ x hx, by simpa using hx) (λ x _, rfl)
+  (λ x y _ _ h, by simpa [prod.ext_iff] using h)
+  (λ x hx, ⟨(x.1, -x.2), by simpa [sub_eq_add_neg] using hx, by simp⟩)
 
-lemma dconv_add (f g h : α → ℂ) : f ○ (g + h) = f ○ g + f ○ h := sorry
-lemma add_dconv (f g h : α → ℂ) : (f + g) ○ h = f ○ h + g ○ h := sorry
+@[simp] lemma dconv_conjneg (f g : α → ℂ) : f ○ conjneg g = f ∗ g :=
+by rw [←conv_conjneg, conjneg_conjneg]
 
-lemma dconv_sub (f g h : α → ℂ) : f ○ (g - h) = f ○ g - f ○ h := sorry
-lemma sub_dconv (f g h : α → ℂ) : (f - g) ○ h = f ○ h - g ○ h := sorry
+lemma dconv_eq_sum_add (f g : α → ℂ) (a : α) : (f ○ g) a = ∑ t, f (a + t) * conj (g t) :=
+by simp [←conv_conjneg, conv_eq_sum_add]
 
-lemma dconv_apply_neg (f g : α → ℂ) (a : α) : (f ○ g) (-a) = conj ((g ○ f) a) := sorry
+lemma dconv_eq_sum_sub (f g : α → ℂ) (a : α) : (f ○ g) a = ∑ t, f t * conj (g (t - a)) :=
+by simp [←conv_conjneg, conv_eq_sum_sub']
+
+@[simp] lemma dconv_zero (f : α → ℂ) : f ○ 0 = 0 := by simp [←conv_conjneg]
+@[simp] lemma zero_dconv (f : α → ℂ) : 0 ○ f = 0 := by simp [←conv_conjneg]
+
+@[simp] lemma dconv_neg (f g : α → ℂ) : f ○ (-g) = -(f ○ g) := by ext : 1; simp [dconv]
+@[simp] lemma neg_dconv (f g : α → ℂ) : (-f) ○ g = -(f ○ g) := by ext : 1; simp [dconv]
+
+lemma dconv_add (f g h : α → ℂ) : f ○ (g + h) = f ○ g + f ○ h :=
+by simp_rw [←conv_conjneg, conjneg_add, conv_add]
+
+lemma add_dconv (f g h : α → ℂ) : (f + g) ○ h = f ○ h + g ○ h :=
+by simp_rw [←conv_conjneg, add_conv]
+
+lemma dconv_sub (f g h : α → ℂ) : f ○ (g - h) = f ○ g - f ○ h :=
+by simp_rw [←conv_conjneg, conjneg_sub, conv_sub]
+
+lemma sub_dconv (f g h : α → ℂ) : (f - g) ○ h = f ○ h - g ○ h :=
+by simp_rw [←conv_conjneg, sub_conv]
+
+@[simp] lemma conjneg_dconv (f g : α → ℂ) : conjneg (f ○ g) = g ○ f :=
+by simp_rw [←conv_conjneg, conjneg_conv, conjneg_conjneg, conv_comm]
+
+lemma dconv_apply_neg (f g : α → ℂ) (a : α) : (f ○ g) (-a) = conj ((g ○ f) a) :=
+by rw [←conjneg_dconv f, conjneg_apply, complex.conj_conj]
+
 lemma dconv_apply_sub (f g : α → ℂ) (a b : α) :
-  (f ○ g) (a - b) = ∑ t, f (a + t) * conj (g (b + t)) := sorry
+  (f ○ g) (a - b) = ∑ t, f (a + t) * conj (g (b + t)) :=
+by simp [←conv_conjneg, sub_eq_add_neg, conv_apply_add, add_comm]
 
-lemma dconv_def (f g : α → ℂ) (a : α) :
-  (f ○ g) a = ∑ x in univ.filter (λ x : α × α, x.1 - x.2 = a), f x.1 * conj (g x.2) := sorry
-lemma dconv_eq_sum_add_conj (f g : α → ℂ) (a : α) : (f ○ g) a = ∑ t, f (a + t) * conj (g t) := sorry
-lemma dconv_eq_sum_conj_sub (f g : α → ℂ) (a : α) : (f ○ g) a = ∑ t, f t * conj (g (t - a)) := sorry
+lemma dconv_eq_inner_translate (f g : α → ℂ) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[ℂ] :=
+by simp [L2inner_eq_sum, dconv_eq_sum_sub, map_sum]
 
 end add_comm_group
