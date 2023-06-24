@@ -152,6 +152,9 @@ norm_add_le _ _
 
 @[simp] lemma Lpnorm_zero : ‖(0 : Π i, α i)‖_[p] = 0 := sorry
 
+lemma lpnorm_complex_smul {α : Type*} [fintype α] {p : ennreal} {k : ℂ} {f : α → ℂ} :
+  ‖k • f‖_[p] = k.abs • ‖f‖_[p] := sorry
+
 /-! #### Weighted Lp norm -/
 
 /-- The Lp norm of a function. -/
@@ -202,17 +205,54 @@ end Lpnorm
 section mu
 variables {α : Type*} {s : finset α}
 
-noncomputable def mu (s : finset α) : α → ℂ := (s.card : ℂ)⁻¹ • indicator s 1
+noncomputable def mu [decidable_eq α] (s : finset α) : α → ℂ :=
+(s.card : ℂ)⁻¹ • λ x, ite (x ∈ s) 1 0
 
-@[simp] lemma mu_empty : mu (∅ : finset α) = 0 := by simp [mu]
+@[simp] lemma mu_empty [decidable_eq α] : mu (∅ : finset α) = 0 := by ext; simp [mu]
 
-lemma L1norm_mu [fintype α] (hs : s.nonempty) : ‖mu s‖_[1] = 1 :=
+lemma ite_rpow {p : Prop} [decidable p] (x y r : ℝ) :
+  (ite p x y) ^ r = ite p (x ^ r) (y ^ r) :=
+by split_ifs; simp
+
+lemma Lpnorm_mu [fintype α] [decidable_eq α] {p : ℝ≥0} (hp : p ≠ 0) (hs : s.nonempty) :
+  ‖mu s‖_[p] = s.card ^ (p⁻¹ - 1 : ℝ) :=
 begin
   have : (s.card : ℝ) ≠ 0 := nat.cast_ne_zero.2 hs.card_pos.ne',
-  simp [L1norm_eq_sum, mu, indicator_apply, apply_ite complex.abs, *, mul_inv_cancel],
+  simp only [mu],
+  rw [lpnorm_complex_smul],
+  simp only [map_inv₀, complex.abs_cast_nat, smul_eq_mul],
+  rw Lpnorm_eq_sum hp.bot_lt,
+  simp only [complex.norm_eq_abs],
+  simp_rw [apply_ite complex.abs, map_one, map_zero, ite_rpow, real.zero_rpow
+    (nnreal.coe_ne_zero.2 hp), real.one_rpow, finset.sum_boole, finset.filter_mem_eq_inter,
+    finset.univ_inter, real.rpow_sub_one this, inv_mul_eq_div],
 end
 
-lemma L1norm_mu_le_one [fintype α] : ‖mu s‖_[1] ≤ 1 :=
+-- begin
+--   -- classical,
+  -- have : (s.card : ℝ) ≠ 0 := nat.cast_ne_zero.2 hs.card_pos.ne',
+  -- have h : ∀ x, (s.card⁻¹ * complex.abs ((s : set α).indicator 1 x) : ℝ) ^ (p : ℝ) =
+  --   ite (x ∈ s) (s.card⁻¹ * complex.abs 1 ^ (p : ℝ)) (s.card⁻¹ * complex.abs 0 ^ (p : ℝ)),
+  -- { intro x,
+  --   rw [indicator_apply, apply_ite complex.abs, mul_ite],
+  --   -- split_ifs,
+  --   simp only [finset.mem_coe, pi.one_apply, absolute_value.map_one, mul_one,
+  --     absolute_value.map_zero, mul_zero, real.one_rpow],
+  --   -- split_ifs,
+  --   -- rw comp_indicator
+
+  --   -- rw [indicator_apply, apply_ite complex.abs, mul_ite],
+  --   -- simp,
+  --   -- -- rw ite_rpow,
+  --   -- rw apply_ite (λ _, _ ^ (p : ℝ)),
+  --   -- simp,
+
+  -- },
+  -- have h : ∀ x, (s.card⁻¹ * complex.abs ((s : set α).indicator 1 x) : ℝ) ^ (p : ℝ) =
+  --   (s : set α).indicator (s.card ^ (-p : ℝ)) x,
+-- end
+
+lemma L1norm_mu_le_one [decidable_eq α] [fintype α] : ‖mu s‖_[1] ≤ 1 :=
 begin
   obtain rfl | hs := s.eq_empty_or_nonempty,
   { simp },

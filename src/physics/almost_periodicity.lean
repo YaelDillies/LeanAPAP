@@ -8,6 +8,7 @@ import mathlib.convolution
 variables {G : Type*} [fintype G] [decidable_eq G] [add_comm_group G]
 
 open_locale big_operators pointwise
+open finset
 
 namespace almost_periodicity
 
@@ -71,11 +72,37 @@ begin
   exact (lpnorm_sub_le _ _ _ hp).trans (add_le_add h₅₁ h₁),
 end
 
-#exit
+def _root_.finset.wide_diag (k : ℕ) (S : finset G) : finset (fin k → G) := S.image (λ i _, i)
+def fintype_wide_diag (k : ℕ) : finset (fin k → G) := univ.wide_diag k
 
-lemma big_shifts {k : ℕ} {A S : finset G} (L : finset (fin k → G)) (a : fin k → G) (ha : a ∈ L) :
-  L.card * S.card ≤ (A + S).card ^ k * (finset.univ.filter (λ t : G, a + (λ _, t) ∈ L)).card :=
-sorry
+lemma _root_.finset.wide_diag_card {k : ℕ} (hk : k ≠ 0) {S : finset G} :
+  (S.wide_diag k).card = S.card :=
+begin
+  cases k,
+
+  rw finset.wide_diag,
+  rw card_image_of_injective,
+  intros i j h,
+  dsimp at h,
+end
+
+lemma big_shifts_step1 {k : ℕ} {S : finset G} (L : finset (fin k → G)) :
+  ∑ x in L + S.wide_diag k, ∑ l in L, ∑ s in S.wide_diag k, ite (l + s = x) 1 0 = L.card * S.card :=
+begin
+  simp only [@sum_comm _ _ _ _ (L + _)],
+  simp only [sum_ite_eq],
+  rw sum_const_nat,
+  intros l hl,
+  rw [sum_const_nat],
+
+end
+
+lemma big_shifts {k : ℕ} {A S : finset G} (L : finset (fin k → G)) :
+  ∃ a : fin k → G, a ∈ L ∧
+    L.card * S.card ≤ (A + S).card ^ k * (univ.filter (λ t : G, a + (λ _, t) ∈ L)).card :=
+begin
+
+end
 
 -- trivially true for other reasons for big ε
 theorem almost_periodicity {ε : ℝ} {A S : finset G} {K : ℝ} {f : G → ℂ} {m : ℕ}
