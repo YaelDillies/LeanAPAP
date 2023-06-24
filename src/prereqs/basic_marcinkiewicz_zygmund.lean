@@ -50,6 +50,7 @@ begin
   rw [pow_mul, pow_mul, mul_assoc (_ * _)],
   refine mul_le_mul_of_nonneg_left _ (by positivity),
   norm_cast,
+  sorry,
 end
 
 -- 2m C 2i / (m C i) ^ 2 =  2m! i!^2 (m-i)!^2 / 2i! (2m-2i)! m!^2
@@ -90,7 +91,8 @@ end
 lemma basic_marcinkiewicz_zygmund {A : finset G} (f : G → ℂ)
   (hf : ∀ i : fin k, ∑ a in fintype.pi_finset (λ _, A), f (a i) = 0) :
   ∑ a in fintype.pi_finset (λ _, A), (∑ i : fin k, f (a i)).abs ^ (2 * m) ≤
-    A.card ^ m * (4 * m) ^ m * (∑ a in fintype.pi_finset (λ _, A), ∑ i : fin k, (f (a i)).abs ^ 2) ^ m :=
+    A.card ^ m * (4 * m) ^ m * (∑ a in fintype.pi_finset (λ _, A),
+      ∑ i : fin k, (f (a i)).abs ^ 2) ^ m :=
 begin
-
+  sorry,
 end

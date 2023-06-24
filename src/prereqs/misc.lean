@@ -11,7 +11,7 @@ import mathlib.analysis.special_functions.log.basic
 -/
 
 open set
-open_locale big_operators ennreal nnreal
+open_locale big_operators complex_conjugate ennreal nnreal
 
 /-! ### Translation operator -/
 
@@ -48,27 +48,29 @@ end translate
 section conjneg
 variables {ι α β γ : Type*} [fintype ι] [add_comm_group α]
 
-section has_involutive_star
-variables [has_involutive_star β]
+section comm_semiring
+variables [comm_semiring β] [star_ring β]
 
-def conjneg (f : α → β) : α → β := λ x, star (f (-x))
+def conjneg (f : α → β) : α → β := λ x, conj (f (-x))
 
-@[simp] lemma conjneg_apply (f : α → β) (x : α) : conjneg f x = star (f (-x)) := rfl
+@[simp] lemma conjneg_apply (f : α → β) (x : α) : conjneg f x = conj (f (-x)) := rfl
 @[simp] lemma conjneg_conjneg (f : α → β) : conjneg (conjneg f) = f := by ext; simp
-
-end has_involutive_star
-
-section star_ring
-variables [comm_ring β] [star_ring β]
-
 @[simp] lemma conjneg_zero : conjneg (0 : α → β) = 0 := by ext; simp
 @[simp] lemma conjneg_add (f g : α → β) : conjneg (f + g) = conjneg f + conjneg g := by ext; simp
+@[simp] lemma conjneg_sum (f : ι → α → β) : conjneg (∑ i, f i) = ∑ i, conjneg (f i) :=
+by ext; simp only [map_sum, conjneg_apply, fintype.sum_apply]
+@[simp] lemma conjneg_prod (f : ι → α → β) : conjneg (∏ i, f i) = ∏ i, conjneg (f i) :=
+by ext; simp only [map_prod, conjneg_apply, fintype.prod_apply]
+
+end comm_semiring
+
+section comm_ring
+variables [comm_ring β] [star_ring β]
+
 @[simp] lemma conjneg_sub (f g : α → β) : conjneg (f - g) = conjneg f - conjneg g := by ext; simp
 @[simp] lemma conjneg_neg (f : α → β) : conjneg (-f) = -conjneg f := by ext; simp
-@[simp] lemma conjneg_sum (f : ι → α → β) : conjneg (∑ i, f i) = ∑ i, conjneg (f i) := by ext; simp
-@[simp] lemma conjneg_prod (f : ι → α → β) : conjneg (∏ i, f i) = ∏ i, conjneg (f i) := by ext; simp
 
-end star_ring
+end comm_ring
 end conjneg
 
 namespace real
@@ -188,6 +190,12 @@ variables [Π i, normed_space ℝ (α i)]
 lemma Lpnorm_nsmul (hp : 1 ≤ p) (n : ℕ) (f : Π i, α i) : ‖n • f‖_[p] = n • ‖f‖_[p] :=
 by haveI := fact.mk hp; exact norm_nsmul _ _
 
+-- TODO: Why is it so hard to use `Lpnorm_nsmul` directly? `function.has_smul` seems to have a hard
+-- time unifying `pi.has_smul`
+lemma Lpnorm_nsmul' {α : Type*} [normed_add_comm_group α] [normed_space ℝ α] (hp : 1 ≤ p) (n : ℕ)
+  (f : ι → α) : ‖n • f‖_[p] = n • ‖f‖_[p] :=
+Lpnorm_nsmul hp _ _
+
 end one_le
 
 /-! #### Weighted Lp norm -/
@@ -273,3 +281,22 @@ lemma L1norm_mu (hs : s.nonempty) : ‖mu s‖_[1] = 1 := by simpa using Lpnorm_
 lemma L1norm_mu_le_one : ‖mu s‖_[1] ≤ 1 := by simpa using Lpnorm_mu_le le_rfl
 
 end mu
+
+/-! ### Wide diagonal -/
+
+namespace finset
+variables {α : Type*} [decidable_eq α] {k : ℕ}
+
+def wide_diag (k : ℕ) (s : finset α) : finset (fin k → α) := s.image (λ i _, i)
+
+def _root_.fintype_wide_diag [fintype α] (k : ℕ) : finset (fin k → α) := univ.wide_diag k
+
+@[simp] lemma card_wide_diag (hk : k ≠ 0) (s : finset α) : (s.wide_diag k).card = s.card :=
+begin
+  cases k,
+  { cases hk rfl },
+  rw [finset.wide_diag, card_image_of_injective],
+  exact λ i j h, congr_fun h 0,
+end
+
+end finset

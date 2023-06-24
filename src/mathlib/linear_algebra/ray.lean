@@ -7,13 +7,7 @@ variables {R M : Type*} [strict_ordered_comm_semiring R] [add_comm_monoid M] [mo
 --TODO: Can we unify with `same_ray_nonneg_smul_right`?
 /-- A vector is in the same ray as a nonnegative integer multiple of itself. -/
 lemma _root_.same_ray_nsmul_right (v : M) (n : ℕ) : same_ray R v (n • v) :=
-begin
-  convert same_ray_nonneg_smul_right v _,
-  swap,
-  exact n,
-  sorry,
-  exact nat.cast_nonneg _,
-end
+by { rw nsmul_eq_smul_cast R, exact same_ray_nonneg_smul_right v (nat.cast_nonneg _) }
 
 --TODO: Can we unify with `same_ray_nonneg_smul_right`?
 /-- A vector is in the same ray as a nonnegative integer multiple of itself. -/

@@ -1,5 +1,5 @@
-import misc
-import mathlib.convolution
+import prereqs.convolution
+import prereqs.misc
 
 /-!
 # Almost-periodicity
@@ -7,8 +7,8 @@ import mathlib.convolution
 
 variables {G : Type*} [fintype G] [decidable_eq G] [add_comm_group G]
 
-open_locale big_operators pointwise
 open finset
+open_locale big_operators pointwise ennreal
 
 namespace almost_periodicity
 
@@ -33,10 +33,10 @@ lemma just_the_triangle_inequality {ε : ℝ} {m : ℕ} {A : finset G} {f : G �
 begin
   let f₁ : G → ℂ := λ x, ∑ i, f (x - a i),
   let f₂ : G → ℂ := λ x, ∑ i, f (x - a i - t),
-  have hp : (1 : ennreal) ≤ 2 * m := by norm_cast; linarith,
-  have h₁ : ‖f₁ - k • (mu A ∗ f)‖_[2*m] ≤ k * ε * ‖f‖_[2 * m],
+  have hp : (1 : ℝ≥0∞) ≤ 2 * m := by norm_cast; linarith,
+  have h₁ : ‖f₁ - k • (mu A ∗ f)‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m],
   { rw [L, finset.mem_filter] at ha, exact ha.2 },
-  have h₂ : ‖f₂ - k • (mu A ∗ f)‖_[2*m] ≤ k * ε * ‖f‖_[2 * m],
+  have h₂ : ‖f₂ - k • (mu A ∗ f)‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m],
   { rw [L, finset.mem_filter, L_prop] at ha',
     refine ha'.2.trans_eq' _,
     congr' with i : 1,
@@ -55,23 +55,9 @@ begin
   { rwa [Lpnorm_sub_comm hp, ←h₄, ←h₃] },
   have : (0 : ℝ) < k, by positivity,
   refine le_of_mul_le_mul_left _ this,
-  rw [←nsmul_eq_mul, ←lpnorm_nsmul hp, nsmul_sub, nsmul_translate, mul_assoc, mul_left_comm,
-    two_mul ((k : ℝ) * _), ←mul_assoc],
-  exact (lpnorm_sub_le _ _ _ hp).trans (add_le_add h₅₁ h₁),
-end
-
-def _root_.finset.wide_diag (k : ℕ) (S : finset G) : finset (fin k → G) := S.image (λ i _, i)
-def fintype_wide_diag (k : ℕ) : finset (fin k → G) := univ.wide_diag k
-
-lemma _root_.finset.wide_diag_card {k : ℕ} (hk : k ≠ 0) {S : finset G} :
-  (S.wide_diag k).card = S.card :=
-begin
-  cases k,
-  { simpa using hk },
-  rw [finset.wide_diag, card_image_of_injective],
-  intros i j h,
-  dsimp at h,
-  exact congr_fun h 0,
+  rw [←nsmul_eq_mul, ←Lpnorm_nsmul' hp _ (_ - mu A ∗ f), nsmul_sub, ←translate_smul_right,
+    mul_assoc, mul_left_comm, two_mul ((k : ℝ) * _), ←mul_assoc],
+  exact (Lpnorm_sub_le_Lpnorm_sub_add_Lpnorm_sub hp).trans (add_le_add h₅₁ h₁),
 end
 
 lemma big_shifts_step1 {k : ℕ} {S : finset G} (L : finset (fin k → G)) :
@@ -81,15 +67,17 @@ begin
   simp only [sum_ite_eq],
   rw sum_const_nat,
   intros l hl,
-  rw [sum_const_nat],
-
+  rw [sum_const_nat, finset.card_wide_diag, mul_one],
+  sorry,
+  simp only [ite_eq_left_iff, nat.zero_ne_one],
+  exact λ f hf h, h (add_mem_add hl hf),
 end
 
 lemma big_shifts {k : ℕ} {A S : finset G} (L : finset (fin k → G)) :
   ∃ a : fin k → G, a ∈ L ∧
     L.card * S.card ≤ (A + S).card ^ k * (univ.filter (λ t : G, a + (λ _, t) ∈ L)).card :=
 begin
-
+  sorry,
 end
 
 -- trivially true for other reasons for big ε
