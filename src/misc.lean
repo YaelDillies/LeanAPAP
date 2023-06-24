@@ -1,7 +1,7 @@
 import analysis.inner_product_space.pi_L2
-import analysis.normed_space.pi_Lp
 import analysis.special_functions.log.basic
 import analysis.special_functions.pow.real
+import mathlib.analysis.normed_space.pi_Lp
 
 /-!
 # Miscellaneous definitions
@@ -10,9 +10,66 @@ import analysis.special_functions.pow.real
 open set
 open_locale big_operators ennreal nnreal
 
+/-! ### Translation operator -/
+
+section translate
+variables {ι α β γ : Type*} [fintype ι] [add_comm_group α]
+
+def translate (a : α) (f : α → β) : α → β := λ x, f (x - a)
+
+notation `τ ` := translate
+
+@[simp] lemma translate_apply (a : α) (f : α → β) (x : α) : τ a f x = f (x - a) := rfl
+
+@[simp] lemma translate_zero (f : α → β) : translate 0 f = f := by ext; simp
+
+@[simp] lemma translate_translate (a b : α) (f : α → β) : τ a (τ b f) = τ (a + b) f :=
+by ext; simp [sub_sub]
+
+@[simp] lemma comp_translate (a : α) (f : α → β) (g : β → γ) : g ∘ τ a f = τ a (g ∘ f) := rfl
+
+variables [add_comm_group β]
+
+@[simp] lemma translate_zero_right (a : α) : τ a (0 : α → β) = 0 := rfl
+lemma translate_add_right (a : α) (f g : α → β) : τ a (f + g) = τ a f + τ a g := rfl
+lemma translate_sub_right (a : α) (f g : α → β) : τ a (f - g) = τ a f - τ a g := rfl
+lemma translate_neg_right (a : α) (f : α → β) : τ a (-f) = -τ a f := rfl
+lemma translate_sum (a : α) (f : ι → α → β) : τ a (∑ i, f i) = ∑ i, τ a (f i) := by ext; simp
+
+end translate
+
+/-! ### Conjugation negation operator -/
+
+section conjneg
+variables {ι α β γ : Type*} [fintype ι] [add_comm_group α]
+
+section has_involutive_star
+variables [has_involutive_star β]
+
+def conjneg (f : α → β) : α → β := λ x, star (f (-x))
+
+@[simp] lemma conjneg_apply (f : α → β) (x : α) : conjneg f x = star (f (-x)) := rfl
+@[simp] lemma conjneg_conjneg (f : α → β) : conjneg (conjneg f) = f := by ext; simp
+
+end has_involutive_star
+
+section star_ring
+variables [comm_ring β] [star_ring β]
+
+@[simp] lemma conjneg_zero : conjneg (0 : α → β) = 0 := by ext; simp
+@[simp] lemma conjneg_add (f g : α → β) : conjneg (f + g) = conjneg f + conjneg g := by ext; simp
+@[simp] lemma conjneg_sub (f g : α → β) : conjneg (f - g) = conjneg f - conjneg g := by ext; simp
+@[simp] lemma conjneg_neg (f : α → β) : conjneg (-f) = -conjneg f := by ext; simp
+@[simp] lemma conjneg_sum (f : ι → α → β) : conjneg (∑ i, f i) = ∑ i, conjneg (f i) := by ext; simp
+@[simp] lemma conjneg_prod (f : ι → α → β) : conjneg (∏ i, f i) = ∏ i, conjneg (f i) := by ext; simp
+
+end star_ring
+end conjneg
+
 namespace real
 variables {x : ℝ}
 
+-- Maybe define as `2 - log x`
 noncomputable def curlog (x : ℝ) : ℝ := log (exp 2 / x)
 
 @[simp] lemma curlog_zero : curlog 0 = 0 := by simp [curlog]
@@ -88,6 +145,13 @@ lemma L1norm_eq_sum (f : Π i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp
 lemma L0norm_eq_card (f : Π i, α i) : ‖f‖_[0] = {i | f i ≠ 0}.to_finite.to_finset.card :=
 pi_Lp.norm_eq_card _
 
+lemma Linftynorm_eq_csupr (f : Π i, α i) : ‖f‖_[∞] = ⨆ i, ‖f i‖ := pi_Lp.norm_eq_csupr _
+
+lemma Lpnorm_add_le [fact (1 ≤ p)] (f g : Π i, α i) : ‖f + g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
+norm_add_le _ _
+
+@[simp] lemma Lpnorm_zero : ‖(0 : Π i, α i)‖_[p] = 0 := sorry
+
 /-! #### Weighted Lp norm -/
 
 /-- The Lp norm of a function. -/
@@ -113,6 +177,26 @@ pi_Lp.inner_apply _ _
 
 end Lpnorm
 
+section Lpnorm
+variables {α β : Type*} [add_comm_group α] [fintype α] [normed_add_comm_group β] {p : ℝ≥0∞}
+
+@[simp] lemma Lpnorm_translate (a : α) (f : α → β) : ‖τ a f‖_[p] = ‖f‖_[p] :=
+begin
+  cases p,
+  { simp only [Linftynorm_eq_csupr, ennreal.none_eq_top, translate_apply],
+    exact (equiv.sub_right _).supr_congr (λ _, rfl) },
+  obtain rfl | hp := @eq_zero_or_pos _ _ p,
+  { simp only [L0norm_eq_card, translate_apply, ne.def, ennreal.some_eq_coe, ennreal.coe_zero,
+      nat.cast_inj],
+    exact finset.card_congr (λ x _, x - a) (λ x hx, by simpa using hx)
+      (λ x y _ _ h, by simpa using h) (λ x hx, ⟨x + a, by simpa using hx⟩) },
+  simp only [Lpnorm_eq_sum hp, ennreal.some_eq_coe, translate_apply],
+  congr' 1,
+  exact fintype.sum_equiv (equiv.sub_right _) _ _ (λ _, rfl),
+end
+
+end Lpnorm
+
 /-! ### Indicator -/
 
 section mu
@@ -120,10 +204,19 @@ variables {α : Type*} {s : finset α}
 
 noncomputable def mu (s : finset α) : α → ℂ := (s.card : ℂ)⁻¹ • indicator s 1
 
+@[simp] lemma mu_empty : mu (∅ : finset α) = 0 := by simp [mu]
+
 lemma L1norm_mu [fintype α] (hs : s.nonempty) : ‖mu s‖_[1] = 1 :=
 begin
-  sorry
-  -- simp [Lpnorm_eq_sum, zero_lt_one],
+  have : (s.card : ℝ) ≠ 0 := nat.cast_ne_zero.2 hs.card_pos.ne',
+  simp [L1norm_eq_sum, mu, indicator_apply, apply_ite complex.abs, *, mul_inv_cancel],
+end
+
+lemma L1norm_mu_le_one [fintype α] : ‖mu s‖_[1] ≤ 1 :=
+begin
+  obtain rfl | hs := s.eq_empty_or_nonempty,
+  { simp },
+  { exact (L1norm_mu hs).le }
 end
 
 end mu

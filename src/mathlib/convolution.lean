@@ -85,10 +85,13 @@ In this section, we define the convolution `f ∗ g` of functions `α → ℂ` a
 properties of `with_conv α` to properties of `∗`.
 -/
 
-notation f ` ∗ `:70 g:70 := of_conv (to_conv f * to_conv g)
-
 section add_group
 variables [add_group α] [fintype α] [decidable_eq α]
+
+/-- Convolution -/
+def function.conv (f g : α → ℂ) : α → ℂ := of_conv (to_conv f * to_conv g)
+
+notation f ` ∗ `:70 g:70 := function.conv f g
 
 @[simp] lemma of_conv_mul (f g : with_conv α) : of_conv (f * g) = of_conv f ∗ of_conv g := rfl
 
