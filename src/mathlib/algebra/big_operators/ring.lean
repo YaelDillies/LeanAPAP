@@ -19,16 +19,16 @@ by simp only [finset.prod_attach_univ, prod_sum, finset.sum_univ_pi]
 end finset
 
 namespace finset
-variables {α β : Type*} [comm_semiring β] [decidable_eq α]
+variables {α β : Type*} [comm_semiring β]
 
 lemma pow_sum (s : finset α) (f : α → β) (n : ℕ) :
   (∑ a in s, f a) ^ n = ∑ p in fintype.pi_finset (λ i : fin n, s), ∏ i, f (p i) :=
-by convert @prod_univ_sum' (fin n) _ _ _ _ _ _ (λ i, s) (λ i d, f d); simp
+by classical; convert @prod_univ_sum' (fin n) _ _ _ _ _ _ (λ i, s) (λ i d, f d); simp
 
 end finset
 
 namespace fintype
-variables {α β : Type*} [fintype α] [comm_semiring β] [decidable_eq α]
+variables {α β : Type*} [fintype α] [comm_semiring β]
 
 lemma pow_sum (f : α → β) (n : ℕ) : (∑ a, f a) ^ n = ∑ p : fin n → α, ∏ i, f (p i) :=
 by simp [finset.pow_sum]
