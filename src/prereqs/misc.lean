@@ -295,6 +295,10 @@ lemma mem_wide_diag {s : finset α} {k : ℕ} {x : fin k → α} :
 def _root_.fintype_wide_diag (α : Type*) [decidable_eq α] [fintype α] (k : ℕ) :
   finset (fin k → α) := univ.wide_diag k
 
+lemma mem_fintype_wide_diag [fintype α] {k : ℕ} {x : fin k → α} :
+  x ∈ fintype_wide_diag α k ↔ ∃ i, (λ _, i) = x :=
+mem_wide_diag.trans (by simp)
+
 @[simp] lemma card_wide_diag (hk : k ≠ 0) (s : finset α) : (s.wide_diag k).card = s.card :=
 begin
   cases k,
