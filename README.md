@@ -71,7 +71,13 @@ There are two pieces of functionality that help a lot when browsing through Lean
 
 ### Organization of the project
 
-* The Lean code is contained in the directory `src/`.
+The Lean code is contained in the directory `src/`. The subdirectories are:
+* `mathlib`: Material missing from existing mathlib developments
+* `prereqs`: New developments to be integrated to mathlib
+* `physics`: The physical (as opposed to Fourier space) proof steps that are shared
+  between the finite field cases and integer case
+* `finite_field`: The proof steps specific to the finite field case
+* `integer`: The proof steps specific to the integer case
 
 ## Building the blueprint locally
 
