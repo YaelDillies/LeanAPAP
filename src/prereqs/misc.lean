@@ -1,10 +1,9 @@
 import analysis.inner_product_space.pi_L2
-import analysis.special_functions.log.basic
-import analysis.special_functions.pow.real
 import mathlib.analysis.normed.group.basic
 import mathlib.analysis.normed_space.pi_Lp
 import mathlib.analysis.normed_space.ray
 import mathlib.analysis.special_functions.log.basic
+import mathlib.analysis.special_functions.pow.real
 
 /-!
 # Miscellaneous definitions
@@ -123,6 +122,7 @@ end real
 
 section Lpnorm
 variables {ι : Type*} [fintype ι] {α : ι → Type*} [Π i, normed_add_comm_group (α i)] {p : ℝ≥0∞}
+  {f g h : Π i, α i}
 
 /-- The Lp norm of a function. -/
 @[reducible] noncomputable def Lpnorm (p : ℝ≥0∞) (f : Π i, α i) : ℝ :=
@@ -142,6 +142,14 @@ lemma Lpnorm_eq_sum {p : ℝ≥0} (hp : 0 < p) (f : Π i, α i) :
   ‖f‖_[p] = (∑ i, ‖f i‖ ^ (p : ℝ)) ^ (p⁻¹ : ℝ) :=
 Lpnorm_eq_sum' hp _
 
+lemma Lpnorm_rpow_eq_sum {p : ℝ≥0} (hp : 0 < p) (f : Π i, α i) :
+  ‖f‖_[p] ^ (p : ℝ) = ∑ i, ‖f i‖ ^ (p : ℝ) :=
+begin
+  rw [Lpnorm_eq_sum hp, real.rpow_inv_rpow],
+  { exact finset.sum_nonneg (λ i _, by positivity) },
+  { positivity }
+end
+
 lemma L1norm_eq_sum (f : Π i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp [Lpnorm_eq_sum']
 
 lemma L0norm_eq_card (f : Π i, α i) : ‖f‖_[0] = {i | f i ≠ 0}.to_finite.to_finset.card :=
@@ -156,8 +164,20 @@ begin
   all_goals { simp [Linftynorm_eq_csupr, L0norm_eq_card, Lpnorm_eq_sum, *, ne_of_gt] },
 end
 
+@[simp] lemma Lpnorm_nonneg : 0 ≤ ‖f‖_[p] :=
+begin
+  cases p,
+  { simp only [Linftynorm_eq_csupr, ennreal.none_eq_top],
+    exact real.supr_nonneg (λ i, norm_nonneg _) },
+  obtain rfl | hp := @eq_zero_or_pos _ _ p,
+  { simp only [L0norm_eq_card, ennreal.some_eq_coe, ennreal.coe_zero],
+    exact nat.cast_nonneg _ },
+  { simp only [Lpnorm_eq_sum hp, ennreal.some_eq_coe],
+    exact real.rpow_nonneg_of_nonneg
+      (finset.sum_nonneg $ λ i _, real.rpow_nonneg_of_nonneg (norm_nonneg _) _) _ }
+end
+
 section one_le
-variables {f g h : Π i, α i}
 
 -- TODO: Remove the `1 ≤ p` condition
 lemma Lpnorm_sub_comm (hp : 1 ≤ p) (f g : Π i, α i) : ‖f - g‖_[p] = ‖g - f‖_[p] :=
@@ -239,6 +259,28 @@ begin
   { simp only [Lpnorm_eq_sum hp, ennreal.some_eq_coe, translate_apply],
     congr' 1,
     exact fintype.sum_equiv (equiv.sub_right _) _ _ (λ _, rfl) }
+end
+
+end Lpnorm
+
+section Lpnorm
+variables {ι α : Type*} [fintype α]
+
+/-- Hölder's inequality, binary case. -/
+lemma Lpnorm_mul_le (p q r : ℝ≥0∞) (hpqr : p⁻¹ + q⁻¹ = r⁻¹) (f g : α → ℂ) :
+  ‖f * g‖_[r] ≤ ‖f‖_[p] * ‖g‖_[q] :=
+begin
+  sorry,
+end
+
+/-- Hölder's inequality, finitary case. -/
+lemma Lpnorm_prod_le {s : finset ι} (p : ι → ℝ≥0∞) (q : ℝ≥0∞) (hpq : ∑ i in s, (p i)⁻¹ = q⁻¹)
+  (f : ι → α → ℂ) : ‖∏ i in s, f i‖_[q] ≤ ∏ i in s, ‖f i‖_[p i] :=
+begin
+  classical,
+  induction s using finset.induction with i s hi ih,
+  sorry { simp },
+  sorry
 end
 
 end Lpnorm

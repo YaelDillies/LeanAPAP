@@ -10,8 +10,8 @@ Multiplicativise? Probably ugly and not very useful.
 Include convolution on `α → ℝ`. Generalise to star rings?
 -/
 
-open finset
-open_locale big_operators complex_conjugate
+open finset real
+open_locale big_operators complex_conjugate nnreal
 
 /-!
 ### The ring of functions under convolution
@@ -33,12 +33,9 @@ rfl
 noncomputable instance function.star_ring' {ι : Type*} : star_ring (ι → ℂ) :=
 pi.star_ring
 
+@[derive add_comm_group] def with_conv (α : Type*) : Type* := α → ℂ
 
-variables (α : Type*)
-
-@[derive add_comm_group] def with_conv : Type* := α → ℂ
-
-variables {α}
+variables {ι α : Type*}
 
 /-- `to_conv` is the identity function to the `order_conv` of a linear order.  -/
 def to_conv : (α → ℂ) ≃ with_conv α := equiv.refl _
@@ -157,9 +154,6 @@ end
 
 lemma conv_comm (f g : α → ℂ) : f ∗ g = g ∗ f := mul_comm (to_conv f) _
 
-lemma conv_eq_sum_sub' (f g : α → ℂ) (a : α) : (f ∗ g) a = ∑ t, f t * g (a - t) :=
-by { rw conv_eq_sum_sub, exact fintype.sum_equiv (equiv.sub_left a) _ _ (λ t, by simp) }
-
 @[simp] lemma conj_conv (f g : α → ℂ) : conj (f ∗ g) = conj f ∗ conj g :=
 funext $ λ a, by simp only [pi.conj_apply, conv_apply, map_sum, map_mul]
 
@@ -170,6 +164,65 @@ begin
   convert equiv.sum_comp_finset (equiv.neg (α × α)) _ rfl using 2,
   rw [←equiv.coe_to_embedding, ←map_eq_image (equiv.neg (α × α)).symm.to_embedding, map_filter],
   simp [function.comp, ←neg_eq_iff_eq_neg, add_comm],
+end
+
+lemma conv_eq_sum_sub' (f g : α → ℂ) (a : α) : (f ∗ g) a = ∑ t, f t * g (a - t) :=
+by { rw conv_eq_sum_sub, exact fintype.sum_equiv (equiv.sub_left a) _ _ (λ t, by simp) }
+
+lemma conv_eq_inner (f g : α → ℂ) (a : α) : (f ∗ g) a = ⟪conj f, τ a (λ x, g (-x))⟫_[ℂ] :=
+by simp [L2inner_eq_sum, conv_eq_sum_sub', map_sum]
+
+-- TODO: This proof would feel much less painful if we had `ℝ≥0`-valued Lp-norms.
+/-- A special case of **Young's convolution inequality**. -/
+lemma Lpnorm_conv_le {p : ℝ≥0} (hp : 1 < p) (f g : α → ℂ) : ‖f ∗ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] :=
+begin
+  have hp₀ := zero_lt_one.trans hp,
+  rw [←rpow_le_rpow_iff _ (mul_nonneg _ _) hp₀, mul_rpow],
+  any_goals { exact Lpnorm_nonneg },
+  simp_rw [Lpnorm_rpow_eq_sum hp₀, conv_eq_sum_sub'],
+  have hpconj : is_conjugate_exponent p (1 - p⁻¹)⁻¹ :=
+    ⟨hp, by simp_rw [one_div, inv_inv, add_sub_cancel'_right]⟩,
+  have : ∀ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
+    (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ),
+  { intro x,
+    rw [←le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ←rpow_mul, sub_one_mul, mul_inv_cancel],
+    rotate 1,
+    { positivity },
+    { exact sum_nonneg (λ _ _, norm_nonneg _) },
+    { exact sum_nonneg (λ _ _, by positivity) },
+    { exact rpow_nonneg_of_nonneg (sum_nonneg $ λ _ _, norm_nonneg _)  _ },
+    { exact mul_nonneg (sum_nonneg $ λ _ _, by positivity)
+        (rpow_nonneg_of_nonneg (sum_nonneg $ λ _ _, norm_nonneg _) _) },
+    { positivity },
+    calc
+      _ ≤ ∑ y, ‖f y * g (x - y)‖ : norm_sum_le _ _
+    ... = ∑ y, ‖f y‖ * ‖g (x - y)‖ ^ (p⁻¹ : ℝ) * ‖g (x - y)‖ ^ (1 - p⁻¹ : ℝ) : _
+    ... ≤ _ : inner_le_Lp_mul_Lq _ _ _ hpconj
+    ... = _ : _,
+    { congr' with t,
+      rw [norm_mul, mul_assoc, ←rpow_add' (norm_nonneg _), add_sub_cancel'_right, rpow_one],
+      simp },
+    { have : (1 - p⁻¹ : ℝ) ≠ 0 := sub_ne_zero.2 (inv_ne_one.2 $ by exact_mod_cast hp.ne').symm,
+      simp only [abs_mul, abs_rpow_of_nonneg, mul_rpow, rpow_nonneg_of_nonneg, hp₀.ne', this,
+        abs_norm, norm_nonneg, rpow_inv_rpow, ne.def, nnreal.coe_eq_zero, not_false_iff, one_div,
+        rpow_rpow_inv, div_inv_eq_mul, one_mul] } },
+  calc
+    ∑ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ)
+      ≤ ∑ x, (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ)
+      : sum_le_sum $ λ i _, this _
+  ... = _ : _,
+  have hg : ∀ x, ∑ y, ‖g (x - y)‖ = ‖g‖_[1],
+  { simp_rw L1norm_eq_sum,
+    exact λ x, fintype.sum_equiv (equiv.sub_left _) _ _ (λ _, rfl) },
+  have hg' : ∀ y, ∑ x, ‖g (x - y)‖ = ‖g‖_[1],
+  { simp_rw L1norm_eq_sum,
+    exact λ x, fintype.sum_equiv (equiv.sub_right _) _ _ (λ _, rfl) },
+  simp_rw hg,
+  rw [←sum_mul, sum_comm],
+  simp_rw [←mul_sum, hg'],
+  rw [←sum_mul, mul_assoc, ←rpow_one_add' Lpnorm_nonneg, add_sub_cancel'_right],
+  { rw add_sub_cancel'_right,
+    positivity }
 end
 
 end add_comm_group
@@ -240,7 +293,7 @@ lemma dconv_apply_sub (f g : α → ℂ) (a b : α) :
   (f ○ g) (a - b) = ∑ t, f (a + t) * conj (g (b + t)) :=
 by simp [←conv_conjneg, sub_eq_add_neg, conv_apply_add, add_comm]
 
-lemma dconv_eq_inner_translate (f g : α → ℂ) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[ℂ] :=
+lemma dconv_eq_inner (f g : α → ℂ) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[ℂ] :=
 by simp [L2inner_eq_sum, dconv_eq_sum_sub, map_sum]
 
 end add_comm_group
