@@ -282,9 +282,10 @@ lemma L1norm_mu_le_one : ‖mu s‖_[1] ≤ 1 := by simpa using Lpnorm_mu_le le_
 
 end mu
 
+namespace finset
+
 /-! ### Wide diagonal -/
 
-namespace finset
 variables {α : Type*} [decidable_eq α] {k : ℕ}
 
 def wide_diag (k : ℕ) (s : finset α) : finset (fin k → α) := s.image (λ i _, i)
@@ -305,6 +306,16 @@ begin
   { cases hk rfl },
   rw [finset.wide_diag, card_image_of_injective],
   exact λ i j h, congr_fun h 0,
+end
+
+/-! ### a finset thing that should actually be called pow_sum and the other thing should be called sum_pow because the binary version of that is called add_pow and the binary version of this is called pow_add -/
+lemma pow_sum_but_its_actually_pow_sum
+  {α β : Type*} [comm_monoid β] (s : finset α) (f : α → ℕ) (m : β) :
+  ∏ i in s, m ^ f i = m ^ (∑ i in s, f i) :=
+begin
+  induction s using finset.cons_induction_on with a s has ih,
+  { simp },
+  rw [prod_cons, ih, sum_cons, pow_add],
 end
 
 end finset
