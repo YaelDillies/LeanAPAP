@@ -1,4 +1,5 @@
 *.olean
+/_cache
 /_target
 /leanpkg.path
 /doc-gen
