@@ -22,8 +22,6 @@ lemma antidiagonal_eq_map :
 
 lemma antidiagonal_eq_image : n.antidiagonal = (range (n + 1)).image (λ i, (i, n - i)) :=
 by simp only [antidiagonal_eq_map, map_eq_image, function.embedding.coe_fn_mk]
--- antidiagonal_eq_map
---  coeff α n (∏ j in s, f j) = ∑ l in cut s n, ∏ i in s, coeff α (l i) (f i) :=
 
 end nat
 end finset
