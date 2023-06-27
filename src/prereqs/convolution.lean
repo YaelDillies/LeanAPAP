@@ -1,5 +1,5 @@
 import algebra.star.pi
-import prereqs.misc
+import prereqs.lp_norm
 
 /-!
 # Convolution

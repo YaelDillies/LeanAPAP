@@ -1,7 +1,6 @@
 import analysis.inner_product_space.pi_L2
 import mathlib.algebra.big_operators.ring
-import prereqs.convolution
-import prereqs.misc
+import prereqs.lp_norm
 
 /-!
 # Unbalancing

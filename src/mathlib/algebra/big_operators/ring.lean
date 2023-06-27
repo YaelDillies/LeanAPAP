@@ -16,21 +16,28 @@ lemma prod_univ_sum' [decidable_eq α] [fintype α] [comm_semiring β] {δ : α 
   ∏ a, ∑ b in t a, f a b = ∑ p in fintype.pi_finset t, ∏ x, f x (p x) :=
 by simp only [finset.prod_attach_univ, prod_sum, finset.sum_univ_pi]
 
-end finset
+section comm_monoid
+variables [comm_monoid β]
 
-namespace finset
-variables {α β : Type*} [comm_semiring β]
+lemma pow_sum (s : finset α) (f : α → ℕ) (m : β) : ∏ i in s, m ^ f i = m ^ ∑ i in s, f i :=
+by induction s using finset.cons_induction_on with a s has ih; simp [*, pow_add]
 
-lemma pow_sum (s : finset α) (f : α → β) (n : ℕ) :
+end comm_monoid
+
+section comm_semiring
+variables [comm_semiring β]
+
+lemma sum_pow' (s : finset α) (f : α → β) (n : ℕ) :
   (∑ a in s, f a) ^ n = ∑ p in fintype.pi_finset (λ i : fin n, s), ∏ i, f (p i) :=
 by classical; convert @prod_univ_sum' (fin n) _ _ _ _ _ _ (λ i, s) (λ i d, f d); simp
 
+end comm_semiring
 end finset
 
 namespace fintype
 variables {α β : Type*} [fintype α] [comm_semiring β]
 
-lemma pow_sum (f : α → β) (n : ℕ) : (∑ a, f a) ^ n = ∑ p : fin n → α, ∏ i, f (p i) :=
-by simp [finset.pow_sum]
+lemma sum_pow (f : α → β) (n : ℕ) : (∑ a, f a) ^ n = ∑ p : fin n → α, ∏ i, f (p i) :=
+by simp [finset.sum_pow']
 
 end fintype

@@ -1,7 +1,6 @@
-import prereqs.misc
-import prereqs.convolution
 import algebra.order.chebyshev
 import combinatorics.pigeonhole
+import prereqs.convolution
 
 /-!
 # Almost-periodicity
@@ -57,7 +56,8 @@ begin
   { rwa [Lpnorm_sub_comm hp, ←h₄, ←h₃] },
   have : (0 : ℝ) < k, by positivity,
   refine le_of_mul_le_mul_left _ this,
-  rw [←nsmul_eq_mul, ←Lpnorm_nsmul' hp _ (_ - mu A ∗ f), nsmul_sub, ←translate_smul_right,
+  have := translate_smul_right (-t) (mu A ∗ f) k,
+  rw [←nsmul_eq_mul, ←Lpnorm_nsmul' hp _ (_ - mu A ∗ f), nsmul_sub, ←this,
     mul_assoc, mul_left_comm, two_mul ((k : ℝ) * _), ←mul_assoc],
   exact (Lpnorm_sub_le_Lpnorm_sub_add_Lpnorm_sub hp).trans (add_le_add h₅₁ h₁),
 end

@@ -27,17 +27,15 @@ begin
   rw [cut, mem_filter, and_comm, and_congr_right],
   intro h,
   simp only [mem_map, exists_prop, function.embedding.coe_fn_mk, mem_pi],
-  split,
+  refine ⟨_, λ hf, ⟨λ i hi, f i, λ i hi, _, _⟩⟩,
   { rintro ⟨_, _, rfl⟩ _ _,
     simp [dif_neg H] },
-  { intro hf,
-    refine ⟨λ i hi, f i, λ i hi, _, _⟩,
-    { rw [mem_range, nat.lt_succ_iff, ← h],
-      apply single_le_sum _ hi,
-      simp },
-    { ext,
-      rw [dite_eq_ite, ite_eq_left_iff, eq_comm],
-      exact hf x } }
+  { rw [mem_range, nat.lt_succ_iff, ← h],
+    apply single_le_sum _ hi,
+    simp },
+  { ext,
+    rw [dite_eq_ite, ite_eq_left_iff, eq_comm],
+    exact hf x }
 end
 
 lemma cut_equiv_antidiag (n : ℕ) :
