@@ -13,6 +13,18 @@ open_locale big_operators pointwise ennreal
 
 namespace almost_periodicity
 
+lemma cast_card_sdiff {α R : Type*} [add_group_with_one R] [decidable_eq α] {s t : finset α}
+  (h : s ⊆ t) : ((t \ s).card : R) = t.card - s.card :=
+by rw [card_sdiff h, nat.cast_sub (card_le_of_subset h)]
+
+lemma card_pi_finset_const {α K : Type*} [fintype K] [decidable_eq K] (A : finset α) :
+  (fintype.pi_finset (λ _ : K, A)).card = A.card ^ fintype.card K :=
+by rw [fintype.card_pi_finset, prod_const, card_univ]
+
+lemma card_pi_finset_fin_const {α : Type*} {k : ℕ} (A : finset α) :
+  (fintype.pi_finset (λ _ : fin k, A)).card = A.card ^ k :=
+by rw [card_pi_finset_const, fintype.card_fin]
+
 def L_prop [fintype G] (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : finset G) (a : fin k → G) : Prop :=
 ‖λ x : G, ∑ i : fin k, f (x - a i) - (k • (mu A ∗ f)) x‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m]
 
@@ -20,12 +32,73 @@ noncomputable instance [fintype G] (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : f
   decidable_pred (L_prop k m ε f A) := classical.dec_pred _
 
 noncomputable def L [fintype G] (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : finset G) : finset (fin k → G) :=
-((fintype.pi_finset (λ i : fin k, A)).filter (L_prop k m ε f A))
+(fintype.pi_finset (λ i : fin k, A)).filter (L_prop k m ε f A)
+
+lemma my_markov {α : Type*} {g : α → ℝ} {c ε : ℝ} {A : finset α} (hc : 0 < c)
+  (hg : ∀ a ∈ A, 0 ≤ g a) (h : ∑ a in A, g a ≤ ε * c * A.card) :
+  (1 - ε) * A.card ≤ (A.filter (λ a, g a ≤ c)).card :=
+begin
+  rcases A.eq_empty_or_nonempty with rfl | hA,
+  { simp },
+  classical,
+  have := h.trans' (sum_le_sum_of_subset_of_nonneg (filter_subset (λ a, ¬ g a ≤ c) A)
+    (λ i hi _, hg _ hi)),
+  have := (card_nsmul_le_sum _ _ c (by simp [le_of_lt] {contextual := tt})).trans this,
+  rw [nsmul_eq_mul, mul_right_comm] at this,
+  have := le_of_mul_le_mul_right this hc,
+  rw [filter_not, cast_card_sdiff (filter_subset _ _)] at this,
+  linarith only [this],
+end
+
+lemma my_other_markov {α : Type*} {g : α → ℝ} {c ε : ℝ} {A : finset α} (hc : 0 ≤ c) (hε : 0 ≤ ε)
+  (hg : ∀ a ∈ A, 0 ≤ g a) (h : ∑ a in A, g a ≤ ε * c * A.card) :
+  (1 - ε) * A.card ≤ (A.filter (λ a, g a ≤ c)).card :=
+begin
+  rcases hc.lt_or_eq with hc | rfl,
+  { exact my_markov hc hg h },
+  simp only [mul_zero, zero_mul] at h,
+  classical,
+  rw [one_sub_mul, sub_le_comm, ←cast_card_sdiff (filter_subset _ A), ←filter_not,
+    filter_false_of_mem],
+  { simp, positivity },
+  intros i hi,
+  rw (sum_eq_zero_iff_of_nonneg hg).1 (h.antisymm (sum_nonneg hg)) i hi,
+  simp
+end
+
+lemma lemma28_markov [fintype G] {ε : ℝ} {m : ℕ} {A : finset G} {f : G → ℂ} {k : ℕ}
+  (hε : 0 < ε) (hm : 1 ≤ m)
+  (h : ∑ a in fintype.pi_finset (λ _, A),
+    ‖λ x : G, ∑ i : fin k, f (x - a i) - (k • (mu A ∗ f)) x‖_[2 * m]^(2 * m) ≤
+      1 / 2 * (k * ε * ‖f‖_[2 * m])^(2 * m) * A.card ^ k) :
+  (A.card ^ k : ℝ) / 2 ≤ (L k m ε f A).card :=
+begin
+  rw [←nat.cast_pow, ←card_pi_finset_fin_const] at h,
+  have := my_other_markov _ (by norm_num) _ h,
+  rotate,
+  { positivity <|> sorry }, -- YAEL MAKE POSITIVITY DO THIS pls
+  { intros a ha,
+    positivity <|> sorry },
+  norm_num1 at this,
+  rw [card_pi_finset_fin_const, mul_comm, mul_one_div, nat.cast_pow] at this,
+  refine this.trans_eq _,
+  rw [L],
+  congr' with a : 3,
+  refine (@strict_mono_on_pow ℝ _ _ _).le_iff_le _ _,
+  { positivity },
+  { rw set.mem_Ici,
+    positivity <|> sorry },
+  { rw set.mem_Ici,
+    positivity <|> sorry }
+end
 
 lemma lemma28 [fintype G] {ε : ℝ} {m : ℕ} {A : finset G} {f : G → ℂ} {k : ℕ}
   (hε : 0 < ε) (hm : 1 ≤ m) (hk : (256 : ℝ) * m / ε ^ 2 ≤ k) :
-  A.card ^ k / 2 ≤ (L k m ε f A).card :=
-sorry
+  (A.card ^ k : ℝ) / 2 ≤ (L k m ε f A).card :=
+begin
+  apply lemma28_markov hε hm,
+  sorry
+end
 
 lemma just_the_triangle_inequality [fintype G] {ε : ℝ} {m : ℕ} {A : finset G} {f : G → ℂ} {k : ℕ}
   {t : G} {a : fin k → G} (ha : a ∈ L k m ε f A) (ha' : a + (λ _, t) ∈ L k m ε f A) (hk : 0 < k)
@@ -100,8 +173,7 @@ begin
     refine sum_congr rfl (λ s₂ hs₂, _),
     rw [←ite_and_mul_zero, mul_one],
     refine if_congr _ rfl rfl,
-    rw eq_sub_iff_add_eq',
-    rw and_iff_right_of_imp,
+    rw [eq_sub_iff_add_eq', and_iff_right_of_imp],
     intro h,
     simp only [mem_wide_diag] at hs₁ hs₂,
     have : x - y = s₂ - s₁,
@@ -123,14 +195,6 @@ begin
   refine this.trans _,
   simp_rw [←sum_mul, mul_comm],
 end
-
-lemma card_pi_finset_const {α K : Type*} [fintype K] [decidable_eq K] (A : finset α) :
-  (fintype.pi_finset (λ _ : K, A)).card = A.card ^ fintype.card K :=
-by rw [fintype.card_pi_finset, prod_const, card_univ]
-
-lemma card_pi_finset_fin_const {α : Type*} {k : ℕ} (A : finset α) :
-  (fintype.pi_finset (λ _ : fin k, A)).card = A.card ^ k :=
-by rw [card_pi_finset_const, fintype.card_fin]
 
 lemma pi_finset_add {α : Type*} {δ : α → Type*} [Π a : α, decidable_eq (δ a)]
   [Π a : α, has_add (δ a)] [fintype α] [decidable_eq α]
