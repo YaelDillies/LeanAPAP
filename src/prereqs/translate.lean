@@ -1,5 +1,5 @@
 import algebra.big_operators.pi
-import algebra.star.basic
+import mathlib.algebra.star.pi
 
 /-!
 # Precomposition operators
@@ -56,7 +56,7 @@ variables {ι α β γ : Type*} [fintype ι] [add_comm_group α]
 section comm_semiring
 variables [comm_semiring β] [star_ring β]
 
-def conjneg (f : α → β) : α → β := λ x, conj (f (-x))
+def conjneg (f : α → β) : α → β := conj (λ x, f (-x))
 
 @[simp] lemma conjneg_apply (f : α → β) (x : α) : conjneg f x = conj (f (-x)) := rfl
 @[simp] lemma conjneg_conjneg (f : α → β) : conjneg (conjneg f) = f := by ext; simp

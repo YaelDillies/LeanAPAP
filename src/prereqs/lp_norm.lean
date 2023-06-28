@@ -1,4 +1,4 @@
-import analysis.inner_product_space.pi_L2
+import mathlib.analysis.inner_product_space.pi_L2
 import mathlib.analysis.normed.group.basic
 import mathlib.analysis.normed_space.pi_Lp
 import mathlib.analysis.normed_space.ray
@@ -270,22 +270,22 @@ Lpnorm_mono (λ i, by dsimp; positivity) $ λ i, smul_le_smul_of_nonneg
 /-! #### Inner product -/
 
 section normed_add_comm_group
-variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] (𝕜 : Type*) [is_R_or_C 𝕜]
-  [Π i, inner_product_space 𝕜 (α i)]
+variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] (𝕜 : Type*) [add_comm_monoid 𝕜]
+  [Π i, has_inner 𝕜 (α i)]
 
 @[reducible] noncomputable def L2inner (f g : Π i, α i) : 𝕜 :=
 inner ((pi_Lp.equiv 2 _).symm f) ((pi_Lp.equiv 2 _).symm g)
 
 notation `⟪`f`, `g`⟫_[`𝕜`]` := L2inner 𝕜 f g
 
-lemma L2inner_eq_sum (f g : Π i, α i) : ⟪f, g⟫_[𝕜] = ∑ i, inner (f i) (g i) := pi_Lp.inner_apply _ _
+lemma L2inner_eq_sum (f g : Π i, α i) : ⟪f, g⟫_[𝕜] = ∑ i, inner (f i) (g i) := rfl
 
 end normed_add_comm_group
 
 section Lpnorm
-variables {α β : Type*} [add_comm_group α] [fintype α] [normed_add_comm_group β] {p : ℝ≥0∞}
+variables {α β : Type*} [add_comm_group α] [fintype α] {p : ℝ≥0∞}
 
-@[simp] lemma Lpnorm_translate (a : α) (f : α → β) : ‖τ a f‖_[p] = ‖f‖_[p] :=
+@[simp] lemma Lpnorm_translate [normed_add_comm_group β] (a : α) (f : α → β) : ‖τ a f‖_[p] = ‖f‖_[p] :=
 begin
   cases p,
   { simp only [Linftynorm_eq_csupr, ennreal.none_eq_top, translate_apply],
@@ -300,7 +300,44 @@ begin
     exact fintype.sum_equiv (equiv.sub_right _) _ _ (λ _, rfl) }
 end
 
+@[simp] lemma Lpnorm_conj [is_R_or_C β] (f : α → β) : ‖conj f‖_[p] = ‖f‖_[p] :=
+begin
+  cases p, swap, obtain rfl | hp := @eq_zero_or_pos _ _ p,
+  all_goals { simp only [Linftynorm_eq_csupr, Lpnorm_eq_sum, L0norm_eq_card, ennreal.some_eq_coe,
+    ennreal.none_eq_top, ennreal.coe_zero, pi.conj_apply, is_R_or_C.norm_conj, map_ne_zero, *] },
+end
+
+@[simp] lemma Lpnorm_conjneg [is_R_or_C β] (f : α → β) : ‖conjneg f‖_[p] = ‖f‖_[p] :=
+begin
+  simp only [conjneg, Lpnorm_conj],
+  cases p,
+  { simp only [Linftynorm_eq_csupr, ennreal.none_eq_top, conjneg, is_R_or_C.norm_conj],
+    exact (equiv.neg _).supr_congr (λ _, rfl) },
+  obtain rfl | hp := @eq_zero_or_pos _ _ p,
+  { simp only [L0norm_eq_card, ne.def, ennreal.some_eq_coe, ennreal.coe_zero, nat.cast_inj],
+    exact card_congr (λ x _, -x) (λ x hx, by simpa using hx) (λ x y _ _, neg_inj.1)
+      (λ x hx, ⟨-x, by simpa using hx⟩) },
+  { simp only [Lpnorm_eq_sum hp, ennreal.some_eq_coe],
+    congr' 1,
+    exact fintype.sum_equiv (equiv.neg _) _ _ (λ _, rfl) }
+end
+
 end Lpnorm
+
+section wLpnorm
+variables {α β : Type*} [add_comm_group α] [fintype α] {p : ℝ≥0} {w : α → ℝ≥0}
+
+@[simp] lemma wLpnorm_translate [normed_add_comm_group β] (a : α) (f : α → β) :
+  ‖τ a f‖_[p, τ a w] = ‖f‖_[p, w] :=
+Lpnorm_translate a $ λ i, w i ^ (p⁻¹ : ℝ) • ‖f i‖
+
+@[simp] lemma wLpnorm_conj [is_R_or_C β] (f : α → β) : ‖conj f‖_[p, w] = ‖f‖_[p, w] :=
+by simp [wLpnorm]
+
+@[simp] lemma wLpnorm_conjneg [is_R_or_C β] (f : α → β) : ‖conjneg f‖_[p] = ‖f‖_[p] :=
+by simp [wLpnorm]
+
+end wLpnorm
 
 namespace tactic
 open positivity
