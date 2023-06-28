@@ -9,6 +9,9 @@ by rw [←rpow_mul hx, mul_inv_cancel hy, rpow_one]
 @[simp] lemma rpow_inv_rpow (hx : 0 ≤ x) (hy : y ≠ 0) : (x ^ y⁻¹) ^ (y : ℝ) = x :=
 by rw [←rpow_mul hx, inv_mul_cancel hy, rpow_one]
 
+@[simp] lemma rpow_eq_zero (hx : 0 ≤ x) (hy : y ≠ 0) : x ^ y = 0 ↔ x = 0 :=
+iff.trans (by rw zero_rpow hy) $ (rpow_left_inj_on hy).eq_iff hx $ by dsimp; refl
+
 lemma rpow_add_int' (hx : 0 ≤ x) {n : ℤ} (h : y + n ≠ 0) : x ^ (y + n) = x ^ y * x ^ n :=
 by rw [rpow_add' hx h, rpow_int_cast]
 

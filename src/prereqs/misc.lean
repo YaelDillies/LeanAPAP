@@ -6,7 +6,7 @@ import mathlib.analysis.special_functions.log.basic
 -/
 
 open set
-open_locale complex_conjugate
+open_locale complex_conjugate nnreal
 
 namespace real
 variables {x : ℝ}
@@ -81,3 +81,15 @@ begin
 end
 
 end finset
+
+/-! ### Normalised indicator -/
+
+section mu
+variables {α : Type*} [decidable_eq α] {s : finset α} {p : ℝ≥0}
+
+/-- The normalised indicator of a set. -/
+noncomputable def mu (s : finset α) : α → ℂ := (s.card : ℂ)⁻¹ • λ x, ite (x ∈ s) 1 0
+
+@[simp] lemma mu_empty : mu (∅ : finset α) = 0 := by ext; simp [mu]
+
+end mu

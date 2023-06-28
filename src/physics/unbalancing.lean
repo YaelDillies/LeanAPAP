@@ -1,5 +1,6 @@
 import analysis.inner_product_space.pi_L2
 import mathlib.algebra.big_operators.ring
+import prereqs.convolution
 import prereqs.lp_norm
 
 /-!
@@ -30,7 +31,7 @@ begin
     rintro _ _ rfl,
     refl },
   simp_rw [sum_congr rfl (this _), dconv_apply_sub, sum_fiberwise, ←univ_product_univ, sum_product],
-  simp only [pow_sum, sum_mul_sum, map_mul, star_ring_end_self_apply, fintype.pi_finset_univ,
+  simp only [sum_pow', sum_mul_sum, map_mul, star_ring_end_self_apply, fintype.pi_finset_univ,
     ←inner_self_eq_norm_sq_to_K, sum_product, is_R_or_C.inner_apply, map_sum, map_prod,
      mul_mul_mul_comm, ←prod_mul_distrib],
   simp only [sum_mul, @sum_comm _ _ (fin k → G), mul_comm (conj _)],

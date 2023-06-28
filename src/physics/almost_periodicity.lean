@@ -126,7 +126,7 @@ begin
   { rw [h₄₁, translate_sub_right, translate_translate],
     simp },
   have h₅₁ : ‖τ (-t) (k • (mu A ∗ f)) - f₁‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m],
-  { rwa [Lpnorm_sub_comm hp, ←h₄, ←h₃] },
+  { rwa [Lpnorm_sub_comm, ←h₄, ←h₃] },
   have : (0 : ℝ) < k, by positivity,
   refine le_of_mul_le_mul_left _ this,
   have := translate_smul_right (-t) (mu A ∗ f) k,
