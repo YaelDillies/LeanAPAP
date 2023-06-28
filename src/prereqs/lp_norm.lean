@@ -239,13 +239,21 @@ variables {𝕜 : Type*} [normed_field 𝕜] [Π i, normed_space 𝕜 (α i)]
 
 -- TODO: `p ≠ 0` is enough
 lemma wLpnorm_smul (hp : 1 ≤ p) (c : 𝕜) (f : Π i, α i) : ‖c • f‖_[p, w] = ‖c‖ * ‖f‖_[p, w] :=
-sorry -- TODO: Bhavik
+begin
+  rw [wLpnorm, wLpnorm],
+  have : (1 : ℝ≥0∞) ≤ p := by exact_mod_cast hp,
+  have := Lpnorm_smul this (‖c‖) (λ i, w i ^ (p⁻¹ : ℝ) • ‖f i‖),
+  rw norm_norm at this,
+  rw ←this,
+  congr' with i : 1,
+  simp only [pi.smul_apply, algebra.id.smul_eq_mul, algebra.mul_smul_comm, norm_smul],
+end
 
 -- TODO: Why is it so hard to use `wLpnorm_smul` directly? `function.has_smul` seems to have a hard
 -- time unifying `pi.has_smul`
 lemma wLpnorm_smul' {α : Type*} [normed_add_comm_group α] [normed_space 𝕜 α] (hp : 1 ≤ p) (c : 𝕜)
   (f : ι → α) : ‖c • f‖_[p, w] = ‖c‖ * ‖f‖_[p, w] :=
-Lpnorm_smul hp _ _
+wLpnorm_smul hp _ _
 
 variables [Π i, normed_space ℝ (α i)]
 
@@ -329,7 +337,7 @@ variables {α β : Type*} [add_comm_group α] [fintype α] {p : ℝ≥0} {w : α
 
 @[simp] lemma wLpnorm_translate [normed_add_comm_group β] (a : α) (f : α → β) :
   ‖τ a f‖_[p, τ a w] = ‖f‖_[p, w] :=
-Lpnorm_translate a $ λ i, w i ^ (p⁻¹ : ℝ) • ‖f i‖
+(Lpnorm_translate a (λ i, w i ^ (p⁻¹ : ℝ) • ‖f i‖)).trans rfl
 
 @[simp] lemma wLpnorm_conj [is_R_or_C β] (f : α → β) : ‖conj f‖_[p, w] = ‖f‖_[p, w] :=
 by simp [wLpnorm]
