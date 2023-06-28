@@ -29,12 +29,14 @@ begin
   { exact (curlog_pos hx₀ hx).le }
 end
 
--- Might work with x = 0
-lemma log_one_div_le_curlog (hx : 0 < x) : log (1 / x) ≤ curlog x :=
-log_le_log_of_le (by positivity) (div_le_div_of_le hx.le (one_le_exp two_pos.le))
+lemma log_one_div_le_curlog (hx : 0 ≤ x) : log (1 / x) ≤ curlog x :=
+begin
+  rcases hx.eq_or_lt with rfl | hx,
+  { simp },
+  exact log_le_log_of_le (by positivity) (div_le_div_of_le hx.le (one_le_exp two_pos.le))
+end
 
--- Might work with x = 0
-lemma log_inv_le_curlog (hx : 0 < x) : log (x⁻¹) ≤ curlog x :=
+lemma log_inv_le_curlog (hx : 0 ≤ x) : log (x⁻¹) ≤ curlog x :=
 by { rw ←one_div, exact log_one_div_le_curlog hx }
 
 -- This might work with x = 1, not sure
@@ -44,7 +46,7 @@ begin
   { simp },
   have : -1 / log (1 / x) ≤ -1 / curlog x,
   { rw [neg_div, neg_div, neg_le_neg_iff],
-    refine one_div_le_one_div_of_le _ (log_one_div_le_curlog hx),
+    refine one_div_le_one_div_of_le _ (log_one_div_le_curlog hx.le),
     refine log_pos _,
     rwa [lt_div_iff hx, one_mul] },
   refine (rpow_le_rpow_of_exponent_ge hx hx'.le this).trans _,
