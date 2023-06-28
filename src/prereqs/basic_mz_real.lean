@@ -1,14 +1,14 @@
 import algebra.big_operators.order
 import analysis.mean_inequalities_pow
-import data.complex.basic
 import data.fin.tuple.nat_antidiagonal
 import data.fintype.big_operators
+import mathlib.algebra.big_operators.basic
 import prereqs.multinomial
 
-variables {G : Type*} {n m : ℕ}
+open finset fintype nat
 open_locale big_operators
 
-open finset fintype
+variables {G : Type*} {n m : ℕ}
 
 @[reducible] def pi_finset_const (A : finset G) (n : ℕ) := fintype.pi_finset (λ _ : fin n, A)
 
@@ -58,8 +58,6 @@ begin
     exact pow_pos (finset.card_pos.2 hA) _ },
   exact step_one hA f a hf
 end
-
-
 
 -- works with this
 -- lemma step_two_aux' {β γ : Type*} [add_comm_monoid β] [comm_ring γ] {A : finset G}
@@ -133,30 +131,12 @@ begin
   rw [←mul_assoc, mul_right_comm],
 end
 
-lemma sum_product_pi_finset {α β γ : Type*} [decidable_eq α] [fintype α]
-  [comm_semiring γ] (s : finset β) (g : α → β → γ) :
-  ∑ f in pi_finset (λ _ : α, s), ∏ i : α, g i (f i) = ∏ i : α, ∑ x in s, g i x :=
-begin
-  classical,
-  rw ←@finset.prod_univ_sum' _ _ _ _ _ _ _ (λ _ : α, s) g,
-end
-
-lemma prod_boole_fintype {α β : Type*} [fintype α] (p : α → Prop) [decidable_pred p]
-  [comm_monoid_with_zero β] :
-  ∏ i, ite (p i) (1 : β) 0 = ite (∀ i, p i) 1 0 :=
-begin
-  rw prod_boole,
-  simp
-end
-
 lemma step_four {k : fin n → ℕ} :
   ∑ ε in ({-1, 1} : finset ℝ)^^n, ∏ t, ε t ^ k t = 2 ^ n * ite (∀ i, even (k i)) 1 0 :=
 begin
-  rw pi_finset_const,
-  have := sum_product_pi_finset ({-1, 1} : finset ℝ) (λ i fi, fi ^ k i),
+  have := sum_prod_pi_finset ({-1, 1} : finset ℝ) (λ i fi, fi ^ k i),
   dsimp at this,
-  rw this,
-  rw ←prod_boole_fintype,
+  rw [pi_finset_const, this, ←fintype.prod_boole],
   have : (2 : ℝ) ^ n = ∏ i : fin n, 2,
   { simp },
   rw [this, ←prod_mul_distrib],
@@ -170,11 +150,6 @@ begin
   rw [h.neg_one_pow],
   simp
 end
-
--- example : function.injective (has_smul.smul 2 : M → M) :=
--- begin
---   library_search,
--- end
 
 lemma sum_div_nat {α : Type*} {s : finset α} {f : α → ℕ} {b : ℕ} (hf : ∀ i ∈ s, b ∣ f i) :
   ∑ i in s, (f i / b) = (∑ i in s, f i) / b :=
@@ -213,10 +188,7 @@ lemma step_five' {α : Type*} [fintype α] :
   (cut univ (2 * m)).filter (λ a : α → ℕ, ∀ i : α, even (a i)) =
     (cut univ m).map
       ⟨λ f a, 2 * f a, λ f g h, funext $ λ i, mul_right_injective₀ two_ne_zero (congr_fun h i)⟩ :=
-begin
-  rw [←step_five],
-  simp
-end
+by simp [←step_five]
 
 -- double_multinomial
 lemma step_six {f : G → ℝ} {a b : fin n → G} :

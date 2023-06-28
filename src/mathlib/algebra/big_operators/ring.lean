@@ -1,11 +1,11 @@
 import algebra.big_operators.ring
-import data.fintype.card
 import data.fintype.big_operators
+import data.fintype.card
 
 open_locale big_operators
 
 namespace finset
-variables {α β : Type*}
+variables {ι α β : Type*}
 
 -- TODO: This is a copy of `finset.prod_univ_sum` with patched universe variables
 /-- The product over `univ` of a sum can be written as a sum over the product of sets,
@@ -15,6 +15,11 @@ lemma prod_univ_sum' [decidable_eq α] [fintype α] [comm_semiring β] {δ : α 
   [Π a, decidable_eq (δ a)] {t : Π a, finset (δ a)} {f : Π a, δ a → β} :
   ∏ a, ∑ b in t a, f a b = ∑ p in fintype.pi_finset t, ∏ x, f x (p x) :=
 by simp only [finset.prod_attach_univ, prod_sum, finset.sum_univ_pi]
+
+lemma sum_prod_pi_finset [decidable_eq ι] [fintype ι] [comm_semiring β] (s : finset α)
+  (g : ι → α → β) :
+  ∑ f in fintype.pi_finset (λ _ : ι, s), ∏ i, g i (f i) = ∏ i, ∑ x in s, g i x :=
+by { classical, rw ←@finset.prod_univ_sum' ι }
 
 section comm_monoid
 variables [comm_monoid β]

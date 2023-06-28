@@ -80,31 +80,4 @@ begin
   exact λ i j h, congr_fun h 0,
 end
 
-open_locale big_operators
-
-/-! ### a finset thing that should actually be called pow_sum and the other thing should be called sum_pow because the binary version of that is called add_pow and the binary version of this is called pow_add -/
-lemma pow_sum_but_its_actually_pow_sum
-  {α β : Type*} [comm_monoid β] (s : finset α) (f : α → ℕ) (m : β) :
-  ∏ i in s, m ^ f i = m ^ (∑ i in s, f i) :=
-begin
-  induction s using finset.cons_induction_on with a s has ih,
-  { simp },
-  rw [prod_cons, ih, sum_cons, pow_add],
-end
-
-/-! # some nice things -/
-lemma sum_nbij {α β γ : Type*} [add_comm_monoid β] {s : finset α} {t : finset γ}
-  {f : α → β} {g : γ → β} (i : α → γ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
-  (i_inj : ∀ a₁ a₂, a₁ ∈ s → a₂ ∈ s → i a₁ = i a₂ → a₁ = a₂) (i_surj : ∀ b ∈ t, ∃ a ∈ s, b = i a) :
-  (∑ x in s, f x) = (∑ x in t, g x) :=
-sum_bij (λ a _, i a) hi h i_inj i_surj
-
-lemma sum_nbij' {α β γ : Type*} [add_comm_monoid β] {s : finset α} {t : finset γ}
-  {f : α → β} {g : γ → β}
-  (i : α → γ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
-  (j : γ → α) (hj : ∀ a ∈ t, j a ∈ s) (left_inv : ∀ a ∈ s, j (i a) = a)
-  (right_inv : ∀ a ∈ t, i (j a) = a) :
-  (∑ x in s, f x) = (∑ x in t, g x) :=
-sum_bij' (λ a _, i a) hi h (λ b _, j b) hj left_inv right_inv
-
 end finset
