@@ -302,6 +302,49 @@ end
 
 end Lpnorm
 
+namespace tactic
+open positivity
+
+private alias Lpnorm_pos ↔ _ Lpnorm_pos_of_ne_zero
+
+private lemma Lpnorm_pos_of_pos {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] :=
+Lpnorm_pos_of_ne_zero hf.ne'
+
+/-- Extension for the `positivity` tactic: Lp norms are nonnegative, and is strictly positive if its
+input is nonzero. -/
+@[positivity]
+meta def positivity_Lpnorm : expr → tactic strictness
+| `(‖%%f‖_[%%p]) := do
+  (do -- if can prove `0 < a` or `a ≠ 0`, report positivity
+    strict_a ← core f,
+    match strict_a with
+    | positive hp := positive <$> mk_mapp ``Lpnorm_pos_of_pos [none, none, p, f, hp]
+    | nonzero hp := positive <$> mk_mapp ``Lpnorm_pos_of_ne_zero [none, none, none, none, p, f, hp]
+    | _ := failed
+    end) <|>
+  -- else report nonnegativity
+  (nonnegative <$> mk_mapp ``Lpnorm_nonneg [none, none, none, none, p, f])
+| e := pp e >>= fail ∘ format.bracket "The expression `" "` isn't of the form `‖f‖_[p]`"
+
+/-- Extension for the `positivity` tactic: Lp norms are nonnegative, and is strictly positive if its
+input is nonzero. -/
+@[positivity]
+meta def positivity_wLpnorm : expr → tactic strictness
+| `(‖%%f‖_[%%p, %%w]) := nonnegative <$> mk_mapp ``wLpnorm_nonneg [none, none, none, none, p, w, f]
+| e := pp e >>= fail ∘ format.bracket "The expression `" "` isn't of the form `‖f‖_[p, w]`"
+
+end tactic
+
+section examples
+variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] {w : ι → ℝ≥0} {f : Π i, α i}
+
+example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0} : 0 ≤ ‖f‖_[p, w] := by positivity
+
+end examples
+
 /-! ### Hölder inequality -/
 
 section Lpnorm

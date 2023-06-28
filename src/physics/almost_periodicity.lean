@@ -76,20 +76,17 @@ begin
   rw [←nat.cast_pow, ←card_pi_finset_fin_const] at h,
   have := my_other_markov _ (by norm_num) _ h,
   rotate,
-  { positivity <|> sorry }, -- YAEL MAKE POSITIVITY DO THIS pls
+  { positivity },
   { intros a ha,
-    positivity <|> sorry },
+    positivity },
   norm_num1 at this,
   rw [card_pi_finset_fin_const, mul_comm, mul_one_div, nat.cast_pow] at this,
   refine this.trans_eq _,
   rw [L],
   congr' with a : 3,
   refine (@strict_mono_on_pow ℝ _ _ _).le_iff_le _ _,
-  { positivity },
-  { rw set.mem_Ici,
-    positivity <|> sorry },
-  { rw set.mem_Ici,
-    positivity <|> sorry }
+  any_goals { rw set.mem_Ici },
+  all_goals { positivity },
 end
 
 lemma lemma28 [fintype G] {ε : ℝ} {m : ℕ} {A : finset G} {f : G → ℂ} {k : ℕ}
