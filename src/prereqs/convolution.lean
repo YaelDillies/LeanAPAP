@@ -180,9 +180,9 @@ begin
     { positivity },
     { exact sum_nonneg (λ _ _, norm_nonneg _) },
     { exact sum_nonneg (λ _ _, by positivity) },
-    { exact rpow_nonneg_of_nonneg (sum_nonneg $ λ _ _, norm_nonneg _)  _ },
+    { exact rpow_nonneg (sum_nonneg $ λ _ _, norm_nonneg _) },
     { exact mul_nonneg (sum_nonneg $ λ _ _, by positivity)
-        (rpow_nonneg_of_nonneg (sum_nonneg $ λ _ _, norm_nonneg _) _) },
+        (rpow_nonneg $ sum_nonneg $ λ _ _, norm_nonneg _) },
     { positivity },
     calc
       _ ≤ ∑ y, ‖f y * g (x - y)‖ : norm_sum_le _ _

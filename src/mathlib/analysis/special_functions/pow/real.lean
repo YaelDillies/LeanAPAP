@@ -48,4 +48,7 @@ lt_iff_lt_of_le_iff_le $ rpow_inv_le_iff_of_pos hy hx hz
 lemma rpow_inv_lt_iff_of_pos (hx : 0 ≤ x) (hy : 0 ≤ y) (hz : 0 < z) : x ^ z⁻¹ < y ↔ x < y ^ z :=
 lt_iff_lt_of_le_iff_le $ le_rpow_inv_iff_of_pos hy hx hz
 
+--TODO: Replace `rpow_nonneg`
+lemma rpow_nonneg (hx : 0 ≤ x) : 0 ≤ x ^ y := rpow_nonneg_of_nonneg hx _
+
 end real
