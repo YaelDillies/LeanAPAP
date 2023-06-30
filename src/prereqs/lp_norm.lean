@@ -471,6 +471,13 @@ begin
     univ_inter, rpow_sub_one ‹_›, inv_mul_eq_div],
 end
 
+lemma Lpnorm_one_mu (hs : s.nonempty) : ‖mu s‖_[1] = 1 :=
+begin
+  have : ((1 : ℝ≥0) : ℝ≥0∞) = 1,
+  { simp },
+  rw [←this, Lpnorm_mu le_rfl hs, nonneg.coe_one, inv_one, sub_self, rpow_zero],
+end
+
 lemma Lpnorm_mu_le (hp : 1 ≤ p) : ‖mu s‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) :=
 begin
   obtain rfl | hs := s.eq_empty_or_nonempty,

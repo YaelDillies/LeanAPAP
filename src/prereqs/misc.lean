@@ -92,6 +92,19 @@ variables {α : Type*} [decidable_eq α] {s : finset α} {p : ℝ≥0}
 /-- The normalised indicator of a set. -/
 noncomputable def mu (s : finset α) : α → ℂ := (s.card : ℂ)⁻¹ • λ x, ite (x ∈ s) 1 0
 
+lemma mu_apply (x : α) : mu s x = (s.card : ℂ)⁻¹ * ite (x ∈ s) 1 0 := rfl
+
 @[simp] lemma mu_empty : mu (∅ : finset α) = 0 := by ext; simp [mu]
+
+lemma smul_mu : s.card • mu s = λ x, ite (x ∈ s) 1 0 :=
+begin
+  ext x : 1,
+  rw [pi.smul_apply, mu_apply, nsmul_eq_mul],
+  split_ifs,
+  { rw [mul_one, mul_inv_cancel],
+    rw [nat.cast_ne_zero, ←pos_iff_ne_zero, finset.card_pos],
+    exact ⟨_, h⟩ },
+  rw [mul_zero, mul_zero]
+end
 
 end mu

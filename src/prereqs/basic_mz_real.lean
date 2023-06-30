@@ -348,3 +348,185 @@ begin
   rw [finset.card_fin, mul_div_cancel'],
   positivity
 end
+
+lemma other_marcinkiewicz_zygmund' {A : finset G} (f : G → ℝ) (hm : m ≠ 0)
+  (hf : ∀ i : fin n, ∑ a in A^^n, f (a i) = 0) :
+  ∑ a in A^^n, (∑ i, f (a i)) ^ (2 * m) ≤
+    (4 * m) ^ m * n ^ (m - 1) * ∑ a in A^^n, ∑ i, f (a i) ^ (2 * m) :=
+by simpa only [pow_mul, sq_abs] using other_marcinkiewicz_zygmund f hm hf
+
+lemma right_ineq {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) {m : ℕ} : a ^ m + b ^ m ≤ 2 * (a + b) ^ m :=
+calc a ^ m + b ^ m ≤ 2 * (max a b)^m :
+    begin
+      rcases max_cases a b with (⟨h₁, h₂⟩ | ⟨h₁, h₂⟩),
+      { rw [h₁, two_mul, add_le_add_iff_left],
+        exact pow_le_pow_of_le_left hb h₂ _ },
+      { rw [h₁, two_mul, add_le_add_iff_right],
+        exact pow_le_pow_of_le_left ha h₂.le _ },
+    end
+  ... ≤ 2 * (a + b) ^ m :
+    begin
+      refine mul_le_mul_of_nonneg_left _ two_pos.le,
+      refine pow_le_pow_of_le_left (le_max_of_le_left ha) (max_le_add_of_nonneg ha hb) _,
+    end
+
+lemma complex_marcinkiewicz_zygmund {A : finset G} (f : G → ℂ) (hm : m ≠ 0)
+  (hf : ∀ i : fin n, ∑ a in A^^n, f (a i) = 0) :
+  ∑ a in A^^n, ‖∑ i, f (a i)‖ ^ (2 * m) ≤
+    (8 * m) ^ m * n ^ (m - 1) * ∑ a in A^^n, ∑ i, ‖f (a i)‖ ^ (2 * m) :=
+begin
+  let f₁ : G → ℝ := λ x, (f x).re,
+  let f₂ : G → ℝ := λ x, (f x).im,
+  have hf₁ : ∀ i, ∑ a in A^^n, f₁ (a i) = 0,
+  { intro i, rw [←complex.re_sum, hf, complex.zero_re] },
+  have hf₂ : ∀ i, ∑ a in A^^n, f₂ (a i) = 0,
+  { intro i, rw [←complex.im_sum, hf, complex.zero_im] },
+  have h₁ := other_marcinkiewicz_zygmund' _ hm hf₁,
+  have h₂ := other_marcinkiewicz_zygmund' _ hm hf₂,
+  simp only [pow_mul, complex.norm_eq_abs, complex.sq_abs, complex.norm_sq_apply],
+  simp only [←sq, complex.re_sum, complex.im_sum],
+  calc ∑ a in A^^n, ((∑ i, (f (a i)).re) ^ 2 + ((∑ i, (f (a i)).im) ^ 2)) ^ m ≤
+    ∑ a in A^^n, 2 ^ (m - 1) * (((∑ i, (f (a i)).re) ^ 2) ^ m + ((∑ i, (f (a i)).im) ^ 2) ^ m) : _
+    ... = 2 ^ (m - 1) * ∑ a in A^^n,
+      ((∑ i, (f (a i)).re) ^ (2 * m) + (∑ i, (f (a i)).im) ^ (2 * m)) : _
+    ... ≤ 2 ^ (m - 1) * (4 * m) ^ m * n ^ (m - 1) * ∑ a in A^^n,
+      ∑ i, ((f (a i)).re ^ (2 * m) + (f (a i)).im ^ (2 * m)) : _
+    ... ≤ (8 * m) ^ m * n ^ (m - 1) * ∑ a in A^^n,
+      ∑ i, ((f (a i)).re ^ 2 + (f (a i)).im ^ 2) ^ m : _,
+  { exact sum_le_sum (λ a ha, other_small_ineq (sq_nonneg _) (sq_nonneg _) m) },
+  { simp only [mul_sum, pow_mul] },
+  { rw [mul_assoc, mul_assoc, sum_add_distrib],
+    refine mul_le_mul_of_nonneg_left _ _,
+    swap,
+    { positivity },
+    simp only [sum_add_distrib, mul_add, ←mul_assoc],
+    refine add_le_add _ _,
+    { exact h₁ },
+    { exact h₂ } },
+  simp only [mul_sum],
+  refine sum_le_sum (λ a ha, _),
+  refine sum_le_sum (λ i hi, _),
+  rw [pow_mul, pow_mul],
+  refine (mul_le_mul_of_nonneg_left (right_ineq (sq_nonneg _) (sq_nonneg _)) _).trans_eq _,
+  { positivity },
+  rw [mul_assoc (2 ^ _ : ℝ), mul_mul_mul_comm, ←pow_succ', nat.sub_add_cancel, ←mul_assoc,
+    ←mul_assoc, ←mul_pow, ←mul_assoc, ←bit0_eq_two_mul],
+  rwa [succ_le_iff, pos_iff_ne_zero],
+end
+
+lemma image_pi_finset {α : Type*} [decidable_eq α] [fintype α] (δ : α → Type*)
+  (t : Π a : α, finset (δ a)) (a : α) [decidable_eq (δ a)]
+  (ht : ∀ b, a ≠ b → (t b).nonempty) :
+  (pi_finset (λ i : α, t i)).image (λ f, f a) = t a :=
+begin
+  ext x,
+  simp only [mem_image, mem_pi_finset, exists_prop],
+  split,
+  { rintro ⟨f, hf, rfl⟩,
+    exact hf _ },
+  intro h,
+  choose f hf using ht,
+  refine ⟨λ b, if h : a = b then ((@eq.rec α a δ x _ h) : δ b) else f _ h, _, _⟩,
+  { intro b,
+    split_ifs with h' h',
+    { cases h',
+      exact h },
+    exact hf _ _ },
+  simp
+end
+
+lemma image_pi_finset_const {α : Type*} [decidable_eq α] [fintype α] (δ : Type*) [decidable_eq δ]
+  (t : finset δ) (a : α) : (pi_finset (λ i : α, t)).image (λ f, f a) = t :=
+begin
+  rcases t.eq_empty_or_nonempty with rfl | ht,
+  { haveI : nonempty α := ⟨a⟩,
+    simp },
+  rw image_pi_finset (λ _, δ),
+  simp [ht]
+end
+
+lemma filter_pi_finset_card_of_mem {α : Type*} [decidable_eq α] [fintype α] (δ : α → Type*)
+  [Π a : α, decidable_eq (δ a)] (t : Π a : α, finset (δ a)) (a : α) (x : δ a) (hx : x ∈ t a) :
+  ((pi_finset t).filter (λ f : Π a : α, δ a, f a = x)).card =
+    ∏ b in univ.erase a, (t b).card :=
+begin
+  let t' : Π a : α, finset (δ a) :=
+    λ a', if h : a = a' then {(@eq.rec _ _ δ x _ h : δ a')} else t a',
+  have : (t' a).card = 1,
+  { simp [t'] },
+  have h₁ : ∏ b in univ.erase a, (t b).card = ∏ b, (t' b).card,
+  { rw ←@prod_erase ℕ α _ _ univ (λ b, (t' b).card) a this,
+    refine prod_congr rfl _,
+    intros b hb,
+    simp only [mem_erase, ne.def, mem_univ, and_true] at hb,
+    simp only [t', dif_neg (ne.symm hb)] },
+  have h₂ : ∏ b, (t' b).card = ∏ b, ∑ i in t' b, 1,
+  { simp },
+  rw [h₁, h₂, prod_univ_sum'],
+  simp only [prod_const_one, ←finset.card_eq_sum_ones],
+  congr' 1,
+  ext f,
+  simp only [mem_filter, mem_pi_finset, t'],
+  split,
+  { rintro ⟨hf, rfl⟩ b,
+    split_ifs with h₁ h₁,
+    { cases h₁,
+      simp },
+    exact hf _ },
+  intro h,
+  have : f a = x, { simpa using h a },
+  refine ⟨_, this⟩,
+  intros b,
+  rcases eq_or_ne a b with rfl | hab,
+  { rwa this },
+  simpa [dif_neg hab] using h b,
+end
+
+lemma filter_pi_finset_of_not_mem {α : Type*} [decidable_eq α] [fintype α] (δ : α → Type*)
+  [Π a : α, decidable_eq (δ a)] (t : Π a : α, finset (δ a)) (a : α) (x : δ a) (hx : x ∉ t a) :
+  (pi_finset t).filter (λ f : Π a : α, δ a, f a = x) = ∅ :=
+begin
+  simp only [filter_eq_empty_iff, mem_pi_finset],
+  rintro f hf rfl,
+  exact hx (hf _)
+end
+
+lemma filter_pi_finset_const_card_of_mem {α : Type*} [decidable_eq α] [fintype α] (δ : Type*)
+  [decidable_eq δ] (t : finset δ) (a : α) (x : δ) (hx : x ∈ t) :
+  ((pi_finset (λ _, t)).filter (λ f : α → δ, f a = x)).card = t.card ^ (card α - 1) :=
+begin
+  rw [filter_pi_finset_card_of_mem (λ _, δ), prod_const t.card, card_erase_of_mem, card_univ],
+  { simp },
+  { exact hx }
+end
+
+-- works better for rewrites
+lemma filter_pi_finset_const_of_not_mem {α : Type*} [decidable_eq α] [fintype α] (δ : Type*)
+  [decidable_eq δ] (t : finset δ) (a : α) (x : δ) (hx : x ∉ t) :
+  (pi_finset (λ _, t)).filter (λ f : α → δ, f a = x) = ∅ :=
+filter_pi_finset_of_not_mem (λ _, δ) _ _ _ hx
+
+lemma filter_pi_finset_card {α : Type*} [decidable_eq α] [fintype α] (δ : α → Type*)
+  [Π a : α, decidable_eq (δ a)] (t : Π a : α, finset (δ a)) (a : α) (x : δ a) :
+  ((pi_finset t).filter (λ f : Π a : α, δ a, f a = x)).card =
+    if x ∈ t a then ∏ b in univ.erase a, (t b).card else 0 :=
+begin
+  split_ifs,
+  { rw filter_pi_finset_card_of_mem _ _ _ _ h },
+  { rw [filter_pi_finset_of_not_mem _ _ _ _ h, finset.card_empty] }
+end
+
+lemma filter_pi_finset_const_card {α : Type*} [decidable_eq α] [fintype α] (δ : Type*)
+  [decidable_eq δ] (t : finset δ) (a : α) (x : δ) :
+  ((pi_finset (λ _, t)).filter (λ f : α → δ, f a = x)).card =
+  if x ∈ t then t.card ^ (card α - 1) else 0 :=
+by { rw [filter_pi_finset_card, prod_const t.card, card_erase_of_mem, card_univ], simp }
+
+lemma mean_simpler_condition {A : finset G} (f : G → ℂ) (hf : ∑ a in A, f a = 0) (i : fin n) :
+  ∑ a in pi_finset (λ _ : fin n, A), f (a i) = 0 :=
+begin
+  classical,
+  rw sum_comp,
+  simp only [image_pi_finset_const, filter_pi_finset_const_card _ A i, ite_smul, zero_smul],
+  rw [←sum_filter, filter_mem_eq_inter, inter_self, ←smul_sum, hf, smul_zero],
+end
