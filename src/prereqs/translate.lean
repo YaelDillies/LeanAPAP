@@ -51,7 +51,7 @@ end translate
 /-! ### Conjugation negation operator -/
 
 section conjneg
-variables {ι α β γ : Type*} [fintype ι] [add_comm_group α]
+variables {ι α β γ : Type*} [fintype ι] [add_group α]
 
 section comm_semiring
 variables [comm_semiring β] [star_ring β]

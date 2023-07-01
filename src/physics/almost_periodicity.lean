@@ -90,21 +90,6 @@ begin
   all_goals { positivity },
 end
 
--- Yaël pls move and fix
-lemma smul_conv {G : Type*} [decidable_eq G] [fintype G] [add_comm_group G] {k : ℂ} {f g : G → ℂ} :
-  (k • f) ∗ g = k • (f ∗ g) :=
-by { ext x : 1, simp only [pi.smul_apply, conv_eq_sum_sub, smul_eq_mul, mul_sum, mul_assoc] }
-
-lemma conv_smul {G : Type*} [decidable_eq G] [fintype G] [add_comm_group G] {k : ℂ} {f g : G → ℂ} :
-  f ∗ (k • g) = k • (f ∗ g) := by rw [conv_comm, smul_conv, conv_comm]
-
-lemma nsmul_conv {G : Type*} [decidable_eq G] [fintype G] [add_comm_group G] {k : ℕ} {f g : G → ℂ} :
-  (k • f) ∗ g = k • (f ∗ g) :=
-by rw [nsmul_eq_smul_cast ℂ, smul_conv, ←nsmul_eq_smul_cast ℂ]
-
-lemma conv_nsmul {G : Type*} [decidable_eq G] [fintype G] [add_comm_group G] {k : ℕ} {f g : G → ℂ} :
-  f ∗ (k • g) = k • (f ∗ g) := by rw [conv_comm, nsmul_conv, conv_comm]
-
 lemma lemma28_part_one [fintype G] {ε : ℝ} {m : ℕ} {A : finset G} {f : G → ℂ} {k : ℕ}
   (hε : 0 < ε) (hm : 1 ≤ m) (hA : A.nonempty) (x : G) :
   ∑ a in fintype.pi_finset (λ _ : fin k, A), ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
@@ -116,7 +101,7 @@ begin
   { intro i,
     apply mean_simpler_condition,
     simp only [f', sum_sub_distrib, sub_eq_zero, sum_const],
-    rw [←pi.smul_apply, ←nsmul_conv, smul_mu, conv_eq_sum_sub'],
+    rw [←pi.smul_apply, ←smul_conv_assoc, smul_mu, conv_eq_sum_sub'],
     simp only [boole_mul],
     rw [←sum_filter, filter_mem_eq_inter, univ_inter] },
   congr' with a : 1,
@@ -329,21 +314,6 @@ begin
     simp only [nsmul_one] },
   refine this.trans _,
   simp_rw [←sum_mul, mul_comm],
-end
-
-lemma pi_finset_add {α : Type*} {δ : α → Type*} [Π a : α, decidable_eq (δ a)]
-  [Π a : α, has_add (δ a)] [fintype α] [decidable_eq α]
-  {s t : Π a : α, finset (δ a)} :
-  fintype.pi_finset s + fintype.pi_finset t = fintype.pi_finset (s + t) :=
-begin
-  ext i,
-  simp only [fintype.mem_pi_finset, pi.add_apply, mem_add],
-  split,
-  { rintro ⟨y, z, hy, hz, rfl⟩ a,
-    exact ⟨_, _, hy _, hz _, rfl⟩ },
-  intro h,
-  choose y z hy hz hi using h,
-  exact ⟨y, z, hy, hz, funext hi⟩,
 end
 
 lemma sum_ite_zero' {α : Type*} (s : finset α) (p : α → Prop) [decidable_pred p]
