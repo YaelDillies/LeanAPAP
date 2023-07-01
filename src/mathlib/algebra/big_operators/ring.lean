@@ -46,3 +46,19 @@ lemma sum_pow (f : α → β) (n : ℕ) : (∑ a, f a) ^ n = ∑ p : fin n → �
 by simp [finset.sum_pow']
 
 end fintype
+
+open finset
+
+namespace nat
+variables {α : Type*} {s : finset α} {f : α → ℕ} {n : ℕ}
+
+protected lemma sum_div (hf : ∀ i ∈ s, n ∣ f i) : (∑ i in s, f i) / n = ∑ i in s, f i / n :=
+begin
+  obtain rfl | hn := n.eq_zero_or_pos,
+  { simp },
+  rw [nat.div_eq_iff_eq_mul_left hn (dvd_sum hf), sum_mul],
+  refine sum_congr rfl (λ s hs, _),
+  rw nat.div_mul_cancel (hf _ hs),
+end
+
+end nat

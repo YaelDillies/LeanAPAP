@@ -23,3 +23,51 @@ by ext;
   simp only [mem_pi_finset, mem_image₂, classical.skolem, forall_and_distrib, function.funext_iff]
 
 end fintype
+
+namespace fintype
+variables {α β : Type*} {δ : α → Type*}
+
+@[reducible] def pi_finset_const (s : finset α) (n : ℕ) := pi_finset $ λ _ : fin n, s
+
+infix `^^`:70 := pi_finset_const
+
+variables [decidable_eq α] [fintype α]
+
+lemma image_pi_finset (t : Π a, finset (δ a)) (a : α) [decidable_eq (δ a)]
+  (ht : ∀ b, a ≠ b → (t b).nonempty) :
+  (pi_finset t).image (λ f, f a) = t a :=
+begin
+  ext x,
+  simp only [mem_image, mem_pi_finset, exists_prop],
+  split,
+  { rintro ⟨f, hf, rfl⟩,
+    exact hf _ },
+  intro h,
+  choose f hf using ht,
+  refine ⟨λ b, if h : a = b then ((@eq.rec α a δ x _ h) : δ b) else f _ h, λ b, _, by simp⟩,
+  split_ifs with h',
+  { cases h',
+    exact h },
+  { exact hf _ _ }
+end
+
+lemma image_pi_finset_const [decidable_eq β] (t : finset β) (a : α) :
+  (pi_finset (λ i : α, t)).image (λ f, f a) = t :=
+begin
+  obtain rfl | ht := t.eq_empty_or_nonempty,
+  { haveI : nonempty α := ⟨a⟩,
+    simp },
+  { exact image_pi_finset (λ _, t) a (λ _ _, ht) }
+end
+
+lemma filter_pi_finset_of_not_mem [Π a, decidable_eq (δ a)] (t : Π a, finset (δ a)) (a : α)
+  (x : δ a) (hx : x ∉ t a) :
+  (pi_finset t).filter (λ f : Π a, δ a, f a = x) = ∅ :=
+by { simp only [filter_eq_empty_iff, mem_pi_finset], rintro f hf rfl, exact hx (hf _) }
+
+-- works better for rewrites
+lemma filter_pi_finset_const_of_not_mem [decidable_eq β] (t : finset β) (a : α) (x : β)
+  (hx : x ∉ t) : (pi_finset (λ _, t)).filter (λ f : α → β, f a = x) = ∅ :=
+filter_pi_finset_of_not_mem _ _ _ hx
+
+end fintype

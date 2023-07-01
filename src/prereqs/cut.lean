@@ -1,15 +1,17 @@
 import algebra.big_operators.order
 import data.fin.tuple.nat_antidiagonal
+import data.finset.pointwise
+import mathlib.algebra.big_operators.ring
 import mathlib.data.finset.nat_antidiagonal
 
 noncomputable theory
 
-variables {ι α : Type*}
+variables {ι α : Type*} [decidable_eq ι]
 
 -- yoinked from archive/100thms/partition
 
 open finset
-open_locale big_operators classical
+open_locale big_operators pointwise
 
 /--
 Functions defined only on `s`, which sum to `n`. In other words, a partition of `n` indexed by `s`.
@@ -67,7 +69,7 @@ end
 eq_empty_of_forall_not_mem $ λ x hx, by simpa using hx
 
 lemma cut_insert (n : ℕ) (a : ι) (s : finset ι) (h : a ∉ s) :
-  cut (insert a s) n =
+  by classical; exact cut (insert a s) n =
   (nat.antidiagonal n).bUnion
     (λ (p : ℕ × ℕ), (cut s p.snd).map
       ⟨λ f, f + λ t, if t = a then p.fst else 0, add_left_injective _⟩) :=
@@ -120,3 +122,46 @@ begin
     add_zero, add_zero] at e,
   exact h' e.symm
 end
+
+lemma nsmul_cut (s : finset ι) (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
+  @has_smul.smul _ _ finset.has_smul_finset n (cut s m) =
+    (cut s (n * m)).filter (λ f : ι → ℕ, ∀ i ∈ s, n ∣ f i) :=
+begin
+  classical,
+  ext f,
+  simp only [mem_smul_finset, mem_filter, mem_cut, function.embedding.coe_fn_mk, exists_prop,
+    and_assoc],
+  split,
+  { rintro ⟨f, rfl, hf, rfl⟩,
+    simpa [←mul_sum, hn] using hf },
+  rintro ⟨hfsum, hfsup, hfdvd⟩,
+  refine ⟨λ i, f i / n, _⟩,
+  rw [←nat.sum_div hfdvd, hfsum, nat.mul_div_cancel_left _ hn.bot_lt],
+  simp only [eq_self_iff_true, true_and, function.funext_iff],
+  refine ⟨λ i hi, _, λ i, _⟩,
+  { rw [hfsup _ hi, nat.zero_div] },
+  dsimp,
+  by_cases i ∈ s,
+  { exact nat.mul_div_cancel' (hfdvd _ h) },
+  { rw [hfsup _ h, nat.zero_div, mul_zero] }
+end
+
+lemma map_nsmul_cut (s : finset ι) (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
+  (cut s m).map ⟨(•) n, λ f g h, funext $ λ i, mul_right_injective₀ hn (congr_fun h i)⟩ =
+    (cut s (n * m)).filter (λ f : ι → ℕ, ∀ i ∈ s, n ∣ f i) :=
+by { rw map_eq_image, exact nsmul_cut _ _ hn }
+
+lemma nsmul_cut_univ [fintype ι] (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
+  @has_smul.smul _ _ finset.has_smul_finset n (cut univ m) =
+    (cut univ (n * m)).filter (λ f : ι → ℕ, ∀ i, n ∣ f i) :=
+begin
+  have := nsmul_cut (univ : finset ι) m hn,
+  simp at this,
+  convert this,
+end
+
+lemma map_nsmul_cut_univ [fintype ι] (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
+  (cut (univ : finset ι) m).map
+    ⟨(•) n, λ f g h, funext $ λ i, mul_right_injective₀ hn (congr_fun h i)⟩ =
+    (cut univ (n * m)).filter (λ f : ι → ℕ, ∀ i, n ∣ f i) :=
+by simpa using map_nsmul_cut (univ : finset ι) m hn

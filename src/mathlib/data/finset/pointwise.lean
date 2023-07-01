@@ -5,6 +5,13 @@ import group_theory.group_action.pi
 open finset
 open_locale pointwise
 
+namespace finset
+variables {α : Type*} [decidable_eq α] [has_involutive_inv α] {s : finset α} {a : α}
+
+@[simp, to_additive] lemma mem_inv' : a ∈ s⁻¹ ↔ a⁻¹ ∈ s := by simp [mem_inv, inv_eq_iff_eq_inv]
+
+end finset
+
 namespace fintype
 variables {ι : Type*} {α β : ι → Type*} [fintype ι] [decidable_eq ι]
 
