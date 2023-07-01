@@ -2,7 +2,7 @@ import algebra.order.chebyshev
 import combinatorics.pigeonhole
 import mathlib.data.finset.card
 import prereqs.convolution
-import prereqs.basic_mz_real
+import prereqs.marcinkiewicz_zygmund
 
 /-!
 # Almost-periodicity
