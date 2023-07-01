@@ -1,4 +1,5 @@
 import algebra.star.pi
+import algebra.star.pointwise
 import mathlib.algebra.big_operators.basic
 import prereqs.lp_norm
 
@@ -19,16 +20,37 @@ Multiplicativise? Probably ugly and not very useful.
 
 -/
 
+section
+variables {R : Type*} [comm_semiring R] [partial_order R] [star_ordered_ring R] {x : R}
+
+open set
+open_locale complex_conjugate
+
+lemma star_nonneg (hx : 0 ≤ x) : 0 ≤ star x :=
+begin
+  rw [star_ordered_ring.nonneg_iff, add_submonoid.mem_closure] at ⊢ hx,
+  rintro s hs,
+  simpa only [star_ring_end_apply, star_involutive.eq_iff, add_submonoid.mem_map,
+    exists_prop, exists_eq_right] using hx (s.map $ star_ring_end R) _,
+  refine subset.trans _ (image_subset _ hs),
+  simp [←range_comp, mul_comm, function.comp, star_ring_end_apply],
+end
+
+@[simp] lemma star_nonneg_iff : 0 ≤ star x ↔ 0 ≤ x :=
+⟨λ hx, by simpa only [star_star] using star_nonneg hx, star_nonneg⟩
+
+end
+
 open finset real
-open_locale big_operators complex_conjugate nnreal
+open_locale big_operators complex_conjugate nnreal pointwise
 
 variables {ι α β γ : Type*} [fintype α] [decidable_eq α] [add_comm_group α]
 
 /-!
 ### Convolution of functions
 
-In this section, we define the convolution `f ∗ g` of functions `α → β` and translate ring
-properties of `with_conv α β` to properties of `∗`.
+In this section, we define the convolution `f ∗ g` and difference convolution `f ○ g` of functions
+`f g : α → β`, and show how they interact.
 -/
 
 section comm_semiring
@@ -188,6 +210,24 @@ by simp only [sub_eq_add_neg, add_dconv, neg_dconv]
 
 end comm_ring
 
+/-!
+### Order properties
+
+In this section, we prove order results about the convolution and difference convolution, in
+particular Young's convolution inequality.
+-/
+
+section ordered_comm_semiring
+variables [ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
+
+lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
+λ a, sum_nonneg $ λ x _, mul_nonneg (hf _) (hg _)
+
+lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
+λ a, sum_nonneg $ λ x _, mul_nonneg (hf _) $ star_nonneg $ hg _
+
+end ordered_comm_semiring
+
 section is_R_or_C
 variables [is_R_or_C β]
 
@@ -255,13 +295,6 @@ lemma Lpnorm_dconv_le {p : ℝ≥0} (hp : 1 < p) (f g : α → β) : ‖f ○ g�
 by simpa using Lpnorm_conv_le hp f (conjneg g)
 
 end is_R_or_C
-
-/-!
-### Difference convolution of functions
-
-In this section, we define the difference convolution `f ○ g` of functions `α → β` and show how it
-interacts with the usual convolution.
--/
 
 /-!
 ### The ring of functions under convolution

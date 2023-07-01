@@ -86,17 +86,29 @@ end finset
 
 /-! ### Normalised indicator -/
 
-section mu
-variables {α : Type*} [decidable_eq α] {s : finset α} {p : ℝ≥0}
+section division_semiring
+variables {α β : Type*} [division_semiring β] [decidable_eq α] {s : finset α}
+
+def indicator (s : finset α) (a : α) : β := ite (a ∈ s) 1 0
+
+notation `𝟭 ` := _root_.indicator
+
+notation `𝟭_[` β `] ` := @_root_.indicator _ β _ _
+
+@[simp] lemma indicator_apply (x : α) : 𝟭_[β] s x = ite (x ∈ s) 1 0 := rfl
 
 /-- The normalised indicator of a set. -/
-noncomputable def mu (s : finset α) : α → ℂ := (s.card : ℂ)⁻¹ • λ x, ite (x ∈ s) 1 0
+def mu (s : finset α) : α → β := (s.card : β)⁻¹ • λ x, ite (x ∈ s) 1 0
 
-lemma mu_apply (x : α) : mu s x = (s.card : ℂ)⁻¹ * ite (x ∈ s) 1 0 := rfl
+notation `μ ` := _root_.mu
 
-@[simp] lemma mu_empty : mu (∅ : finset α) = 0 := by ext; simp [mu]
+notation `μ_[` β `] ` := @_root_.mu _ β _ _
 
-lemma smul_mu : s.card • mu s = λ x, ite (x ∈ s) 1 0 :=
+lemma mu_apply (x : α) : μ s x = (s.card : β)⁻¹ * ite (x ∈ s) 1 0 := rfl
+
+@[simp] lemma mu_empty : (μ ∅ : α → β) = 0 := by ext; simp [mu]
+
+lemma smul_mu [char_zero β] : s.card • μ_[β] s = 𝟭 s :=
 begin
   ext x : 1,
   rw [pi.smul_apply, mu_apply, nsmul_eq_mul],
@@ -104,7 +116,16 @@ begin
   { rw [mul_one, mul_inv_cancel],
     rw [nat.cast_ne_zero, ←pos_iff_ne_zero, finset.card_pos],
     exact ⟨_, h⟩ },
-  rw [mul_zero, mul_zero]
+  { rw [mul_zero, mul_zero] }
 end
 
-end mu
+end division_semiring
+
+section linear_ordered_field
+variables {α β : Type*} [linear_ordered_field β] [decidable_eq α] {s : finset α}
+
+lemma indicator_nonneg : 0 ≤ 𝟭_[β] s := λ a, by rw _root_.indicator_apply; split_ifs; norm_num
+
+lemma mu_nonneg : 0 ≤ μ_[β] s := λ a, by rw mu_apply; split_ifs; norm_num
+
+end linear_ordered_field
