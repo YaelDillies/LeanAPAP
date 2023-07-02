@@ -1,6 +1,7 @@
 import algebra.star.pi
 import algebra.star.pointwise
 import mathlib.algebra.big_operators.basic
+import mathlib.algebra.star.order
 import prereqs.lp_norm
 
 /-!
@@ -19,27 +20,6 @@ point in time.
 Multiplicativise? Probably ugly and not very useful.
 
 -/
-
-section
-variables {R : Type*} [comm_semiring R] [partial_order R] [star_ordered_ring R] {x : R}
-
-open set
-open_locale complex_conjugate
-
-lemma star_nonneg (hx : 0 ≤ x) : 0 ≤ star x :=
-begin
-  rw [star_ordered_ring.nonneg_iff, add_submonoid.mem_closure] at ⊢ hx,
-  rintro s hs,
-  simpa only [star_ring_end_apply, star_involutive.eq_iff, add_submonoid.mem_map,
-    exists_prop, exists_eq_right] using hx (s.map $ star_ring_end R) _,
-  refine subset.trans _ (image_subset _ hs),
-  simp [←range_comp, mul_comm, function.comp, star_ring_end_apply],
-end
-
-@[simp] lemma star_nonneg_iff : 0 ≤ star x ↔ 0 ≤ x :=
-⟨λ hx, by simpa only [star_star] using star_nonneg hx, star_nonneg⟩
-
-end
 
 open finset real
 open_locale big_operators complex_conjugate nnreal pointwise
@@ -224,7 +204,7 @@ lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
 λ a, sum_nonneg $ λ x _, mul_nonneg (hf _) (hg _)
 
 lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
-λ a, sum_nonneg $ λ x _, mul_nonneg (hf _) $ star_nonneg $ hg _
+λ a, sum_nonneg $ λ x _, mul_nonneg (hf _) $ star_nonneg.2 $ hg _
 
 end ordered_comm_semiring
 
@@ -239,8 +219,17 @@ by simp [L2inner_eq_sum, dconv_eq_sum_sub, map_sum]
 
 -- TODO: This proof would feel much less painful if we had `ℝ≥0`-valued Lp-norms.
 /-- A special case of **Young's convolution inequality**. -/
-lemma Lpnorm_conv_le {p : ℝ≥0} (hp : 1 < p) (f g : α → β) : ‖f ∗ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] :=
+lemma Lpnorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] :=
 begin
+  obtain rfl | hp := hp.eq_or_lt,
+  { simp_rw [ennreal.coe_one, L1norm_eq_sum, sum_mul_sum, conv_eq_sum_sub'],
+    calc
+        ∑ x, ‖∑ y, f y * g (x - y)‖ ≤ ∑ x, ∑ y, ‖f y * g (x - y)‖
+          : sum_le_sum $ λ x _, norm_sum_le _ _
+      ... = _ : _,
+    rw sum_comm,
+    simp_rw [norm_mul, sum_product],
+    exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_right x) _ _ $ λ _, rfl) },
   have hp₀ := zero_lt_one.trans hp,
   rw [←rpow_le_rpow_iff _ (mul_nonneg _ _) hp₀, mul_rpow],
   any_goals { exact Lpnorm_nonneg },
@@ -291,10 +280,28 @@ begin
 end
 
 /-- A special case of **Young's convolution inequality**. -/
-lemma Lpnorm_dconv_le {p : ℝ≥0} (hp : 1 < p) (f g : α → β) : ‖f ○ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] :=
-by simpa using Lpnorm_conv_le hp f (conjneg g)
+lemma Lpnorm_dconv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ○ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] :=
+by simpa only [conv_conjneg, Lpnorm_conjneg] using Lpnorm_conv_le hp f (conjneg g)
 
 end is_R_or_C
+
+section real
+variables {f g : α → ℝ} --TODO: Include `f : α → ℂ`
+
+lemma L1norm_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ∗ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
+begin
+  simp_rw [L1norm_eq_sum, conv_eq_sum_sub'],
+  rw [sum_mul_sum, sum_product],
+  have : ∀ x, 0 ≤ ∑ y, f y * g (x - y) := λ x, sum_nonneg (λ y _, mul_nonneg (hf _) (hg _)),
+  simp only [norm_of_nonneg (this _), norm_of_nonneg (hf _), norm_of_nonneg (hg _)],
+  rw sum_comm,
+  exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_right x) _ _ $ λ y, rfl),
+end
+
+lemma L1norm_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ○ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
+by simpa using L1norm_conv hf (conjneg_nonneg.2 hg)
+
+end real
 
 /-!
 ### The ring of functions under convolution

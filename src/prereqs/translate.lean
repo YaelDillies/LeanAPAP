@@ -1,11 +1,13 @@
 import algebra.big_operators.pi
+import algebra.order.pi
+import mathlib.algebra.star.order
 import mathlib.algebra.star.pi
 
 /-!
 # Precomposition operators
 -/
 
-open set
+open function set
 open_locale big_operators complex_conjugate
 
 /-! ### Translation operator -/
@@ -51,21 +53,40 @@ end translate
 /-! ### Conjugation negation operator -/
 
 section conjneg
-variables {ι α β γ : Type*} [fintype ι] [add_group α]
+variables {ι α β γ : Type*} [add_group α]
 
 section comm_semiring
-variables [comm_semiring β] [star_ring β]
+variables [comm_semiring β] [star_ring β] {f g : α → β}
 
 def conjneg (f : α → β) : α → β := conj (λ x, f (-x))
 
 @[simp] lemma conjneg_apply (f : α → β) (x : α) : conjneg f x = conj (f (-x)) := rfl
 @[simp] lemma conjneg_conjneg (f : α → β) : conjneg (conjneg f) = f := by ext; simp
+
+lemma conjneg_injective : injective (conjneg : (α → β) → α → β) :=
+involutive.injective conjneg_conjneg
+
+@[simp] lemma conjneg_inj : conjneg f = conjneg g ↔ f = g := conjneg_injective.eq_iff
+lemma conjneg_ne_conjneg : conjneg f ≠ conjneg g ↔ f ≠ g := conjneg_injective.ne_iff
+
 @[simp] lemma conjneg_zero : conjneg (0 : α → β) = 0 := by ext; simp
+@[simp] lemma conjneg_one : conjneg (1 : α → β) = 1 := by ext; simp
 @[simp] lemma conjneg_add (f g : α → β) : conjneg (f + g) = conjneg f + conjneg g := by ext; simp
-@[simp] lemma conjneg_sum (f : ι → α → β) : conjneg (∑ i, f i) = ∑ i, conjneg (f i) :=
-by ext; simp only [map_sum, conjneg_apply, fintype.sum_apply]
-@[simp] lemma conjneg_prod (f : ι → α → β) : conjneg (∏ i, f i) = ∏ i, conjneg (f i) :=
-by ext; simp only [map_prod, conjneg_apply, fintype.prod_apply]
+@[simp] lemma conjneg_sum (s : finset ι) (f : ι → α → β) :
+  conjneg (∑ i in s, f i) = ∑ i in s, conjneg (f i) :=
+by ext; simp only [map_sum, conjneg_apply, finset.sum_apply]
+@[simp] lemma conjneg_prod (s : finset ι) (f : ι → α → β) :
+  conjneg (∏ i in s, f i) = ∏ i in s, conjneg (f i) :=
+by ext; simp only [map_prod, conjneg_apply, finset.prod_apply]
+
+@[simp] lemma conjneg_eq_zero : conjneg f = 0 ↔ f = 0 :=
+by rw [←conjneg_inj, conjneg_conjneg, conjneg_zero]
+
+@[simp] lemma conjneg_eq_one : conjneg f = 1 ↔ f = 1 :=
+by rw [←conjneg_inj, conjneg_conjneg, conjneg_one]
+
+lemma conjneg_ne_zero : conjneg f ≠ 0 ↔ f ≠ 0 := conjneg_eq_zero.not
+lemma conjneg_ne_one : conjneg f ≠ 1 ↔ f ≠ 1 := conjneg_eq_one.not
 
 end comm_semiring
 
@@ -76,4 +97,26 @@ variables [comm_ring β] [star_ring β]
 @[simp] lemma conjneg_neg (f : α → β) : conjneg (-f) = -conjneg f := by ext; simp
 
 end comm_ring
+
+section ordered_comm_semiring
+variables [ordered_comm_semiring β] [star_ordered_ring β] {f : α → β}
+
+@[simp] lemma conjneg_nonneg : 0 ≤ conjneg f ↔ 0 ≤ f :=
+(equiv.neg _).forall_congr $ λ x, star_nonneg
+
+@[simp] lemma conjneg_pos : 0 < conjneg f ↔ 0 < f :=
+by simp_rw [lt_iff_le_and_ne, @ne_comm (α → β) 0, conjneg_nonneg, conjneg_ne_zero]
+
+end ordered_comm_semiring
+
+section ordered_comm_ring
+variables [ordered_comm_ring β] [star_ordered_ring β] {f : α → β}
+
+@[simp] lemma conjneg_nonpos : conjneg f ≤ 0 ↔ f ≤ 0 :=
+by simp_rw [←neg_nonneg, ←conjneg_neg, conjneg_nonneg]
+
+@[simp] lemma conjneg_neg' : conjneg f < 0 ↔ f < 0 :=
+by simp_rw [←neg_pos, ←conjneg_neg, conjneg_pos]
+
+end ordered_comm_ring
 end conjneg
