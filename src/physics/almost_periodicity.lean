@@ -343,7 +343,7 @@ end
 
 -- might be true for dumb reason when k = 0, since L would be singleton and rhs is |G|,
 -- so its just |S| ≤ |G|
-lemma big_shifts {A S : finset G} (L : finset (fin k → G)) (hk : k ≠ 0)
+lemma big_shifts {A : finset G} (S : finset G) (L : finset (fin k → G)) (hk : k ≠ 0)
   (hL' : L.nonempty) (hL : L ⊆ fintype.pi_finset (λ _, A)) :
   ∃ a : fin k → G, a ∈ L ∧
     L.card * S.card ≤ (A + S).card ^ k * (univ.filter (λ t : G, a - (λ _, t) ∈ L)).card :=
@@ -377,11 +377,55 @@ begin
   exact exists_le_of_sum_le hL' this,
 end
 
+lemma T_bound {K : ℝ} (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * m / (ε / 2) ^ 2⌉₊)
+  (h₁ : Lc * Sc ≤ ASc ^ k * Tc) (h₂ : (Ac : ℝ) ^ k / 2 ≤ Lc) (h₃ : (ASc : ℝ) ≤ K * Ac) :
+  K ^ (-512 * m / ε ^ 2 : ℝ) * Sc ≤ Tc :=
+begin
+  sorry
+end
+
 -- trivially true for other reasons for big ε
-theorem almost_periodicity {A S : finset G} {K : ℝ}
+theorem almost_periodicity {A S : finset G} {K : ℝ} (hm : 1 ≤ m) (hK' : 2 ≤ K)
   (hε : 0 < ε) (hε' : ε ≤ 1) (hK : ((A + S).card : ℝ) ≤ K * A.card) :
-  ∃ T : finset G, K ^ (-2048 * m / ε ^ 2 : ℝ) * S.card ≤ T.card ∧
+  ∃ T : finset G, K ^ (-512 * m / ε ^ 2 : ℝ) * S.card ≤ T.card ∧
     ∀ t ∈ T, ‖τ t (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ ε * ‖f‖_[2 * m] :=
-sorry
+begin
+  rcases A.eq_empty_or_nonempty with rfl | hA,
+  { refine ⟨univ, _, _⟩,
+    { have : K ^ ((-512 : ℝ) * m / ε ^ 2) ≤ 1,
+      { refine real.rpow_le_one_of_one_le_of_nonpos (one_le_two.trans hK') _,
+        rw [neg_mul, neg_div, right.neg_nonpos_iff],
+        exact div_nonneg (mul_nonneg (by norm_num1) (nat.cast_nonneg _)) (sq_nonneg _), },
+      refine (mul_le_mul_of_nonneg_right this (nat.cast_nonneg _)).trans _,
+      rw [one_mul, nat.cast_le],
+      exact card_le_of_subset (subset_univ _) },
+    intros t ht,
+    simp only [mu_empty, zero_conv, translate_zero_right, sub_self, Lpnorm_zero],
+    exact mul_nonneg hε.le Lpnorm_nonneg },
+  let k := ⌈(64 : ℝ) * m / (ε / 2) ^ 2⌉₊,
+  have hk : k ≠ 0,
+  { rw [←pos_iff_ne_zero, nat.ceil_pos],
+    positivity },
+  let L := L k m (ε / 2) f A,
+  have : (A.card : ℝ) ^ k / 2 ≤ L.card := lemma28 (half_pos hε) hm (nat.le_ceil _),
+  have hL : L.nonempty,
+  { rw [←card_pos, ←@nat.cast_pos ℝ],
+    refine this.trans_lt' _,
+    refine div_pos (pow_pos _ _) zero_lt_two,
+    rw [nat.cast_pos, card_pos],
+    exact hA },
+  obtain ⟨a, ha, hL'⟩ := big_shifts S _ hk hL (filter_subset _ _),
+  refine ⟨univ.filter (λ t : G, a + (λ _, -t) ∈ L), _, _⟩,
+  { refine T_bound hK' L.card S.card A.card (A + S).card _ rfl _ this hK,
+    convert hL' using 5,
+    ext i,
+    congr' 2,
+    ext j,
+    simp [sub_eq_add_neg] },
+  intros t ht,
+  simp only [exists_prop, exists_eq_right, mem_filter, mem_univ, true_and] at ht,
+  have := just_the_triangle_inequality ha ht hk.bot_lt hm,
+  rwa [neg_neg, mul_div_cancel' _ (two_ne_zero' ℝ)] at this,
+end
 
 end almost_periodicity
