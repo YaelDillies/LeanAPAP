@@ -146,11 +146,11 @@ begin
   let f' : G → ℂ := λ a, f (x - a) - (mu A ∗ f) x,
   refine (complex_marcinkiewicz_zygmund f' (by linarith only [hm]) _).trans_eq' _,
   { intro i,
-    apply mean_simpler_condition,
-    simp only [f', sum_sub_distrib, sub_eq_zero, sum_const],
+    rw [fintype.sum_fintype_apply, sum_sub_distrib],
+    simp only [f', sub_eq_zero, sum_const, indicator_apply],
     rw [←pi.smul_apply, ←smul_conv_assoc, smul_mu, conv_eq_sum_sub'],
-    simp only [boole_mul],
-    rw [←sum_filter, filter_mem_eq_inter, univ_inter] },
+    simp only [boole_mul, indicator_apply],
+    rw [←sum_filter, filter_mem_eq_inter, univ_inter, sub_self, smul_zero] },
   congr' with a : 1,
   simp only [f', sum_sub_distrib, pi.smul_apply, sum_const, card_fin]
 end
@@ -181,8 +181,8 @@ begin -- lots of the equalities about m can be automated but it's *way* slower
   { rw [←nat.cast_two, ←nat.cast_mul, nat.one_lt_cast],
     exact hm' },
   rw [←hmeq', conv_comm],
-  refine (Lpnorm_conv_le this _ _).trans _,
-  rw [Lpnorm_one_mu hA, mul_one],
+  refine (Lpnorm_conv_le this.le _ _).trans _,
+  rw [L1norm_mu hA, mul_one],
 end.
 
 lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hA : A.nonempty) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :

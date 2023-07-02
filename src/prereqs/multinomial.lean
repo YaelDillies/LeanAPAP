@@ -19,7 +19,8 @@ variables {K : Type*} {s : finset K} {f f' : K → ℕ}
 
 namespace nat
 
-lemma multinomial_expansion' {α β : Type*} [comm_semiring β] {s : finset α} {x : α → β} {n : ℕ} :
+lemma multinomial_expansion' {α β : Type*} [decidable_eq α] [comm_semiring β] {s : finset α}
+  {x : α → β} {n : ℕ} :
   (∑ i in s, x i) ^ n = ∑ k in cut s n, multinomial s k * ∏ t in s, x t ^ k t :=
 begin
   classical, -- maybe make cut_cons and use cons_induction

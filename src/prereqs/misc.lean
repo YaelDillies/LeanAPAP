@@ -111,7 +111,7 @@ lemma mu_apply (x : α) : μ s x = (s.card : β)⁻¹ * ite (x ∈ s) 1 0 := rfl
 lemma smul_mu [char_zero β] : s.card • μ_[β] s = 𝟭 s :=
 begin
   ext x : 1,
-  rw [pi.smul_apply, mu_apply, nsmul_eq_mul],
+  rw [pi.smul_apply, mu_apply, _root_.indicator_apply, nsmul_eq_mul],
   split_ifs,
   { rw [mul_one, mul_inv_cancel],
     rw [nat.cast_ne_zero, ←pos_iff_ne_zero, finset.card_pos],
@@ -124,8 +124,8 @@ end division_semiring
 section linear_ordered_field
 variables {α β : Type*} [linear_ordered_field β] [decidable_eq α] {s : finset α}
 
-lemma indicator_nonneg : 0 ≤ 𝟭_[β] s := λ a, by rw _root_.indicator_apply; split_ifs; norm_num
+@[simp] lemma indicator_nonneg : 0 ≤ 𝟭_[β] s := λ a, by rw _root_.indicator_apply; split_ifs; norm_num
 
-lemma mu_nonneg : 0 ≤ μ_[β] s := λ a, by rw mu_apply; split_ifs; norm_num
+@[simp] lemma mu_nonneg : 0 ≤ μ_[β] s := λ a, by rw mu_apply; split_ifs; norm_num
 
 end linear_ordered_field

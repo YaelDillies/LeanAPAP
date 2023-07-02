@@ -8,7 +8,7 @@ open_locale big_operators
 namespace fintype
 variables {α β γ : Type*} [decidable_eq α] [fintype α] [add_comm_monoid γ]
 
-lemma mean_simpler_condition (f : β → γ) (s : finset β) (a : α) :
+lemma sum_fintype_apply (f : β → γ) (s : finset β) (a : α) :
   ∑ g in pi_finset (λ _ : α, s), f (g a) = s.card ^ (card α - 1) • ∑ b in s, f b :=
 begin
   classical,

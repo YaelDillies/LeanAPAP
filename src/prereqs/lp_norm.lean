@@ -455,9 +455,9 @@ end Lpnorm
 /-! ### Indicator -/
 
 section mu
-variables {α : Type*} [fintype α] [decidable_eq α] {s : finset α} {p : ℝ≥0}
+variables {α β : Type*} [is_R_or_C β] [fintype α] [decidable_eq α] {s : finset α} {p : ℝ≥0}
 
-lemma Lpnorm_mu (hp : 1 ≤ p) (hs : s.nonempty) : ‖(mu s : α → ℂ)‖_[p] = s.card ^ (p⁻¹ - 1 : ℝ) :=
+lemma Lpnorm_mu (hp : 1 ≤ p) (hs : s.nonempty) : ‖μ_[β] s‖_[p] = s.card ^ (p⁻¹ - 1 : ℝ) :=
 begin
   have : (s.card : ℝ) ≠ 0 := nat.cast_ne_zero.2 hs.card_pos.ne',
   rw [mu, Lpnorm_smul'], swap,
@@ -466,19 +466,12 @@ begin
   simp only [map_inv₀, complex.abs_cast_nat, smul_eq_mul, Lpnorm_eq_sum hp, complex.norm_eq_abs],
   have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) :=
     λ x, by split_ifs; simp,
-  simp_rw [apply_ite complex.abs, map_one, map_zero, this, zero_rpow
-    (nnreal.coe_ne_zero.2 hp.ne'), one_rpow, sum_boole, filter_mem_eq_inter,
-    univ_inter, rpow_sub_one ‹_›, inv_mul_eq_div],
+  simp_rw [apply_ite has_norm.norm, norm_one, norm_zero, norm_inv, is_R_or_C.norm_nat_cast, this,
+    zero_rpow (nnreal.coe_ne_zero.2 hp.ne'), one_rpow, sum_boole, filter_mem_eq_inter, univ_inter,
+    rpow_sub_one ‹_›, inv_mul_eq_div],
 end
 
-lemma Lpnorm_one_mu (hs : s.nonempty) : ‖(mu s : α → ℂ)‖_[1] = 1 :=
-begin
-  have : ((1 : ℝ≥0) : ℝ≥0∞) = 1,
-  { simp },
-  rw [←this, Lpnorm_mu le_rfl hs, nonneg.coe_one, inv_one, sub_self, rpow_zero],
-end
-
-lemma Lpnorm_mu_le (hp : 1 ≤ p) : ‖(mu s : α → ℂ)‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) :=
+lemma Lpnorm_mu_le (hp : 1 ≤ p) : ‖μ_[β] s‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) :=
 begin
   obtain rfl | hs := s.eq_empty_or_nonempty,
   { simp,
@@ -486,8 +479,8 @@ begin
   { exact (Lpnorm_mu hp hs).le }
 end
 
-lemma L1norm_mu (hs : s.nonempty) : ‖(mu s : α → ℂ)‖_[1] = 1 := by simpa using Lpnorm_mu le_rfl hs
+lemma L1norm_mu (hs : s.nonempty) : ‖μ_[β] s‖_[1] = 1 := by simpa using Lpnorm_mu le_rfl hs
 
-lemma L1norm_mu_le_one : ‖(mu s : α → ℂ)‖_[1] ≤ 1 := by simpa using Lpnorm_mu_le le_rfl
+lemma L1norm_mu_le_one : ‖μ_[β] s‖_[1] ≤ 1 := by simpa using Lpnorm_mu_le le_rfl
 
 end mu
