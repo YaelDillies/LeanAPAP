@@ -87,8 +87,8 @@ by { simpa [mu] using mul_inv_cancel _, exact nat.cast_ne_zero.2 hs.card_pos.ne'
 
 end division_semiring
 
-section linear_ordered_field
-variables [linear_ordered_field β] [decidable_eq α] {s : finset α}
+section linear_ordered_semifield
+variables [linear_ordered_semifield β] [decidable_eq α] {s : finset α}
 
 @[simp] lemma mu_nonneg : 0 ≤ μ_[β] s := λ a, by rw mu_apply; split_ifs; norm_num
 
@@ -99,7 +99,7 @@ begin
     finset.nonempty],
 end
 
-end linear_ordered_field
+end linear_ordered_semifield
 
 namespace tactic
 open positivity
