@@ -159,3 +159,37 @@ begin
 end
 
 end linear_ordered_field
+
+namespace tactic
+section
+variables [linear_ordered_field β] [decidable_eq α] {s : finset α}
+
+private lemma indicator_pos_of_nonempty : s.nonempty → 0 < 𝟭_[β] s := indicator_pos.2
+private lemma mu_pos_of_nonempty : s.nonempty → 0 < μ_[β] s := mu_pos.2
+
+end
+
+open positivity
+
+/-- Extension for the `positivity` tactic: multiplication is nonnegative/positive/nonzero if both
+multiplicands are. -/
+@[positivity]
+meta def positivity_indicator : expr → tactic strictness
+| e@`(_root_.indicator %%s) := (do
+    p ← to_expr ``(finset.nonempty %%s) >>= find_assumption,
+    positive <$> mk_app ``indicator_pos_of_nonempty [p]) <|>
+    nonnegative <$> mk_mapp ``_root_.indicator_nonneg [none, none, none, none, s]
+| e@`(mu %%s) := (do
+    p ← to_expr ``(finset.nonempty %%s) >>= find_assumption,
+    positive <$> mk_app ``mu_pos_of_nonempty [p]) <|>
+    nonnegative <$> mk_mapp ``mu_nonneg [none, none, none, none, s]
+| e := pp e >>= fail ∘ format.bracket "The expression `" "` isn't of the form `f ∗ g` or `f ○ g`"
+
+variables [linear_ordered_field β] [decidable_eq α] {s : finset α}
+
+example : 0 ≤ 𝟭_[β] s := by positivity
+example : 0 ≤ μ_[β] s := by positivity
+example (hs : s.nonempty) : 0 < 𝟭_[β] s := by positivity
+example (hs : s.nonempty) : 0 < μ_[β] s := by positivity
+
+end tactic

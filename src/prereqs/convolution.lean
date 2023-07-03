@@ -241,6 +241,72 @@ by rw ←conv_conjneg; exact conv_pos hf (conjneg_pos.2 hg)
 
 end strict_ordered_comm_semiring
 
+namespace tactic
+section
+variables [ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
+
+private lemma conv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
+conv_nonneg hf.le hg
+
+private lemma conv_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ∗ g :=
+conv_nonneg hf hg.le
+
+private lemma dconv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
+dconv_nonneg hf.le hg
+
+private lemma dconv_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ○ g :=
+dconv_nonneg hf hg.le
+
+end
+
+open positivity
+
+/-- Extension for the `positivity` tactic: multiplication is nonnegative/positive/nonzero if both
+multiplicands are. -/
+@[positivity]
+meta def positivity_conv : expr → tactic strictness
+| e@`(%%f ∗ %%g) := do
+  strictness_f ← core f,
+  strictness_g ← core g,
+  match strictness_f, strictness_g with
+  | positive pf, positive pg := positive <$> mk_app ``conv_pos [pf, pg]
+  | positive pf, nonnegative pg := nonnegative <$> mk_mapp ``conv_nonneg_of_pos_of_nonneg
+      [none, none, none, none, none, none, none, f, g, pf, pg]
+  | nonnegative pf, positive pg := nonnegative <$> mk_mapp ``conv_nonneg_of_nonneg_of_pos
+      [none, none, none, none, none, none, none, f, g, pf, pg]
+  | nonnegative pf, nonnegative pg := nonnegative <$> mk_mapp ``conv_nonneg
+      [none, none, none, none, none, none, none, f, g, pf, pg]
+  | sf@_, sg@ _ := positivity_fail e f g sf sg
+  end
+| e@`(%%f ○ %%g) := do
+  strictness_f ← core f,
+  strictness_g ← core g,
+  match strictness_f, strictness_g with
+  | positive pf, positive pg := positive <$> mk_app ``dconv_pos [pf, pg]
+  | positive pf, nonnegative pg := nonnegative <$> mk_mapp ``dconv_nonneg_of_pos_of_nonneg
+      [none, none, none, none, none, none, none, f, g, pf, pg]
+  | nonnegative pf, positive pg := nonnegative <$> mk_mapp ``dconv_nonneg_of_nonneg_of_pos
+      [none, none, none, none, none, none, none, f, g, pf, pg]
+  | nonnegative pf, nonnegative pg := nonnegative <$> mk_mapp ``dconv_nonneg
+      [none, none, none, none, none, none, none, f, g, pf, pg]
+  | sf@_, sg@ _ := positivity_fail e f g sf sg
+  end
+| e := pp e >>= fail ∘ format.bracket "The expression `" "` isn't of the form `f ∗ g` or `f ○ g`"
+
+variables [strict_ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
+
+example (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by positivity
+example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g := by positivity
+example (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ∗ g := by positivity
+example (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g := by positivity
+
+example (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by positivity
+example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ○ g := by positivity
+example (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ○ g := by positivity
+example (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g := by positivity
+
+end tactic
+
 section is_R_or_C
 variables [is_R_or_C β]
 
