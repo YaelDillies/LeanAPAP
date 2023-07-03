@@ -379,10 +379,49 @@ begin
 end
 
 lemma T_bound {K : ℝ} (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * m / (ε / 2) ^ 2⌉₊)
-  (h₁ : Lc * Sc ≤ ASc ^ k * Tc) (h₂ : (Ac : ℝ) ^ k / 2 ≤ Lc) (h₃ : (ASc : ℝ) ≤ K * Ac) :
+  (h₁ : Lc * Sc ≤ ASc ^ k * Tc) (h₂ : (Ac : ℝ) ^ k / 2 ≤ Lc) (h₃ : (ASc : ℝ) ≤ K * Ac)
+  (hAc : 0 < Ac) (hε : 0 < ε) (hε' : ε ≤ 1) (hm : 1 ≤ m) :
   K ^ (-512 * m / ε ^ 2 : ℝ) * Sc ≤ Tc :=
 begin
-  sorry
+  have hk' : k = ⌈(256 : ℝ) * m / ε ^ 2⌉₊,
+  { rw [hk, div_pow, div_div_eq_mul_div, mul_right_comm],
+    congr' 3,
+    norm_num },
+  have hK : 0 < K,
+  { refine zero_lt_two.trans_le hK' },
+  have : (0 : ℝ) < Ac ^ k,
+  { refine pow_pos _ _,
+    rwa nat.cast_pos },
+  refine le_of_mul_le_mul_left _ this,
+  have : (Ac : ℝ) ^ k ≤ K * Lc,
+  { rw div_le_iff' at h₂,
+    refine h₂.trans (mul_le_mul_of_nonneg_right hK' (nat.cast_nonneg _)),
+    exact zero_lt_two },
+  rw [neg_mul, neg_div, real.rpow_neg hK.le, mul_left_comm,
+    inv_mul_le_iff (real.rpow_pos_of_pos hK _)],
+  refine (mul_le_mul_of_nonneg_right this (nat.cast_nonneg _)).trans _,
+  rw mul_assoc,
+  rw [←@nat.cast_le ℝ, nat.cast_mul] at h₁,
+  refine (mul_le_mul_of_nonneg_left h₁ hK.le).trans _,
+  rw [nat.cast_mul, ←mul_assoc, ←mul_assoc, nat.cast_pow],
+  refine mul_le_mul_of_nonneg_right _ (nat.cast_nonneg _),
+  refine (mul_le_mul_of_nonneg_left (pow_le_pow_of_le_left (nat.cast_nonneg _) h₃ k) hK.le).trans _,
+  rw [mul_pow, ←mul_assoc, ←pow_succ],
+  refine mul_le_mul_of_nonneg_right _ (pow_nonneg (nat.cast_nonneg _) _),
+  rw [←real.rpow_nat_cast],
+  refine real.rpow_le_rpow_of_exponent_le (one_le_two.trans hK') _,
+  rw [nat.cast_add_one, ←le_sub_iff_add_le, hk'],
+  refine (nat.ceil_lt_add_one _).le.trans _,
+  { positivity },
+  have : (1 : ℝ) ≤ 128 * (m / ε ^ 2),
+  { rw [div_eq_mul_one_div],
+    refine one_le_mul_of_one_le_of_one_le (by norm_num1) _,
+    refine one_le_mul_of_one_le_of_one_le (nat.one_le_cast.2 hm) _,
+    refine one_le_one_div (by positivity) _,
+    rw sq_le_one_iff hε.le,
+    exact hε' },
+  rw [mul_div_assoc, mul_div_assoc],
+  linarith only [this]
 end
 
 -- trivially true for other reasons for big ε
@@ -417,7 +456,9 @@ begin
     exact hA },
   obtain ⟨a, ha, hL'⟩ := big_shifts S _ hk hL (filter_subset _ _),
   refine ⟨univ.filter (λ t : G, a + (λ _, -t) ∈ L), _, _⟩,
-  { refine T_bound hK' L.card S.card A.card (A + S).card _ rfl _ this hK,
+  { refine T_bound hK' L.card S.card A.card (A + S).card _ rfl _ this hK _ hε hε' hm,
+    swap,
+    { rwa card_pos },
     convert hL' using 5,
     ext i,
     congr' 2,
