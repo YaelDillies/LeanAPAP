@@ -7,7 +7,6 @@ import mathlib.data.real.basic
 import mathlib.data.real.nnreal
 import mathlib.order.conditionally_complete_lattice.finset
 import prereqs.indicator
-import prereqs.translate
 
 /-!
 # Lp norms

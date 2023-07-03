@@ -166,19 +166,25 @@ lemma dconv_apply_sub (f g : α → β) (a b : α) :
   (f ○ g) (a - b) = ∑ t, f (a + t) * conj (g (b + t)) :=
 by simp [←conv_conjneg, sub_eq_add_neg, conv_apply_add, add_comm]
 
-lemma sum_conv (f g : α → β) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a :=
+lemma sum_conv_mul (f g h : α → β) : ∑ a, (f ∗ g) a * h a = ∑ a b, f a * g b * h (a + b) :=
 begin
-  simp_rw conv_eq_sum_sub',
-  rw [sum_mul_sum, sum_product, sum_comm],
-  exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_right x) _ _ $ λ y, rfl),
+  simp_rw [conv_eq_sum_sub', sum_mul],
+  rw sum_comm,
+  exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_right x) _ _ $ λ y, by simp),
 end
 
-lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) :=
+lemma sum_dconv_mul (f g h : α → β) : ∑ a, (f ○ g) a * h a = ∑ a b, f a * conj (g b) * h (a - b) :=
 begin
-  simp_rw dconv_eq_sum_sub,
-  rw [sum_mul_sum, sum_product, sum_comm],
-  exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_left x) _ _ $ λ y, rfl),
+  simp_rw [dconv_eq_sum_sub, sum_mul],
+  rw sum_comm,
+  exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_left x) _ _ $ λ y, by simp),
 end
+
+lemma sum_conv (f g : α → β) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a :=
+by simpa only [sum_mul_sum, sum_product, pi.one_apply, mul_one] using sum_conv_mul f g 1
+
+lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) :=
+by simpa only [sum_mul_sum, sum_product, pi.one_apply, mul_one] using sum_dconv_mul f g 1
 
 lemma support_conv_subset (f g : α → β) : support (f ∗ g) ⊆ support f + support g :=
 begin

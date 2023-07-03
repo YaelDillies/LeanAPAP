@@ -149,7 +149,7 @@ begin
   { intro i,
     rw [fintype.sum_fintype_apply, sum_sub_distrib],
     simp only [f', sub_eq_zero, sum_const, indicator_apply],
-    rw [←pi.smul_apply, ←smul_conv_assoc, smul_mu, conv_eq_sum_sub'],
+    rw [←pi.smul_apply, ←smul_conv_assoc, card_smul_mu, conv_eq_sum_sub'],
     simp only [boole_mul, indicator_apply],
     rw [←sum_filter, filter_mem_eq_inter, univ_inter, sub_self, smul_zero] },
   congr' with a : 1,

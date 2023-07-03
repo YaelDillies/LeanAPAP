@@ -1,4 +1,6 @@
+import mathlib.algebra.big_operators.ring
 import mathlib.data.complex.exponential
+import mathlib.data.fintype.lattice
 import mathlib.data.real.sqrt
 import prereqs.convolution
 
@@ -7,12 +9,36 @@ import prereqs.convolution
 -/
 
 open real
-open_locale big_operators nnreal
+open_locale big_operators nnreal pointwise
 
 open finset
 
 variables {G : Type*} [decidable_eq G] [fintype G] [add_comm_group G] {B₁ B₂ A : finset G} {ε δ : ℝ}
   {p : ℕ}
+
+def C (p : ℕ) (A : finset G) (s : fin p → G) : finset G := univ.inf (λ i, s i +ᵥ A)
+
+lemma lemma_0 (f : G → ℝ) :
+  ∑ s, ⟪𝟭_[ℝ] (B₁ ∩ C p A s) ○ 𝟭 (B₂ ∩ C p A s), f⟫_[ℝ] =
+    (B₁.card * B₂.card) • ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * ((𝟭 A ○ 𝟭 A) x ^ p * f x) :=
+begin
+  simp only [L2inner_eq_sum, is_R_or_C.inner_apply, is_R_or_C.conj_to_real, mul_sum, sum_mul,
+    @sum_comm _ _ (fin p → G), sum_dconv_mul, smul_sum],
+  congr' with b₁,
+  congr' with b₂,
+  rw [←smul_mul_assoc, ←smul_mul_smul, card_smul_mu_apply, card_smul_mu_apply],
+    calc
+      _ = 𝟭 B₁ b₁ * 𝟭 B₂ b₂ * ((∑ s, 𝟭 (C p A s) b₁ * 𝟭 (C p A s) b₂) * f (b₁ - b₂)) : _
+    ... = 𝟭 B₁ b₁ * 𝟭 B₂ b₂ * ((∑ t : G, 𝟭 (t +ᵥ A) b₁ * 𝟭 (t +ᵥ A) b₂) ^ p * f (b₁ - b₂)) : _
+    ... = _ : _,
+  { simp only [mul_sum, sum_mul],
+    congr' with s,
+    rw [←mul_assoc, mul_mul_mul_comm, ←indicator_inter_apply, ←indicator_inter_apply] },
+  { simp_rw [fintype.sum_pow, prod_mul_distrib, C, indicator_inf_apply] },
+  { simp_rw [dconv_apply_sub, fintype.sum_pow, map_indicator],
+    rw fintype.sum_equiv (equiv.neg $ fin p → G),
+    simp [←translate_indicator, sub_eq_add_neg] }
+end
 
 lemma lemma_1 (hp : 2 ≤ p) (hpeven : even p) (f : G → ℝ≥0) (B₁ B₂ A : finset G) :
   ∃ (A₁ ⊆ B₁) (A₂ ⊆ B₂), ⟪μ_[ℝ] A₁ ○ μ A₂, coe ∘ f⟫_[ℝ] ≤
@@ -32,8 +58,9 @@ univ.filter $ λ x, (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ 
   x ∈ S p ε B₁ B₂ A ↔ (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] < (𝟭 A ○ 𝟭 A) x :=
 by simp [S]
 
+--TODO: When `1 < ε`, the result is trivial since `S = univ`.
 lemma lemma_2 (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : even p) (hp₂ : 2 ≤ p)
-  (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hB : (B₁ ∩ B₂).nonempty) {hA : A.nonempty} :
+  (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hB : (B₁ ∩ B₂).nonempty) (hA : A.nonempty) :
   ∃ (A₁ ⊆ B₁) (A₂ ⊆ B₂), 1 - δ ≤ ∑ x in S p ε B₁ B₂ A, (μ A₁ ○ μ A₂) x ∧
     (4 : ℝ)⁻¹ * A.card ^ (-2 * p : ℤ) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) ≤
       A₁.card / B₁.card ∧
