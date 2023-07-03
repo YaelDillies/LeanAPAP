@@ -5,7 +5,7 @@
 \begin{lemma}[Marcinkiewicz-Zygmund inequality]\label{mzi}
 %\leanok
 Let $m\geq 1$. If $f:G\to\bbr$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
-\[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (8mn)^{m}.\]
+\[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (4mn)^{m}.\]
 \end{lemma}
 \begin{proof}
 %\leanok
@@ -26,15 +26,21 @@ This can be seen, for example, by writing both sides out using factorials, yield
 \[\frac{(2m)!}{(2l_1)!\cdots (2l_n)!}\leq \frac{(2m)!}{2^mm!}\frac{m!}{l_1!\cdots l_n!}\leq m^m\frac{m!}{l_1!\cdots l_n!}.\]
 \end{proof}
 
-
-\begin{lemma}\label{random_approx_expect}
-Let $\epsilon>0$ and $m\geq 1$. Let $A\subseteq G$ and $f:G\to \{0,1\}$. If $k\geq 256m\epsilon^{-2}$ then the set
-
-\[ \bbe_{a_1,\ldots,a_k\in A} \norm{ \mu_\tup{a}*f - \mu_A*f }_{2m}^{2m} \leq (\epsilon/2)^{2m}.\] 
+\begin{lemma}\label{mzi-complex}
+%\leanok
+Let $m\geq 1$. If $f:G\to\bbc$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
+\[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (16mn)^{m}.\]
 \end{lemma}
 \begin{proof}\uses{mzi}
+Test.
+\end{proof}
 
+\begin{lemma}\label{random_approx_expect}
+Let $\epsilon>0$ and $m\geq 1$. Let $A\subseteq G$ and $f:G\to \bbc$. If $k\geq 256m\epsilon^{-2}$ then the set
 
+\[ \bbe_{a_1,\ldots,a_k\in A} \norm{ \mu_\tup{a}*f - \mu_A*f }_{2m}^{2m} \leq (\epsilon/2)^{2m}\norm{f}_{2m}^{2m}.\] 
+\end{lemma}
+\begin{proof}\uses{mzi-complex}
 Note that if $a\in A$ is chosen uniformly at random then, for any fixed $x\in G$,
 \[\bbe f(x-a_i)= \frac{1}{\abs{A}}\sum_{a\in A}f(x-a)=\frac{1}{\abs{A}}\ind{A}\ast f(x)=\mu_A\ast f(x).\]
 Therefore, if we choose $a_1,\ldots,a_k\in A$ independently uniformly at random, for any fixed $x\in G$ and $1\leq i\leq k$,  the random variable $f(x-a_i)-f\ast \mu_A(x)$ has mean zero. By the Marcinkiewicz-Zygmund inequality Lemma~\ref{mzi}, therefore, 
@@ -55,69 +61,56 @@ It follows that
 In particular, if $k\geq 256\epsilon^{-2}m$ then the right-hand side is at most $(\frac{\epsilon}{2}\norm{f}_{2m})^{2m}$ as required.
 \end{proof}
 
-\begin{lemma}\label{random_approx}
-Let $\epsilon>0$ and $m\geq 1$. Let $A\subseteq G$ and $f:G\to \{0,1\}$. If $k\geq 256m\epsilon^{-2}$ then the set
-\[\{ \tup{a}\in A^k : \norm{ \mu_\tup{a}*f - \mu_A*f }_{{2m}}\leq \epsilon\]
-has size $\geq \abs{A}^k/2$.
+\begin{lemma}\label{aps_in_translates}
+Let $A\subseteq G$ and $f:G\to \bbc$. Let $\epsilon>0$ and $m\geq 1$ and $k\geq 1$. Let
+\[L=\{ \tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^kf(x-a_i)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}\}.\]
+If $t\in G$ is such that $\tup{a}\in L$ and $\tup{a}+(t,\ldots,t)\in L$ then
+\[\| \tau_t(\mu_A\ast f)-\mu_A\ast f\|_{2m}\leq 2\epsilon \|f\|_{2m}.\]
 \end{lemma}
-\begin{proof}\uses{random_approx_expect}
-Apply Lemma~\ref{random_approx_expect}. The lemma follows from this by averaging (also known as Markov's inequality): if $L$ is the set in question, then the contribution to this expectation from those $\tup{a}\not\in L$ is at least
-\[\brac{1-\frac{\abs{L}}{\abs{A}^k}}(\epsilon \norm{f}_{2m})^{2m},\]
-and hence comparing this to our upper bound we have
-\[\brac{1-\frac{\abs{L}}{\abs{A}^k}}\leq 2^{-2m}\leq 1/2\]
-as required.
+\begin{proof}
+Test.
 \end{proof}
 
-\begin{theorem}\label{ap}
-Let $\epsilon>0$ and $m\geq 1$. Suppose that $A\subseteq G$ with density $\alpha$. Then, for any function $f:G\to\bbr$, there exists a set $T$ of size
-\[\abs{T}\geq \alpha^{O(m\epsilon^{-2})}N\]
-such that for all $t\in T$
-\[\norm{\tau_t \mu_A\ast f-\mu_A\ast f}_{2m}\leq \epsilon \norm{f}_{2m}.\]
+
+\begin{lemma}\label{lots_of_diagonals}Let $A\subseteq G$ and $k\geq 1$ and $L\subseteq A^k$. Then there exists some $\tup{a}\in L$ such that
+\[\#\{ t\in G : \tup{a}+(t,\ldots,t)\in L\}\geq \frac{\lvert L\rvert}{\lvert A+S\rvert^k}\lvert S\rvert.\]
+\end{lemma}
+\begin{proof}
+Test.
+\end{proof}
+
+\begin{theorem}\label{lp_ap}
+Let $\epsilon>0$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $f:G\to \bbc$. There exists $T\subseteq G$ such that
+\[\lvert T\rvert \geq K^{-1000m\epsilon^{-2}}\lvert S\rvert\]
+such that for any $t\in T$ we have
+\[\| \tau_t(\mu_A\ast f)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}.\]
 \end{theorem}
-\begin{proof}\uses{random_approx}
-Let $k=\lceil 1024m\epsilon^{-2}\rceil$. Let $L$ be the set from Lemma~\ref{random_approx} (with $\epsilon$ replaced by $\epsilon/2$), so that $\abs{L}\geq \tfrac{1}{2}\alpha^kN^k$. Let $\Delta=\{(s,\ldots,s) : s \in G\}$. We have
-\[\abs{L}N= \sum_{z\in L+\Delta}\abs{\Delta\cap(L-z)}\]
-so therefore since $\abs{L+\Delta}\leq N^k\leq 2\alpha^{-k}\abs{L}$ there exists some $z\in L$ such that
-\[\abs{\Delta\cap(L-z)}\geq \frac{\alpha^k}{2}N.\]
-Fix some $(t',\ldots,t')\in \Delta\cap L-z$, say $\vec{b}=(t',\ldots,t')+z\in L$. We claim that
-\[T = \{ t\in S-S : (t+t',\ldots,t+t')\in \Delta\cap (L-z)\}\]
-works. Indeed, we know that there exists some $\vec{a}\in L$ such that $\vec{a}=(t,\ldots,t)+(t',\ldots,t')+z=(t,\ldots,t)+\vec{b}$. Therefore
-\begin{align*}
-\norm{\tau_{t}(\mu_{\vec{b}}\ast f) - f\ast \mu_A}_{2m}
-&=
-\norm{\mu_{\vec{b}+(t,\ldots,t)}\ast f - f\ast \mu_A}_{2m}
-\\
-&\leq \tfrac{1}{2}\epsilon \norm{f}_{2m},
-\end{align*}
-and similarly
-\begin{align*}
-\norm{\tau_{t}(\mu_{\vec{b}}\ast f) - \tau_{t}(f\ast \mu_A)}_{2m}
-&=
-\norm{\mu_{\vec{b}}\ast f - f\ast \mu_A}_{2m}\\
-&\leq \tfrac{1}{2}\epsilon \norm{f}_{2m}.
-\end{align*}
-It follows by the triangle inequality that
-\[\norm{\tau_{t}(f\ast \mu_A) - f\ast \mu_A}_{2m}\leq \epsilon \norm{f}_{2m}\]
-as required.
+\begin{proof}\uses{random_approx_expect, lots_of_diagonals, aps_in_translates}
+Test.
 \end{proof}
 
 
 
 \begin{theorem}\label{linfty_ap}
-Let $\epsilon>0$ and $m\geq 1$, and $G$ be some finite abelian group of order $N$. Suppose that $A\subseteq G$ with density $\alpha=\abs{A}/N$. For any function $f:G\to\bbr$ there is a set $T$ such that
-\[\abs{T}\geq \exp(-O(\log(1/\alpha)\log(1/\beta)\epsilon^{-2})N\]
-
-and for all sets $B$ of density at least $\beta$ and for all $t\in T$
-\[\norm{\tau_t \mu_A\ast \mu_B\ast f- \mu_A\ast \mu_B\ast f}_{\infty}\leq \epsilon \norm{f}_{2m}.\]
+Let $\epsilon>0$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $B,C\subseteq G$. There exists $T\subseteq G$ such that
+\[\lvert T\rvert \geq K^{-1000\log(\lvert C\rvert/\lvert B\rvert)\epsilon^{-2}}\lvert S\rvert\]
+such that for any $t\in T$ we have
+\[\| \tau_t(\mu_A\ast \mu_B\ast 1_C)-\mu_A\ast \mu_B\ast 1_C\|_{2m}\leq \epsilon.\]
 \end{theorem}
-\begin{proof}\uses{ap}
-Shifting $B$ if necessary, it suffices to prove 
-\[\langle \ind{B}, \tau_t \ind{A}\ast f-\ind{A}\ast f\rangle \leq  \epsilon \abs{A}\abs{B}^{1/2m}.\]
-Apply Holder's inequality with $m\approx \log(1/\beta)$, this bounds the left-hand side by 
-\[\beta^{1-1/m}\norm{\tau_t\ind{A}\ast f-\ind{A}\ast f}_{2m}\leq 2\beta \norm{\tau_t\ind{A}\ast f-\ind{A}\ast f}_{2m},\]
-say, and we are done by Theorem~\ref{ap}.
+\begin{proof}\uses{lp_ap}
+Test.
 \end{proof}
 
+
+\begin{theorem}\label{linfty_ap_boosted}
+Let $\epsilon>0$ and $m\geq 1$ and $k\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $B,C\subseteq G$. There exists $T\subseteq G$ such that
+\[\lvert T\rvert \geq K^{-1000\log(\lvert C\rvert/\lvert B\rvert)k^2\epsilon^{-2}}\lvert S\rvert\]
+such that
+\[\| \mu_T^{(k)}\ast\mu_A\ast \mu_B\ast 1_C-\mu_A\ast \mu_B\ast 1_C\|_{2m}\leq \epsilon.\]
+\end{theorem}
+\begin{proof}\uses{linfty_ap}
+Test.
+\end{proof}
 
 \begin{theorem}\label{chang}
 If 
@@ -135,6 +128,6 @@ If $A_1,A_2,S\subseteq \bbf_q^n$ are such that $A_1$ and $A_2$ both have density
 such that
 \[\abs{\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle-\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle}\leq \epsilon.\]
 \end{theorem}
-\begin{proof}\uses{chang,linfty_ap}
+\begin{proof}\uses{chang,linfty_ap_boosted}
 Test.
 \end{proof}
