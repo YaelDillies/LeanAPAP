@@ -3,6 +3,7 @@ import combinatorics.pigeonhole
 import mathlib.data.finset.card
 import prereqs.convolution
 import prereqs.marcinkiewicz_zygmund
+import prereqs.misc
 
 /-!
 # Almost-periodicity

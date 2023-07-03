@@ -1,14 +1,16 @@
 import algebra.big_operators.pi
+import algebra.support
 import algebra.order.pi
 import mathlib.algebra.star.order
 import mathlib.algebra.star.pi
+import data.set.pointwise.smul
 
 /-!
 # Precomposition operators
 -/
 
 open function set
-open_locale big_operators complex_conjugate
+open_locale big_operators complex_conjugate pointwise
 
 /-! ### Translation operator -/
 
@@ -43,6 +45,9 @@ lemma translate_sum_right (a : α) (f : ι → α → β) (s : finset ι) :
 
 lemma sum_translate [fintype α] (a : α) (f : α → β) : ∑ b, τ a f b = ∑ b, f b :=
 fintype.sum_equiv (equiv.sub_right _) _ _ $ λ _, rfl
+
+@[simp] lemma support_translate (a : α) (f : α → β) : support (τ a f) = a +ᵥ support f :=
+by ext; simp [mem_vadd_set_iff_neg_vadd_mem, sub_eq_neg_add]
 
 end add_comm_group
 
@@ -93,6 +98,9 @@ lemma conjneg_ne_one : conjneg f ≠ 1 ↔ f ≠ 1 := conjneg_eq_one.not
 
 lemma sum_conjneg [fintype α] (f : α → β) : ∑ a, conjneg f a = ∑ a, conj (f a) :=
 fintype.sum_equiv (equiv.neg _) _ _ $ λ _, rfl
+
+@[simp] lemma support_conjneg (f : α → β) : support (conjneg f) = -support f :=
+by ext; simp [star_ring_end_apply]
 
 end comm_semiring
 

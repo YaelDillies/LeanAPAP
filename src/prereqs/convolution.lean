@@ -21,7 +21,7 @@ Multiplicativise? Probably ugly and not very useful.
 
 -/
 
-open finset real
+open finset function real
 open_locale big_operators complex_conjugate nnreal pointwise
 
 variables {ι α β γ : Type*} [fintype α] [decidable_eq α] [add_comm_group α]
@@ -34,7 +34,7 @@ In this section, we define the convolution `f ∗ g` and difference convolution 
 -/
 
 section comm_semiring
-variables [comm_semiring β] [star_ring β]
+variables [comm_semiring β] [star_ring β] {f g : α → β}
 
 /-- Convolution -/
 @[nolint unused_arguments]
@@ -166,19 +166,29 @@ lemma dconv_apply_sub (f g : α → β) (a b : α) :
   (f ○ g) (a - b) = ∑ t, f (a + t) * conj (g (b + t)) :=
 by simp [←conv_conjneg, sub_eq_add_neg, conv_apply_add, add_comm]
 
-lemma sum_conv (f g : α → ℝ) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a :=
+lemma sum_conv (f g : α → β) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a :=
 begin
   simp_rw conv_eq_sum_sub',
   rw [sum_mul_sum, sum_product, sum_comm],
   exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_right x) _ _ $ λ y, rfl),
 end
 
-lemma sum_dconv (f g : α → ℝ) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) :=
+lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) :=
 begin
   simp_rw dconv_eq_sum_sub,
   rw [sum_mul_sum, sum_product, sum_comm],
   exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_left x) _ _ $ λ y, rfl),
 end
+
+lemma support_conv_subset (f g : α → β) : support (f ∗ g) ⊆ support f + support g :=
+begin
+  rintro a ha,
+  obtain ⟨x, hx, h⟩ := exists_ne_zero_of_sum_ne_zero ha,
+  exact ⟨x.1, x.2, left_ne_zero_of_mul h, right_ne_zero_of_mul h, (mem_filter.1 hx).2⟩,
+end
+
+lemma support_dconv_subset (f g : α → β) : support (f ○ g) ⊆ support f - support g :=
+by simpa [sub_eq_add_neg] using support_conv_subset f (conjneg g)
 
 end comm_semiring
 
@@ -225,7 +235,20 @@ end ordered_comm_semiring
 section strict_ordered_comm_semiring
 variables [strict_ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
 
---TODO: Those two can probably be generalised to `ordered_comm_semiring` but we don't really care
+--TODO: Those can probably be generalised to `ordered_comm_semiring` but we don't really care
+@[simp] lemma support_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ∗ g) = support f + support g :=
+begin
+  refine (support_conv_subset _ _).antisymm _,
+  rintro _ ⟨a, b, ha, hb, rfl⟩,
+  dsimp,
+  rw conv_apply_add,
+  exact ne_of_gt (sum_pos' (λ c _, mul_nonneg (hf _) $ hg _) ⟨0, mem_univ _,
+    mul_pos ((hf _).lt_of_ne' $ by simpa using ha) ((hg _).lt_of_ne' $ by simpa using hb)⟩),
+end
+
+@[simp] lemma support_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ○ g) = support f - support g :=
+by simpa [sub_eq_add_neg] using support_conv hf (conjneg_nonneg.2 hg)
+
 lemma conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g :=
 begin
   rw pi.lt_def at ⊢ hf hg,

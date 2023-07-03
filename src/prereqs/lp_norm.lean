@@ -6,7 +6,7 @@ import mathlib.analysis.special_functions.pow.real
 import mathlib.data.real.basic
 import mathlib.data.real.nnreal
 import mathlib.order.conditionally_complete_lattice.finset
-import prereqs.misc
+import prereqs.indicator
 import prereqs.translate
 
 /-!
@@ -466,9 +466,9 @@ begin
   simp only [map_inv₀, complex.abs_cast_nat, smul_eq_mul, Lpnorm_eq_sum hp, complex.norm_eq_abs],
   have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) :=
     λ x, by split_ifs; simp,
-  simp_rw [apply_ite has_norm.norm, norm_one, norm_zero, norm_inv, is_R_or_C.norm_nat_cast, this,
-    zero_rpow (nnreal.coe_ne_zero.2 hp.ne'), one_rpow, sum_boole, filter_mem_eq_inter, univ_inter,
-    rpow_sub_one ‹_›, inv_mul_eq_div],
+  simp_rw [indicator_apply, apply_ite has_norm.norm, norm_one, norm_zero, norm_inv,
+    is_R_or_C.norm_nat_cast, this, zero_rpow (nnreal.coe_ne_zero.2 hp.ne'), one_rpow, sum_boole,
+    filter_mem_eq_inter, univ_inter, rpow_sub_one ‹_›, inv_mul_eq_div],
 end
 
 lemma Lpnorm_mu_le (hp : 1 ≤ p) : ‖μ_[β] s‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) :=
