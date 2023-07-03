@@ -6,7 +6,7 @@ import mathlib.analysis.special_functions.log.basic
 -/
 
 open set
-open_locale complex_conjugate nnreal
+open_locale big_operators complex_conjugate nnreal
 
 namespace real
 variables {x : ℝ}
@@ -86,8 +86,10 @@ end finset
 
 /-! ### Normalised indicator -/
 
+variables {α β γ : Type*}
+
 section division_semiring
-variables {α β : Type*} [division_semiring β] [decidable_eq α] {s : finset α}
+variables [division_semiring β] [division_semiring γ] [decidable_eq α] {s : finset α}
 
 def indicator (s : finset α) (a : α) : β := ite (a ∈ s) 1 0
 
@@ -97,8 +99,19 @@ notation `𝟭_[` β `] ` := @_root_.indicator _ β _ _
 
 @[simp] lemma indicator_apply (x : α) : 𝟭_[β] s x = ite (x ∈ s) 1 0 := rfl
 
+@[simp] lemma indicator_empty : (𝟭 ∅ : α → β) = 0 := by ext; simp [_root_.indicator]
+
+@[simp] lemma indicator_univ [fintype α] : (𝟭 finset.univ : α → β) = 1 :=
+by ext; simp [_root_.indicator]
+
+lemma sum_indicator [fintype α] : ∑ x, 𝟭_[β] s x = s.card :=
+by simp [_root_.indicator_apply, ←finset.mem_coe, filter_mem_univ_eq_to_finset]
+
+lemma map_indicator (f : β →+* γ) (s : finset α) (x : α) : f (𝟭 s x) = 𝟭 s x :=
+ring_hom.map_ite_one_zero _ _
+
 /-- The normalised indicator of a set. -/
-def mu (s : finset α) : α → β := (s.card : β)⁻¹ • λ x, ite (x ∈ s) 1 0
+def mu (s : finset α) : α → β := (s.card : β)⁻¹ • 𝟭 s
 
 notation `μ ` := _root_.mu
 
@@ -107,6 +120,9 @@ notation `μ_[` β `] ` := @_root_.mu _ β _ _
 lemma mu_apply (x : α) : μ s x = (s.card : β)⁻¹ * ite (x ∈ s) 1 0 := rfl
 
 @[simp] lemma mu_empty : (μ ∅ : α → β) = 0 := by ext; simp [mu]
+
+lemma map_mu (f : β →+* γ) (s : finset α) (x : α) : f (μ s x) = μ s x :=
+by simp_rw [mu, pi.smul_apply, smul_eq_mul, map_mul, map_indicator, map_inv₀, map_nat_cast]
 
 lemma smul_mu [char_zero β] : s.card • μ_[β] s = 𝟭 s :=
 begin
@@ -119,13 +135,27 @@ begin
   { rw [mul_zero, mul_zero] }
 end
 
+lemma sum_mu [char_zero β] [fintype α] (hs : s.nonempty) : ∑ x, μ_[β] s x = 1 :=
+by { simpa [mu] using mul_inv_cancel _, exact nat.cast_ne_zero.2 hs.card_pos.ne' }
+
 end division_semiring
 
 section linear_ordered_field
-variables {α β : Type*} [linear_ordered_field β] [decidable_eq α] {s : finset α}
+variables [linear_ordered_field β] [decidable_eq α] {s : finset α}
 
-@[simp] lemma indicator_nonneg : 0 ≤ 𝟭_[β] s := λ a, by rw _root_.indicator_apply; split_ifs; norm_num
+@[simp] lemma indicator_nonneg : 0 ≤ 𝟭_[β] s :=
+λ a, by rw _root_.indicator_apply; split_ifs; norm_num
+
+@[simp] lemma indicator_pos : 0 < 𝟭_[β] s ↔ s.nonempty :=
+by simpa [pi.lt_def, function.funext_iff, lt_iff_le_and_ne, @eq_comm β 0]
 
 @[simp] lemma mu_nonneg : 0 ≤ μ_[β] s := λ a, by rw mu_apply; split_ifs; norm_num
+
+@[simp] lemma mu_pos : 0 < μ_[β] s ↔ s.nonempty :=
+begin
+  have : ¬ s = ∅ ↔ s.nonempty := finset.nonempty_iff_ne_empty.symm,
+  simp [pi.lt_def, mu_apply, function.funext_iff, lt_iff_le_and_ne, @eq_comm β 0, this,
+    finset.nonempty],
+end
 
 end linear_ordered_field

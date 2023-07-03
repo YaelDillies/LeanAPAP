@@ -166,6 +166,20 @@ lemma dconv_apply_sub (f g : α → β) (a b : α) :
   (f ○ g) (a - b) = ∑ t, f (a + t) * conj (g (b + t)) :=
 by simp [←conv_conjneg, sub_eq_add_neg, conv_apply_add, add_comm]
 
+lemma sum_conv (f g : α → ℝ) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a :=
+begin
+  simp_rw conv_eq_sum_sub',
+  rw [sum_mul_sum, sum_product, sum_comm],
+  exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_right x) _ _ $ λ y, rfl),
+end
+
+lemma sum_dconv (f g : α → ℝ) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) :=
+begin
+  simp_rw dconv_eq_sum_sub,
+  rw [sum_mul_sum, sum_product, sum_comm],
+  exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_left x) _ _ $ λ y, rfl),
+end
+
 end comm_semiring
 
 section comm_ring
@@ -207,6 +221,25 @@ lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
 λ a, sum_nonneg $ λ x _, mul_nonneg (hf _) $ star_nonneg.2 $ hg _
 
 end ordered_comm_semiring
+
+section strict_ordered_comm_semiring
+variables [strict_ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
+
+--TODO: Those two can probably be generalised to `ordered_comm_semiring` but we don't really care
+lemma conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g :=
+begin
+  rw pi.lt_def at ⊢ hf hg,
+  obtain ⟨hf, a, ha⟩ := hf,
+  obtain ⟨hg, b, hb⟩ := hg,
+  refine ⟨conv_nonneg hf hg, a + b, _⟩,
+  rw conv_apply_add,
+  exact sum_pos' (λ c _, mul_nonneg (hf _) $ hg _) ⟨0, by simpa using mul_pos ha hb⟩,
+end
+
+lemma dconv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g :=
+by rw ←conv_conjneg; exact conv_pos hf (conjneg_pos.2 hg)
+
+end strict_ordered_comm_semiring
 
 section is_R_or_C
 variables [is_R_or_C β]
@@ -290,12 +323,9 @@ variables {f g : α → ℝ} --TODO: Include `f : α → ℂ`
 
 lemma L1norm_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ∗ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
 begin
-  simp_rw [L1norm_eq_sum, conv_eq_sum_sub'],
-  rw [sum_mul_sum, sum_product],
   have : ∀ x, 0 ≤ ∑ y, f y * g (x - y) := λ x, sum_nonneg (λ y _, mul_nonneg (hf _) (hg _)),
-  simp only [norm_of_nonneg (this _), norm_of_nonneg (hf _), norm_of_nonneg (hg _)],
-  rw sum_comm,
-  exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_right x) _ _ $ λ y, rfl),
+  simp only [L1norm_eq_sum, ←sum_conv, conv_eq_sum_sub', norm_of_nonneg (this _),
+    norm_of_nonneg (hf _), norm_of_nonneg (hg _)],
 end
 
 lemma L1norm_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ○ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
@@ -339,7 +369,7 @@ section comm_semiring
 variables [comm_semiring β] [star_ring β]
 
 instance : comm_semiring (with_conv α β) :=
-{ one := to_conv $ (pi.single 0 1 : α → β),
+{ one := to_conv (pi.single 0 1 : α → β),
   mul := λ f g, to_conv $ of_conv f ∗ of_conv g,
   mul_assoc := conv_assoc,
   mul_comm := conv_comm,

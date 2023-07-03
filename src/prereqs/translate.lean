@@ -41,6 +41,9 @@ lemma translate_neg_right (a : α) (f : α → β) : τ a (-f) = -τ a f := rfl
 lemma translate_sum_right (a : α) (f : ι → α → β) (s : finset ι) :
   τ a (∑ i in s, f i) = ∑ i in s, τ a (f i) := by ext; simp
 
+lemma sum_translate [fintype α] (a : α) (f : α → β) : ∑ b, τ a f b = ∑ b, f b :=
+fintype.sum_equiv (equiv.sub_right _) _ _ $ λ _, rfl
+
 end add_comm_group
 
 variable [comm_ring β]
@@ -87,6 +90,9 @@ by rw [←conjneg_inj, conjneg_conjneg, conjneg_one]
 
 lemma conjneg_ne_zero : conjneg f ≠ 0 ↔ f ≠ 0 := conjneg_eq_zero.not
 lemma conjneg_ne_one : conjneg f ≠ 1 ↔ f ≠ 1 := conjneg_eq_one.not
+
+lemma sum_conjneg [fintype α] (f : α → β) : ∑ a, conjneg f a = ∑ a, conj (f a) :=
+fintype.sum_equiv (equiv.neg _) _ _ $ λ _, rfl
 
 end comm_semiring
 
