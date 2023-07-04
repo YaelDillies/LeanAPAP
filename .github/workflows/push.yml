@@ -4,7 +4,7 @@ on:
       - master
 
 jobs:
-  update_con_nf_branch_and_build:
+  update_leanapap:
     runs-on: ubuntu-latest
     name: Build LeanAPAP
     steps:
@@ -30,7 +30,7 @@ jobs:
       - name: Remove .gitignore for gh-pages
         run: rm docs/.gitignore
 
-      - name: Bundle dependencis
+      - name: Bundle dependencies
         uses: ruby/setup-ruby@v1
         with:
           working-directory: docs

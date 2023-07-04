@@ -5,6 +5,7 @@
 \begin{lemma}[Marcinkiewicz-Zygmund inequality]
 \label{mzi}
 \lean{other_marcinkiewicz_zygmund'}
+\leanok
 Let $m\geq 1$. If $f:G\to\bbr$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
 \[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (4mn)^{m}.\]
 \end{lemma}
@@ -31,6 +32,7 @@ This can be seen, for example, by writing both sides out using factorials, yield
 
 \begin{lemma}[Complex-valued Marcinkiewicz-Zygmund inequality]
 \label{mzi-complex}
+\leanok
 \lean{complex_marcinkiewicz_zygmund}
 Let $m\geq 1$. If $f:G\to\bbc$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
 \[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (16mn)^{m}.\]
@@ -46,6 +48,7 @@ Test.
 \begin{lemma}
 \label{random_approx_expect}
 \lean{lemma28}
+\leanok
 Let $\epsilon>0$ and $m\geq 1$. Let $A\subseteq G$ and $f:G\to \bbc$. If $k\geq 64m\epsilon^{-2}$ then the set
 \[L=\{ \tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^kf(x-a_i)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}\}.\]
 has size at least $\lvert A \rvert^k/2$.
@@ -78,6 +81,7 @@ In particular, if $k\geq 64\epsilon^{-2}m$ then the right-hand side is at most $
 \begin{lemma}
 \label{aps_in_translates}
 \lean{just_the_triangle_inequality}
+\leanok
 Let $A\subseteq G$ and $f:G\to \bbc$. Let $\epsilon>0$ and $m\geq 1$ and $k\geq 1$. Let
 \[L=\{ \tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^kf(x-a_i)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}\}.\]
 If $t\in G$ is such that $\tup{a}\in L$ and $\tup{a}+(t,\ldots,t)\in L$ then
@@ -93,6 +97,7 @@ Test.
 \begin{lemma}
 \label{lots_of_diagonals}
 \lean{big_shifts}
+\leanok
 Let $A\subseteq G$ and $k\geq 1$ and $L\subseteq A^k$. Then there exists some $\tup{a}\in L$ such that
 \[\#\{ t\in G : \tup{a}+(t,\ldots,t)\in L\}\geq \frac{\lvert L\rvert}{\lvert A+S\rvert^k}\lvert S\rvert.\]
 \end{lemma}
@@ -105,11 +110,13 @@ Test.
 \begin{theorem}[$L_p$ almost periodicity]
 \label{lp_ap}
 \lean{almost_periodicity}
+\leanok
 Let $\epsilon>0$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $f:G\to \bbc$. There exists $T\subseteq G$ such that
 \[\lvert T\rvert \geq K^{-1000m\epsilon^{-2}}\lvert S\rvert\]
 such that for any $t\in T$ we have
 \[\| \tau_t(\mu_A\ast f)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}.\]
 \end{theorem}
+
 \begin{proof}
 \uses{random_approx_expect, lots_of_diagonals, aps_in_translates}
 \leanok
