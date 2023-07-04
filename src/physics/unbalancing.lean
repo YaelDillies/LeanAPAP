@@ -124,8 +124,8 @@ begin
       ... = (∑ i, ν i) ^ (2⁻¹ : ℝ) * ‖f‖_[2 * ↑p, ν] ^ p : _
       ... ≤ _ : mul_le_mul_of_nonneg_left (pow_le_pow_of_le_left wLpnorm_nonneg hf₁ _) $
               rpow_nonneg $ sum_nonneg $ λ i _, nnreal.coe_nonneg _,
-    rw [wLpnorm_eq_sum hp', ←ennreal.coe_one, ←ennreal.coe_bit0],
-    simp only [Lpnorm_eq_sum zero_lt_two, coe_sqrt, nnreal.zero_le_coe, nnreal.coe_bit0,
+    rw [wLpnorm_eq_sum hp'.ne', ←ennreal.coe_one, ←ennreal.coe_bit0],
+    simp only [Lpnorm_eq_sum two_ne_zero, coe_sqrt, nnreal.zero_le_coe, nnreal.coe_bit0,
       nonneg.coe_one, rpow_two, pow_bit0_abs, sq_sqrt, abs_nonneg, nnreal.smul_def,
       mul_comm (2 : ℝ), rpow_mul, pi.pow_apply, abs_pow, norm_eq_abs, mul_pow, nonneg.coe_mul,
       nnreal.coe_nat_cast, rpow_nat_cast, algebra.id.smul_eq_mul, mul_inv_rev],
@@ -165,7 +165,7 @@ begin
     ... ≤ (∑ i, ↑(ν i) * |f i + 1| ^ p') ^ (p'⁻¹ : ℝ)
         : rpow_le_rpow (sum_nonneg $ λ i _, by positivity)
           (sum_le_sum_of_subset_of_nonneg (subset_univ _) $ λ i _ _, by positivity) (by positivity)
-    ... = _ : by simp [wLpnorm_eq_sum, nnreal.smul_def, hp'],
+    ... = _ : by simp [wLpnorm_eq_sum, nnreal.smul_def, hp'.ne'],
 end
 
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier

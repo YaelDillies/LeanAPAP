@@ -13,6 +13,12 @@ variables {ι : Type*} {α : ι → Type*}
 @[simp] lemma neg_part_apply [Π i, lattice (α i)] [Π i, add_comm_group (α i)]
   (f : Π i, α i) (i : ι) : f⁻ i = (f i)⁻ := rfl
 
+lemma abs_def [Π i, has_neg (α i)] [Π i, has_sup (α i)] (f : Π i, α i) : |f| = λ i, |f i| := rfl
+lemma pos_part_def [Π i, lattice (α i)] [Π i, add_comm_group (α i)] (f : Π i, α i) :
+  f⁺ = λ i, (f i)⁺ := rfl
+lemma neg_part_def [Π i, lattice (α i)] [Π i, add_comm_group (α i)] (f : Π i, α i) :
+  f⁻ = λ i, (f i)⁻ := rfl
+
 end pi
 
 section lattice

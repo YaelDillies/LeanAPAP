@@ -361,7 +361,7 @@ begin
   have hp₀ := zero_lt_one.trans hp,
   rw [←rpow_le_rpow_iff _ (mul_nonneg _ _) hp₀, mul_rpow],
   any_goals { exact Lpnorm_nonneg },
-  simp_rw [Lpnorm_rpow_eq_sum hp₀, conv_eq_sum_sub'],
+  simp_rw [Lpnorm_rpow_eq_sum hp₀.ne', conv_eq_sum_sub'],
   have hpconj : is_conjugate_exponent p (1 - p⁻¹)⁻¹ :=
     ⟨hp, by simp_rw [one_div, inv_inv, add_sub_cancel'_right]⟩,
   have : ∀ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
