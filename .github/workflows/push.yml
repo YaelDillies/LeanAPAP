@@ -6,7 +6,7 @@ on:
 jobs:
   update_con_nf_branch_and_build:
     runs-on: ubuntu-latest
-    name: Update LeanAPAP branch and build project
+    name: Build LeanAPAP
     steps:
       - name: checkout project
         uses: actions/checkout@v2

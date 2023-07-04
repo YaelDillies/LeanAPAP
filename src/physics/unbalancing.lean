@@ -2,10 +2,10 @@ import analysis.inner_product_space.pi_L2
 import data.complex.exponential_bounds
 import mathlib.algebra.big_operators.ring
 import mathlib.algebra.order.lattice_group
+import mathlib.analysis.special_functions.log.basic
 import mathlib.data.complex.exponential
 import mathlib.data.nat.order.basic
 import prereqs.convolution
-import prereqs.lp_norm
 
 /-!
 # Unbalancing

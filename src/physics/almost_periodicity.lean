@@ -52,13 +52,9 @@ variables {α K : Type*} {k : ℕ}
 
 open finset
 
-lemma card_pi_finset_const [fintype K] [decidable_eq K] (A : finset α) :
-  (fintype.pi_finset (λ _ : K, A)).card = A.card ^ fintype.card K :=
-by rw [fintype.card_pi_finset, prod_const, card_univ]
-
 lemma card_pi_finset_fin_const (A : finset α) :
   (fintype.pi_finset (λ _ : fin k, A)).card = A.card ^ k :=
-by rw [card_pi_finset_const, fintype.card_fin]
+by rw [fintype.card_pi_finset, prod_const, card_univ, fintype.card_fin]
 
 end
 
