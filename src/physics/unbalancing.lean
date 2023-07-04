@@ -45,12 +45,10 @@ end
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg {f : G → ℝ} (hf : coe ∘ f = g ○ g) (hν : coe ∘ ν = h ○ h) (k : ℕ) :
   0 ≤ ⟪(coe ∘ ν : G → ℝ), f ^ k⟫_[ℝ] :=
-begin
-  sorry
-end
+by simpa [←complex.zero_le_real, L2inner_eq_sum, mul_comm] using pow_inner_nonneg' hf hν k
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
-lemma unbalancing' {p : ℕ} (hp : 5 ≤ p) (hp₁ : odd p) (hν₁ : ‖(coe ∘ ν : G → ℝ)‖_[1] = 1)
+lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : odd p) (hν₁ : ‖(coe ∘ ν : G → ℝ)‖_[1] = 1)
   (hν : coe ∘ ν = h ○ h) (hf : coe ∘ f = g ○ g) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hε : ε ≤ ‖f‖_[p, ν]) :
   ∃ p' : ℕ, ↑p' ≤ 16 / ε * log (12 / ε) * p ∧ 1 + ε/2 ≤ ‖f + 1‖_[p', ν] :=
 begin
@@ -91,6 +89,10 @@ begin
     ext i,
     rw [pi.pos_part_apply, pos_part_eq_ite],
     split_ifs; simp [pow_sub_one_mul hp₁.pos.ne'] },
+  have hp' : 1 ≤ (2 * p : ℝ≥0),
+  { norm_cast,
+    rw nat.succ_le_iff,
+    positivity },
   have : ∑ i in P \ T, ↑(ν i) * (f ^ p) i ≤ 4⁻¹ * ε ^ p,
   { calc
         _ ≤ ∑ i in P \ T, ↑(ν i) * (3/4 * ε) ^ p : sum_le_sum $ λ i hi, _
@@ -103,21 +105,34 @@ begin
         (sum_le_univ_sum_of_nonneg $ λ i, _) (sum_nonneg $ λ i _, _) _; positivity <|> norm_num } },
   replace hf₁ : ‖f‖_[2 * p, ν] ≤ 3,
   { calc
-        _ ≤ ‖f + 1‖_[2 * p, ν] + ‖(1 : G → ℝ)‖_[2 * p, ν] : wLpnorm_le_add_wLpnorm_add _ _ _ _
+        _ ≤ ‖f + 1‖_[2 * p, ν] + ‖(1 : G → ℝ)‖_[2 * p, ν] : wLpnorm_le_add_wLpnorm_add hp' _ _ _
       ... ≤ (2 + 1 : ℝ) : add_le_add hf₁ (by rw [wLpnorm_one, hν₁, one_rpow]; positivity)
-      ... = 3 : by norm_num,
-    sorry --TODO: Bhavik
-    },
+      ... = 3 : by norm_num },
+  replace hp' := zero_lt_one.trans_le hp',
   have : 4⁻¹ * ε ^ p ≤ (∑ i, ν i) ^ (2⁻¹ : ℝ) * 3 ^ p,
   { calc
         4⁻¹ * ε ^ p = 2⁻¹ * ε ^ p - 4⁻¹ * ε ^ p : by rw ←sub_mul; norm_num
       ... ≤ _ : sub_le_sub ‹_› ‹_›
       ... = ∑ i in T, ν i * (f ^ p) i : by rw [sum_sdiff_eq_sub hTP, sub_sub_cancel]
-      ... ≤ (∑ i, ν i) ^ (2⁻¹ : ℝ) * ‖f‖_[2 * ↑p, ν] ^ p : _
+      ... ≤ ∑ i in T, ν i * |(f ^ p) i|
+          : sum_le_sum $ λ i _, mul_le_mul_of_nonneg_left (le_abs_self _) $ by positivity
+      ... ≤ ∑ i, ν i * |(f ^ p) i| : sum_le_univ_sum_of_nonneg $ λ i, by positivity
+      ... = ⟪λ i, ((ν i).sqrt : ℝ), λ i, (ν i).sqrt * |(f ^ p) i|⟫_[ℝ]
+          : by simp [L2inner_eq_sum, ←mul_assoc]
+      ... ≤ ‖λ i, ((ν i).sqrt : ℝ)‖_[2] * ‖λ i, ↑(ν i).sqrt * |(f ^ p) i|‖_[2]
+          : L2inner_le_L2norm_mul_L2norm _ _
+      ... = (∑ i, ν i) ^ (2⁻¹ : ℝ) * ‖f‖_[2 * ↑p, ν] ^ p : _
       ... ≤ _ : mul_le_mul_of_nonneg_left (pow_le_pow_of_le_left wLpnorm_nonneg hf₁ _) $
               rpow_nonneg $ sum_nonneg $ λ i _, nnreal.coe_nonneg _,
-    sorry --TODO: Bhavik
-  },
+    rw [wLpnorm_eq_sum hp', ←ennreal.coe_one, ←ennreal.coe_bit0],
+    simp only [Lpnorm_eq_sum zero_lt_two, coe_sqrt, nnreal.zero_le_coe, nnreal.coe_bit0,
+      nonneg.coe_one, rpow_two, pow_bit0_abs, sq_sqrt, abs_nonneg, nnreal.smul_def,
+      mul_comm (2 : ℝ), rpow_mul, pi.pow_apply, abs_pow, norm_eq_abs, mul_pow, nonneg.coe_mul,
+      nnreal.coe_nat_cast, rpow_nat_cast, algebra.id.smul_eq_mul, mul_inv_rev],
+    rwa [rpow_mul, rpow_nat_inv_pow_nat],
+    { exact rpow_nonneg (sum_nonneg $ λ i _, by positivity) },
+    { positivity },
+    { exact sum_nonneg (λ i _, by positivity) } },
   set p' : ℕ := sorry,
   have hp' : 0 < p' := sorry,
   refine ⟨p', _, _⟩,
@@ -155,6 +170,7 @@ end
 
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier
 transform. -/
-lemma unbalancing (hp : 1 ≤ p) (hf : coe ∘ f = g ○ g) (hν : coe ∘ ν = h ○ h) (hε : ε ≤ ‖f‖_[p, ν]) :
+lemma unbalancing (hp : 1 ≤ p) (hν₁ : ‖(coe ∘ ν : G → ℝ)‖_[1] = 1) (hν : coe ∘ ν = h ○ h)
+  (hf : coe ∘ f = g ○ g) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hε : ε ≤ ‖f‖_[p, ν]) :
   ∃ p' : ℝ≥0, ↑p' ≤ 16 / ε * log (48 / ε) * p ∧ 1 + ε/2 ≤ ‖f + 1‖_[p', ν] :=
-sorry
+sorry --TODO: Bhavik

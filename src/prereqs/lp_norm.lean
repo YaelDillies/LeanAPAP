@@ -384,6 +384,10 @@ by simp [wLpnorm]
 
 end wLpnorm
 
+/-- **Cauchy-Schwarz inequality** -/
+lemma L2inner_le_L2norm_mul_L2norm (f g : ι → ℝ) : ⟪f, g⟫_[ℝ] ≤ ‖f‖_[2] * ‖g‖_[2] :=
+real_inner_le_norm _ _
+
 namespace tactic
 open positivity
 
