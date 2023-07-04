@@ -39,8 +39,9 @@ alias neg_inf_eq_sup_neg ← neg_inf
 @[simp] lemma neg_part_add_pos_part (a : α) : a⁻ + a⁺ = |a| :=
 by rw [add_comm, pos_part_add_neg_part]
 
-@[simp] lemma pos_part_sub_neg_part (a : α) : a⁺ - a⁻ = a := sorry
-@[simp] lemma neg_part_sub_pos_part (a : α) : a⁻ - a⁺ = -a := sorry
+@[simp] lemma pos_part_sub_neg_part (a : α) : a⁺ - a⁻ = a := pos_sub_neg _
+@[simp] lemma neg_part_sub_pos_part (a : α) : a⁻ - a⁺ = -a :=
+by rw [←neg_sub, pos_part_sub_neg_part]
 
 lemma abs_add_eq_two_nsmul_pos_part (a : α) : |a| + a = 2 • a⁺ :=
 by rw [two_nsmul, ←add_add_sub_cancel (a⁺), pos_part_add_neg_part, pos_part_sub_neg_part]
