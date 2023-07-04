@@ -8,39 +8,40 @@ jobs:
     runs-on: ubuntu-latest
     name: Build LeanAPAP
     steps:
-      - name: checkout project
+      - name: Checkout project
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: update branch
+      - name: Update branch
         if: github.ref == 'refs/heads/master'
         uses: leanprover-contrib/update-versions-action@master
 
-      - uses: satackey/action-docker-layer-caching@v0.0.11
+      - name: Retrieve cached docker container
+        uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
 
-      - name: build docker container
+      - name: Build docker container
         run: docker build -t leanapap .
 
-      - name: build project
+      - name: Build project
         run: docker run --rm -v ${{ github.workspace }}:/src leanapap
 
-      - name: remove .gitignore for gh-pages
+      - name: Remove .gitignore for gh-pages
         run: rm docs/.gitignore
 
-      - name: bundler deps
+      - name: Bundle dependencis
         uses: ruby/setup-ruby@v1
         with:
           working-directory: docs
           ruby-version: "3.0" # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-      - name: bundle website
+      - name: Bundle website
         working-directory: docs
         run: JEKYLL_ENV=production bundle exec jekyll build
 
-      - name: deploy
+      - name: Deploy
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           SINGLE_COMMIT: true
