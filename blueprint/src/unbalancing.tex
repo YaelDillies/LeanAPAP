@@ -3,6 +3,7 @@
 \begin{lemma}
 \label{nonneg_moments}
 \lean{pow_inner_nonneg}
+\leanok
 For any function $f:G\to\bbr$ and integer $k\geq 0$
 \[\bbe_x f\circ f(x)^k\geq 0.\]
 \end{lemma}
@@ -17,6 +18,7 @@ Test.
 \leanok
 Let $\epsilon\in(0,1)$ and $\nu:G\to\bbr_{\geq 0}$ be some probability measure such that $\widehat{\nu}\geq 0$. Let $f:G\to\bbr$. If $\norm{f\circ f}_{p(\nu)}\geq \epsilon$ for some $p\geq 1$ then $\norm{f\circ f+1}_{p'(\nu)}\geq 1+\tfrac{1}{2}\epsilon$ for some $p'\ll_\epsilon p$.
 \end{lemma}
+
 \begin{proof}
 \uses{nonneg_moments}
 Without loss of generality we can assume that $p\geq 5$ is an odd integer. % Want (3/4)^p \leq 1/4
