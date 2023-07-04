@@ -1,20 +1,27 @@
 \chapter{Unbalancing}
 
-\begin{lemma}\label{nonneg_moments}
+\begin{lemma}
+\label{nonneg_moments}
+\lean{pow_inner_nonneg}
 For any function $f:G\to\bbr$ and integer $k\geq 0$
 \[\bbe_x f\circ f(x)^k\geq 0.\]
 \end{lemma}
 \begin{proof}
+\leanok
 Test.
 \end{proof}
 
-\begin{lemma}\label{unbalancing}
+\begin{lemma}
+\label{unbalancing}
+\lean{unbalancing}
+\leanok
 Let $\epsilon\in(0,1)$ and $\nu:G\to\bbr_{\geq 0}$ be some probability measure such that $\widehat{\nu}\geq 0$. Let $f:G\to\bbr$. If $\norm{f\circ f}_{p(\nu)}\geq \epsilon$ for some $p\geq 1$ then $\norm{f\circ f+1}_{p'(\nu)}\geq 1+\tfrac{1}{2}\epsilon$ for some $p'\ll_\epsilon p$.
 \end{lemma}
-\begin{proof}\uses{nonneg_moments}
+\begin{proof}
+\uses{nonneg_moments}
 Without loss of generality we can assume that $p\geq 5$ is an odd integer. % Want (3/4)^p \leq 1/4
 Since the Fourier transforms of $f$ and $\nu$ are non-negative,
-\[\bbe \nu f^{p}= \widehat{\nu}\ast\widehat{f}^{(p)}(0_{\widehat{G}})\geq 0.\] 
+\[\bbe \nu f^{p}= \widehat{\nu}\ast\widehat{f}^{(p)}(0_{\widehat{G}})\geq 0.\]
 It follows that, since $2\max(x,0)=x+\abs{x}$ for $x\in\bbr$,
 \[2\langle \max(f,0),f^{p-1}\rangle_\nu=\bbe \nu f^{p}+\langle \abs{f},f^{p-1}\rangle_\nu\geq \norm{f}_{p(\nu)}^p\geq \epsilon^p.\]
 Therefore, if $P=\{ x : f(x) \geq 0\}$, then $\langle \ind{P},f^{p}\rangle_\nu\geq \frac{1}{2}\epsilon^{p}$. Furthermore, if $T=\{ x\in P : f(x) \geq \tfrac{3}{4}\epsilon\}$ then $\langle \ind{P\backslash T},f^p\rangle_\nu \leq \tfrac{1}{4}\epsilon^{p}$, and hence by the Cauchy-Schwarz inequality,

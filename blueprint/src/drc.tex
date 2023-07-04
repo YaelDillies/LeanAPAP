@@ -1,11 +1,16 @@
 \chapter{Dependent random choice}
 
-\begin{lemma}\label{lem-drc}
+
+\begin{lemma}
+\label{lem-drc}
+\lean{drc}
+\leanok
 Let $p\geq 2$ be an even integer. Let $B_1,B_2\subseteq G$ and $\mu=\mu_{B_1}\circ\mu_{B_2}$. For any finite set $A\subseteq G$ and function $f:G\to\bbr_{\geq 0}$ there exist $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that
 \[\langle \mu_{A_1}\circ \mu_{A_2}, f\rangle\leq 2\frac{\langle (\ind{A}\circ \ind{A})^p,f\rangle_\mu}{\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p}\]
 and
 \[\min\brac{\frac{\abs{A_1}}{\abs{B_1}},\frac{\abs{A_2}}{\abs{B_2}}}\geq \frac{1}{4}\abs{A}^{-2p}\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^{2p}.\]
 \end{lemma}
+
 \begin{proof}
 For $s\in G^{p}$ let $A_1(s)=B_1\cap (A+s_1)\cap\cdots\cap (A+s_{p})$, and similarly for $A_2(s)$. Note that
 \begin{align*}
@@ -18,9 +23,9 @@ For $s\in G^{p}$ let $A_1(s)=B_1\cap (A+s_1)\cap\cdots\cap (A+s_{p})$, and simil
 \end{align*}
 In particular, applying this with $f\equiv 1$ we see that
 \[\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p=\abs{B_1}^{-1}\abs{B_2}^{-1}\sum_s\abs{A_1(s)}\abs{A_2(s)}\]
-and 
+and
 \[\frac{\langle (\ind{A}\circ \ind{A})^p,f\rangle_\mu}{\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p}=\frac{\sum_{s}\langle \ind{A_1(s)}\circ \ind{A_2(s)}, f\rangle}{\sum_s \abs{A_1(s)}\abs{A_2(s)}}=\eta,\]
-say. Note that, if 
+say. Note that, if
 \[M=\tfrac{1}{2}\abs{A}^{-p}(\abs{B_1}\abs{B_2})^{1/2}\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p,\]
 then, by the Cauchy-Schwarz inequality,
 \begin{align*}
@@ -37,7 +42,7 @@ and so
 whence
 \[\sum_s\langle \ind{A_1(s)}\circ \ind{A_2(s)},f\rangle =\eta \sum \abs{A_1(s)}\abs{A_2(s)}
 < 2\eta \sum_s \abs{A_1(s)}\abs{A_2(s)}1_{\abs{A_1(s)}\abs{A_2(s)}\geq M^2}.\]
-In particular there must exist some $s$ such that 
+In particular there must exist some $s$ such that
 \[\langle \ind{A_1(s)}\circ \ind{A_2(s)},f\rangle< 2\eta \abs{A_1(s)}\abs{A_2(s)}1_{\abs{A_1(s)}\abs{A_2(s)}\geq M^2},\]
 and the claim follows. Note that the left-hand side is trivially $\geq 0$ and hence such an $s$ must satisfy $ \abs{A_1(s)}\abs{A_2(s)}\geq M^2$, that is,
 \[\abs{A_1(s)}\abs{A_2(s)}\geq \frac{1}{4}\abs{A}^{-2p}\abs{B_1}\abs{B_2}\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^{2p}.\]
@@ -45,22 +50,25 @@ The final bound now follows since $xy \leq \min(x,y)$ when $x,y\leq 1$.
 \end{proof}
 
 
-\begin{lemma}\label{lem-sift}
-Let $\epsilon,\delta >0$ and $p\geq \max(2,\epsilon^{-1}\log(2/\delta))$ be an even integer. Let $B_1,B_2\subseteq G$, and let $\mu=\mu_{B_1}\circ\mu_{B_2}$. For any finite set $A\subseteq G$, if 
+\begin{lemma}
+\label{lem-sift}
+\lean{sifting}
+Let $\epsilon,\delta >0$ and $p\geq \max(2,\epsilon^{-1}\log(2/\delta))$ be an even integer. Let $B_1,B_2\subseteq G$, and let $\mu=\mu_{B_1}\circ\mu_{B_2}$. For any finite set $A\subseteq G$, if
 \[S=\{ x\in G: \ind{A}\circ \ind{A}(x)>(1-\epsilon)\norm{\ind{A}\circ \ind{A}}_{p(\mu)}\},\]
-then there are $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that 
+then there are $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that
 \[\langle \mu_{A_1}\circ\mu_{A_2},\ind{S}\rangle \geq 1-\delta\]
 and
-
 \[\min\brac{\frac{\abs{A_1}}{\abs{B_1}},\frac{\abs{A_2}}{\abs{B_2}}}\geq \frac{1}{4}\abs{A}^{-2p}\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^{2p}.\]
-
 \end{lemma}
-\begin{proof}\uses{lem-drc}
+
+\begin{proof}
+\uses{lem-drc}
+\leanok
 Apply Lemma~\ref{lem-drc} with $f=\ind{G\backslash S}$. This produces some $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that
 \[\langle \mu_{A_1}\circ \mu_{A_2}, \ind{G\backslash S}\rangle\leq 2\frac{\langle (\ind{A}\circ \ind{A})^p,\ind{G\backslash S}\rangle_\mu}{\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p}\]
 and
 \[\min\brac{\frac{\abs{A_1}}{\abs{B_1}},\frac{\abs{A_2}}{\abs{B_2}}}\geq \frac{1}{4}\abs{A}^{-2p}\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^{2p}.\]
-It then suffices to note that 
+It then suffices to note that
 \[\langle \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle=1-\langle \mu_{A_1}\circ \mu_{A_2},\ind{G\backslash S}\rangle\]
 and by definition of $S$ we have
 \[\langle (\ind{A}\circ \ind{A})^p,\ind{G\backslash S}\rangle_\mu\leq (1-\epsilon)^p\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p\sum_{x}\mu(x)=(1-\epsilon)^p\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p.\]
@@ -68,13 +76,15 @@ Now use the fact that $p\geq \epsilon^{-1}\log(2/\delta)$ together with the ineq
 \end{proof}
 
 
-
-\begin{corollary}\label{global_drc}
+\begin{corollary}
+\label{global_drc}
 Let $p\geq 1$ be an integer and $\epsilon>0$. If $A\subseteq G$ is such that $\norm{\mu_A\circ \mu_A}_p \geq 1+\epsilon$ and $S=\{ x : \mu_A\circ \mu_A(x)>1+\epsilon/2\}$, then there are $A_1,A_2\subseteq G$, both of density
 \[\gg \alpha^{p+O_\epsilon(1)},\]
 such that
 \[\langle \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle \geq 1-\epsilon/8.\]
 \end{corollary}
-\begin{proof}\uses{lem-sift}
+
+\begin{proof}
+\uses{lem-sift}
 Test.
 \end{proof}

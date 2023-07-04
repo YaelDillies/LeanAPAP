@@ -18,7 +18,7 @@ variables {G : Type*} [decidable_eq G] [fintype G] [add_comm_group G] {p : ℕ} 
 
 def C (p : ℕ) (A : finset G) (s : fin p → G) : finset G := univ.inf (λ i, s i +ᵥ A)
 
-lemma lemma_0 (p : ℕ) (B₁ B₂ A : finset G) (f : G → ℝ) :
+private lemma lemma_0 (p : ℕ) (B₁ B₂ A : finset G) (f : G → ℝ) :
   ∑ s, ⟪𝟭_[ℝ] (B₁ ∩ C p A s) ○ 𝟭 (B₂ ∩ C p A s), f⟫_[ℝ] =
     (B₁.card * B₂.card) • ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * ((𝟭 A ○ 𝟭 A) x ^ p * f x) :=
 begin
@@ -33,7 +33,7 @@ begin
   simp [C, indicator_inf_apply, ←translate_indicator, sub_eq_add_neg, mul_assoc],
 end
 
-lemma lemma_1 (hp : 2 ≤ p) (hpeven : even p) (f : G → ℝ≥0) (B₁ B₂ A : finset G) :
+lemma drc (hp : 2 ≤ p) (hpeven : even p) (f : G → ℝ≥0) (B₁ B₂ A : finset G) :
   ∃ (A₁ ⊆ B₁) (A₂ ⊆ B₂), ⟪μ_[ℝ] A₁ ○ μ A₂, coe ∘ f⟫_[ℝ] ≤
     2 * (∑ x, (μ B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x) / ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p
     ∧ (4 : ℝ)⁻¹ * A.card ^ (-2 * p : ℤ) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p)
@@ -54,7 +54,7 @@ univ.filter $ λ x, (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ 
 by simp [S]
 
 --TODO: When `1 < ε`, the result is trivial since `S = univ`.
-lemma lemma_2 (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : even p) (hp₂ : 2 ≤ p)
+lemma sifting (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : even p) (hp₂ : 2 ≤ p)
   (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hB : (B₁ ∩ B₂).nonempty) (hA : A.nonempty) :
   ∃ (A₁ ⊆ B₁) (A₂ ⊆ B₂), 1 - δ ≤ ∑ x in S p ε B₁ B₂ A, (μ A₁ ○ μ A₂) x ∧
     (4 : ℝ)⁻¹ * A.card ^ (-2 * p : ℤ) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) ≤
@@ -62,7 +62,7 @@ lemma lemma_2 (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : even p) (h
     (4 : ℝ)⁻¹ * A.card ^ (-2 * p : ℤ) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) ≤
       A₂.card / B₂.card :=
 begin
-  obtain ⟨A₁, hAB₁, A₂, hAB₂, h, hcard₁, hcard₂⟩ := lemma_1 hp₂ hp (𝟭 (S p ε B₁ B₂ A)ᶜ) B₁ B₂ A,
+  obtain ⟨A₁, hAB₁, A₂, hAB₂, h, hcard₁, hcard₂⟩ := drc hp₂ hp (𝟭 (S p ε B₁ B₂ A)ᶜ) B₁ B₂ A,
   refine ⟨A₁, hAB₁, A₂, hAB₂, _, hcard₁, hcard₂⟩,
   have : 0 < ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p,
   { rw wLpnorm_pow_eq_sum,

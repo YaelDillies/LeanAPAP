@@ -2,20 +2,22 @@
 \label{chap:ap}
 
 
-\begin{lemma}[Marcinkiewicz-Zygmund inequality]\label{mzi}
-%\leanok
+\begin{lemma}[Marcinkiewicz-Zygmund inequality]
+\label{mzi}
+\lean{other_marcinkiewicz_zygmund'}
 Let $m\geq 1$. If $f:G\to\bbr$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
 \[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (4mn)^{m}.\]
 \end{lemma}
+
 \begin{proof}
-%\leanok
+\leanok
 Let $S$ be the left-hand side. Since $0=\bbe_y f(y)$ we have, by the triangle inequality, and H\"{o}lder's inequality,
 \[S=\bbe_{x_1,\ldots,x_n}\left\lvert \sum_i f(x_i) - \bbe_{y_i} f(y_i)\right\rvert^{2m} = \bbe_{x_1,\ldots,x_n} \left\lvert\bbe_{y_i}\brac{\sum_i f(x_i)-f(y_i)}\right\rvert^{2m}\leq \bbe_{x_1,\dots,y_n} \left\lvert \sum_i f(x_i)-f(y_i)\right\rvert^{2m}.\]
-Changing the role of $x_i$ and $y_i$ makes no difference here, but multiplies the $i$ summand by $\{-1,+1\}$, and therefore for any $\epsilon_i\in\{-1,+1\}$, 
+Changing the role of $x_i$ and $y_i$ makes no difference here, but multiplies the $i$ summand by $\{-1,+1\}$, and therefore for any $\epsilon_i\in\{-1,+1\}$,
 \[ S \leq\bbe_{x_1,\ldots,y_n}\left\lvert \sum_i \epsilon_i(f(x_i)-f(y_i))\right\rvert^{2m}.\]
-In particular, if we sample $\epsilon_i\in\{-1,+1\}$ uniformly at random, then 
+In particular, if we sample $\epsilon_i\in\{-1,+1\}$ uniformly at random, then
 \[ S \leq\bbe_{\epsilon_i} \bbe_{x_1,\ldots,y_n}\left\lvert \sum_i \epsilon_i(f(x_i)-f(y_i))\right\rvert^{2m}.\]
-We now change the order of expectation and consider the expectation over just $\epsilon_i$, viewing the $f(x_i)-f(y_i)=z_i$, say, as fixed quantities. For any $z_i$ we can expand $\bbe_{\epsilon_i} \lvert \sum_i \epsilon_iz_i\rvert^{2m}$ and then bound it from above, using the triangle inequality and $\abs{z_i}\leq 4$, by 
+We now change the order of expectation and consider the expectation over just $\epsilon_i$, viewing the $f(x_i)-f(y_i)=z_i$, say, as fixed quantities. For any $z_i$ we can expand $\bbe_{\epsilon_i} \lvert \sum_i \epsilon_iz_i\rvert^{2m}$ and then bound it from above, using the triangle inequality and $\abs{z_i}\leq 4$, by
 \[4^{2m}\sum_{k_1+\cdots+k_n=2m}\binom{2m}{k_1,\ldots,k_n}\abs{\bbe\epsilon_1^{k_1}\cdots \epsilon_n^{k_n}}.\]
 The inner expectation vanishes unless each $k_i$ is even, when it is trivially one. Therefore the above quantity is exactly
 \[\sum_{l_1+\cdots+l_n=m}\binom{2m}{2l_1,\ldots,2l_n}\leq m^mn^m,\]
@@ -26,94 +28,126 @@ This can be seen, for example, by writing both sides out using factorials, yield
 \[\frac{(2m)!}{(2l_1)!\cdots (2l_n)!}\leq \frac{(2m)!}{2^mm!}\frac{m!}{l_1!\cdots l_n!}\leq m^m\frac{m!}{l_1!\cdots l_n!}.\]
 \end{proof}
 
-\begin{lemma}\label{mzi-complex}
-%\leanok
+
+\begin{lemma}[Complex-valued Marcinkiewicz-Zygmund inequality]
+\label{mzi-complex}
+\lean{complex_marcinkiewicz_zygmund}
 Let $m\geq 1$. If $f:G\to\bbc$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
 \[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (16mn)^{m}.\]
 \end{lemma}
-\begin{proof}\uses{mzi}
+
+\begin{proof}
+\uses{mzi}
+\leanok
 Test.
 \end{proof}
 
-\begin{lemma}\label{random_approx_expect}
-Let $\epsilon>0$ and $m\geq 1$. Let $A\subseteq G$ and $f:G\to \bbc$. If $k\geq 256m\epsilon^{-2}$ then the set
 
-\[ \bbe_{a_1,\ldots,a_k\in A} \norm{ \mu_\tup{a}*f - \mu_A*f }_{2m}^{2m} \leq (\epsilon/2)^{2m}\norm{f}_{2m}^{2m}.\] 
+\begin{lemma}
+\label{random_approx_expect}
+\lean{lemma28}
+Let $\epsilon>0$ and $m\geq 1$. Let $A\subseteq G$ and $f:G\to \bbc$. If $k\geq 64m\epsilon^{-2}$ then the set
+\[L=\{ \tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^kf(x-a_i)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}\}.\]
+has size at least $\lvert A \rvert^k/2$.
 \end{lemma}
-\begin{proof}\uses{mzi-complex}
+
+\begin{proof}
+\uses{mzi-complex}
+\leanok
 Note that if $a\in A$ is chosen uniformly at random then, for any fixed $x\in G$,
 \[\bbe f(x-a_i)= \frac{1}{\abs{A}}\sum_{a\in A}f(x-a)=\frac{1}{\abs{A}}\ind{A}\ast f(x)=\mu_A\ast f(x).\]
-Therefore, if we choose $a_1,\ldots,a_k\in A$ independently uniformly at random, for any fixed $x\in G$ and $1\leq i\leq k$,  the random variable $f(x-a_i)-f\ast \mu_A(x)$ has mean zero. By the Marcinkiewicz-Zygmund inequality Lemma~\ref{mzi}, therefore, 
+Therefore, if we choose $a_1,\ldots,a_k\in A$ independently uniformly at random, for any fixed $x\in G$ and $1\leq i\leq k$,  the random variable $f(x-a_i)-f\ast \mu_A(x)$ has mean zero. By the Marcinkiewicz-Zygmund inequality Lemma~\ref{mzi}, therefore,
 \begin{multline*}
 \bbe\abs{ \frac{1}{k}\sum_i f(x-a_i)-f\ast \mu_A(x)}^{2m} \leq \\(16m/k)^mk^{-1} \bbe \sum_i \abs{f(x-a_i)-f\ast \mu_A(x)}^{2m}.
 \end{multline*}
-We now sum both sides over all $x\in G$. By the triangle inequality, for any fixed $1\leq i\leq k$ and $a_i\in A$, 
+We now sum both sides over all $x\in G$. By the triangle inequality, for any fixed $1\leq i\leq k$ and $a_i\in A$,
 \begin{align*}
 \sum_{x\in G} \abs{f(x-a_i)-f\ast \mu_A(x)}^{2m}
 &\leq 2^{2m-1}\sum_{x\in G}\abs{f(x-a_i)}^{2m}+\sum_{x\in G}\abs{f\ast \mu_A(x)}^{2m}\\
 &\leq 2^{2m-1}\brac{\norm{f}_{2m}^{2m}+\norm{f\ast \mu_A}_{2m}^{2m}}.
 \end{align*}
-We note that $\norm{\mu_A}_1=\frac{1}{\abs{A}}\sum_{x\in A}\ind{A}(x)=\abs{A}/\abs{A}=1$, and hence by Young's inequality, $\norm{f\ast \mu_A}_{2m}\leq \norm{f}_{2m}$, and so 
+We note that $\norm{\mu_A}_1=\frac{1}{\abs{A}}\sum_{x\in A}\ind{A}(x)=\abs{A}/\abs{A}=1$, and hence by Young's inequality, $\norm{f\ast \mu_A}_{2m}\leq \norm{f}_{2m}$, and so
 \[\sum_{x\in G} \abs{f(x-a_i)-f\ast \mu_A(x)}^{2m}\leq 2^{2m}\norm{f}_{2m}^{2m}.\]
-It follows that 
-\[\bbe_{a_1,\ldots,a_k\in A}\norm{\frac{1}{k}\sum_i\tau_{a_i}f-f\ast \mu_A}_{2m}^{2m}\leq 
+It follows that
+\[\bbe_{a_1,\ldots,a_k\in A}\norm{\frac{1}{k}\sum_i\tau_{a_i}f-f\ast \mu_A}_{2m}^{2m}\leq
 (64m/k)^m\norm{f}_{2m}^{2m}.\]
-In particular, if $k\geq 256\epsilon^{-2}m$ then the right-hand side is at most $(\frac{\epsilon}{2}\norm{f}_{2m})^{2m}$ as required.
+In particular, if $k\geq 64\epsilon^{-2}m$ then the right-hand side is at most $(\frac{\epsilon}{2}\norm{f}_{2m})^{2m}$ as required.
 \end{proof}
 
-\begin{lemma}\label{aps_in_translates}
+
+\begin{lemma}
+\label{aps_in_translates}
+\lean{just_the_triangle_inequality}
 Let $A\subseteq G$ and $f:G\to \bbc$. Let $\epsilon>0$ and $m\geq 1$ and $k\geq 1$. Let
 \[L=\{ \tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^kf(x-a_i)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}\}.\]
 If $t\in G$ is such that $\tup{a}\in L$ and $\tup{a}+(t,\ldots,t)\in L$ then
 \[\| \tau_t(\mu_A\ast f)-\mu_A\ast f\|_{2m}\leq 2\epsilon \|f\|_{2m}.\]
 \end{lemma}
+
 \begin{proof}
+\leanok
 Test.
 \end{proof}
 
 
-\begin{lemma}\label{lots_of_diagonals}Let $A\subseteq G$ and $k\geq 1$ and $L\subseteq A^k$. Then there exists some $\tup{a}\in L$ such that
+\begin{lemma}
+\label{lots_of_diagonals}
+\lean{big_shifts}
+Let $A\subseteq G$ and $k\geq 1$ and $L\subseteq A^k$. Then there exists some $\tup{a}\in L$ such that
 \[\#\{ t\in G : \tup{a}+(t,\ldots,t)\in L\}\geq \frac{\lvert L\rvert}{\lvert A+S\rvert^k}\lvert S\rvert.\]
 \end{lemma}
+
 \begin{proof}
+\leanok
 Test.
 \end{proof}
 
-\begin{theorem}\label{lp_ap}
+\begin{theorem}[$L_p$ almost periodicity]
+\label{lp_ap}
+\lean{almost_periodicity}
 Let $\epsilon>0$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $f:G\to \bbc$. There exists $T\subseteq G$ such that
 \[\lvert T\rvert \geq K^{-1000m\epsilon^{-2}}\lvert S\rvert\]
 such that for any $t\in T$ we have
 \[\| \tau_t(\mu_A\ast f)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}.\]
 \end{theorem}
-\begin{proof}\uses{random_approx_expect, lots_of_diagonals, aps_in_translates}
+\begin{proof}
+\uses{random_approx_expect, lots_of_diagonals, aps_in_translates}
+\leanok
 Test.
 \end{proof}
 
 
 
-\begin{theorem}\label{linfty_ap}
+\begin{theorem}[$L_\infty$ almost periodicity]
+\label{linfty_ap}
 Let $\epsilon>0$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $B,C\subseteq G$. There exists $T\subseteq G$ such that
 \[\lvert T\rvert \geq K^{-1000\log(\lvert C\rvert/\lvert B\rvert)\epsilon^{-2}}\lvert S\rvert\]
 such that for any $t\in T$ we have
 \[\| \tau_t(\mu_A\ast \mu_B\ast 1_C)-\mu_A\ast \mu_B\ast 1_C\|_{2m}\leq \epsilon.\]
 \end{theorem}
-\begin{proof}\uses{lp_ap}
+
+\begin{proof}
+\uses{lp_ap}
 Test.
 \end{proof}
 
 
-\begin{theorem}\label{linfty_ap_boosted}
+\begin{theorem}
+\label{linfty_ap_boosted}
 Let $\epsilon>0$ and $m\geq 1$ and $k\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $B,C\subseteq G$. There exists $T\subseteq G$ such that
 \[\lvert T\rvert \geq K^{-1000\log(\lvert C\rvert/\lvert B\rvert)k^2\epsilon^{-2}}\lvert S\rvert\]
 such that
 \[\| \mu_T^{(k)}\ast\mu_A\ast \mu_B\ast 1_C-\mu_A\ast \mu_B\ast 1_C\|_{2m}\leq \epsilon.\]
 \end{theorem}
-\begin{proof}\uses{linfty_ap}
+
+\begin{proof}
+\uses{linfty_ap}
 Test.
 \end{proof}
 
-\begin{theorem}\label{chang}
-If 
+\begin{theorem}[Chang's lemma]
+\label{chang}
+If
 \[\Delta = \{ \gamma : \lvert \widehat{\ind{X}(\gamma)}\rvert \geq \eta \mu(X)\}\]
 then there is a set $\Gamma$ of size $O(\eta^{-2}\log(1/\mu(X)))$ such that
 \[\Delta\subseteq \left\{\sum_{\gamma\in\Gamma}\epsilon_\gamma\gamma : \epsilon_\gamma\in \{-1,0,1\}\right\}.\]
