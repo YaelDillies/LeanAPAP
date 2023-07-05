@@ -111,8 +111,9 @@ Test.
 \label{lp_ap}
 \lean{almost_periodicity}
 \leanok
-Let $\epsilon>0$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $f:G\to \bbc$. There exists $T\subseteq G$ such that
-\[\lvert T\rvert \geq K^{-1000m\epsilon^{-2}}\lvert S\rvert\]
+Let $\epsilon\in (0,1]$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$.
+Let $f:G\to \bbc$. There exists $T\subseteq G$ such that
+\[\lvert T\rvert \geq K^{-512m\epsilon^{-2}}\lvert S\rvert\]
 such that for any $t\in T$ we have
 \[\| \tau_t(\mu_A\ast f)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}.\]
 \end{theorem}
@@ -124,32 +125,57 @@ Test.
 \end{proof}
 
 
-
 \begin{theorem}[$L_\infty$ almost periodicity]
 \label{linfty_ap}
-Let $\epsilon>0$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $B,C\subseteq G$. There exists $T\subseteq G$ such that
-\[\lvert T\rvert \geq K^{-1000\log(\lvert C\rvert/\lvert B\rvert)\epsilon^{-2}}\lvert S\rvert\]
+Let $\epsilon\in (0,1]$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$.
+Let $B,C\subseteq G$. Let $\eta=\min(1,\lvert C\rvert/\lvert B\rvert)$. There exists $T\subseteq G$ such that
+\[\lvert T\rvert \geq K^{-4096\lceil \lo{\eta}\rceil\epsilon^{-2}}\lvert S\rvert\]
 such that for any $t\in T$ we have
-\[\| \tau_t(\mu_A\ast \mu_B\ast 1_C)-\mu_A\ast \mu_B\ast 1_C\|_{2m}\leq \epsilon.\]
+\[\| \tau_t(\mu_A\ast 1_B\ast \mu_C)-\mu_A\ast 1_B\ast \mu_C\|_{\infty}\leq \epsilon.\]
 \end{theorem}
 
 \begin{proof}
-\uses{lp_ap}
-Test.
+\uses{lp_ap} Let $T$ be as given in \ref{l_ap}
+with $f=1_B$ and $m=\lceil \lo{\eta}\rceil$ and $\epsilon=\epsilon/e$. (The size bound on $T$ follows since $e^2\leq 8$.) Fix $t\in T$ and let $F=\tau_t(\mu_A\ast 1_B)-\mu_A\ast 1_B$. We have, for any $x\in G$,
+\[(\tau_t(\mu_A\ast 1_B\ast \mu_C)-\mu_A\ast 1_B\ast \mu_C)(x)=F\ast \mu_C(x)=\sum_y F(y)\mu_{C}(x-y)=\sum_yF(y)\mu_{x-C}(y).\]
+By Holder's inequality, this is (in absolute value), for any $m\geq 1$,
+\[\norm{F}_{2m}\norm{\mu_{x-C}}_{1+\frac{1}{2m-1}}.\]
+By the construction of $T$ the first factor is at most
+$\frac{\epsilon}{e}\| 1_B\|_{2m}=\frac{\epsilon}{e}\lvert B\rvert^{1/2m}$.
+We have by calculation
+\[\norm{\mu_{x-C}}_{1+\frac{1}{2m-1}}=\lvert x-C\rvert^{-1/2m}=\lvert C\rvert^{-1/2m}.\]
+Therefore we have shown that
+
+\[\| \tau_t(\mu_A\ast 1_B\ast \mu_C)-\mu_A\ast 1_B\ast \mu_C\|_{\infty}\leq \frac{\epsilon}{e}(\lvert C\rvert/\lvert B\rvert)^{-1/2m}.\]
+The claim now follows since, by choice of $m$,
+\[(\lvert C\rvert/\lvert B\rvert)^{-1/2m}\leq e\]
+(dividing into cases as to whether $\eta=1$ or not).
 \end{proof}
 
 
 \begin{theorem}
 \label{linfty_ap_boosted}
-Let $\epsilon>0$ and $m\geq 1$ and $k\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$. Let $B,C\subseteq G$. There exists $T\subseteq G$ such that
-\[\lvert T\rvert \geq K^{-1000\log(\lvert C\rvert/\lvert B\rvert)k^2\epsilon^{-2}}\lvert S\rvert\]
+
+Let $\epsilon\in (0,1]$ and $m\geq 1$ and $k\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$.
+Let $B,C\subseteq G$. Let $\eta=\min(1,\lvert C\rvert/\lvert B\rvert)$. There exists $T\subseteq G$ such that
+\[\lvert T\rvert \geq K^{-4096\lceil \lo{\eta}\rceil k^2\epsilon^{-2}}\lvert S\rvert\]
 such that
-\[\| \mu_T^{(k)}\ast\mu_A\ast \mu_B\ast 1_C-\mu_A\ast \mu_B\ast 1_C\|_{2m}\leq \epsilon.\]
+\[\| \mu_T^{(k)}\ast \mu_A\ast 1_B\ast \mu_C-\mu_A\ast 1_B\ast \mu_C\|_{\infty}\leq \epsilon.\]
 \end{theorem}
 
 \begin{proof}
 \uses{linfty_ap}
-Test.
+Let $T$ be as in Theorem~\ref{linfty_ap} with $\epsilon$ replaced by $\epsilon/k$. Note that, for any $x\in G$,
+\[\mu_T^{(k)}\ast \mu_A\ast 1_B\ast \mu_C(x)=\frac{1}{\lvert T\rvert^k}\sum_{t_1,\ldots,t_k\in T}\tau_{t_1+\cdots+t_k}\mu_A\ast 1_B\ast \mu_C(x).\]
+It therefore suffices (by the triangle inequality) to show, for any fixed $x\in G$ and $t_1,\ldots,t_k\in T$, that with $F=\mu_A\ast 1_B\ast \mu_C$, we have
+\[\lvert \tau_{t_1+\cdots+t_k}F(x)-F(x)\rvert \leq \epsilon.\]
+This follows by the triangle inequality applied $k$ times if we knew that, for $1\leq l\leq k$,
+\[\lvert \tau_{t_1+\cdots+t_l}F(x)-\tau_{t_1+\cdots+t_{l-1}}F(x)\rvert \leq \epsilon/k.\]
+We can write the left-hand side as
+\[\lvert \tau_{t_1+\cdots+t_l}F(x)-\tau_{t_1+\cdots+t_{l-1}}F(x)\rvert=\lvert \tau_{t_l}F(x-t_1-\cdots-t-{l-1})-F(x-t_1-\cdots-t-{l-1})\rvert.\]
+The right-hand side is at most
+\[\| \tau_{t_l}F-F\|_\infty\]
+and we are done by choice of $T$.
 \end{proof}
 
 \begin{theorem}[Chang's lemma]
@@ -172,3 +198,4 @@ such that
 \begin{proof}\uses{chang,linfty_ap_boosted}
 Test.
 \end{proof}
+
