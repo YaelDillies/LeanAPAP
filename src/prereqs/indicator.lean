@@ -42,6 +42,9 @@ by ext; simp [indicator_apply]
 lemma sum_indicator [fintype α] (s : finset α) : ∑ x, 𝟭_[β] s x = s.card :=
 by simp [indicator_apply, ←finset.mem_coe, set.filter_mem_univ_eq_to_finset]
 
+lemma card_eq_sum_indicator [fintype α] (s : finset α) : s.card = ∑ x, 𝟭_[ℕ] s x :=
+(sum_indicator _ _).symm
+
 lemma translate_indicator [add_comm_group α] (a : α) (s : finset α) : τ a (𝟭_[β] s) = 𝟭 (a +ᵥ s) :=
 by ext; simp [indicator_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
 

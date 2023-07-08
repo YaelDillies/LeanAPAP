@@ -2,6 +2,12 @@ import algebra.big_operators.ring
 import data.fintype.big_operators
 import data.fintype.card
 
+/-!
+## TODO
+
+More explicit arguments to `finset.mul_sum`/`finset.sum_mul`
+-/
+
 open_locale big_operators
 
 namespace finset
