@@ -127,6 +127,14 @@ lemma smul_dconv_left_comm [has_star γ] [distrib_smul γ β] [smul_comm_class �
 by ext a; simp only [pi.smul_apply, smul_sum, dconv_apply, mul_smul_comm, star_ring_end_apply,
   star_module.star_smul]
 
+lemma map_conv {γ} [comm_semiring γ] [star_ring γ] (m : β →+* γ) (f g : α → β) (a : α) :
+  m ((f ∗ g) a) = ((m ∘ f) ∗ (m ∘ g)) a :=
+by simp_rw [conv_apply, map_sum, map_mul]
+
+--TODO: Can we generalise to star ring homs?
+lemma map_dconv (f g : α → ℝ≥0) (a : α) : (↑((f ○ g) a) : ℝ) = ((coe ∘ f) ○ (coe ∘ g)) a :=
+by simp_rw [dconv_apply, nnreal.coe_sum, nnreal.coe_mul, star_ring_end_apply, star_trivial]
+
 lemma conv_eq_sum_sub (f g : α → β) (a : α) : (f ∗ g) a = ∑ t, f (a - t) * g t :=
 begin
   rw conv_apply,
