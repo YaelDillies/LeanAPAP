@@ -1,0 +1,118 @@
+\chapter{Chang's lemma}
+
+\begin{definition}
+
+Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\eta\in \bbr$. The $\eta$-large spectrum is defined to be
+\[\Delta_\eta(f) = \{ \gamma\in\widehat{G} : \lvert \widehat{f}(\gamma)\rvert \geq \eta\norm{f}_1\}.\]
+\end{definition}
+
+\begin{definition}
+Let $G$ be a finite abelian group and $A\subseteq G$. Let $m\geq 1$. We define
+\[E_{2m}(A)=\sum_{a_1,\ldots,a_{2m}\in A}1_{a_1+\cdots-a_{2m}=0}.\]
+\end{definition}
+
+
+\begin{definition}
+Let $\Delta\subseteq \widehat{G}$ and $m\geq 1$. Let $\nu:G\to \bbc$. Then 
+\[E_{2m}(\Delta;\nu)=\sum_{\gamma_1,\ldots,\gamma_{2m}\in \Delta}\abs{\widehat{\nu}(\gamma_1+\cdots-\gamma_{2m})}.\]
+\end{definition}
+
+\begin{definition}
+We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G$, there is at most one $A'\subset A$ of size $\abs{A'}=m$ such that 
+\[\sum_{a\in A'}a=x.\]
+\end{definition}
+
+\begin{lemma}\label{general_holder}
+Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\nu:G\to \bbr_{\geq 0}$ be such that whenever $\abs{f}\neq 0$ we have $\nu \geq 1$. Let $\Delta\subseteq \Delta_\eta(f)$. Then, for any $m\geq 1$.  
+\[\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\leq E_{2m}(\Delta;\nu).\]
+\end{lemma}
+\begin{proof}
+By definition of $\Delta_\eta(f)$ we know that
+\[\eta\norm{f}_1\abs{\Delta}\leq \sum_{\gamma\in\Delta} \lvert \widehat{f}(\gamma)\rvert.\]
+There exists some $c_\gamma\in\bbc$ with $\lvert c_\gamma\rvert=1$ for all $\gamma$ such that 
+\[\lvert \widehat{f}(\gamma)\rvert=c_\gamma\widehat{f}(\gamma)=c_\gamma \sum_{x\in G}f(x)\overline{\gamma(x)}.\]
+Interchanging the sums, therefore,
+
+\[\eta\norm{f}_1\abs{\Delta}\leq \sum_{x\in G}f(x)\sum_{\gamma\in\Delta} c_\gamma \overline{\gamma(x)}.\]
+By H\"{o}lder's inequality the right-hand side is at most
+\[\brac{\sum_x \abs{f(x)}}^{1-1/m}\brac{\sum_x \abs{f(x)}\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^m}^{1/m}.\]
+Taking $m$th powers, therefore, we have
+\[\eta^m\abs{\Delta}^m\norm{f}_1\leq \sum_{x}\abs{f(x)}\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^m.\]
+By assumption we can bound $\abs{f(x)}\leq \abs{f(x)}\nu(x)^{1/2}$, and therefore by the Cauchy-Schwarz inequality the right-hand side is bounded above by
+\[\norm{f}_2\brac{\sum_x \nu(x)\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^{2m}}^{1/2}.\]
+Squaring and simplifying, we deduce that
+\[\eta^{2m}\abs{\Delta}^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\leq \sum_x \nu(x)\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^{2m}.\]
+Expanding out the power, the right-hand side is equal to
+\[\sum_x \nu(x)\sum_{\gamma_1,\ldots,\gamma_{2m}}c_{\gamma_1}\cdots \overline{c_{\gamma_{2m}}} (\overline{\gamma_1}\cdots \gamma_{2m})(x).\]
+Changing the order of summation this is equal to 
+\[\sum_{\gamma_1,\ldots,\gamma_{2m}}c_{\gamma_1}\cdots \overline{c_{\gamma_{2m}}}
+\widehat{\nu}(\gamma_1\cdots \overline{\gamma_{2m}}).\]
+The result follows by the triangle inequality.
+\end{proof}
+
+\begin{lemma}\label{spec_holder}
+Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\Delta\subseteq \Delta_\eta(f)$. Then, for any $m\geq 1$.  
+\[N^{-1}\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\leq E_{2m}(\Delta).\]
+\end{lemma}
+\begin{proof}
+\uses{general_holder}
+Apply Lemma~\ref{general_holder} with $\nu\equiv 1$, and use the fact that $\sum_x \lambda(x)$ is $N$ if $\lambda\equiv 1$ and $0$ otherwise. 
+\end{proof}
+
+\begin{lemma}\label{energy_alt}
+If $A\subset G$ and $m\geq 1$ then
+\[E_{2m}(A) = \sum_x 1_A^{(m)}(x)^2.\]
+\end{lemma}
+\begin{proof}
+Expand out definitions.
+\end{proof}
+
+\begin{lemma}\label{diss_energy}
+If $A\subseteq G$ is dissociated then $E_{2m}(A) \leq m! \abs{A}^m$.
+\end{lemma}
+\begin{proof}
+\uses{energy_alt}
+By Lemma~\ref{energy_alt}
+
+\[E_{2m}(A) = \sum_x 1_A^{(m)}(x)^2.\]
+By the definition of dissociativity, $1_A^{(m)}(x)\leq m!$ for all $x\in G$. We are done since 
+\[ \sum_x 1_A^{(m)}(x) = \abs{A}^m.\]
+\end{proof}
+
+\begin{lemma}\label{diss_span}
+If $A\subseteq G$ contains no dissociated set with $\geq K+1$ elements then there is $A'\subseteq A$ of size $\abs{A'}\leq K$ such that
+\[A\subseteq \left\{ \sum_{a\in A'}c_aa : c_a\in \{-1,0,1\} \right\}.\]
+\end{lemma}
+\begin{proof}
+Let $A'\subseteq A$ be a maximal dissociated subset (this exists and is non-empty, since trivially any singleton is dissociated). We have $\abs{A'}\leq K$ by assumption. 
+
+Let $S$ be the span on the right-hand side. It is obvious that $A'\subseteq S$. Suppose that $x\in A\backslash A'$. Then $A'\cup\{x\}$ is not dissociated by maximality. Therefore there exists some $y\in G$ and two distinct sets $B,C\subseteq A'\cup \{x\}$ such that
+\[\sum_{b\in B}b = y = \sum_{c\in C} c.\]
+If $x\not\in B$ and $x\not\in C$ then this contradicts the dissociativity of $A'$. If $x\in B$ and $x\in C$ then we have
+\[\sum_{b\in B\backslash x}b=y-x=\sum_{c\in C\backslash x}c,\]
+again contradicting the dissociativity of $A'$. Without loss of generality, therefore, $x\in B$ and $x\not\in C$. Therefore
+\[x=\sum_{c\in C}c - \sum_{b\in B\backslash x}b\]
+which is in the span as required.
+\end{proof}
+
+
+\begin{theorem}\label{chang_simple}
+Let $G$ be a finite abelian group and $f:G\to \bbc$. Let $\eta >0$ and $\alpha=N^{-1}\norm{f}_1^2/\norm{f}_2^2$. There exists some $\Delta\subseteq \Delta_\eta(f)$ such that
+\[\abs{\Delta}\leq \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil \]
+and
+\[\Delta_\eta(f)\subseteq \left\{ \sum_{\gamma\in\Delta}c_\gamma \gamma : c_\gamma\in \{-1,0,1\} \right\}.\]
+\end{theorem}
+\begin{proof}
+\uses{diss_span, spec_holder}
+By Lemma~\ref{diss_span} it suffices to show that $\Delta_\eta(f)$ contains no dissociated set with at least
+\[K= \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil+1\]
+many elements. Suppose not, and let $\Delta\subseteq \Delta_\eta(f)$ be a dissociated set of size $K$. Then by Lemma~\ref{diss_energy} we have, for any $m\geq 1$,
+\[E_{2m}(\Delta)\leq m!K^m.\]
+On the other hand, by Lemma~\ref{spec_holder},
+
+\[\eta^{2m}\alpha K^{2m}\leq E_{2m}(\Delta).\]
+Rearranging these bounds, we have
+\[K^m \leq m! \alpha^{-1}\eta^{-2m}\leq m^m\alpha^{-1}\eta^{2m}.\]
+Therefore $K\leq \alpha^{-1/m}m\eta^{-2}$. This is a contradiction to the choice of $K$ if we choose $m=\mathcal{L}(\alpha)$, since $\alpha^{-1/m}\leq e$. 
+\end{proof}
+
