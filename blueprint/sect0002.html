@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unbalancing</title>
+<link rel="next" href="sect0003.html" title="Dependent random choice" />
+<link rel="prev" href="sect0001.html" title="Chang’s lemma" />
+<link rel="up" href="index.html" title="LeanAPAP" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">LeanAPAP</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="chap-ap.html"><span class="toc_ref">1</span> <span class="toc_entry">Almost-Periodicity</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">2</span> <span class="toc_entry">Chang’s lemma</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0002.html"><span class="toc_ref">3</span> <span class="toc_entry">Unbalancing</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">4</span> <span class="toc_entry">Dependent random choice</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">5</span> <span class="toc_entry">Finite field model</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000003">3 Unbalancing</h1>
+<p><div class="lemma_thmwrapper" id="nonneg_moments">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.1</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0002.html#nonneg_moments">#</a>
+    <a class="icon proof" href="sect0002.html#a0000000092"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/YaelDillies/LeanAPAP//blob/b825c4f702e6a0a4b29ae5ec65a08891f79f9c75/src/physics/unbalancing.lean#L46">pow_inner_nonneg</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  For any function \(f:G\to \mathbb {R}\) and integer \(k\geq 0\) </p>
+<div class="displaymath" id="a0000000093">
+  \[ \mathbb {E}_x f\circ f(x)^k\geq 0. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000092">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Test. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="unbalancing">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">3.2</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0002.html#unbalancing">#</a>
+    <a class="icon proof" href="sect0002.html#a0000000094"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/YaelDillies/LeanAPAP//blob/b825c4f702e6a0a4b29ae5ec65a08891f79f9c75/src/physics/unbalancing.lean#L173">unbalancing</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(\epsilon \in (0,1)\) and \(\nu :G\to \mathbb {R}_{\geq 0}\) be some probability measure such that \(\widehat{\nu }\geq 0\). Let \(f:G\to \mathbb {R}\). If \(\lVert f\circ f\rVert _{p(\nu )}\geq \epsilon \) for some \(p\geq 1\) then \(\lVert f\circ f+1\rVert _{p'(\nu )}\geq 1+\tfrac {1}{2}\epsilon \) for some \(p'\ll _\epsilon p\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000094">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Without loss of generality we can assume that \(p\geq 5\) is an odd integer. Since the Fourier transforms of \(f\) and \(\nu \) are non-negative, </p>
+<div class="displaymath" id="a0000000095">
+  \[ \mathbb {E}\nu f^{p}= \widehat{\nu }\ast \widehat{f}^{(p)}(0_{\widehat{G}})\geq 0. \]
+</div>
+<p> It follows that, since \(2\max (x,0)=x+\left\lvert x\right\rvert \) for \(x\in \mathbb {R}\), </p>
+<div class="displaymath" id="a0000000096">
+  \[ 2\langle \max (f,0),f^{p-1}\rangle _\nu =\mathbb {E}\nu f^{p}+\langle \left\lvert f\right\rvert ,f^{p-1}\rangle _\nu \geq \lVert f\rVert _{p(\nu )}^p\geq \epsilon ^p. \]
+</div>
+<p> Therefore, if \(P=\{  x : f(x) \geq 0\} \), then \(\langle 1_{P},f^{p}\rangle _\nu \geq \frac{1}{2}\epsilon ^{p}\). Furthermore, if \(T=\{  x\in P : f(x) \geq \tfrac {3}{4}\epsilon \} \) then \(\langle 1_{P\backslash T},f^p\rangle _\nu \leq \tfrac {1}{4}\epsilon ^{p}\), and hence by the Cauchy-Schwarz inequality, </p>
+<div class="displaymath" id="a0000000097">
+  \[ \nu (T)^{1/2}\lVert f\rVert _{2p(\nu )}^{p}\geq \langle 1_{T}, f^{p}\rangle _\nu \geq \tfrac {1}{4}\epsilon ^{p}. \]
+</div>
+<p> On the other hand, by the triangle inequality </p>
+<div class="displaymath" id="a0000000098">
+  \[ \lVert f\rVert _{2p(\nu )}\leq 1+\lVert f+1\rVert _{2p(\nu )}\leq 3, \]
+</div>
+<p> or else we are done, with \(p'=2p\). Hence \(\nu (T)\geq (\epsilon /10)^{2p}\). It follows that, for any \(p'\geq 1\), </p>
+<div class="displaymath" id="a0000000099">
+  \[ \lVert f+1\rVert _{p'(\nu )}\geq \langle 1_{T},\left\lvert f+1\right\rvert ^{p'}\rangle _\nu ^{1/p'}\geq (1+\tfrac {3}{4}\epsilon )(\epsilon /10)^{2p/p'}. \]
+</div>
+<p> The desired bound now follows if we choose \(p'\) a sufficiently large multiple (depending on \(\epsilon \)) of \(p\). </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0001.html" title="Chang’s lemma"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="LeanAPAP"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0003.html" title="Dependent random choice"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

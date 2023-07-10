@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Finite field model</title>
+<link rel="prev" href="sect0003.html" title="Dependent random choice" />
+<link rel="up" href="index.html" title="LeanAPAP" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">LeanAPAP</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="chap-ap.html"><span class="toc_ref">1</span> <span class="toc_entry">Almost-Periodicity</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">2</span> <span class="toc_entry">Chang’s lemma</span></a>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">3</span> <span class="toc_entry">Unbalancing</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">4</span> <span class="toc_entry">Dependent random choice</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0004.html"><span class="toc_ref">5</span> <span class="toc_entry">Finite field model</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000005">5 Finite field model</h1>
+<p><div class="lemma_thmwrapper" id="global_dichotomy">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">5.1</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0004.html#global_dichotomy">#</a>
+    <a class="icon proof" href="sect0004.html#a0000000123"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Let \(\epsilon {\gt}0\). If \(A,C\subseteq G\), where \(C\) has density at least \(\gamma \), then either </p>
+<ol class="enumerate">
+  <li><p>\(\left\lvert \langle \mu _A\ast \mu _A,\mu _C\rangle -1\right\rvert \leq \epsilon \) or </p>
+</li>
+  <li><p>\(\lVert \mu _A\circ \mu _A-1\rVert _p \geq \epsilon /2\) for some \(p\ll \log (2.\gamma )\). </p>
+</li>
+</ol>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000123">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>If the first alternative fails, then by Hölder’s inequality, for any \(p\geq 1\) </p>
+<div class="displaymath" id="a0000000124">
+  \[ \epsilon {\lt} \left\lvert  \langle \mu _A \ast \mu _A - 1, \mu _C \rangle \right\rvert  \leq \lVert \mu _A\ast \mu _A-1\rVert _p\gamma ^{-1/p}. \]
+</div>
+<p> In particular if we choose \(p=2\lceil K\log {\gamma }\rceil \) for some large constant \(K\) then we deduce that </p>
+<div class="displaymath" id="a0000000125">
+  \[ \lVert \mu _A\ast \mu _A-1\rVert _{p}\geq \tfrac {1}{2}\epsilon . \]
+</div>
+<p> It remains to note that, since \(p\) is even, </p>
+<div class="displaymath" id="a0000000126">
+  \[ \lVert \mu _A\ast \mu _A-1\rVert _{p}^p=(\widehat{\mu _A}^21_{\neq 0})^{(p)}(0)\leq (\lvert \widehat{\mu _A} \rvert ^21_{\neq 0})^{(p)}(0)=\lVert \mu _A\circ \mu _A-1\rVert _p^p. \qedhere  \]
+</div>
+
+  </div>
+</div>
+<p><div class="proposition_thmwrapper" id="di_in_ff">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
+    </span>
+    <span class="proposition_thmlabel">5.2</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0004.html#di_in_ff">#</a>
+    <a class="icon proof" href="sect0004.html#a0000000127"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="proposition_thmcontent">
+  <p> Let \(\epsilon \in (0,1)\). If \(A,C\subseteq \mathbb {F}_q^n\), where \(C\) has density at least \(\gamma \), then either </p>
+<ol class="enumerate">
+  <li><p>\(\left\lvert \langle \mu _A\ast \mu _A,\mu _C\rangle -1\right\rvert \leq \epsilon \) or </p>
+</li>
+  <li><p>there is a subspace \(V\) of codimension </p>
+<div class="displaymath" id="a0000000128">
+  \[ \ll _\epsilon \log (2/\gamma )^4\log (2/\alpha )^4 \]
+</div>
+<p> such that \(\lVert 1_{A}\ast \mu _V\rVert _\infty \geq (1+\Omega (\epsilon ))\alpha \). </p>
+</li>
+</ol>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000127">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> By Lemma&#160;??, if the first alternative fails then \(\lVert \mu _A\circ \mu _A-1\rVert _p\geq \epsilon /2\) for some \(p\ll \mathcal{L}{\gamma }\). By Lemma&#160;?? (applied to \(f=\mu _A\circ \mu _A-1\)) we deduce that \(\lVert \mu _A\circ \mu _A\rVert _p\geq 1+\epsilon /4\) for some \(p\ll _\epsilon \mathcal{L}{\gamma }\). Hence, by Corollary&#160;??, there are \(A_1,A_2\), both of density </p>
+<div class="displaymath" id="a0000000129">
+  \[ \geq \alpha ^{O_\epsilon (\mathcal{L}{\gamma })}, \]
+</div>
+<p> such that \(\langle \mu _{A_1}\circ \mu _{A_2},1_{S}\rangle \geq 1-\epsilon /32\), where \(S=\{ x : \mu _A\circ \mu _A(x)\geq 1+\epsilon /8\} \) . By Theorem&#160;?? there is a subspace \(V\) of the required codimension such that </p>
+<div class="displaymath" id="a0000000130">
+  \[ \langle \mu _V\ast \mu _{A_1}\circ \mu _{A_2},1_{S}\rangle \geq 1-\tfrac {1}{16}\epsilon . \]
+</div>
+<p> By definition of \(S\), it follows that </p>
+<div class="displaymath" id="a0000000131">
+  \begin{align*}  1+\Omega (\epsilon ) & \leq (1+\epsilon /8)(1-\epsilon /16)\\ & \leq \langle \mu _V\ast \mu _{A_1}\circ \mu _{A_2},\mu _A\circ \mu _A\rangle \\ & \leq \lVert \mu _V\ast \mu _A\rVert _\infty \lVert \mu _{A}\ast \mu _{A_2}\circ \mu _{A_1}\rVert _1\\ & = \lVert \mu _V\ast 1_{A}\rVert _\infty \alpha ^{-1}, \end{align*}
+</div>
+<p> and the proof is complete. </p>
+
+  </div>
+</div>
+<p><div class="theorem_thmwrapper" id="3aps_in_ff_count">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">5.3</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0004.html#3aps_in_ff_count">#</a>
+    <a class="icon proof" href="sect0004.html#a0000000132"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p> If \(A\subseteq \mathbb {F}_q^n\) has density \(\alpha \) then </p>
+<div class="displaymath" id="a0000000133">
+  \[ \langle 1_{A}\ast 1_{A},1_{2\cdot A}\rangle \gg \exp (-O(\log (1/\alpha )^9)). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000132">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Test. </p>
+
+  </div>
+</div>
+<p><div class="theorem_thmwrapper" id="3aps_in_ff">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">5.4</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0004.html#3aps_in_ff">#</a>
+    <a class="icon proof" href="sect0004.html#a0000000134"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p> If \(A\subseteq \mathbb {F}_q^n\) has only trivial three-term arithmetic progressions then </p>
+<div class="displaymath" id="a0000000135">
+  \[ \alpha \leq \exp (-n^{1/9}). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000134">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Test. </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0003.html" title="Dependent random choice"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="LeanAPAP"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

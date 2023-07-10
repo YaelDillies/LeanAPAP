@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles/style.css" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+<link rel="stylesheet" href="styles/style_coverage.css" />
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+
+<title>Formalization status</title>
+</head>
+
+<body>
+<div class="wrapper">
+<header>
+  <a href="index.html">Home</a>
+  <h1 id="doc_title">Formalization status</h1>
+</header>
+
+<div class="content">
+
+<h2>Completion report</h2>
+
+Click chapter titles to see missing items.
+
+
+<section>
+  <h3>1 Almost-Periodicity <span class="partial">60%</span></h3>
+  
+  <ul class="coverage">
+    
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Theorem 1.10 (ap_in_ff)</div>
+      <div class="thm_thm_content"><p> If \(A_1,A_2,S\subseteq \mathbb {F}_q^n\) are such that \(A_1\) and \(A_2\) both have density at least \(\alpha \) then there is a subspace \(V\) of codimension </p>
+<div class="displaymath" id="a0000000052">
+  \[ \mathrm{codim}(V)\ll _\epsilon \log (2/\alpha )^4 \]
+</div>
+<p> such that </p>
+<div class="displaymath" id="a0000000053">
+  \[ \left\lvert \langle \mu _V\ast \mu _{A_1}\ast \mu _{A_2},1_{S}\rangle -\langle \mu _{A_1}\ast \mu _{A_2},1_{S}\rangle \right\rvert \leq \epsilon . \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Theorem 1.7 (linfty_ap)</div>
+      <div class="thm_thm_content"><p>  Let \(\epsilon \in (0,1]\) and \(m\geq 1\). Let \(K\geq 2\) and \(A,S\subseteq G\) with \(\lvert A+S\rvert \leq K\lvert A\rvert \). Let \(B,C\subseteq G\). Let \(\eta =\min (1,\lvert C\rvert /\lvert B\rvert )\). There exists \(T\subseteq G\) such that </p>
+<div class="displaymath" id="a0000000033">
+  \[ \lvert T\rvert \geq K^{-4096\lceil \mathcal{L}{\eta }\rceil \epsilon ^{-2}}\lvert S\rvert  \]
+</div>
+<p> such that for any \(t\in T\) we have </p>
+<div class="displaymath" id="a0000000034">
+  \[ \|  \tau _t(\mu _A\ast 1_B\ast \mu _C)-\mu _A\ast 1_B\ast \mu _C\| _{\infty }\leq \epsilon . \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Theorem 1.8 (linfty_ap_boosted)</div>
+      <div class="thm_thm_content">
+<p>Let \(\epsilon \in (0,1]\) and \(m\geq 1\) and \(k\geq 1\). Let \(K\geq 2\) and \(A,S\subseteq G\) with \(\lvert A+S\rvert \leq K\lvert A\rvert \). Let \(B,C\subseteq G\). Let \(\eta =\min (1,\lvert C\rvert /\lvert B\rvert )\). There exists \(T\subseteq G\) such that </p>
+<div class="displaymath" id="a0000000041">
+  \[ \lvert T\rvert \geq K^{-4096\lceil \mathcal{L}{\eta }\rceil k^2\epsilon ^{-2}}\lvert S\rvert  \]
+</div>
+<p> such that </p>
+<div class="displaymath" id="a0000000042">
+  \[ \|  \mu _T^{(k)}\ast \mu _A\ast 1_B\ast \mu _C-\mu _A\ast 1_B\ast \mu _C\| _{\infty }\leq \epsilon . \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Theorem 1.9 (chang)</div>
+      <div class="thm_thm_content"><p>  If </p>
+<div class="displaymath" id="a0000000049">
+  \[ \Delta = \{  \gamma : \lvert \widehat{1_{X}(\gamma )}\rvert \geq \eta \mu (X)\}  \]
+</div>
+<p> then there is a set \(\Gamma \) of size \(O(\eta ^{-2}\log (1/\mu (X)))\) such that </p>
+<div class="displaymath" id="a0000000050">
+  \[ \Delta \subseteq \left\{ \sum _{\gamma \in \Gamma }\epsilon _\gamma \gamma : \epsilon _\gamma \in \{ -1,0,1\} \right\} . \]
+</div>
+</div>
+    </li>
+    
+    
+  </ul>
+  
+</section>
+
+<section>
+  <h3>2 Chang’s lemma <span class="void">0%</span></h3>
+  
+  <ul class="coverage">
+    
+    
+    <li>
+      <div class="thm_thmheading">Definition 2.1 (a0000000054)</div>
+      <div class="thm_thm_content"><p>Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\eta \in \mathbb {R}\). The \(\eta \)-large spectrum is defined to be </p>
+<div class="displaymath" id="a0000000055">
+  \[ \Delta _\eta (f) = \{  \gamma \in \widehat{G} : \lvert \widehat{f}(\gamma )\rvert \geq \eta \lVert f\rVert _1\} . \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Theorem 2.10 (chang_simple)</div>
+      <div class="thm_thm_content"><p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\eta {\gt}0\) and \(\alpha =N^{-1}\lVert f\rVert _1^2/\lVert f\rVert _2^2\). There exists some \(\Delta \subseteq \Delta _\eta (f)\) such that </p>
+<div class="displaymath" id="a0000000086">
+  \[ \left\lvert \Delta \right\rvert \leq \lceil e\mathcal{L}(\alpha )\eta ^{-2}\rceil  \]
+</div>
+<p> and </p>
+<div class="displaymath" id="a0000000087">
+  \[ \Delta _\eta (f)\subseteq \left\{  \sum _{\gamma \in \Delta }c_\gamma \gamma : c_\gamma \in \{ -1,0,1\}  \right\} . \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Definition 2.2 (a0000000056)</div>
+      <div class="thm_thm_content"><p>Let \(G\) be a finite abelian group and \(A\subseteq G\). Let \(m\geq 1\). We define </p>
+<div class="displaymath" id="a0000000057">
+  \[ E_{2m}(A)=\sum _{a_1,\ldots ,a_{2m}\in A}1_{a_1+\cdots -a_{2m}=0}. \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Definition 2.3 (a0000000058)</div>
+      <div class="thm_thm_content"><p>Let \(\Delta \subseteq \widehat{G}\) and \(m\geq 1\). Let \(\nu :G\to \mathbb {C}\). Then </p>
+<div class="displaymath" id="a0000000059">
+  \[ E_{2m}(\Delta ;\nu )=\sum _{\gamma _1,\ldots ,\gamma _{2m}\in \Delta }\left\lvert \widehat{\nu }(\gamma _1+\cdots -\gamma _{2m})\right\rvert . \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Definition 2.4 (a0000000060)</div>
+      <div class="thm_thm_content"><p>We say that \(A\subseteq G\) is dissociated if, for any \(m\geq 1\), and any \(x\in G\), there is at most one \(A'\subset A\) of size \(\left\lvert A'\right\rvert =m\) such that </p>
+<div class="displaymath" id="a0000000061">
+  \[ \sum _{a\in A'}a=x. \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.5 (general_holder)</div>
+      <div class="thm_thm_content"><p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\nu :G\to \mathbb {R}_{\geq 0}\) be such that whenever \(\left\lvert f\right\rvert \neq 0\) we have \(\nu \geq 1\). Let \(\Delta \subseteq \Delta _\eta (f)\). Then, for any \(m\geq 1\). </p>
+<div class="displaymath" id="a0000000063">
+  \[ \eta ^{2m}\frac{\lVert f\rVert _1^2}{\lVert f\rVert _2^2}\left\lvert \Delta \right\rvert ^{2m}\leq E_{2m}(\Delta ;\nu ). \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.6 (spec_holder)</div>
+      <div class="thm_thm_content"><p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\Delta \subseteq \Delta _\eta (f)\). Then, for any \(m\geq 1\). </p>
+<div class="displaymath" id="a0000000074">
+  \[ N^{-1}\eta ^{2m}\frac{\lVert f\rVert _1^2}{\lVert f\rVert _2^2}\left\lvert \Delta \right\rvert ^{2m}\leq E_{2m}(\Delta ). \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.7 (energy_alt)</div>
+      <div class="thm_thm_content"><p> If \(A\subset G\) and \(m\geq 1\) then </p>
+<div class="displaymath" id="a0000000076">
+  \[ E_{2m}(A) = \sum _x 1_A^{(m)}(x)^2. \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.8 (diss_energy)</div>
+      <div class="thm_thm_content"><p> If \(A\subseteq G\) is dissociated then \(E_{2m}(A) \leq m! \left\lvert A\right\rvert ^m\). </p>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.9 (diss_span)</div>
+      <div class="thm_thm_content"><p> If \(A\subseteq G\) contains no dissociated set with \(\geq K+1\) elements then there is \(A'\subseteq A\) of size \(\left\lvert A'\right\rvert \leq K\) such that </p>
+<div class="displaymath" id="a0000000081">
+  \[ A\subseteq \left\{  \sum _{a\in A'}c_aa : c_a\in \{ -1,0,1\}  \right\} . \]
+</div>
+</div>
+    </li>
+    
+    
+  </ul>
+  
+</section>
+
+<section>
+  <h3>3 Unbalancing <span class="partial">50%</span></h3>
+  
+  <ul class="coverage">
+    
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 3.2 (unbalancing)</div>
+      <div class="thm_thm_content"><p>  Let \(\epsilon \in (0,1)\) and \(\nu :G\to \mathbb {R}_{\geq 0}\) be some probability measure such that \(\widehat{\nu }\geq 0\). Let \(f:G\to \mathbb {R}\). If \(\lVert f\circ f\rVert _{p(\nu )}\geq \epsilon \) for some \(p\geq 1\) then \(\lVert f\circ f+1\rVert _{p'(\nu )}\geq 1+\tfrac {1}{2}\epsilon \) for some \(p'\ll _\epsilon p\). </p>
+</div>
+    </li>
+    
+    
+  </ul>
+  
+</section>
+
+<section>
+  <h3>4 Dependent random choice <span class="partial">50%</span></h3>
+  
+  <ul class="coverage">
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.1 (lem-drc)</div>
+      <div class="thm_thm_content"><p>  Let \(p\geq 2\) be an even integer. Let \(B_1,B_2\subseteq G\) and \(\mu =\mu _{B_1}\circ \mu _{B_2}\). For any finite set \(A\subseteq G\) and function \(f:G\to \mathbb {R}_{\geq 0}\) there exist \(A_1\subseteq B_1\) and \(A_2\subseteq B_2\) such that </p>
+<div class="displaymath" id="a0000000101">
+  \[ \langle \mu _{A_1}\circ \mu _{A_2}, f\rangle \lVert 1_{A}\circ 1_{A}\rVert _{p(\mu )}^p\leq 2\langle (1_{A}\circ 1_{A})^p,f\rangle _\mu  \]
+</div>
+<p> and </p>
+<div class="displaymath" id="a0000000102">
+  \[ \min \left( \frac{\left\lvert A_1\right\rvert }{\left\lvert B_1\right\rvert },\frac{\left\lvert A_2\right\rvert }{\left\lvert B_2\right\rvert }\right)\geq \frac{1}{4}\left\lvert A\right\rvert ^{-2p}\lVert 1_{A}\circ 1_{A}\rVert _{p(\mu )}^{2p}. \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    
+  </ul>
+  
+</section>
+
+<section>
+  <h3>5 Finite field model <span class="void">0%</span></h3>
+  
+  <ul class="coverage">
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 5.1 (global_dichotomy)</div>
+      <div class="thm_thm_content"><p> Let \(\epsilon {\gt}0\). If \(A,C\subseteq G\), where \(C\) has density at least \(\gamma \), then either </p>
+<ol class="enumerate">
+  <li><p>\(\left\lvert \langle \mu _A\ast \mu _A,\mu _C\rangle -1\right\rvert \leq \epsilon \) or </p>
+</li>
+  <li><p>\(\lVert \mu _A\circ \mu _A-1\rVert _p \geq \epsilon /2\) for some \(p\ll \log (2.\gamma )\). </p>
+</li>
+</ol>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Proposition 5.2 (di_in_ff)</div>
+      <div class="thm_thm_content"><p> Let \(\epsilon \in (0,1)\). If \(A,C\subseteq \mathbb {F}_q^n\), where \(C\) has density at least \(\gamma \), then either </p>
+<ol class="enumerate">
+  <li><p>\(\left\lvert \langle \mu _A\ast \mu _A,\mu _C\rangle -1\right\rvert \leq \epsilon \) or </p>
+</li>
+  <li><p>there is a subspace \(V\) of codimension </p>
+<div class="displaymath" id="a0000000128">
+  \[ \ll _\epsilon \log (2/\gamma )^4\log (2/\alpha )^4 \]
+</div>
+<p> such that \(\lVert 1_{A}\ast \mu _V\rVert _\infty \geq (1+\Omega (\epsilon ))\alpha \). </p>
+</li>
+</ol>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Theorem 5.3 (3aps_in_ff_count)</div>
+      <div class="thm_thm_content"><p> If \(A\subseteq \mathbb {F}_q^n\) has density \(\alpha \) then </p>
+<div class="displaymath" id="a0000000133">
+  \[ \langle 1_{A}\ast 1_{A},1_{2\cdot A}\rangle \gg \exp (-O(\log (1/\alpha )^9)). \]
+</div>
+</div>
+    </li>
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Theorem 5.4 (3aps_in_ff)</div>
+      <div class="thm_thm_content"><p> If \(A\subseteq \mathbb {F}_q^n\) has only trivial three-term arithmetic progressions then </p>
+<div class="displaymath" id="a0000000135">
+  \[ \alpha \leq \exp (-n^{1/9}). \]
+</div>
+</div>
+    </li>
+    
+    
+  </ul>
+  
+</section>
+
+
+<h2>What to define next?</h2>
+
+
+<section>
+  
+</section>
+
+<section>
+  
+  <h3>2 Chang’s lemma</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Definition 2.1 (a0000000054)</div>
+      <div class="thm_thm_content"><p>Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\eta \in \mathbb {R}\). The \(\eta \)-large spectrum is defined to be </p>
+<div class="displaymath" id="a0000000055">
+  \[ \Delta _\eta (f) = \{  \gamma \in \widehat{G} : \lvert \widehat{f}(\gamma )\rvert \geq \eta \lVert f\rVert _1\} . \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Definition 2.2 (a0000000056)</div>
+      <div class="thm_thm_content"><p>Let \(G\) be a finite abelian group and \(A\subseteq G\). Let \(m\geq 1\). We define </p>
+<div class="displaymath" id="a0000000057">
+  \[ E_{2m}(A)=\sum _{a_1,\ldots ,a_{2m}\in A}1_{a_1+\cdots -a_{2m}=0}. \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Definition 2.3 (a0000000058)</div>
+      <div class="thm_thm_content"><p>Let \(\Delta \subseteq \widehat{G}\) and \(m\geq 1\). Let \(\nu :G\to \mathbb {C}\). Then </p>
+<div class="displaymath" id="a0000000059">
+  \[ E_{2m}(\Delta ;\nu )=\sum _{\gamma _1,\ldots ,\gamma _{2m}\in \Delta }\left\lvert \widehat{\nu }(\gamma _1+\cdots -\gamma _{2m})\right\rvert . \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Definition 2.4 (a0000000060)</div>
+      <div class="thm_thm_content"><p>We say that \(A\subseteq G\) is dissociated if, for any \(m\geq 1\), and any \(x\in G\), there is at most one \(A'\subset A\) of size \(\left\lvert A'\right\rvert =m\) such that </p>
+<div class="displaymath" id="a0000000061">
+  \[ \sum _{a\in A'}a=x. \]
+</div>
+</div>
+    </li>
+    
+  </ul>
+  
+</section>
+
+<section>
+  
+</section>
+
+<section>
+  
+</section>
+
+<section>
+  
+</section>
+
+
+<h2>What to state next?</h2>
+
+
+<section>
+  
+  <h3>1 Almost-Periodicity</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Theorem 1.10 (ap_in_ff)</div>
+      <div class="thm_thm_content"><p> If \(A_1,A_2,S\subseteq \mathbb {F}_q^n\) are such that \(A_1\) and \(A_2\) both have density at least \(\alpha \) then there is a subspace \(V\) of codimension </p>
+<div class="displaymath" id="a0000000052">
+  \[ \mathrm{codim}(V)\ll _\epsilon \log (2/\alpha )^4 \]
+</div>
+<p> such that </p>
+<div class="displaymath" id="a0000000053">
+  \[ \left\lvert \langle \mu _V\ast \mu _{A_1}\ast \mu _{A_2},1_{S}\rangle -\langle \mu _{A_1}\ast \mu _{A_2},1_{S}\rangle \right\rvert \leq \epsilon . \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Theorem 1.7 (linfty_ap)</div>
+      <div class="thm_thm_content"><p>  Let \(\epsilon \in (0,1]\) and \(m\geq 1\). Let \(K\geq 2\) and \(A,S\subseteq G\) with \(\lvert A+S\rvert \leq K\lvert A\rvert \). Let \(B,C\subseteq G\). Let \(\eta =\min (1,\lvert C\rvert /\lvert B\rvert )\). There exists \(T\subseteq G\) such that </p>
+<div class="displaymath" id="a0000000033">
+  \[ \lvert T\rvert \geq K^{-4096\lceil \mathcal{L}{\eta }\rceil \epsilon ^{-2}}\lvert S\rvert  \]
+</div>
+<p> such that for any \(t\in T\) we have </p>
+<div class="displaymath" id="a0000000034">
+  \[ \|  \tau _t(\mu _A\ast 1_B\ast \mu _C)-\mu _A\ast 1_B\ast \mu _C\| _{\infty }\leq \epsilon . \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Theorem 1.8 (linfty_ap_boosted)</div>
+      <div class="thm_thm_content">
+<p>Let \(\epsilon \in (0,1]\) and \(m\geq 1\) and \(k\geq 1\). Let \(K\geq 2\) and \(A,S\subseteq G\) with \(\lvert A+S\rvert \leq K\lvert A\rvert \). Let \(B,C\subseteq G\). Let \(\eta =\min (1,\lvert C\rvert /\lvert B\rvert )\). There exists \(T\subseteq G\) such that </p>
+<div class="displaymath" id="a0000000041">
+  \[ \lvert T\rvert \geq K^{-4096\lceil \mathcal{L}{\eta }\rceil k^2\epsilon ^{-2}}\lvert S\rvert  \]
+</div>
+<p> such that </p>
+<div class="displaymath" id="a0000000042">
+  \[ \|  \mu _T^{(k)}\ast \mu _A\ast 1_B\ast \mu _C-\mu _A\ast 1_B\ast \mu _C\| _{\infty }\leq \epsilon . \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Theorem 1.9 (chang)</div>
+      <div class="thm_thm_content"><p>  If </p>
+<div class="displaymath" id="a0000000049">
+  \[ \Delta = \{  \gamma : \lvert \widehat{1_{X}(\gamma )}\rvert \geq \eta \mu (X)\}  \]
+</div>
+<p> then there is a set \(\Gamma \) of size \(O(\eta ^{-2}\log (1/\mu (X)))\) such that </p>
+<div class="displaymath" id="a0000000050">
+  \[ \Delta \subseteq \left\{ \sum _{\gamma \in \Gamma }\epsilon _\gamma \gamma : \epsilon _\gamma \in \{ -1,0,1\} \right\} . \]
+</div>
+</div>
+    </li>
+    
+  </ul>
+  
+</section>
+
+<section>
+  
+  <h3>2 Chang’s lemma</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Theorem 2.10 (chang_simple)</div>
+      <div class="thm_thm_content"><p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\eta {\gt}0\) and \(\alpha =N^{-1}\lVert f\rVert _1^2/\lVert f\rVert _2^2\). There exists some \(\Delta \subseteq \Delta _\eta (f)\) such that </p>
+<div class="displaymath" id="a0000000086">
+  \[ \left\lvert \Delta \right\rvert \leq \lceil e\mathcal{L}(\alpha )\eta ^{-2}\rceil  \]
+</div>
+<p> and </p>
+<div class="displaymath" id="a0000000087">
+  \[ \Delta _\eta (f)\subseteq \left\{  \sum _{\gamma \in \Delta }c_\gamma \gamma : c_\gamma \in \{ -1,0,1\}  \right\} . \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.5 (general_holder)</div>
+      <div class="thm_thm_content"><p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\nu :G\to \mathbb {R}_{\geq 0}\) be such that whenever \(\left\lvert f\right\rvert \neq 0\) we have \(\nu \geq 1\). Let \(\Delta \subseteq \Delta _\eta (f)\). Then, for any \(m\geq 1\). </p>
+<div class="displaymath" id="a0000000063">
+  \[ \eta ^{2m}\frac{\lVert f\rVert _1^2}{\lVert f\rVert _2^2}\left\lvert \Delta \right\rvert ^{2m}\leq E_{2m}(\Delta ;\nu ). \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.6 (spec_holder)</div>
+      <div class="thm_thm_content"><p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\Delta \subseteq \Delta _\eta (f)\). Then, for any \(m\geq 1\). </p>
+<div class="displaymath" id="a0000000074">
+  \[ N^{-1}\eta ^{2m}\frac{\lVert f\rVert _1^2}{\lVert f\rVert _2^2}\left\lvert \Delta \right\rvert ^{2m}\leq E_{2m}(\Delta ). \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.7 (energy_alt)</div>
+      <div class="thm_thm_content"><p> If \(A\subset G\) and \(m\geq 1\) then </p>
+<div class="displaymath" id="a0000000076">
+  \[ E_{2m}(A) = \sum _x 1_A^{(m)}(x)^2. \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.8 (diss_energy)</div>
+      <div class="thm_thm_content"><p> If \(A\subseteq G\) is dissociated then \(E_{2m}(A) \leq m! \left\lvert A\right\rvert ^m\). </p>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 2.9 (diss_span)</div>
+      <div class="thm_thm_content"><p> If \(A\subseteq G\) contains no dissociated set with \(\geq K+1\) elements then there is \(A'\subseteq A\) of size \(\left\lvert A'\right\rvert \leq K\) such that </p>
+<div class="displaymath" id="a0000000081">
+  \[ A\subseteq \left\{  \sum _{a\in A'}c_aa : c_a\in \{ -1,0,1\}  \right\} . \]
+</div>
+</div>
+    </li>
+    
+  </ul>
+  
+</section>
+
+<section>
+  
+</section>
+
+<section>
+  
+</section>
+
+<section>
+  
+  <h3>5 Finite field model</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Lemma 5.1 (global_dichotomy)</div>
+      <div class="thm_thm_content"><p> Let \(\epsilon {\gt}0\). If \(A,C\subseteq G\), where \(C\) has density at least \(\gamma \), then either </p>
+<ol class="enumerate">
+  <li><p>\(\left\lvert \langle \mu _A\ast \mu _A,\mu _C\rangle -1\right\rvert \leq \epsilon \) or </p>
+</li>
+  <li><p>\(\lVert \mu _A\circ \mu _A-1\rVert _p \geq \epsilon /2\) for some \(p\ll \log (2.\gamma )\). </p>
+</li>
+</ol>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Proposition 5.2 (di_in_ff)</div>
+      <div class="thm_thm_content"><p> Let \(\epsilon \in (0,1)\). If \(A,C\subseteq \mathbb {F}_q^n\), where \(C\) has density at least \(\gamma \), then either </p>
+<ol class="enumerate">
+  <li><p>\(\left\lvert \langle \mu _A\ast \mu _A,\mu _C\rangle -1\right\rvert \leq \epsilon \) or </p>
+</li>
+  <li><p>there is a subspace \(V\) of codimension </p>
+<div class="displaymath" id="a0000000128">
+  \[ \ll _\epsilon \log (2/\gamma )^4\log (2/\alpha )^4 \]
+</div>
+<p> such that \(\lVert 1_{A}\ast \mu _V\rVert _\infty \geq (1+\Omega (\epsilon ))\alpha \). </p>
+</li>
+</ol>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Theorem 5.3 (3aps_in_ff_count)</div>
+      <div class="thm_thm_content"><p> If \(A\subseteq \mathbb {F}_q^n\) has density \(\alpha \) then </p>
+<div class="displaymath" id="a0000000133">
+  \[ \langle 1_{A}\ast 1_{A},1_{2\cdot A}\rangle \gg \exp (-O(\log (1/\alpha )^9)). \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Theorem 5.4 (3aps_in_ff)</div>
+      <div class="thm_thm_content"><p> If \(A\subseteq \mathbb {F}_q^n\) has only trivial three-term arithmetic progressions then </p>
+<div class="displaymath" id="a0000000135">
+  \[ \alpha \leq \exp (-n^{1/9}). \]
+</div>
+</div>
+    </li>
+    
+  </ul>
+  
+</section>
+
+
+<h2>What to prove next?</h2>
+
+
+<section>
+  
+</section>
+
+<section>
+  
+</section>
+
+<section>
+  
+  <h3>3 Unbalancing</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Lemma 3.2 (unbalancing)</div>
+      <div class="thm_thm_content"><p>  Let \(\epsilon \in (0,1)\) and \(\nu :G\to \mathbb {R}_{\geq 0}\) be some probability measure such that \(\widehat{\nu }\geq 0\). Let \(f:G\to \mathbb {R}\). If \(\lVert f\circ f\rVert _{p(\nu )}\geq \epsilon \) for some \(p\geq 1\) then \(\lVert f\circ f+1\rVert _{p'(\nu )}\geq 1+\tfrac {1}{2}\epsilon \) for some \(p'\ll _\epsilon p\). </p>
+</div>
+    </li>
+    
+  </ul>
+  
+</section>
+
+<section>
+  
+  <h3>4 Dependent random choice</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.1 (lem-drc)</div>
+      <div class="thm_thm_content"><p>  Let \(p\geq 2\) be an even integer. Let \(B_1,B_2\subseteq G\) and \(\mu =\mu _{B_1}\circ \mu _{B_2}\). For any finite set \(A\subseteq G\) and function \(f:G\to \mathbb {R}_{\geq 0}\) there exist \(A_1\subseteq B_1\) and \(A_2\subseteq B_2\) such that </p>
+<div class="displaymath" id="a0000000101">
+  \[ \langle \mu _{A_1}\circ \mu _{A_2}, f\rangle \lVert 1_{A}\circ 1_{A}\rVert _{p(\mu )}^p\leq 2\langle (1_{A}\circ 1_{A})^p,f\rangle _\mu  \]
+</div>
+<p> and </p>
+<div class="displaymath" id="a0000000102">
+  \[ \min \left( \frac{\left\lvert A_1\right\rvert }{\left\lvert B_1\right\rvert },\frac{\left\lvert A_2\right\rvert }{\left\lvert B_2\right\rvert }\right)\geq \frac{1}{4}\left\lvert A\right\rvert ^{-2p}\lVert 1_{A}\circ 1_{A}\rVert _{p(\mu )}^{2p}. \]
+</div>
+</div>
+    </li>
+    
+  </ul>
+  
+</section>
+
+<section>
+  
+</section>
+
+
+</div>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/coverage.js"></script>
+</body>
+</html>

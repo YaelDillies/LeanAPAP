@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chang’s lemma</title>
+<link rel="next" href="sect0002.html" title="Unbalancing" />
+<link rel="prev" href="chap-ap.html" title="Almost-Periodicity" />
+<link rel="up" href="index.html" title="LeanAPAP" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">LeanAPAP</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="chap-ap.html"><span class="toc_ref">1</span> <span class="toc_entry">Almost-Periodicity</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0001.html"><span class="toc_ref">2</span> <span class="toc_entry">Chang’s lemma</span></a>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">3</span> <span class="toc_entry">Unbalancing</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">4</span> <span class="toc_entry">Dependent random choice</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">5</span> <span class="toc_entry">Finite field model</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000002">2 Chang’s lemma</h1>
+<p><div class="definition_thmwrapper" id="a0000000054">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.1</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#a0000000054">#</a>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\eta \in \mathbb {R}\). The \(\eta \)-large spectrum is defined to be </p>
+<div class="displaymath" id="a0000000055">
+  \[ \Delta _\eta (f) = \{  \gamma \in \widehat{G} : \lvert \widehat{f}(\gamma )\rvert \geq \eta \lVert f\rVert _1\} . \]
+</div>
+
+  </div>
+</div> </p>
+<p><div class="definition_thmwrapper" id="a0000000056">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#a0000000056">#</a>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>Let \(G\) be a finite abelian group and \(A\subseteq G\). Let \(m\geq 1\). We define </p>
+<div class="displaymath" id="a0000000057">
+  \[ E_{2m}(A)=\sum _{a_1,\ldots ,a_{2m}\in A}1_{a_1+\cdots -a_{2m}=0}. \]
+</div>
+
+  </div>
+</div> </p>
+<p><div class="definition_thmwrapper" id="a0000000058">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.3</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#a0000000058">#</a>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>Let \(\Delta \subseteq \widehat{G}\) and \(m\geq 1\). Let \(\nu :G\to \mathbb {C}\). Then </p>
+<div class="displaymath" id="a0000000059">
+  \[ E_{2m}(\Delta ;\nu )=\sum _{\gamma _1,\ldots ,\gamma _{2m}\in \Delta }\left\lvert \widehat{\nu }(\gamma _1+\cdots -\gamma _{2m})\right\rvert . \]
+</div>
+
+  </div>
+</div> </p>
+<p><div class="definition_thmwrapper" id="a0000000060">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.4</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#a0000000060">#</a>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>We say that \(A\subseteq G\) is dissociated if, for any \(m\geq 1\), and any \(x\in G\), there is at most one \(A'\subset A\) of size \(\left\lvert A'\right\rvert =m\) such that </p>
+<div class="displaymath" id="a0000000061">
+  \[ \sum _{a\in A'}a=x. \]
+</div>
+
+  </div>
+</div> </p>
+<p><div class="lemma_thmwrapper" id="general_holder">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.5</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#general_holder">#</a>
+    <a class="icon proof" href="sect0001.html#a0000000062"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\nu :G\to \mathbb {R}_{\geq 0}\) be such that whenever \(\left\lvert f\right\rvert \neq 0\) we have \(\nu \geq 1\). Let \(\Delta \subseteq \Delta _\eta (f)\). Then, for any \(m\geq 1\). </p>
+<div class="displaymath" id="a0000000063">
+  \[ \eta ^{2m}\frac{\lVert f\rVert _1^2}{\lVert f\rVert _2^2}\left\lvert \Delta \right\rvert ^{2m}\leq E_{2m}(\Delta ;\nu ). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000062">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>By definition of \(\Delta _\eta (f)\) we know that </p>
+<div class="displaymath" id="a0000000064">
+  \[ \eta \lVert f\rVert _1\left\lvert \Delta \right\rvert \leq \sum _{\gamma \in \Delta } \lvert \widehat{f}(\gamma )\rvert . \]
+</div>
+<p> There exists some \(c_\gamma \in \mathbb {C}\) with \(\lvert c_\gamma \rvert =1\) for all \(\gamma \) such that </p>
+<div class="displaymath" id="a0000000065">
+  \[ \lvert \widehat{f}(\gamma )\rvert =c_\gamma \widehat{f}(\gamma )=c_\gamma \sum _{x\in G}f(x)\overline{\gamma (x)}. \]
+</div>
+<p> Interchanging the sums, therefore, </p>
+<div class="displaymath" id="a0000000066">
+  \[ \eta \lVert f\rVert _1\left\lvert \Delta \right\rvert \leq \sum _{x\in G}f(x)\sum _{\gamma \in \Delta } c_\gamma \overline{\gamma (x)}. \]
+</div>
+<p> By Hölder’s inequality the right-hand side is at most </p>
+<div class="displaymath" id="a0000000067">
+  \[ \left( \sum _x \left\lvert f(x)\right\rvert \right)^{1-1/m}\left( \sum _x \left\lvert f(x)\right\rvert \left\lvert \sum _{\gamma \in \Delta }c_\gamma \overline{\gamma (x)}\right\rvert ^m\right)^{1/m}. \]
+</div>
+<p> Taking \(m\)th powers, therefore, we have </p>
+<div class="displaymath" id="a0000000068">
+  \[ \eta ^m\left\lvert \Delta \right\rvert ^m\lVert f\rVert _1\leq \sum _{x}\left\lvert f(x)\right\rvert \left\lvert \sum _{\gamma \in \Delta }c_\gamma \overline{\gamma (x)}\right\rvert ^m. \]
+</div>
+<p> By assumption we can bound \(\left\lvert f(x)\right\rvert \leq \left\lvert f(x)\right\rvert \nu (x)^{1/2}\), and therefore by the Cauchy-Schwarz inequality the right-hand side is bounded above by </p>
+<div class="displaymath" id="a0000000069">
+  \[ \lVert f\rVert _2\left( \sum _x \nu (x)\left\lvert \sum _{\gamma \in \Delta }c_\gamma \overline{\gamma (x)}\right\rvert ^{2m}\right)^{1/2}. \]
+</div>
+<p> Squaring and simplifying, we deduce that </p>
+<div class="displaymath" id="a0000000070">
+  \[ \eta ^{2m}\left\lvert \Delta \right\rvert ^{2m}\frac{\lVert f\rVert _1^2}{\lVert f\rVert _2^2}\leq \sum _x \nu (x)\left\lvert \sum _{\gamma \in \Delta }c_\gamma \overline{\gamma (x)}\right\rvert ^{2m}. \]
+</div>
+<p> Expanding out the power, the right-hand side is equal to </p>
+<div class="displaymath" id="a0000000071">
+  \[ \sum _x \nu (x)\sum _{\gamma _1,\ldots ,\gamma _{2m}}c_{\gamma _1}\cdots \overline{c_{\gamma _{2m}}} (\overline{\gamma _1}\cdots \gamma _{2m})(x). \]
+</div>
+<p> Changing the order of summation this is equal to </p>
+<div class="displaymath" id="a0000000072">
+  \[ \sum _{\gamma _1,\ldots ,\gamma _{2m}}c_{\gamma _1}\cdots \overline{c_{\gamma _{2m}}} \widehat{\nu }(\gamma _1\cdots \overline{\gamma _{2m}}). \]
+</div>
+<p> The result follows by the triangle inequality. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="spec_holder">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.6</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#spec_holder">#</a>
+    <a class="icon proof" href="sect0001.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\Delta \subseteq \Delta _\eta (f)\). Then, for any \(m\geq 1\). </p>
+<div class="displaymath" id="a0000000074">
+  \[ N^{-1}\eta ^{2m}\frac{\lVert f\rVert _1^2}{\lVert f\rVert _2^2}\left\lvert \Delta \right\rvert ^{2m}\leq E_{2m}(\Delta ). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000073">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Apply Lemma&#160;<a href="sect0001.html#general_holder">2.5</a> with \(\nu \equiv 1\), and use the fact that \(\sum _x \lambda (x)\) is \(N\) if \(\lambda \equiv 1\) and \(0\) otherwise. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="energy_alt">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.7</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#energy_alt">#</a>
+    <a class="icon proof" href="sect0001.html#a0000000075"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> If \(A\subset G\) and \(m\geq 1\) then </p>
+<div class="displaymath" id="a0000000076">
+  \[ E_{2m}(A) = \sum _x 1_A^{(m)}(x)^2. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000075">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Expand out definitions. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="diss_energy">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.8</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#diss_energy">#</a>
+    <a class="icon proof" href="sect0001.html#a0000000077"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> If \(A\subseteq G\) is dissociated then \(E_{2m}(A) \leq m! \left\lvert A\right\rvert ^m\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000077">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> By Lemma&#160;<a href="sect0001.html#energy_alt">2.7</a> </p>
+<div class="displaymath" id="a0000000078">
+  \[ E_{2m}(A) = \sum _x 1_A^{(m)}(x)^2. \]
+</div>
+<p> By the definition of dissociativity, \(1_A^{(m)}(x)\leq m!\) for all \(x\in G\). We are done since </p>
+<div class="displaymath" id="a0000000079">
+  \[  \sum _x 1_A^{(m)}(x) = \left\lvert A\right\rvert ^m. \]
+</div>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="diss_span">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.9</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#diss_span">#</a>
+    <a class="icon proof" href="sect0001.html#a0000000080"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> If \(A\subseteq G\) contains no dissociated set with \(\geq K+1\) elements then there is \(A'\subseteq A\) of size \(\left\lvert A'\right\rvert \leq K\) such that </p>
+<div class="displaymath" id="a0000000081">
+  \[ A\subseteq \left\{  \sum _{a\in A'}c_aa : c_a\in \{ -1,0,1\}  \right\} . \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000080">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Let \(A'\subseteq A\) be a maximal dissociated subset (this exists and is non-empty, since trivially any singleton is dissociated). We have \(\left\lvert A'\right\rvert \leq K\) by assumption. </p>
+<p>Let \(S\) be the span on the right-hand side. It is obvious that \(A'\subseteq S\). Suppose that \(x\in A\backslash A'\). Then \(A'\cup \{ x\} \) is not dissociated by maximality. Therefore there exists some \(y\in G\) and two distinct sets \(B,C\subseteq A'\cup \{ x\} \) such that </p>
+<div class="displaymath" id="a0000000082">
+  \[ \sum _{b\in B}b = y = \sum _{c\in C} c. \]
+</div>
+<p> If \(x\not\in B\) and \(x\not\in C\) then this contradicts the dissociativity of \(A'\). If \(x\in B\) and \(x\in C\) then we have </p>
+<div class="displaymath" id="a0000000083">
+  \[ \sum _{b\in B\backslash x}b=y-x=\sum _{c\in C\backslash x}c, \]
+</div>
+<p> again contradicting the dissociativity of \(A'\). Without loss of generality, therefore, \(x\in B\) and \(x\not\in C\). Therefore </p>
+<div class="displaymath" id="a0000000084">
+  \[ x=\sum _{c\in C}c - \sum _{b\in B\backslash x}b \]
+</div>
+<p> which is in the span as required. </p>
+
+  </div>
+</div>
+<p><div class="theorem_thmwrapper" id="chang_simple">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.10</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="sect0001.html#chang_simple">#</a>
+    <a class="icon proof" href="sect0001.html#a0000000085"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p> Let \(G\) be a finite abelian group and \(f:G\to \mathbb {C}\). Let \(\eta {\gt}0\) and \(\alpha =N^{-1}\lVert f\rVert _1^2/\lVert f\rVert _2^2\). There exists some \(\Delta \subseteq \Delta _\eta (f)\) such that </p>
+<div class="displaymath" id="a0000000086">
+  \[ \left\lvert \Delta \right\rvert \leq \lceil e\mathcal{L}(\alpha )\eta ^{-2}\rceil  \]
+</div>
+<p> and </p>
+<div class="displaymath" id="a0000000087">
+  \[ \Delta _\eta (f)\subseteq \left\{  \sum _{\gamma \in \Delta }c_\gamma \gamma : c_\gamma \in \{ -1,0,1\}  \right\} . \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000085">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> By Lemma&#160;<a href="sect0001.html#diss_span">2.9</a> it suffices to show that \(\Delta _\eta (f)\) contains no dissociated set with at least </p>
+<div class="displaymath" id="a0000000088">
+  \[ K= \lceil e\mathcal{L}(\alpha )\eta ^{-2}\rceil +1 \]
+</div>
+<p> many elements. Suppose not, and let \(\Delta \subseteq \Delta _\eta (f)\) be a dissociated set of size \(K\). Then by Lemma&#160;<a href="sect0001.html#diss_energy">2.8</a> we have, for any \(m\geq 1\), </p>
+<div class="displaymath" id="a0000000089">
+  \[ E_{2m}(\Delta )\leq m!K^m. \]
+</div>
+<p> On the other hand, by Lemma&#160;<a href="sect0001.html#spec_holder">2.6</a>, </p>
+<div class="displaymath" id="a0000000090">
+  \[ \eta ^{2m}\alpha K^{2m}\leq E_{2m}(\Delta ). \]
+</div>
+<p> Rearranging these bounds, we have </p>
+<div class="displaymath" id="a0000000091">
+  \[ K^m \leq m! \alpha ^{-1}\eta ^{-2m}\leq m^m\alpha ^{-1}\eta ^{2m}. \]
+</div>
+<p> Therefore \(K\leq \alpha ^{-1/m}m\eta ^{-2}\). This is a contradiction to the choice of \(K\) if we choose \(m=\mathcal{L}(\alpha )\), since \(\alpha ^{-1/m}\leq e\). </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="chap-ap.html" title="Almost-Periodicity"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="LeanAPAP"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0002.html" title="Unbalancing"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

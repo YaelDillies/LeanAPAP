@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Almost-Periodicity</title>
+<link rel="next" href="sect0001.html" title="Chang’s lemma" />
+<link rel="prev" href="index.html" title="LeanAPAP" />
+<link rel="up" href="index.html" title="LeanAPAP" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">LeanAPAP</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class=" active current">
+  <a href="chap-ap.html"><span class="toc_ref">1</span> <span class="toc_entry">Almost-Periodicity</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">2</span> <span class="toc_entry">Chang’s lemma</span></a>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">3</span> <span class="toc_entry">Unbalancing</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">4</span> <span class="toc_entry">Dependent random choice</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">5</span> <span class="toc_entry">Finite field model</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="chap:ap">1 Almost-Periodicity</h1>
+
+<p><div class="lemma_thmwrapper" id="mzi">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">1.1</span>
+    <span class="lemma_thmtitle">Marcinkiewicz-Zygmund inequality</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#mzi">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000006"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/YaelDillies/LeanAPAP//blob/b825c4f702e6a0a4b29ae5ec65a08891f79f9c75/src/prereqs/marcinkiewicz_zygmund.lean#L282">other_marcinkiewicz_zygmund'</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   Let \(m\geq 1\). If \(f:G\to \mathbb {R}\) is such that \(\mathbb {E}_x f(x)=0\) and \(\left\lvert f(x)\right\rvert \leq 2\) for all \(x\) then </p>
+<div class="displaymath" id="a0000000007">
+  \[ \mathbb {E}_{x_1,\ldots ,x_n} \left\lvert \sum _{i=1}^n f(x_i)\right\rvert ^{2m} \leq (4mn)^{m}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000006">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Let \(S\) be the left-hand side. Since \(0=\mathbb {E}_y f(y)\) we have, by the triangle inequality, and Hölder’s inequality, </p>
+<div class="displaymath" id="a0000000008">
+  \[ S=\mathbb {E}_{x_1,\ldots ,x_n}\left\lvert \sum _i f(x_i) - \mathbb {E}_{y_i} f(y_i)\right\rvert ^{2m} = \mathbb {E}_{x_1,\ldots ,x_n} \left\lvert \mathbb {E}_{y_i}\left( \sum _i f(x_i)-f(y_i)\right)\right\rvert ^{2m}\leq \mathbb {E}_{x_1,\dots ,y_n} \left\lvert \sum _i f(x_i)-f(y_i)\right\rvert ^{2m}. \]
+</div>
+<p> Changing the role of \(x_i\) and \(y_i\) makes no difference here, but multiplies the \(i\) summand by \(\{ -1,+1\} \), and therefore for any \(\epsilon _i\in \{ -1,+1\} \), </p>
+<div class="displaymath" id="a0000000009">
+  \[  S \leq \mathbb {E}_{x_1,\ldots ,y_n}\left\lvert \sum _i \epsilon _i(f(x_i)-f(y_i))\right\rvert ^{2m}. \]
+</div>
+<p> In particular, if we sample \(\epsilon _i\in \{ -1,+1\} \) uniformly at random, then </p>
+<div class="displaymath" id="a0000000010">
+  \[  S \leq \mathbb {E}_{\epsilon _i} \mathbb {E}_{x_1,\ldots ,y_n}\left\lvert \sum _i \epsilon _i(f(x_i)-f(y_i))\right\rvert ^{2m}. \]
+</div>
+<p> We now change the order of expectation and consider the expectation over just \(\epsilon _i\), viewing the \(f(x_i)-f(y_i)=z_i\), say, as fixed quantities. For any \(z_i\) we can expand \(\mathbb {E}_{\epsilon _i} \lvert \sum _i \epsilon _iz_i\rvert ^{2m}\) and then bound it from above, using the triangle inequality and \(\left\lvert z_i\right\rvert \leq 4\), by </p>
+<div class="displaymath" id="a0000000011">
+  \[ 4^{2m}\sum _{k_1+\cdots +k_n=2m}\binom {2m}{k_1,\ldots ,k_n}\left\lvert \mathbb {E}\epsilon _1^{k_1}\cdots \epsilon _n^{k_n}\right\rvert . \]
+</div>
+<p> The inner expectation vanishes unless each \(k_i\) is even, when it is trivially one. Therefore the above quantity is exactly </p>
+<div class="displaymath" id="a0000000012">
+  \[ \sum _{l_1+\cdots +l_n=m}\binom {2m}{2l_1,\ldots ,2l_n}\leq m^mn^m, \]
+</div>
+<p> since for any \(l_1+\cdots +l_n=m\), </p>
+<div class="displaymath" id="a0000000013">
+  \[ \binom {2m}{2l_1,\ldots ,2l_n}\leq m^m\binom {m}{l_1,\ldots ,l_n}. \]
+</div>
+<p> This can be seen, for example, by writing both sides out using factorials, yielding </p>
+<div class="displaymath" id="a0000000014">
+  \[ \frac{(2m)!}{(2l_1)!\cdots (2l_n)!}\leq \frac{(2m)!}{2^mm!}\frac{m!}{l_1!\cdots l_n!}\leq m^m\frac{m!}{l_1!\cdots l_n!}. \]
+</div>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="mzi-complex">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">1.2</span>
+    <span class="lemma_thmtitle">Complex-valued Marcinkiewicz-Zygmund inequality</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#mzi-complex">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000015"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/YaelDillies/LeanAPAP//blob/b825c4f702e6a0a4b29ae5ec65a08891f79f9c75/src/prereqs/marcinkiewicz_zygmund.lean#L288">complex_marcinkiewicz_zygmund</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   Let \(m\geq 1\). If \(f:G\to \mathbb {C}\) is such that \(\mathbb {E}_x f(x)=0\) and \(\left\lvert f(x)\right\rvert \leq 2\) for all \(x\) then </p>
+<div class="displaymath" id="a0000000016">
+  \[ \mathbb {E}_{x_1,\ldots ,x_n} \left\lvert \sum _{i=1}^n f(x_i)\right\rvert ^{2m} \leq (16mn)^{m}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000015">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Test. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="random_approx_expect">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">1.3</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#random_approx_expect">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000017"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(\epsilon {\gt}0\) and \(m\geq 1\). Let \(A\subseteq G\) and \(f:G\to \mathbb {C}\). If \(k\geq 64m\epsilon ^{-2}\) then the set </p>
+<div class="displaymath" id="a0000000018">
+  \[ L=\{  {\vec{a}}\in A^k : \| \tfrac {1}{k}\sum _{i=1}^kf(x-a_i)-\mu _A\ast f\| _{2m}\leq \epsilon \|  f\| _{2m}\} . \]
+</div>
+<p> has size at least \(\lvert A \rvert ^k/2\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000017">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Note that if \(a\in A\) is chosen uniformly at random then, for any fixed \(x\in G\), </p>
+<div class="displaymath" id="a0000000019">
+  \[ \mathbb {E}f(x-a_i)= \frac{1}{\left\lvert A\right\rvert }\sum _{a\in A}f(x-a)=\frac{1}{\left\lvert A\right\rvert }1_{A}\ast f(x)=\mu _A\ast f(x). \]
+</div>
+<p> Therefore, if we choose \(a_1,\ldots ,a_k\in A\) independently uniformly at random, for any fixed \(x\in G\) and \(1\leq i\leq k\), the random variable \(f(x-a_i)-f\ast \mu _A(x)\) has mean zero. By the Marcinkiewicz-Zygmund inequality Lemma&#160;<a href="chap-ap.html#mzi">1.1</a>, therefore, </p>
+<div class="displaymath" id="a0000000020">
+  \begin{multline*}  \mathbb {E}\left\lvert  \frac{1}{k}\sum _i f(x-a_i)-f\ast \mu _A(x)\right\rvert ^{2m} \leq \\ (16m/k)^mk^{-1} \mathbb {E}\sum _i \left\lvert f(x-a_i)-f\ast \mu _A(x)\right\rvert ^{2m}. \end{multline*}
+</div>
+<p> We now sum both sides over all \(x\in G\). By the triangle inequality, for any fixed \(1\leq i\leq k\) and \(a_i\in A\), </p>
+<div class="displaymath" id="a0000000021">
+  \begin{align*}  \sum _{x\in G} \left\lvert f(x-a_i)-f\ast \mu _A(x)\right\rvert ^{2m} & \leq 2^{2m-1}\sum _{x\in G}\left\lvert f(x-a_i)\right\rvert ^{2m}+\sum _{x\in G}\left\lvert f\ast \mu _A(x)\right\rvert ^{2m}\\ & \leq 2^{2m-1}\left( \lVert f\rVert _{2m}^{2m}+\lVert f\ast \mu _A\rVert _{2m}^{2m}\right). \end{align*}
+</div>
+<p> We note that \(\lVert \mu _A\rVert _1=\frac{1}{\left\lvert A\right\rvert }\sum _{x\in A}1_{A}(x)=\left\lvert A\right\rvert /\left\lvert A\right\rvert =1\), and hence by Young’s inequality, \(\lVert f\ast \mu _A\rVert _{2m}\leq \lVert f\rVert _{2m}\), and so </p>
+<div class="displaymath" id="a0000000022">
+  \[ \sum _{x\in G} \left\lvert f(x-a_i)-f\ast \mu _A(x)\right\rvert ^{2m}\leq 2^{2m}\lVert f\rVert _{2m}^{2m}. \]
+</div>
+<p> It follows that </p>
+<div class="displaymath" id="a0000000023">
+  \[ \mathbb {E}_{a_1,\ldots ,a_k\in A}\lVert \frac{1}{k}\sum _i\tau _{a_i}f-f\ast \mu _A\rVert _{2m}^{2m}\leq (64m/k)^m\lVert f\rVert _{2m}^{2m}. \]
+</div>
+<p> In particular, if \(k\geq 64\epsilon ^{-2}m\) then the right-hand side is at most \((\frac{\epsilon }{2}\lVert f\rVert _{2m})^{2m}\) as required. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="aps_in_translates">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">1.4</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#aps_in_translates">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000024"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(A\subseteq G\) and \(f:G\to \mathbb {C}\). Let \(\epsilon {\gt}0\) and \(m\geq 1\) and \(k\geq 1\). Let </p>
+<div class="displaymath" id="a0000000025">
+  \[ L=\{  {\vec{a}}\in A^k : \| \tfrac {1}{k}\sum _{i=1}^kf(x-a_i)-\mu _A\ast f\| _{2m}\leq \epsilon \|  f\| _{2m}\} . \]
+</div>
+<p> If \(t\in G\) is such that \({\vec{a}}\in L\) and \({\vec{a}}+(t,\ldots ,t)\in L\) then </p>
+<div class="displaymath" id="a0000000026">
+  \[ \|  \tau _t(\mu _A\ast f)-\mu _A\ast f\| _{2m}\leq 2\epsilon \| f\| _{2m}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000024">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Test. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lots_of_diagonals">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">1.5</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#lots_of_diagonals">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000027"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(A\subseteq G\) and \(k\geq 1\) and \(L\subseteq A^k\). Then there exists some \({\vec{a}}\in L\) such that </p>
+<div class="displaymath" id="a0000000028">
+  \[ \# \{  t\in G : {\vec{a}}+(t,\ldots ,t)\in L\} \geq \frac{\lvert L\rvert }{\lvert A+S\rvert ^k}\lvert S\rvert . \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000027">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Test. </p>
+
+  </div>
+</div>
+<p><div class="theorem_thmwrapper" id="lp_ap">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">1.6</span>
+    <span class="theorem_thmtitle">\(L_p\) almost periodicity</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#lp_ap">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000029"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   Let \(\epsilon \in (0,1]\) and \(m\geq 1\). Let \(K\geq 2\) and \(A,S\subseteq G\) with \(\lvert A+S\rvert \leq K\lvert A\rvert \). Let \(f:G\to \mathbb {C}\). There exists \(T\subseteq G\) such that </p>
+<div class="displaymath" id="a0000000030">
+  \[ \lvert T\rvert \geq K^{-512m\epsilon ^{-2}}\lvert S\rvert  \]
+</div>
+<p> such that for any \(t\in T\) we have </p>
+<div class="displaymath" id="a0000000031">
+  \[ \|  \tau _t(\mu _A\ast f)-\mu _A\ast f\| _{2m}\leq \epsilon \|  f\| _{2m}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000029">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Test. </p>
+
+  </div>
+</div>
+<p><div class="theorem_thmwrapper" id="linfty_ap">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">1.7</span>
+    <span class="theorem_thmtitle">\(L_\infty \) almost periodicity</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#linfty_ap">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000032"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>  Let \(\epsilon \in (0,1]\) and \(m\geq 1\). Let \(K\geq 2\) and \(A,S\subseteq G\) with \(\lvert A+S\rvert \leq K\lvert A\rvert \). Let \(B,C\subseteq G\). Let \(\eta =\min (1,\lvert C\rvert /\lvert B\rvert )\). There exists \(T\subseteq G\) such that </p>
+<div class="displaymath" id="a0000000033">
+  \[ \lvert T\rvert \geq K^{-4096\lceil \mathcal{L}{\eta }\rceil \epsilon ^{-2}}\lvert S\rvert  \]
+</div>
+<p> such that for any \(t\in T\) we have </p>
+<div class="displaymath" id="a0000000034">
+  \[ \|  \tau _t(\mu _A\ast 1_B\ast \mu _C)-\mu _A\ast 1_B\ast \mu _C\| _{\infty }\leq \epsilon . \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000032">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Let \(T\) be as given in ?? with \(f=1_B\) and \(m=\lceil \mathcal{L}{\eta }\rceil \) and \(\epsilon =\epsilon /e\). (The size bound on \(T\) follows since \(e^2\leq 8\).) Fix \(t\in T\) and let \(F=\tau _t(\mu _A\ast 1_B)-\mu _A\ast 1_B\). We have, for any \(x\in G\), </p>
+<div class="displaymath" id="a0000000035">
+  \[ (\tau _t(\mu _A\ast 1_B\ast \mu _C)-\mu _A\ast 1_B\ast \mu _C)(x)=F\ast \mu _C(x)=\sum _y F(y)\mu _{C}(x-y)=\sum _yF(y)\mu _{x-C}(y). \]
+</div>
+<p> By Holder’s inequality, this is (in absolute value), for any \(m\geq 1\), </p>
+<div class="displaymath" id="a0000000036">
+  \[ \lVert F\rVert _{2m}\lVert \mu _{x-C}\rVert _{1+\frac{1}{2m-1}}. \]
+</div>
+<p> By the construction of \(T\) the first factor is at most \(\frac{\epsilon }{e}\|  1_B\| _{2m}=\frac{\epsilon }{e}\lvert B\rvert ^{1/2m}\). We have by calculation </p>
+<div class="displaymath" id="a0000000037">
+  \[ \lVert \mu _{x-C}\rVert _{1+\frac{1}{2m-1}}=\lvert x-C\rvert ^{-1/2m}=\lvert C\rvert ^{-1/2m}. \]
+</div>
+<p> Therefore we have shown that </p>
+<div class="displaymath" id="a0000000038">
+  \[ \|  \tau _t(\mu _A\ast 1_B\ast \mu _C)-\mu _A\ast 1_B\ast \mu _C\| _{\infty }\leq \frac{\epsilon }{e}(\lvert C\rvert /\lvert B\rvert )^{-1/2m}. \]
+</div>
+<p> The claim now follows since, by choice of \(m\), </p>
+<div class="displaymath" id="a0000000039">
+  \[ (\lvert C\rvert /\lvert B\rvert )^{-1/2m}\leq e \]
+</div>
+<p> (dividing into cases as to whether \(\eta =1\) or not). </p>
+
+  </div>
+</div>
+<p><div class="theorem_thmwrapper" id="linfty_ap_boosted">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">1.8</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#linfty_ap_boosted">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000040"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+<p>Let \(\epsilon \in (0,1]\) and \(m\geq 1\) and \(k\geq 1\). Let \(K\geq 2\) and \(A,S\subseteq G\) with \(\lvert A+S\rvert \leq K\lvert A\rvert \). Let \(B,C\subseteq G\). Let \(\eta =\min (1,\lvert C\rvert /\lvert B\rvert )\). There exists \(T\subseteq G\) such that </p>
+<div class="displaymath" id="a0000000041">
+  \[ \lvert T\rvert \geq K^{-4096\lceil \mathcal{L}{\eta }\rceil k^2\epsilon ^{-2}}\lvert S\rvert  \]
+</div>
+<p> such that </p>
+<div class="displaymath" id="a0000000042">
+  \[ \|  \mu _T^{(k)}\ast \mu _A\ast 1_B\ast \mu _C-\mu _A\ast 1_B\ast \mu _C\| _{\infty }\leq \epsilon . \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000040">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Let \(T\) be as in Theorem&#160;<a href="chap-ap.html#linfty_ap">1.7</a> with \(\epsilon \) replaced by \(\epsilon /k\). Note that, for any \(x\in G\), </p>
+<div class="displaymath" id="a0000000043">
+  \[ \mu _T^{(k)}\ast \mu _A\ast 1_B\ast \mu _C(x)=\frac{1}{\lvert T\rvert ^k}\sum _{t_1,\ldots ,t_k\in T}\tau _{t_1+\cdots +t_k}\mu _A\ast 1_B\ast \mu _C(x). \]
+</div>
+<p> It therefore suffices (by the triangle inequality) to show, for any fixed \(x\in G\) and \(t_1,\ldots ,t_k\in T\), that with \(F=\mu _A\ast 1_B\ast \mu _C\), we have </p>
+<div class="displaymath" id="a0000000044">
+  \[ \lvert \tau _{t_1+\cdots +t_k}F(x)-F(x)\rvert \leq \epsilon . \]
+</div>
+<p> This follows by the triangle inequality applied \(k\) times if we knew that, for \(1\leq l\leq k\), </p>
+<div class="displaymath" id="a0000000045">
+  \[ \lvert \tau _{t_1+\cdots +t_l}F(x)-\tau _{t_1+\cdots +t_{l-1}}F(x)\rvert \leq \epsilon /k. \]
+</div>
+<p> We can write the left-hand side as </p>
+<div class="displaymath" id="a0000000046">
+  \[ \lvert \tau _{t_1+\cdots +t_l}F(x)-\tau _{t_1+\cdots +t_{l-1}}F(x)\rvert =\lvert \tau _{t_l}F(x-t_1-\cdots -t-{l-1})-F(x-t_1-\cdots -t-{l-1})\rvert . \]
+</div>
+<p> The right-hand side is at most </p>
+<div class="displaymath" id="a0000000047">
+  \[ \|  \tau _{t_l}F-F\| _\infty  \]
+</div>
+<p> and we are done by choice of \(T\). </p>
+
+  </div>
+</div>
+<p><div class="theorem_thmwrapper" id="chang">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">1.9</span>
+    <span class="theorem_thmtitle">Chang’s lemma</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#chang">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000048"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>  If </p>
+<div class="displaymath" id="a0000000049">
+  \[ \Delta = \{  \gamma : \lvert \widehat{1_{X}(\gamma )}\rvert \geq \eta \mu (X)\}  \]
+</div>
+<p> then there is a set \(\Gamma \) of size \(O(\eta ^{-2}\log (1/\mu (X)))\) such that </p>
+<div class="displaymath" id="a0000000050">
+  \[ \Delta \subseteq \left\{ \sum _{\gamma \in \Gamma }\epsilon _\gamma \gamma : \epsilon _\gamma \in \{ -1,0,1\} \right\} . \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000048">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Test. </p>
+
+  </div>
+</div>
+<p><div class="theorem_thmwrapper" id="ap_in_ff">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">1.10</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-ap.html#ap_in_ff">#</a>
+    <a class="icon proof" href="chap-ap.html#a0000000051"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p> If \(A_1,A_2,S\subseteq \mathbb {F}_q^n\) are such that \(A_1\) and \(A_2\) both have density at least \(\alpha \) then there is a subspace \(V\) of codimension </p>
+<div class="displaymath" id="a0000000052">
+  \[ \mathrm{codim}(V)\ll _\epsilon \log (2/\alpha )^4 \]
+</div>
+<p> such that </p>
+<div class="displaymath" id="a0000000053">
+  \[ \left\lvert \langle \mu _V\ast \mu _{A_1}\ast \mu _{A_2},1_{S}\rangle -\langle \mu _{A_1}\ast \mu _{A_2},1_{S}\rangle \right\rvert \leq \epsilon . \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000051">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Test. </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="index.html" title="LeanAPAP"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="LeanAPAP"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0001.html" title="Chang’s lemma"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang=" en-US">
+
+<head>
+  <meta charset="UTF-8">
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Arithmetic Progressions - Almost Periodicity | A digitisation of the Kelley-Meka bound on Roth numbers</title>
+<meta name="generator" content="Jekyll v3.9.2" />
+<meta property="og:title" content="Arithmetic Progressions - Almost Periodicity" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A digitisation of the Kelley-Meka bound on Roth numbers" />
+<meta property="og:description" content="A digitisation of the Kelley-Meka bound on Roth numbers" />
+<link rel="canonical" href="https://yaeldillies.github.io/LeanAPAP//" />
+<meta property="og:url" content="https://yaeldillies.github.io/LeanAPAP//" />
+<meta property="og:site_name" content="Arithmetic Progressions - Almost Periodicity" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Arithmetic Progressions - Almost Periodicity" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","description":"A digitisation of the Kelley-Meka bound on Roth numbers","headline":"Arithmetic Progressions - Almost Periodicity","name":"Arithmetic Progressions - Almost Periodicity","url":"https://yaeldillies.github.io/LeanAPAP//"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style"
+    type="text/css" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <link rel="stylesheet"
+    href="/LeanAPAP/assets/css/style.css?v=b825c4f702e6a0a4b29ae5ec65a08891f79f9c75">
+  
+  <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body>
+  <a id="skip-to-content" href="#content">Skip to the content.</a>
+
+  <header class="page-header" role="banner">
+    <h1 class="project-name">Arithmetic Progressions - Almost Periodicity</h1>
+    <h2 class="project-tagline">A digitisation of the Kelley-Meka bound on Roth numbers</h2>
+    <a href="blueprint" class="btn">Blueprint</a>
+    <a href="docs" class="btn">Documentation</a>
+    
+    <a href="https://github.com/YaelDillies/LeanAPAP" class="btn">View on GitHub</a>
+    
+    
+  </header>
+
+  <main id="content" class="main-content" role="main">
+    <h1 id="arithmetic-progressions---almost-periodicity">Arithmetic Progressions - Almost Periodicity</h1>
+
+<p>The purpose of this repository is to <em>digitise</em> some mathematical definitions, theorem statements
+and theorem proofs. Digitisation, or formalisation, is a process where the source material,
+typically a mathematical textbook or a pdf file or website or video, is transformed into definitions
+in a target system consisting of a computer implementation of a logical theory (such as set theory
+or type theory).</p>
+
+<h2 id="the-source">The source</h2>
+
+<p>The definitions, theorems and proofs in this repository are taken from the exposition of Bloom and
+Sisask on the Kelley-Meka bound on Roth numbers <a href="https://arxiv.org/abs/2302.07211">2302.07211</a>.</p>
+
+<p>The main result is that there is some constant <code class="language-plaintext highlighter-rouge">c &gt; 0</code> such that, if <code class="language-plaintext highlighter-rouge">A ⊆ {1, ..., N}</code> contains no
+non-trivial arithmetic progression of length 3, then <code class="language-plaintext highlighter-rouge">|A| ≤ N/exp(c * (log n)^(1/12)))</code> for some
+constant <code class="language-plaintext highlighter-rouge">c &gt; 0</code>. This is an amazing improvement over previous bounds, which were all of the form
+<code class="language-plaintext highlighter-rouge">N/(log n)^c</code> for some constant <code class="language-plaintext highlighter-rouge">c</code>.</p>
+
+<h2 id="the-target">The target</h2>
+
+<p>The formal system which we are using as a target system is Lean’s dependent type theory. Lean is a
+project being developed at AWS and Microsoft Research by Leonardo de Moura and his team.</p>
+
+<p>At this stage, mathlib4 contains all the background material that we need. However, not all
+quality-of-life improvements that we know from Lean 3 have made it to Lean 4 (yet) and Lean 4
+suffers from its own problems that currently make it unsuitable for new formalisation of
+research-level mathematics. As a consequence, we are sticking to Lean 3 until the project is
+complete. Then we will port it to Lean 4 in order to upstream our basic results.</p>
+
+<h2 id="content-of-this-project">Content of this project</h2>
+
+<p>This project currently contains about 3k lines of Lean code about the discrete (difference)
+convolution, discrete Lp norms, discrete Fourier transform. It also contains proofs of a version of
+almost periodicity and of a quantitative version of the Marcinkiewicz-Zygmund inequality.</p>
+
+<p>Once finished, this project will contain two main results (here <code class="language-plaintext highlighter-rouge">R</code> is the Roth number, the maximum
+size of a set without three term arithmetic progressions):</p>
+<ul>
+  <li>The <strong>finite field case</strong>: A proof that <code class="language-plaintext highlighter-rouge">R(F_q^n) ≤ q ^ (n - c * n ^ (1/9))</code> for some constant
+<code class="language-plaintext highlighter-rouge">c</code>. This is worse than the Ellenberg-Gijswijt bound <code class="language-plaintext highlighter-rouge">R(F_q^n) ≤ q ^ (n - c * n)</code> which was
+formalised in <a href="https://drops.dagstuhl.de/opus/volltexte/2019/11070/">Dahmen, Hölzl, Lewis</a>. The
+goal here is therefore not to improve on the existing bound but instead demonstrate the
+probability and Fourier analysis techniques, whereas Ellenberg-Gijswijt used the polynomial
+method.</li>
+  <li>The <strong>integer case</strong>: A proof that <code class="language-plaintext highlighter-rouge">R(n) ≤ N/exp(c * (log n)^(1/9)))</code>, using the same techniques
+as in the finite field case, except for the fact that we now use Bohr sets instead of subspaces.
+This bound is a slight improvement over the Kelley-Meka bound (with <code class="language-plaintext highlighter-rouge">1/12</code> as the exponent instead
+of <code class="language-plaintext highlighter-rouge">1/9</code>). It is due to Bloom and Sisask.</li>
+</ul>
+
+<h3 id="code-organisation">Code organisation</h3>
+
+<p>The Lean code is contained in the directory <code class="language-plaintext highlighter-rouge">src/</code>. The subdirectories are:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">mathlib</code>: Material missing from existing mathlib developments</li>
+  <li><code class="language-plaintext highlighter-rouge">prereqs</code>: New developments to be integrated to mathlib</li>
+  <li><code class="language-plaintext highlighter-rouge">physics</code>: The physical (as opposed to Fourier space) proof steps that are shared
+between the finite field cases and integer case</li>
+  <li><code class="language-plaintext highlighter-rouge">finite_field</code>: The proof steps specific to the finite field case</li>
+  <li><code class="language-plaintext highlighter-rouge">integer</code>: The proof steps specific to the integer case</li>
+</ul>
+
+<p>See the next section for how to browse it.</p>
+
+<h3 id="current-progress">Current progress</h3>
+
+<p>The project is not yet finished. The following table details live which files are unfinished, and
+how many ‘sorries’ (unproven statements) remain in each file.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>File</th>
+      <th>Sorries</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://github.com/YaelDillies/LeanAPAP/blob/master/src/mathlib/topology/metric_space/algebra.lean">Mathlib: Topology: Metric space: Algebra</a></td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/YaelDillies/LeanAPAP/blob/master/src/physics/drc.lean">Physics: Drc</a></td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/YaelDillies/LeanAPAP/blob/master/src/physics/unbalancing.lean">Physics: Unbalancing</a></td>
+      <td>6</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="what-next">What next?</h3>
+
+<p>Almost periodicity is nowadays a standard tool in additive combinatorics. The version we formalised
+is sufficient for many applications. In particular, it gives one of the best known bounds on
+Freiman’s theorem. If some time is left at the end of the project, we might tackle Freiman’s
+theorem.</p>
+
+<p>The discrete convolution/Lp norm/Fourier transform material belongs in mathlib and we hope to PR it
+there once the transition to Lean 4 has completed. Almost periodicity should similarly be upstreamed
+to mathlib given the numerous applications. The rest of the material might forever live in this
+repository.</p>
+
+<h2 id="how-to-browse-this-repository">How to browse this repository</h2>
+
+<h3 id="blueprint">Blueprint</h3>
+
+<p>Below we explain how to engage with the Lean code directly.
+We also provide a <a href="https://YaelDillies.github.io/LeanAPAP/">blueprint</a>
+including a <a href="https://YaelDillies.github.io/LeanAPAP/blueprint/dep_graph_document.html">dependency graph</a>
+of the main ingredients in the repository.
+This blueprint is developed in sync with the Lean formalization,
+and will hence see frequent updates during the length of the project.
+More information on building the blueprint locally is given below.</p>
+
+<h3 id="getting-the-project">Getting the project</h3>
+
+<p>At the moment, the recommended way of browsing this repository,
+is by using a Lean development environment.
+Crucially, this will allow you to introspect Lean’s “Goal state” during proofs,
+and easily jump to definitions or otherwise follow paths through the code.</p>
+
+<p>We are looking into ways to setup an online interactive website
+that will provide the same experience without the hassle of installing a complete
+Lean development environment.</p>
+
+<p>For the time being: please use the
+<a href="https://leanprover-community.github.io/get_started.html#regular-install">installation instructions</a>
+to install Lean and a supporting toolchain.
+After that, download and open a copy of the repository
+by executing the following command in a terminal:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>leanproject get YaelDillies/LeanAPAP
+code LeanAPAP
+</code></pre></div></div>
+<p>For detailed instructions on how to work with Lean projects,
+see <a href="https://leanprover-community.github.io/install/project.html">this</a>. The script
+<code class="language-plaintext highlighter-rouge">scripts/get-cache.sh</code> in the folder <code class="language-plaintext highlighter-rouge">LeanAPAP</code> will download the <code class="language-plaintext highlighter-rouge">olean</code> files created by our
+continuous integration. This will save you some time by not having to run <code class="language-plaintext highlighter-rouge">leanproject build</code>.</p>
+
+<h3 id="reading-the-project">Reading the project</h3>
+
+<p>With the project opened in VScode,
+you are all set to start exploring the code.
+There are two pieces of functionality that help a lot when browsing through Lean code:</p>
+
+<ul>
+  <li>“Go to definition”: If you right-click on a name of a definition or lemma (such as <code class="language-plaintext highlighter-rouge">dconv</code> or
+<code class="language-plaintext highlighter-rouge">Lpnorm</code>), then you can choose “Go to definition” from the menu, and you will be taken to the
+relevant location in the source files. This also works by <code class="language-plaintext highlighter-rouge">Ctrl</code>-clicking on the name.</li>
+  <li>“Goal view”: in the event that you would like to read a <em>proof</em>, you can step through the proof
+line-by-line, and see the internals of Lean’s “brain” in the Goal window. If the Goal window is
+not open, you can open it by clicking on one of the icons in the top right hand corner.</li>
+</ul>
+
+<h3 id="building-the-blueprint-locally">Building the blueprint locally</h3>
+
+<p>To build the web version of the blueprint locally, you need a working LaTeX installation.
+Furthermore, you need some dependencies.  Under Linux, you should be able to get the prepackaged
+ones with something like:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt install graphviz libgraphviz-dev libjpeg-dev pandoc
+pip3 install invoke
+</code></pre></div></div>
+
+<p>Under Mac OS, you should be able to get these with:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew install graphviz pandoc
+pip3 install pygraphviz invoke
+</code></pre></div></div>
+<p>(<a href="https://stackoverflow.com/a/70439868/">This stackoverflow answer</a> may help to fix an error
+installing <code class="language-plaintext highlighter-rouge">pygraphviz</code>.</p>
+
+<p>A couple of dependencies must be installed from source, for now (<code class="language-plaintext highlighter-rouge">leanblueprint</code> is not yet
+released, and the released <code class="language-plaintext highlighter-rouge">plastex</code> is out of date):</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd .. # go to a folder where you are happy to clone git repos
+git clone https://github.com/plastex/plastex
+pip3 install ./plastex
+git clone https://github.com/PatrickMassot/leanblueprint
+pip3 install ./leanblueprint
+</code></pre></div></div>
+
+<p>To actually build the blueprint, <code class="language-plaintext highlighter-rouge">cd</code> to the <code class="language-plaintext highlighter-rouge">LeanAPAP</code> folder and run</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>leanproject get-mathlib-cache
+leanproject build
+inv all html
+</code></pre></div></div>
+
+<p>To view the web version of the blueprint locally, run <code class="language-plaintext highlighter-rouge">inv serve</code> and navigate to
+<code class="language-plaintext highlighter-rouge">http://localhost:8000/</code> in your favorite browser.</p>
+
+<h2 id="brief-note-on-type-theory">Brief note on type theory</h2>
+
+<p>Lean is based on type theory, which means that some things work slightly differently from set
+theory. We highlight two syntactical differences:</p>
+<ul>
+  <li>Firstly, the element-of relation (<code class="language-plaintext highlighter-rouge">∈</code>) plays no fundamental role. Instead, there is a typing
+judgment (<code class="language-plaintext highlighter-rouge">:</code>). This means that we write <code class="language-plaintext highlighter-rouge">x : X</code> to say that “<code class="language-plaintext highlighter-rouge">x</code> is a term of type <code class="language-plaintext highlighter-rouge">X</code>”
+instead of “<code class="language-plaintext highlighter-rouge">x</code> is an element of the set <code class="language-plaintext highlighter-rouge">X</code>”. Conveniently, we can write <code class="language-plaintext highlighter-rouge">f : X → Y</code> to mean
+“<code class="language-plaintext highlighter-rouge">f</code> has type <code class="language-plaintext highlighter-rouge">X → Y</code>”, in other words “<code class="language-plaintext highlighter-rouge">f</code> is a function from <code class="language-plaintext highlighter-rouge">X</code> to <code class="language-plaintext highlighter-rouge">Y</code>”.</li>
+  <li>Secondly, type theorists do not use the mapsto symbol (<code class="language-plaintext highlighter-rouge">↦</code>), but instead use lambda-notation.
+This means that we can define the square function on the integers via <code class="language-plaintext highlighter-rouge">λ x, x^2</code>, which translates
+to <code class="language-plaintext highlighter-rouge">x ↦ x^2</code> in set-theoretic notation. For more information about <code class="language-plaintext highlighter-rouge">λ</code>, see the Wikipedia page on
+<a href="https://en.wikipedia.org/wiki/Lambda_calculus">lambda calculus</a>.</li>
+</ul>
+
+<p>For a more extensive discussion of type theory, see the dedicated
+<a href="https://leanprover-community.github.io/lean-perfectoid-spaces/type_theory.html">page</a>
+on the perfectoid project website.</p>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<p>Our project builds on mathlib. We must therefore thank its numerous contributors without whom this
+project couldn’t even have started.</p>
+
+<p>Much of the project infrastructure has been adapted from</p>
+<ul>
+  <li><a href="https://leanprover-community.github.io/sphere-eversion/">sphere eversion</a></li>
+  <li><a href="https://github.com/leanprover-community/liquid/">liquid tensor experiment</a></li>
+  <li><a href="https://github.com/b-mehta/unit-fractions/">unit fractions</a></li>
+</ul>
+
+<h2 id="source-reference">Source reference</h2>
+
+<p><code class="language-plaintext highlighter-rouge">[BS]</code> : https://arxiv.org/abs/2302.07211</p>
+
+
+
+    <footer class="site-footer">
+      
+      <span class="site-footer-owner"><a href="https://github.com/YaelDillies/LeanAPAP">LeanAPAP</a>
+        is maintained by a team of contributors from the University of Cambridge and the University of Oxford. Visit the repository on GitHub for
+        more information.</span>
+      
+    </footer>
+  </main>
+</body>
+
+</html>
