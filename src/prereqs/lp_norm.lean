@@ -54,6 +54,9 @@ by simpa using Lpnorm_rpow_eq_sum (nat.cast_ne_zero.2 hp) f
 
 lemma L1norm_eq_sum (f : Π i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp [Lpnorm_eq_sum']
 
+lemma L2norm_eq_sum (f : Π i, α i) : ‖f‖_[2] = sqrt (∑ i, ‖f i‖ ^ 2) :=
+by simpa [sqrt_eq_rpow] using Lpnorm_eq_sum two_ne_zero _
+
 lemma L0norm_eq_card (f : Π i, α i) : ‖f‖_[0] = {i | f i ≠ 0}.to_finite.to_finset.card :=
 pi_Lp.norm_eq_card _
 
@@ -318,8 +321,10 @@ end real
 /-! #### Inner product -/
 
 section normed_add_comm_group
-variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] (𝕜 : Type*) [add_comm_monoid 𝕜]
-  [Π i, has_inner 𝕜 (α i)]
+variables {𝕜 : Type*} {α : ι → Type*} [Π i, normed_add_comm_group (α i)]
+
+section has_inner
+variables (𝕜) [add_comm_monoid 𝕜] [Π i, has_inner 𝕜 (α i)]
 
 @[reducible] noncomputable def L2inner (f g : Π i, α i) : 𝕜 :=
 inner ((pi_Lp.equiv 2 _).symm f) ((pi_Lp.equiv 2 _).symm g)
@@ -328,7 +333,33 @@ notation `⟪`f`, `g`⟫_[`𝕜`]` := L2inner 𝕜 f g
 
 lemma L2inner_eq_sum (f g : Π i, α i) : ⟪f, g⟫_[𝕜] = ∑ i, inner (f i) (g i) := rfl
 
+end has_inner
+
+variables [is_R_or_C 𝕜] [Π i, inner_product_space 𝕜 (α i)]
+
+@[simp] lemma L2inner_zero_left (g : Π i, α i) : ⟪0, g⟫_[𝕜] = 0 := by simp [L2inner_eq_sum]
+@[simp] lemma L2inner_zero_right (f : Π i, α i) : ⟪f, 0⟫_[𝕜] = 0 := by simp [L2inner_eq_sum]
+
 end normed_add_comm_group
+
+section is_R_or_C
+variables {𝕜 γ : Type*} [is_R_or_C 𝕜] [distrib_smul γ 𝕜]
+
+lemma L2inner_smul_left [has_star γ] [star_module γ 𝕜] [is_scalar_tower γ 𝕜 𝕜] (c : γ)
+  (f g : ι → 𝕜) : ⟪c • f, g⟫_[𝕜] = star c • ⟪f, g⟫_[𝕜] :=
+by simp only [L2inner_eq_sum, pi.smul_apply, is_R_or_C.inner_apply, smul_mul_assoc, smul_sum,
+  star_ring_end_apply, star_smul]
+
+lemma L2inner_smul_right [has_star γ] [star_module γ 𝕜] [smul_comm_class γ 𝕜 𝕜] (c : γ)
+  (f g : ι → 𝕜) : ⟪f, c • g⟫_[𝕜] = c • ⟪f, g⟫_[𝕜] :=
+by simp only [L2inner_eq_sum, pi.smul_apply, is_R_or_C.inner_apply, mul_smul_comm, smul_sum,
+  star_ring_end_apply, star_smul]
+
+lemma smul_L2inner_left [has_involutive_star γ] [star_module γ 𝕜] [is_scalar_tower γ 𝕜 𝕜] (c : γ)
+  (f g : ι → 𝕜) : c • ⟪f, g⟫_[𝕜] = ⟪star c • f, g⟫_[𝕜] :=
+by rw [L2inner_smul_left, star_star]
+
+end is_R_or_C
 
 section Lpnorm
 variables {α β : Type*} [add_comm_group α] [fintype α] {p : ℝ≥0∞}
@@ -557,3 +588,20 @@ lemma L1norm_mu (hs : s.nonempty) : ‖μ_[β] s‖_[1] = 1 := by simpa using Lp
 lemma L1norm_mu_le_one : ‖μ_[β] s‖_[1] ≤ 1 := by simpa using Lpnorm_mu_le le_rfl
 
 end mu
+
+/-! ### Things that should go earlier -/
+
+namespace real
+variables {f g : ι → ℝ}
+
+open finset
+open_locale big_operators
+
+-- TODO: `nnreal` version
+/-- Square root version of the **Cauchy-Schwarz inequality**. -/
+lemma sum_sqrt_mul_sqrt_le (s : finset ι) (hf : ∀ i, 0 ≤ f i) (hg : ∀ i, 0 ≤ g i) :
+  ∑ i in s, sqrt (f i) * sqrt (g i) ≤ sqrt (∑ i in s, f i) * sqrt (∑ i in s, g i) :=
+by simpa [←@sum_attach _ _ s, L2inner_eq_sum, L2norm_eq_sum, hf _, hg _]
+    using L2inner_le_L2norm_mul_L2norm (λ i : s, sqrt $ f i) (λ i : s, sqrt $ g i)
+
+end real

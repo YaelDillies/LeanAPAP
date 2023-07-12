@@ -1,6 +1,7 @@
 import data.finset.pointwise
 import mathlib.data.fintype.lattice
 import prereqs.translate
+import data.real.nnreal
 
 open finset function
 open_locale big_operators pointwise
@@ -63,6 +64,17 @@ funext $ λ x, by rw [finset.prod_apply, indicator_inf_apply]
 
 end comm_semiring
 
+namespace nnreal
+open_locale nnreal
+
+@[simp, norm_cast] lemma coe_indicator' (s : finset α) (x : α) : ↑(𝟭_[ℝ≥0] s x) = 𝟭_[ℝ] s x :=
+map_indicator nnreal.to_real_hom _ _
+
+@[simp] lemma coe_comp_indicator (s : finset α) : coe ∘ 𝟭_[ℝ≥0] s = 𝟭_[ℝ] s :=
+by ext; exact coe_indicator' _ _
+
+end nnreal
+
 section ordered_semiring
 variables [ordered_semiring β] {s : finset α}
 
@@ -119,6 +131,17 @@ lemma translate_mu [add_comm_group α] (a : α) (s : finset α) : τ a (μ_[β] 
 by ext; simp [mu_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
 
 end division_semiring
+
+namespace nnreal
+open_locale nnreal
+
+@[simp, norm_cast] lemma coe_mu (s : finset α) (x : α) : ↑(μ_[ℝ≥0] s x) = μ_[ℝ] s x :=
+map_mu nnreal.to_real_hom _ _
+
+@[simp] lemma coe_comp_mu (s : finset α) : coe ∘ μ_[ℝ≥0] s = μ_[ℝ] s :=
+by ext; exact coe_mu _ _
+
+end nnreal
 
 section linear_ordered_semifield
 variables [linear_ordered_semifield β] {s : finset α}

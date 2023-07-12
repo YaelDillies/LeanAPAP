@@ -12,7 +12,8 @@ and
 \end{lemma}
 
 \begin{proof}
-First note that the statement is trivially true (with $A_1=B_1$ and $A_2=B_2$, say) if $\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p=0$. We can therefore assume this is $\neq 0$. 
+\leanok
+First note that the statement is trivially true (with $A_1=B_1$ and $A_2=B_2$, say) if $\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p=0$. We can therefore assume this is $\neq 0$.
 
 For $s\in G^{p}$ let $A_1(s)=B_1\cap (A+s_1)\cap\cdots\cap (A+s_{p})$, and similarly for $A_2(s)$. Note that
 \begin{align*}
@@ -27,12 +28,12 @@ In particular, applying this with $f\equiv 1$ we see that
 \[\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p=\abs{B_1}^{-1}\abs{B_2}^{-1}\sum_s\abs{A_1(s)}\abs{A_2(s)}\]
 and
 \[\frac{\langle (\ind{A}\circ \ind{A})^p,f\rangle_\mu}{\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p}=\frac{\sum_{s}\langle \ind{A_1(s)}\circ \ind{A_2(s)}, f\rangle}{\sum_s \abs{A_1(s)}\abs{A_2(s)}}=\eta,\]
-say. Let $M>0$ be some parameter, and let 
+say. Let $M>0$ be some parameter, and let
 \[g(s) = \begin{cases} 1&\textrm{ if }0<\abs{A_1(s)}\abs{A_2(s)}<M^2\textrm{ and }\\0&\textrm{ otherwise.}\end{cases}\]
-Then we have 
+Then we have
 \[\sum_s g(s)\abs{A_1(s)}\abs{A_2(s)}
 <\sum_s M\abs{A_1(s)}^{1/2}\abs{A_2(s)}^{1/2}.\]
-To see why, note first that each summand on the left-hand side is $\leq$ the corresponding summand on the right-hand side, arguing by cases on whether $g(s)=1$ or not. It therefore suffices to show that there exists some $s$ such that the summand on the left-hand side is $<$ the corresponding summand on the right-hand side. 
+To see why, note first that each summand on the left-hand side is $\leq$ the corresponding summand on the right-hand side, arguing by cases on whether $g(s)=1$ or not. It therefore suffices to show that there exists some $s$ such that the summand on the left-hand side is $<$ the corresponding summand on the right-hand side.
 
 If $g(s)=0$ for all $s$ then choose some $s$ such that $\abs{A_1(s)}\abs{A_2(s)}\geq M^2$ (this must exist or else $\abs{A_1(s)}\abs{A_2(s)}=0$ for all $s$, but then $\norm{1_A\circ 1_A}_{p(\mu)}^p=0$ by the above calculation). Otherwise, choose some $s$ such that $g(s)=1$, and note that for this $s$ we have, by definition of $s$,
 \[\abs{A_1(s)}\abs{A_2(s)}<M\abs{A_1(s)}^{1/2}\abs{A_2(s)}^{1/2}.\]
@@ -58,7 +59,7 @@ In particular there must exist some $s$ such that
 \[\langle \ind{A_1(s)}\circ \ind{A_2(s)},f\rangle< 2\eta \abs{A_1(s)}\abs{A_2(s)}(1-g(s)).\]
 We claim this $s$ meets the requirements. The first is satisfied since the right-hand side is $\leq 2\eta \abs{A_1(s)}\abs{A_2(s)}$. The second is satisfied since the left-hand side is trivially $\geq 0$ and hence such an $s$ must satisfy $g(s)=0$, whence either $ \abs{A_1(s)}\abs{A_2(s)}\geq M^2$, that is,
 \[\abs{A_1(s)}\abs{A_2(s)}\geq \frac{1}{4}\abs{A}^{-2p}\abs{B_1}\abs{B_2}\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^{2p},\]
-or $\abs{A_1(s)}\abs{A_2(s)}=0$, which can't happen because then the right-hand side is $=0$. 
+or $\abs{A_1(s)}\abs{A_2(s)}=0$, which can't happen because then the right-hand side is $=0$.
 
 The final bound now follows since $xy \leq \min(x,y)$ when $x,y\leq 1$.
 \end{proof}
@@ -89,5 +90,3 @@ and by definition of $S$ we have
 \[\langle (\ind{A}\circ \ind{A})^p,\ind{G\backslash S}\rangle_\mu\leq (1-\epsilon)^p\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p\sum_{x}\mu(x)=(1-\epsilon)^p\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p.\]
 Now use the fact that $p\geq \epsilon^{-1}\log(2/\delta)$ together with the inequality $1-x\leq e^{-x}$ to deduce that the right-hand side is $\leq \tfrac{\delta}{2}\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p$.
 \end{proof}
-
-
