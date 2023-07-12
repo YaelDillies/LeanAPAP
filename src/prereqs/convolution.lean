@@ -110,22 +110,27 @@ by simp_rw [←conv_conjneg, conjneg_add, conv_add]
 lemma add_dconv (f g h : α → β) : (f + g) ○ h = f ○ h + g ○ h :=
 by simp_rw [←conv_conjneg, add_conv]
 
-lemma smul_conv_assoc [distrib_smul γ β] [is_scalar_tower γ β β] (c : γ) (f g : α → β) :
+lemma smul_conv [distrib_smul γ β] [is_scalar_tower γ β β] (c : γ) (f g : α → β) :
   (c • f) ∗ g = c • (f ∗ g) :=
 by ext a; simp only [pi.smul_apply, smul_sum, conv_apply, smul_mul_assoc]
 
-lemma smul_dconv_assoc [distrib_smul γ β] [is_scalar_tower γ β β] (c : γ) (f g : α → β) :
+lemma smul_dconv [distrib_smul γ β] [is_scalar_tower γ β β] (c : γ) (f g : α → β) :
   (c • f) ○ g = c • (f ○ g) :=
 by ext a; simp only [pi.smul_apply, smul_sum, dconv_apply, smul_mul_assoc]
 
-lemma smul_conv_left_comm [distrib_smul γ β] [smul_comm_class γ β β] (c : γ) (f g : α → β) :
+lemma conv_smul [distrib_smul γ β] [smul_comm_class γ β β] (c : γ) (f g : α → β) :
   f ∗ (c • g) = c • (f ∗ g) :=
 by ext a; simp only [pi.smul_apply, smul_sum, conv_apply, mul_smul_comm]
 
-lemma smul_dconv_left_comm [has_star γ] [distrib_smul γ β] [smul_comm_class γ β β] [star_module γ β]
+lemma dconv_smul [has_star γ] [distrib_smul γ β] [smul_comm_class γ β β] [star_module γ β]
   (c : γ) (f g : α → β) : f ○ (c • g) = star c • (f ○ g) :=
 by ext a; simp only [pi.smul_apply, smul_sum, dconv_apply, mul_smul_comm, star_ring_end_apply,
   star_module.star_smul]
+
+alias smul_conv ← smul_conv_assoc
+alias smul_dconv ← smul_dconv_assoc
+alias conv_smul ← smul_conv_left_comm
+alias dconv_smul ← smul_dconv_left_comm
 
 lemma map_conv {γ} [comm_semiring γ] [star_ring γ] (m : β →+* γ) (f g : α → β) (a : α) :
   m ((f ∗ g) a) = ((m ∘ f) ∗ (m ∘ g)) a :=
@@ -227,6 +232,17 @@ lemma sub_dconv (f g h : α → β) : (f - g) ○ h = f ○ h - g ○ h :=
 by simp only [sub_eq_add_neg, add_dconv, neg_dconv]
 
 end comm_ring
+
+namespace nnreal
+variables {f g : α → ℝ≥0}
+
+@[simp, norm_cast] lemma coe_conv (x : α) : (↑((f ∗ g) x) : ℝ) = (coe ∘ f ∗ coe ∘ g) x :=
+by simp [conv_apply, coe_sum]
+
+@[simp, norm_cast] lemma coe_dconv (x : α) : (↑((f ○ g) x) : ℝ) = (coe ∘ f ○ coe ∘ g) x :=
+by simp [dconv_apply, coe_sum]
+
+end nnreal
 
 /-!
 ### Order properties
