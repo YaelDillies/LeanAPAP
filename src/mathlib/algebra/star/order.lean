@@ -1,5 +1,7 @@
 import algebra.star.order
 import group_theory.submonoid.operations
+import mathlib.algebra.star.basic
+import mathlib.group_theory.submonoid.operations
 
 open set
 open_locale complex_conjugate
@@ -34,3 +36,21 @@ variables [comm_ring R] [partial_order R] [star_ordered_ring R] {x : R}
 @[simp] lemma star_neg' : star x < 0 ↔ x < 0 := by simp_rw [←neg_pos, ←star_neg, star_pos]
 
 end comm_ring
+
+instance : star_ordered_ring ℕ :=
+{ le_iff := λ a b, begin
+    have : add_submonoid.closure (range $ λ x : ℕ, x * x) = ⊤ := eq_top_mono
+      (add_submonoid.closure_mono $ singleton_subset_iff.2 $ mem_range.2 ⟨1, one_mul _⟩)
+      nat.add_submonoid_closure_one,
+    simp [this, le_iff_exists_add],
+  end,
+  ..nat.star_ring, ..nat.ordered_semiring }
+
+instance : star_ordered_ring ℚ :=
+{ le_iff := λ a b, begin
+    have : add_submonoid.closure (range $ λ x : ℕ, x * x) = ⊤ := eq_top_mono
+      (add_submonoid.closure_mono $ singleton_subset_iff.2 $ mem_range.2 ⟨1, one_mul _⟩)
+      nat.add_submonoid_closure_one,
+    simp [this, le_iff_exists_nonneg_add a b],
+  end,
+  ..rat.star_ring, ..rat.ordered_semiring }

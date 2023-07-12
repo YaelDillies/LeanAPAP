@@ -1,23 +1,8 @@
 import data.real.sqrt
 import mathlib.data.real.nnreal
+import mathlib.group_theory.submonoid.basic
 
-open set
-
-namespace submonoid
-variables (α : Type*) [ordered_comm_monoid α] {a : α}
-
-@[to_additive, simps] def one_le : submonoid α :=
-{ carrier := {a | 1 ≤ a},
-  mul_mem' := λ _ _, one_le_mul,
-  one_mem' := le_rfl }
-
-variables {α}
-
-@[simp, to_additive] lemma mem_one_le : a ∈ one_le α ↔ 1 ≤ a := iff.rfl
-
-end submonoid
-
-open nnreal
+open nnreal set
 open_locale nnreal
 
 instance : star_ordered_ring ℝ≥0 :=
