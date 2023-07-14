@@ -1,7 +1,7 @@
 \chapter{Chang's lemma}
 
 \begin{definition}[Large spectrum]
-\label{large-spec}
+\label{large_spec}
 Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\eta\in \bbr$. The $\eta$-large spectrum is defined to be
 \[\Delta_\eta(f) = \{ \gamma\in\widehat{G} : \lvert \widehat{f}(\gamma)\rvert \geq \eta\norm{f}_1\}.\]
 \end{definition}
@@ -74,6 +74,7 @@ Apply Lemma~\ref{general_holder} with $\nu\equiv 1$, and use the fact that $\sum
 
 
 \begin{lemma}
+\uses{energy}
 \label{energy_alt}
 If $A\subset G$ and $m\geq 1$ then
 \[E_{2m}(A) = \sum_x 1_A^{(m)}(x)^2.\]
@@ -128,7 +129,7 @@ and
 \end{theorem}
 
 \begin{proof}
-\uses{diss_span, spec_holder}
+\uses{diss_energy, diss_span, spec_holder}
 By Lemma~\ref{diss_span} it suffices to show that $\Delta_\eta(f)$ contains no dissociated set with at least
 \[K= \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil+1\]
 many elements. Suppose not, and let $\Delta\subseteq \Delta_\eta(f)$ be a dissociated set of size $K$. Then by Lemma~\ref{diss_energy} we have, for any $m\geq 1$,
