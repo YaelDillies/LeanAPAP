@@ -31,7 +31,7 @@ This can be seen, for example, by writing both sides out using factorials, yield
 
 
 \begin{lemma}[Complex-valued Marcinkiewicz-Zygmund inequality]
-\label{mzi-complex}
+\label{mzi_complex}
 \leanok
 \lean{complex_marcinkiewicz_zygmund}
 Let $m\geq 1$. If $f:G\to\bbc$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
@@ -55,7 +55,7 @@ has size at least $\lvert A \rvert^k/2$.
 \end{lemma}
 
 \begin{proof}
-\uses{mzi-complex}
+\uses{mzi_complex}
 \leanok
 Note that if $a\in A$ is chosen uniformly at random then, for any fixed $x\in G$,
 \[\bbe f(x-a_i)= \frac{1}{\abs{A}}\sum_{a\in A}f(x-a)=\frac{1}{\abs{A}}\ind{A}\ast f(x)=\mu_A\ast f(x).\]
@@ -106,6 +106,7 @@ Let $A\subseteq G$ and $k\geq 1$ and $L\subseteq A^k$. Then there exists some $\
 \leanok
 Test.
 \end{proof}
+
 
 \begin{theorem}[$L_p$ almost periodicity]
 \label{lp_ap}
@@ -178,24 +179,14 @@ The right-hand side is at most
 and we are done by choice of $T$.
 \end{proof}
 
-\begin{theorem}[Chang's lemma]
-\label{chang}
-If
-\[\Delta = \{ \gamma : \lvert \widehat{\ind{X}(\gamma)}\rvert \geq \eta \mu(X)\}\]
-then there is a set $\Gamma$ of size $O(\eta^{-2}\log(1/\mu(X)))$ such that
-\[\Delta\subseteq \left\{\sum_{\gamma\in\Gamma}\epsilon_\gamma\gamma : \epsilon_\gamma\in \{-1,0,1\}\right\}.\]
-\end{theorem}
-\begin{proof}
-Test.
-\end{proof}
-
 \begin{theorem}\label{ap_in_ff}
 If $A_1,A_2,S\subseteq \bbf_q^n$ are such that $A_1$ and $A_2$ both have density at least $\alpha$ then there is a subspace $V$ of codimension
 \[\mathrm{codim}(V)\ll_\epsilon \log(2/\alpha)^4\]
 such that
 \[\abs{\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle-\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle}\leq \epsilon.\]
 \end{theorem}
-\begin{proof}\uses{chang,linfty_ap_boosted}
+
+\begin{proof}
+\uses{chang, linfty_ap_boosted}
 Test.
 \end{proof}
-
