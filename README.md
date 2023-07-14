@@ -1,6 +1,6 @@
 # Arithmetic Progressions - Almost Periodicity
 
-[![.github/workflows/push_main.yml](https://github.com/YaelDillies/LeanAPAP/actions/workflows/push_main.yml/badge.svg)](https://github.com/YaelDillies/LeanAPAP/actions/workflows/push_main.yml)
+[![.github/workflows/push.yml](https://github.com/YaelDillies/LeanAPAP/actions/workflows/push.yml/badge.svg)](https://github.com/YaelDillies/LeanAPAP/actions/workflows/push.yml)
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/YaelDillies/LeanAPAP)
 
 The purpose of this repository is to *digitise* some mathematical definitions, theorem statements
