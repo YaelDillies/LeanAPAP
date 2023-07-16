@@ -23,6 +23,8 @@ Let $\Delta\subseteq \widehat{G}$ and $m\geq 1$. Let $\nu:G\to \bbc$. Then
 
 \begin{definition}[Dissociation]
 \label{dissociated}
+\lean{finset.dissociated}
+\leanok
 We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G$, there is at most one $A'\subset A$ of size $\abs{A'}=m$ such that
 \[\sum_{a\in A'}a=x.\]
 \end{definition}
@@ -103,11 +105,14 @@ By the definition of dissociativity, $1_A^{(m)}(x)\leq m!$ for all $x\in G$. We 
 \begin{lemma}
 \label{diss_span}
 \uses{dissociated}
+\lean{finset.diss_span}
+\leanok
 If $A\subseteq G$ contains no dissociated set with $\geq K+1$ elements then there is $A'\subseteq A$ of size $\abs{A'}\leq K$ such that
 \[A\subseteq \left\{ \sum_{a\in A'}c_aa : c_a\in \{-1,0,1\} \right\}.\]
 \end{lemma}
 
 \begin{proof}
+\leanok
 Let $A'\subseteq A$ be a maximal dissociated subset (this exists and is non-empty, since trivially any singleton is dissociated). We have $\abs{A'}\leq K$ by assumption.
 
 Let $S$ be the span on the right-hand side. It is obvious that $A'\subseteq S$. Suppose that $x\in A\backslash A'$. Then $A'\cup\{x\}$ is not dissociated by maximality. Therefore there exists some $y\in G$ and two distinct sets $B,C\subseteq A'\cup \{x\}$ such that
