@@ -93,6 +93,24 @@ begin
   simp only [add_assoc, mul_assoc, prod.mk.eta, eq_self_iff_true, and_self],
 end
 
+lemma conv_right_comm (f g h : α → β) : f ∗ g ∗ h = f ∗ h ∗ g :=
+by rw [conv_assoc, conv_assoc, conv_comm g]
+
+lemma conv_left_comm (f g h : α → β) : f ∗ (g ∗ h) = g ∗ (f ∗ h) :=
+by rw [←conv_assoc, ←conv_assoc, conv_comm g]
+
+lemma conv_conv_conv_comm (f g h i : α → β) : (f ∗ g) ∗ (h ∗ i) = (f ∗ h) ∗ (g ∗ i) :=
+by rw [conv_assoc, conv_assoc, conv_left_comm g]
+
+lemma conv_dconv_conv_comm (f g h i : α → β) : (f ∗ g) ○ (h ∗ i) = (f ○ h) ∗ (g ○ i) :=
+by simp_rw [←conv_conjneg, conjneg_conv, conv_conv_conv_comm]
+
+lemma dconv_conv_dconv_comm (f g h i : α → β) : (f ○ g) ∗ (h ○ i) = (f ∗ h) ○ (g ∗ i) :=
+by simp_rw [←conv_conjneg, conjneg_conv, conv_conv_conv_comm]
+
+lemma dconv_dconv_dconv_comm (f g h i : α → β) : (f ○ g) ○ (h ○ i) = (f ○ h) ○ (g ○ i) :=
+by simp_rw [←conv_conjneg, conjneg_conv, conv_conv_conv_comm]
+
 @[simp] lemma conv_zero (f : α → β) : f ∗ 0 = 0 := by ext; simp [conv_apply]
 @[simp] lemma zero_conv (f : α → β) : 0 ∗ f = 0 := by ext; simp [conv_apply]
 @[simp] lemma dconv_zero (f : α → β) : f ○ 0 = 0 := by simp [←conv_conjneg]
@@ -132,9 +150,17 @@ alias smul_dconv ← smul_dconv_assoc
 alias conv_smul ← smul_conv_left_comm
 alias dconv_smul ← smul_dconv_left_comm
 
+lemma mul_smul_conv_comm [monoid γ] [distrib_mul_action γ β] [is_scalar_tower γ β β]
+   [smul_comm_class γ β β] (c d : γ) (f g : α → β) : (c * d) • (f ∗ g) = c • f ∗ d • g :=
+by rw [smul_conv, conv_smul, mul_smul]
+
 lemma map_conv {γ} [comm_semiring γ] [star_ring γ] (m : β →+* γ) (f g : α → β) (a : α) :
   m ((f ∗ g) a) = ((m ∘ f) ∗ (m ∘ g)) a :=
 by simp_rw [conv_apply, map_sum, map_mul]
+
+lemma comp_conv {γ} [comm_semiring γ] [star_ring γ] (m : β →+* γ) (f g : α → β) :
+  m ∘ (f ∗ g) = (m ∘ f) ∗ (m ∘ g) :=
+funext $ map_conv _ _ _
 
 --TODO: Can we generalise to star ring homs?
 lemma map_dconv (f g : α → ℝ≥0) (a : α) : (↑((f ○ g) a) : ℝ) = ((coe ∘ f) ○ (coe ∘ g)) a :=
@@ -198,6 +224,18 @@ by simpa only [sum_mul_sum, sum_product, pi.one_apply, mul_one] using sum_conv_m
 
 lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) :=
 by simpa only [sum_mul_sum, sum_product, pi.one_apply, mul_one] using sum_dconv_mul f g 1
+
+@[simp] lemma conv_ite (f : α → β) : f ∗ (λ a, if a = 0 then 1 else 0) = f :=
+by { ext a, simp [conv_eq_sum_sub] }
+
+@[simp] lemma ite_conv (f : α → β) : (λ a, if a = 0 then 1 else 0 : α → β) ∗ f = f :=
+by rw [conv_comm, conv_ite]
+
+@[simp] lemma dconv_ite (f : α → β) : f ○ (λ a, if a = 0 then 1 else 0) = f :=
+by { ext a, simp [dconv_eq_sum_add] }
+
+@[simp] lemma ite_dconv (f : α → β) : (λ a, if a = 0 then 1 else 0 : α → β) ○ f = conjneg f :=
+by rw [←conv_conjneg, ite_conv]
 
 lemma support_conv_subset (f g : α → β) : support (f ∗ g) ⊆ support f + support g :=
 begin
@@ -294,6 +332,103 @@ by rw ←conv_conjneg; exact conv_pos hf (conjneg_pos.2 hg)
 
 end strict_ordered_comm_semiring
 
+/-! ### Iterated convolution -/
+
+section comm_semiring
+variables [comm_semiring β] [star_ring β] {f g : α → β} {n : ℕ}
+
+/-- Iterated convolution. -/
+def iter_conv (f : α → β) : ℕ → α → β
+| 0 := λ a, if a = 0 then 1 else 0
+| (n + 1) := f ∗ iter_conv n
+
+infix  ` ∗^ `:78 := iter_conv
+
+@[simp] lemma iter_conv_zero (f : α → β) : f ∗^ 0 = λ a, if a = 0 then 1 else 0 := rfl
+-- @[simp] lemma iter_conv_one (f : α → β) : [f]∗[1] = f := conv_ite _
+
+lemma iter_conv_succ (f : α → β) (n : ℕ) : f ∗^ (n + 1) = f ∗ f ∗^ n := rfl
+lemma iter_conv_succ' (f : α → β) (n : ℕ) : f ∗^ (n + 1) = f ∗^ n ∗ f := conv_comm _ _
+
+lemma iter_conv_add (f : α → β) (m : ℕ) : ∀ n, f ∗^ (m + n) = f ∗^ m ∗ f ∗^ n
+| 0 := by simp
+| (n + 1) := by simp [←add_assoc, iter_conv_succ, iter_conv_add, conv_left_comm]
+
+lemma iter_conv_mul (f : α → β) (m : ℕ) : ∀ n, f ∗^ (m * n) = (f ∗^ m) ∗^ n
+| 0 := rfl
+| (n + 1) := by simp [mul_add_one, iter_conv_succ, iter_conv_add, iter_conv_mul]
+
+lemma iter_conv_mul' (f : α → β) (m n : ℕ) : f ∗^ (m * n) = (f ∗^ n) ∗^ m :=
+by rw [mul_comm, iter_conv_mul]
+
+@[simp] lemma conj_iter_conv (f : α → β) : ∀ n, conj (f ∗^ n) = conj f ∗^ n
+| 0 := by ext; simp
+| (n + 1) := by simp [iter_conv_succ, conj_iter_conv]
+
+@[simp] lemma conjneg_iter_conv (f : α → β) : ∀ n, conjneg (f ∗^ n) = conjneg f ∗^ n
+| 0 := by ext; simp
+| (n + 1) := by simp [iter_conv_succ, conjneg_iter_conv]
+
+lemma iter_conv_conv_distrib (f g : α → β) : ∀ n, (f ∗ g) ∗^ n = f ∗^ n ∗ g ∗^ n
+| 0 := (conv_ite _).symm
+| (n + 1) := by simp_rw [iter_conv_succ, iter_conv_conv_distrib, conv_conv_conv_comm]
+
+lemma iter_conv_dconv_distrib (f g : α → β) : ∀ n, (f ○ g) ∗^ n = f ∗^ n ○ g ∗^ n
+| 0 := (dconv_ite _).symm
+| (n + 1) := by simp_rw [iter_conv_succ, iter_conv_dconv_distrib, conv_dconv_conv_comm]
+
+@[simp] lemma zero_iter_conv : ∀ {n}, n ≠ 0 → (0 : α → β) ∗^ n = 0
+| 0 hn := by cases hn rfl
+| (n + 1) _ := zero_conv _
+
+@[simp] lemma smul_iter_conv [monoid γ] [distrib_mul_action γ β] [is_scalar_tower γ β β]
+  [smul_comm_class γ β β] (c : γ) (f : α → β) : ∀ n, (c • f) ∗^ n = c ^ n • f ∗^ n
+| 0 := by simp
+| (n + 1) := by simp_rw [iter_conv_succ, smul_iter_conv n, pow_succ, mul_smul_conv_comm]
+
+lemma comp_iter_conv {γ} [comm_semiring γ] [star_ring γ] (m : β →+* γ) (f : α → β) :
+  ∀ n, m ∘ (f ∗^ n) = (m ∘ f) ∗^ n
+| 0 := by ext; simp
+| (n + 1) := by simp [iter_conv_succ, comp_conv, comp_iter_conv]
+
+lemma map_iter_conv {γ} [comm_semiring γ] [star_ring γ] (m : β →+* γ) (f : α → β) (a : α) (n : ℕ) :
+  m ((f ∗^ n) a) = ((m ∘ f) ∗^ n) a :=
+congr_fun (comp_iter_conv m _ _) _
+
+lemma sum_iter_conv (f : α → β) : ∀ n, ∑ a, (f ∗^ n) a = (∑ a, f a) ^ n
+| 0 := by simp [filter_eq']
+| (n + 1) := by simp only [iter_conv_succ, sum_conv, sum_iter_conv, pow_succ]
+
+@[simp] lemma iter_conv_ite :
+  ∀ n, (λ a, if a = 0 then 1 else 0 : α → β) ∗^ n = (λ a, if a = 0 then 1 else 0)
+| 0 := rfl
+| (n + 1) := (ite_conv _).trans $ iter_conv_ite _
+
+lemma support_iter_conv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n • support f
+| 0 := by simp only [iter_conv_zero, zero_smul, support_subset_iff, ne.def, ite_eq_right_iff,
+  not_forall, exists_prop, set.mem_zero, and_imp, forall_eq, eq_self_iff_true, implies_true_iff]
+| (n + 1) := (support_conv_subset _ _).trans $ set.add_subset_add_left $ support_iter_conv_subset _
+
+end comm_semiring
+
+section ordered_comm_semiring
+variables [ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β} {n : ℕ}
+
+@[simp] lemma iter_conv_nonneg (hf : 0 ≤ f) : ∀ {n}, 0 ≤ f ∗^ n
+| 0 := λ _, by dsimp; split_ifs; norm_num
+| (n + 1) := conv_nonneg hf iter_conv_nonneg
+
+end ordered_comm_semiring
+
+section strict_ordered_comm_semiring
+variables [strict_ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β} {n : ℕ}
+
+@[simp] lemma iter_conv_pos (hf : 0 < f) : ∀ {n}, 0 < f ∗^ n
+| 0 := pi.lt_def.2 ⟨iter_conv_nonneg hf.le, 0, by simp⟩
+| (n + 1) := conv_pos hf iter_conv_pos
+
+end strict_ordered_comm_semiring
+
 namespace tactic
 section
 variables [ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
@@ -314,8 +449,8 @@ end
 
 open positivity
 
-/-- Extension for the `positivity` tactic: multiplication is nonnegative/positive/nonzero if both
-multiplicands are. -/
+/-- Extension for the `positivity` tactic: convolution/difference convolution/iterated convolution
+is nonnegative/positive if both multiplicands are. -/
 @[positivity]
 meta def positivity_conv : expr → tactic strictness
 | e@`(%%f ∗ %%g) := do
@@ -344,7 +479,17 @@ meta def positivity_conv : expr → tactic strictness
       [none, none, none, none, none, none, none, f, g, pf, pg]
   | sf@_, sg@ _ := positivity_fail e f g sf sg
   end
-| e := pp e >>= fail ∘ format.bracket "The expression `" "` isn't of the form `f ∗ g` or `f ○ g`"
+| e@`(%%f ∗^ %%n) := do
+  strictness_f ← core f,
+  match strictness_f with
+  | positive p := positive <$> mk_mapp ``iter_conv_pos
+      [none, none, none, none, none, none, none, none, p, n]
+  | nonnegative p := nonnegative <$> mk_mapp ``iter_conv_nonneg
+      [none, none, none, none, none, none, none, none, p, n]
+  | _ := failed
+  end
+| e := pp e >>= fail ∘ format.bracket "The expression `"
+    "` isn't of the form `f ∗ g`, `f ○ g` or `f ∗^ n`"
 
 variables [strict_ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
 
@@ -357,6 +502,9 @@ example (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by positivity
 example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ○ g := by positivity
 example (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ○ g := by positivity
 example (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g := by positivity
+
+example (hf : 0 < f) (n : ℕ) : 0 < f ∗^ n := by positivity
+example (hf : 0 ≤ f) (n : ℕ) : 0 ≤ f ∗^ n := by positivity
 
 end tactic
 
