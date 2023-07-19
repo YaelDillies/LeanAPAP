@@ -17,7 +17,7 @@ import prereqs.indicator
 open finset real
 open_locale big_operators complex_conjugate ennreal nnreal
 
-variables {ι : Type*} [fintype ι]
+variables {ι 𝕜 : Type*} [fintype ι]
 
 /-! ### Lp norm -/
 
@@ -129,7 +129,7 @@ lemma Lpnorm_sub_le_Lpnorm_sub_add_Lpnorm_sub (hp : 1 ≤ p) :
   ‖f - h‖_[p] ≤ ‖f - g‖_[p] + ‖g - h‖_[p] :=
 by haveI := fact.mk hp; exact norm_sub_le_norm_sub_add_norm_sub
 
-variables {𝕜 : Type*} [normed_field 𝕜] [Π i, normed_space 𝕜 (α i)]
+variables [normed_field 𝕜] [Π i, normed_space 𝕜 (α i)]
 
 -- TODO: `p ≠ 0` is enough
 lemma Lpnorm_smul (hp : 1 ≤ p) (c : 𝕜) (f : Π i, α i) : ‖c • f‖_[p] = ‖c‖ * ‖f‖_[p] :=
@@ -270,7 +270,7 @@ lemma wLpnorm_sub_le_Lpnorm_sub_add_Lpnorm_sub (hp : 1 ≤ p) :
   ‖f - h‖_[p, w] ≤ ‖f - g‖_[p, w] + ‖g - h‖_[p, w] :=
 by simpa using wLpnorm_add_le hp w (f - g) (g - h)
 
-variables {𝕜 : Type*} [normed_field 𝕜] [Π i, normed_space 𝕜 (α i)]
+variables [normed_field 𝕜] [Π i, normed_space 𝕜 (α i)]
 
 -- TODO: `p ≠ 0` is enough
 lemma wLpnorm_smul (hp : 1 ≤ p) (c : 𝕜) (f : Π i, α i) : ‖c • f‖_[p, w] = ‖c‖ * ‖f‖_[p, w] :=
@@ -320,51 +320,66 @@ end real
 
 /-! #### Inner product -/
 
-section normed_add_comm_group
-variables {𝕜 : Type*} {α : ι → Type*} [Π i, normed_add_comm_group (α i)]
+section comm_semiring
+variables [comm_semiring 𝕜] [star_ring 𝕜] {γ : Type*} [distrib_smul γ 𝕜]
 
-section has_inner
-variables (𝕜) [add_comm_monoid 𝕜] [Π i, has_inner 𝕜 (α i)]
+/-- Inner product giving rise to the L2 norm. -/
+def L2inner (f g : ι → 𝕜) : 𝕜 := ∑ i, conj (f i) * g i
 
-@[reducible] noncomputable def L2inner (f g : Π i, α i) : 𝕜 :=
-inner ((pi_Lp.equiv 2 _).symm f) ((pi_Lp.equiv 2 _).symm g)
+notation `⟪`f`, `g`⟫_[`𝕜`]` := @L2inner _ 𝕜 _ _ _ f g
 
-notation `⟪`f`, `g`⟫_[`𝕜`]` := L2inner 𝕜 f g
+lemma L2inner_eq_sum (f g : ι → 𝕜) : ⟪f, g⟫_[𝕜] = ∑ i, conj (f i) * g i := rfl
 
-lemma L2inner_eq_sum (f g : Π i, α i) : ⟪f, g⟫_[𝕜] = ∑ i, inner (f i) (g i) := rfl
+@[simp] lemma conj_L2inner (f g : ι → 𝕜) : conj ⟪f, g⟫_[𝕜] = ⟪g, f⟫_[𝕜] :=
+by simp [L2inner_eq_sum, map_sum, mul_comm]
 
-end has_inner
+@[simp] lemma L2inner_zero_left (g : ι → 𝕜) : ⟪0, g⟫_[𝕜] = 0 := by simp [L2inner_eq_sum]
+@[simp] lemma L2inner_zero_right (f : ι → 𝕜) : ⟪f, 0⟫_[𝕜] = 0 := by simp [L2inner_eq_sum]
 
-variables [is_R_or_C 𝕜] [Π i, inner_product_space 𝕜 (α i)]
+lemma L2inner_add_left (f₁ f₂ g : ι → 𝕜) : ⟪f₁ + f₂, g⟫_[𝕜] = ⟪f₁, g⟫_[𝕜] + ⟪f₂, g⟫_[𝕜] :=
+by simp_rw [L2inner_eq_sum, pi.add_apply, map_add, add_mul, sum_add_distrib]
 
-@[simp] lemma L2inner_zero_left (g : Π i, α i) : ⟪0, g⟫_[𝕜] = 0 := by simp [L2inner_eq_sum]
-@[simp] lemma L2inner_zero_right (f : Π i, α i) : ⟪f, 0⟫_[𝕜] = 0 := by simp [L2inner_eq_sum]
-
-end normed_add_comm_group
-
-section is_R_or_C
-variables {𝕜 γ : Type*} [is_R_or_C 𝕜] [distrib_smul γ 𝕜]
+lemma L2inner_add_right (f g₁ g₂ : ι → 𝕜) : ⟪f, g₁ + g₂⟫_[𝕜] = ⟪f, g₁⟫_[𝕜] + ⟪f, g₂⟫_[𝕜] :=
+by simp_rw [L2inner_eq_sum, pi.add_apply, mul_add, sum_add_distrib]
 
 lemma L2inner_smul_left [has_star γ] [star_module γ 𝕜] [is_scalar_tower γ 𝕜 𝕜] (c : γ)
   (f g : ι → 𝕜) : ⟪c • f, g⟫_[𝕜] = star c • ⟪f, g⟫_[𝕜] :=
-by simp only [L2inner_eq_sum, pi.smul_apply, is_R_or_C.inner_apply, smul_mul_assoc, smul_sum,
-  star_ring_end_apply, star_smul]
+by simp only [L2inner_eq_sum, pi.smul_apply, smul_mul_assoc, smul_sum, star_ring_end_apply,
+  star_smul]
 
 lemma L2inner_smul_right [has_star γ] [star_module γ 𝕜] [smul_comm_class γ 𝕜 𝕜] (c : γ)
   (f g : ι → 𝕜) : ⟪f, c • g⟫_[𝕜] = c • ⟪f, g⟫_[𝕜] :=
-by simp only [L2inner_eq_sum, pi.smul_apply, is_R_or_C.inner_apply, mul_smul_comm, smul_sum,
-  star_ring_end_apply, star_smul]
+by simp only [L2inner_eq_sum, pi.smul_apply, mul_smul_comm, smul_sum, star_ring_end_apply,
+  star_smul]
 
 lemma smul_L2inner_left [has_involutive_star γ] [star_module γ 𝕜] [is_scalar_tower γ 𝕜 𝕜] (c : γ)
   (f g : ι → 𝕜) : c • ⟪f, g⟫_[𝕜] = ⟪star c • f, g⟫_[𝕜] :=
 by rw [L2inner_smul_left, star_star]
 
-end is_R_or_C
+end comm_semiring
+
+section comm_ring
+variables [comm_ring 𝕜] [star_ring 𝕜]
+
+lemma L2inner_neg_left (f g : ι → 𝕜) : ⟪-f, g⟫_[𝕜] = -⟪f, g⟫_[𝕜] :=
+by simp [L2inner_eq_sum, sum_add_distrib]
+
+lemma L2inner_neg_right (f g : ι → 𝕜) : ⟪f, -g⟫_[𝕜] = -⟪f, g⟫_[𝕜] :=
+by simp [L2inner_eq_sum, sum_add_distrib]
+
+lemma L2inner_sub_left (f₁ f₂ g : ι → 𝕜) : ⟪f₁ - f₂, g⟫_[𝕜] = ⟪f₁, g⟫_[𝕜] - ⟪f₂, g⟫_[𝕜] :=
+by simp_rw [sub_eq_add_neg, L2inner_add_left, L2inner_neg_left]
+
+lemma L2inner_sub_right (f g₁ g₂ : ι → 𝕜) : ⟪f, g₁ - g₂⟫_[𝕜] = ⟪f, g₁⟫_[𝕜] - ⟪f, g₂⟫_[𝕜] :=
+by simp_rw [sub_eq_add_neg, L2inner_add_right, L2inner_neg_right]
+
+end comm_ring
 
 section Lpnorm
 variables {α β : Type*} [add_comm_group α] [fintype α] {p : ℝ≥0∞}
 
-@[simp] lemma Lpnorm_translate [normed_add_comm_group β] (a : α) (f : α → β) : ‖τ a f‖_[p] = ‖f‖_[p] :=
+@[simp] lemma Lpnorm_translate [normed_add_comm_group β] (a : α) (f : α → β) :
+  ‖τ a f‖_[p] = ‖f‖_[p] :=
 begin
   cases p,
   { simp only [Linftynorm_eq_csupr, ennreal.none_eq_top, translate_apply],
@@ -429,7 +444,7 @@ end wLpnorm
 
 /-- **Cauchy-Schwarz inequality** -/
 lemma L2inner_le_L2norm_mul_L2norm (f g : ι → ℝ) : ⟪f, g⟫_[ℝ] ≤ ‖f‖_[2] * ‖g‖_[2] :=
-real_inner_le_norm _ _
+real_inner_le_norm ((pi_Lp.equiv 2 _).symm f) _
 
 namespace tactic
 open positivity
@@ -570,7 +585,7 @@ begin
   simp only [map_inv₀, smul_eq_mul, Lpnorm_eq_sum hp.ne'],
   have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) :=
     λ x, by split_ifs; simp,
-  simp_rw [indicator_apply, apply_ite has_norm.norm, norm_one, norm_zero, norm_inv,
+  simp_rw [indicate_apply, apply_ite has_norm.norm, norm_one, norm_zero, norm_inv,
     is_R_or_C.norm_nat_cast, this, zero_rpow (nnreal.coe_ne_zero.2 hp.ne'), one_rpow, sum_boole,
     filter_mem_eq_inter, univ_inter, rpow_sub_one ‹_›, inv_mul_eq_div],
 end
