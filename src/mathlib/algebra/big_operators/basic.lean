@@ -6,6 +6,9 @@ import algebra.big_operators.basic
 * More explicit arguments to `finset.sum_attach`
 -/
 
+localized "notation `∑` binders ` in ` s ` with ` p:(scoped:30 p, p) `, ` r:(scoped:67 f, finset.sum (s.filter p) f) := r" in big_operators
+localized "notation `∑` binders ` with ` p:(scoped:30 p, p) `, ` r:(scoped:67 f, finset.sum (finset.univ.filter p) f) := r" in big_operators
+
 open_locale big_operators
 
 namespace finset
