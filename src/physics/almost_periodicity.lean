@@ -144,9 +144,9 @@ begin
   refine (complex_marcinkiewicz_zygmund f' (by linarith only [hm]) _).trans_eq' _,
   { intro i,
     rw [fintype.sum_fintype_apply, sum_sub_distrib],
-    simp only [f', sub_eq_zero, sum_const, indicator_apply],
+    simp only [f', sub_eq_zero, sum_const, indicate_apply],
     rw [←pi.smul_apply, ←smul_conv, card_smul_mu, conv_eq_sum_sub'],
-    simp only [boole_mul, indicator_apply],
+    simp only [boole_mul, indicate_apply],
     rw [←sum_filter, filter_mem_eq_inter, univ_inter, sub_self, smul_zero] },
   congr' with a : 1,
   simp only [f', sum_sub_distrib, pi.smul_apply, sum_const, card_fin]
@@ -426,7 +426,7 @@ theorem almost_periodicity {A S : finset G} {K : ℝ} (hm : 1 ≤ m) (hK' : 2 �
   ∃ T : finset G, K ^ (-512 * m / ε ^ 2 : ℝ) * S.card ≤ T.card ∧
     ∀ t ∈ T, ‖τ t (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ ε * ‖f‖_[2 * m] :=
 begin
-  rcases A.eq_empty_or_nonempty with rfl | hA,
+  obtain rfl | hA := A.eq_empty_or_nonempty,
   { refine ⟨univ, _, _⟩,
     { have : K ^ ((-512 : ℝ) * m / ε ^ 2) ≤ 1,
       { refine real.rpow_le_one_of_one_le_of_nonpos (one_le_two.trans hK') _,
@@ -434,7 +434,7 @@ begin
         exact div_nonneg (mul_nonneg (by norm_num1) (nat.cast_nonneg _)) (sq_nonneg _), },
       refine (mul_le_mul_of_nonneg_right this (nat.cast_nonneg _)).trans _,
       rw [one_mul, nat.cast_le],
-      exact card_le_of_subset (subset_univ _) },
+      exact card_le_univ _ },
     intros t ht,
     simp only [mu_empty, zero_conv, translate_zero_right, sub_self, Lpnorm_zero],
     exact mul_nonneg hε.le Lpnorm_nonneg },

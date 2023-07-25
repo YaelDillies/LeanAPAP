@@ -38,21 +38,24 @@ variables [comm_semiring β] [star_ring β] {f g : α → β}
 
 /-- Convolution -/
 @[nolint unused_arguments]
-def function.conv (f g : α → β) : α → β :=
-λ a, ∑ x in univ.filter (λ x : α × α, x.1 + x.2 = a), f x.1 * g x.2
+def function.conv (f g : α → β) : α → β := λ a, ∑ x : α × α with x.1 + x.2 = a, f x.1 * g x.2
 
 /-- Difference convolution -/
-def dconv (f g : α → β) : α → β :=
-λ a, ∑ x in univ.filter (λ x : α × α, x.1 - x.2 = a), f x.1 * conj (g x.2)
+def dconv (f g : α → β) : α → β := λ a, ∑ x : α × α with x.1 - x.2 = a, f x.1 * conj (g x.2)
+
+/-- The trivial character. -/
+def triv_char : α → β := λ a, if a = 0 then 1 else 0
 
 infix ` ∗ `:70 := function.conv
 infix ` ○ `:70 := dconv
 
 lemma conv_apply (f g : α → β) (a : α) :
-  (f ∗ g) a = ∑ x in univ.filter (λ x : α × α, x.1 + x.2 = a), f x.1 * g x.2 := rfl
+  (f ∗ g) a = ∑ x : α × α with x.1 + x.2 = a, f x.1 * g x.2 := rfl
 
 lemma dconv_apply (f g : α → β) (a : α) :
-  (f ○ g) a = ∑ x in univ.filter (λ x : α × α, x.1 - x.2 = a), f x.1 * conj (g x.2) := rfl
+  (f ○ g) a = ∑ x : α × α with x.1 - x.2 = a, f x.1 * conj (g x.2) := rfl
+
+@[simp] lemma triv_char_apply (a : α) : (triv_char a : β) =  if a = 0 then 1 else 0 := rfl
 
 @[simp] lemma conv_conjneg (f g : α → β) : f ∗ conjneg g = f ○ g :=
 funext $ λ a, sum_bij (λ x _, (x.1, -x.2)) (λ x hx, by simpa using hx) (λ x _, rfl)
@@ -225,17 +228,14 @@ by simpa only [sum_mul_sum, sum_product, pi.one_apply, mul_one] using sum_conv_m
 lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) :=
 by simpa only [sum_mul_sum, sum_product, pi.one_apply, mul_one] using sum_dconv_mul f g 1
 
-@[simp] lemma conv_ite (f : α → β) : f ∗ (λ a, if a = 0 then 1 else 0) = f :=
-by { ext a, simp [conv_eq_sum_sub] }
+@[simp] lemma conv_triv_char (f : α → β) : f ∗ triv_char = f := by { ext a, simp [conv_eq_sum_sub] }
+@[simp] lemma triv_char_conv (f : α → β) : triv_char ∗ f = f := by rw [conv_comm, conv_triv_char]
 
-@[simp] lemma ite_conv (f : α → β) : (λ a, if a = 0 then 1 else 0 : α → β) ∗ f = f :=
-by rw [conv_comm, conv_ite]
-
-@[simp] lemma dconv_ite (f : α → β) : f ○ (λ a, if a = 0 then 1 else 0) = f :=
+@[simp] lemma dconv_triv_char (f : α → β) : f ○ triv_char = f :=
 by { ext a, simp [dconv_eq_sum_add] }
 
-@[simp] lemma ite_dconv (f : α → β) : (λ a, if a = 0 then 1 else 0 : α → β) ○ f = conjneg f :=
-by rw [←conv_conjneg, ite_conv]
+@[simp] lemma triv_char_dconv (f : α → β) : triv_char ○ f = conjneg f :=
+by rw [←conv_conjneg, triv_char_conv]
 
 lemma support_conv_subset (f g : α → β) : support (f ∗ g) ⊆ support f + support g :=
 begin
@@ -339,13 +339,13 @@ variables [comm_semiring β] [star_ring β] {f g : α → β} {n : ℕ}
 
 /-- Iterated convolution. -/
 def iter_conv (f : α → β) : ℕ → α → β
-| 0 := λ a, if a = 0 then 1 else 0
+| 0 := triv_char
 | (n + 1) := f ∗ iter_conv n
 
 infix  ` ∗^ `:78 := iter_conv
 
-@[simp] lemma iter_conv_zero (f : α → β) : f ∗^ 0 = λ a, if a = 0 then 1 else 0 := rfl
--- @[simp] lemma iter_conv_one (f : α → β) : [f]∗[1] = f := conv_ite _
+@[simp] lemma iter_conv_zero (f : α → β) : f ∗^ 0 = triv_char := rfl
+@[simp] lemma iter_conv_one (f : α → β) : f ∗^ 1 = f := conv_triv_char _
 
 lemma iter_conv_succ (f : α → β) (n : ℕ) : f ∗^ (n + 1) = f ∗ f ∗^ n := rfl
 lemma iter_conv_succ' (f : α → β) (n : ℕ) : f ∗^ (n + 1) = f ∗^ n ∗ f := conv_comm _ _
@@ -370,11 +370,11 @@ by rw [mul_comm, iter_conv_mul]
 | (n + 1) := by simp [iter_conv_succ, conjneg_iter_conv]
 
 lemma iter_conv_conv_distrib (f g : α → β) : ∀ n, (f ∗ g) ∗^ n = f ∗^ n ∗ g ∗^ n
-| 0 := (conv_ite _).symm
+| 0 := (conv_triv_char _).symm
 | (n + 1) := by simp_rw [iter_conv_succ, iter_conv_conv_distrib, conv_conv_conv_comm]
 
 lemma iter_conv_dconv_distrib (f g : α → β) : ∀ n, (f ○ g) ∗^ n = f ∗^ n ○ g ∗^ n
-| 0 := (dconv_ite _).symm
+| 0 := (dconv_triv_char _).symm
 | (n + 1) := by simp_rw [iter_conv_succ, iter_conv_dconv_distrib, conv_dconv_conv_comm]
 
 @[simp] lemma zero_iter_conv : ∀ {n}, n ≠ 0 → (0 : α → β) ∗^ n = 0
@@ -399,14 +399,15 @@ lemma sum_iter_conv (f : α → β) : ∀ n, ∑ a, (f ∗^ n) a = (∑ a, f a) 
 | 0 := by simp [filter_eq']
 | (n + 1) := by simp only [iter_conv_succ, sum_conv, sum_iter_conv, pow_succ]
 
-@[simp] lemma iter_conv_ite :
-  ∀ n, (λ a, if a = 0 then 1 else 0 : α → β) ∗^ n = (λ a, if a = 0 then 1 else 0)
+@[simp] lemma iter_conv_triv_char :
+  ∀ n, (triv_char : α → β) ∗^ n = triv_char
 | 0 := rfl
-| (n + 1) := (ite_conv _).trans $ iter_conv_ite _
+| (n + 1) := (triv_char_conv _).trans $ iter_conv_triv_char _
 
 lemma support_iter_conv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n • support f
 | 0 := by simp only [iter_conv_zero, zero_smul, support_subset_iff, ne.def, ite_eq_right_iff,
-  not_forall, exists_prop, set.mem_zero, and_imp, forall_eq, eq_self_iff_true, implies_true_iff]
+  not_forall, exists_prop, set.mem_zero, and_imp, forall_eq, eq_self_iff_true, implies_true_iff,
+  triv_char_apply]
 | (n + 1) := (support_conv_subset _ _).trans $ set.add_subset_add_left $ support_iter_conv_subset _
 
 end comm_semiring

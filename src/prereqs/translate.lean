@@ -1,9 +1,8 @@
-import algebra.big_operators.pi
-import algebra.support
 import algebra.order.pi
+import data.zmod.basic
 import mathlib.algebra.star.order
 import mathlib.algebra.star.pi
-import data.set.pointwise.smul
+import mathlib.algebra.star.self_adjoint
 
 /-!
 # Precomposition operators
@@ -134,3 +133,17 @@ by simp_rw [←neg_pos, ←conjneg_neg, conjneg_pos]
 
 end ordered_comm_ring
 end conjneg
+
+open fintype
+
+variables {α β G 𝕜 : Type*} [add_comm_group G]
+
+variable [fintype G]
+
+def dilate (f : G → 𝕜) (n : ℕ) : G → 𝕜 := λ a, f ((n⁻¹ : zmod (card G)).val • a)
+
+variables [has_star 𝕜] {f : G → 𝕜}
+
+protected lemma is_self_adjoint.dilate (hf : is_self_adjoint f) (n : ℕ) :
+  is_self_adjoint (dilate f n) :=
+pi.is_self_adjoint.2 $ λ g, hf.apply _

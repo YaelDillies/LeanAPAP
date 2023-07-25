@@ -1,6 +1,5 @@
-import algebra.big_operators.basic
+import algebra.indicator_function
 import mathlib.data.finset.powerset
-import prereqs.indicator
 
 /-!
 # Dissociation
@@ -60,7 +59,8 @@ variables [fintype α]
 
 instance : decidable_pred (dissociated : finset α → Prop) :=
 λ A, decidable_of_iff' (∀ a (n ∈ range A.card),
-  ((A.powerset_len n).filter $ λ A', ∑ x in A', x = a : set $ finset α).subsingleton) (dissociated_iff_forall_lt_card.trans $ by simp_rw ←finset.mem_range)
+  ((A.powerset_len n).filter $ λ A', ∑ x in A', x = a : set $ finset α).subsingleton)
+  (dissociated_iff_forall_lt_card.trans $ by simp_rw ←finset.mem_range)
 
 def span (A : finset α) : finset α :=
 (fintype.pi_finset $ λ a, ({-1, 0, 1} : finset ℤ)).image (λ c, ∑ a in A, c a • a)

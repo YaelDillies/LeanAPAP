@@ -52,10 +52,13 @@ end
 lemma Lpnorm_pow_eq_sum {p : ℕ} (hp : p ≠ 0) (f : Π i, α i) : ‖f‖_[p] ^ p = ∑ i, ‖f i‖ ^ p :=
 by simpa using Lpnorm_rpow_eq_sum (nat.cast_ne_zero.2 hp) f
 
-lemma L1norm_eq_sum (f : Π i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp [Lpnorm_eq_sum']
+lemma L2norm_sq_eq_sum (f : Π i, α i) : ‖f‖_[2] ^ 2 = ∑ i, ‖f i‖ ^ 2 :=
+by simpa using Lpnorm_pow_eq_sum two_ne_zero _
 
 lemma L2norm_eq_sum (f : Π i, α i) : ‖f‖_[2] = sqrt (∑ i, ‖f i‖ ^ 2) :=
 by simpa [sqrt_eq_rpow] using Lpnorm_eq_sum two_ne_zero _
+
+lemma L1norm_eq_sum (f : Π i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp [Lpnorm_eq_sum']
 
 lemma L0norm_eq_card (f : Π i, α i) : ‖f‖_[0] = {i | f i ≠ 0}.to_finite.to_finset.card :=
 pi_Lp.norm_eq_card _
@@ -375,6 +378,32 @@ by simp_rw [sub_eq_add_neg, L2inner_add_right, L2inner_neg_right]
 
 end comm_ring
 
+section is_R_or_C
+variables {κ : Type*} [is_R_or_C 𝕜] {f : ι → 𝕜}
+
+lemma L2inner_eq_inner (f g : ι → 𝕜) :
+  ⟪f, g⟫_[𝕜] = inner ((pi_Lp.equiv 2 _).symm f) ((pi_Lp.equiv 2 _).symm g) := rfl
+
+lemma inner_eq_L2inner (f g : pi_Lp 2 $ λ i : ι, 𝕜) :
+  inner f g = ⟪pi_Lp.equiv 2 _ f, pi_Lp.equiv 2 _ g⟫_[𝕜] := rfl
+
+@[simp] lemma L2inner_self (f : ι → 𝕜) : ⟪f, f⟫_[𝕜] = ‖f‖_[2] ^ 2 :=
+by simp_rw [←algebra_map.coe_pow, L2norm_sq_eq_sum, L2inner_eq_sum, algebra_map.coe_sum,
+  is_R_or_C.conj_mul, is_R_or_C.norm_sq_eq_def']
+
+lemma L2inner_self_of_norm_eq_one (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫_[𝕜] = fintype.card ι :=
+by simp [L2inner_eq_sum, is_R_or_C.conj_mul, is_R_or_C.norm_sq_eq_def', hf, card_univ]
+
+lemma linear_independent_of_ne_zero_of_L2inner_eq_zero {v : κ → ι → 𝕜} (hz : ∀ k, v k ≠ 0)
+  (ho : pairwise $ λ k l, ⟪v k, v l⟫_[𝕜] = 0) : linear_independent 𝕜 v :=
+begin
+  simp_rw L2inner_eq_inner at ho,
+  have := linear_independent_of_ne_zero_of_inner_eq_zero _ ho,
+  exacts [this, hz],
+end
+
+end is_R_or_C
+
 section Lpnorm
 variables {α β : Type*} [add_comm_group α] [fintype α] {p : ℝ≥0∞}
 
@@ -573,22 +602,41 @@ end Lpnorm
 
 /-! ### Indicator -/
 
+section indicate
+variables {α β : Type*} [is_R_or_C β] [fintype α] [decidable_eq α] {s : finset α} {p : ℝ≥0}
+
+lemma Lpnorm_rpow_indicate (hp : p ≠ 0) (s : finset α) : ‖𝟭_[β] s‖_[p] ^ (p : ℝ) = s.card :=
+begin
+  have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) :=
+    λ x, by split_ifs; simp,
+  simp [Lpnorm_rpow_eq_sum, hp, indicate_apply, apply_ite has_norm.norm, -sum_const,
+    card_eq_sum_ones, sum_boole, this, zero_rpow, filter_mem_eq_inter],
+end
+
+lemma Lpnorm_indicate (hp : p ≠ 0) (s : finset α) : ‖𝟭_[β] s‖_[p] = s.card ^ (p⁻¹ : ℝ) :=
+by refine (eq_rpow_inv _ _ _).2 (Lpnorm_rpow_indicate _ _); positivity
+
+lemma Lpnorm_pow_indicate {p : ℕ} (hp : p ≠ 0) (s : finset α) :
+  ‖𝟭_[β] s‖_[p] ^ (p : ℝ) = s.card :=
+by simpa using Lpnorm_rpow_indicate (nat.cast_ne_zero.2 hp) s
+
+lemma L2norm_sq_indicate (s : finset α) : ‖𝟭_[β] s‖_[2] ^ 2 = s.card :=
+by simpa using Lpnorm_pow_indicate two_ne_zero s
+
+lemma L2norm_indicate (s : finset α) : ‖𝟭_[β] s‖_[2] = real.sqrt s.card :=
+by rw [eq_comm, sqrt_eq_iff_sq_eq, L2norm_sq_indicate]; positivity
+
+@[simp] lemma L1norm_indicate (s : finset α) : ‖𝟭_[β] s‖_[1] = s.card :=
+by simpa using Lpnorm_pow_indicate one_ne_zero s
+
+end indicate
+
 section mu
 variables {α β : Type*} [is_R_or_C β] [fintype α] [decidable_eq α] {s : finset α} {p : ℝ≥0}
 
 lemma Lpnorm_mu (hp : 1 ≤ p) (hs : s.nonempty) : ‖μ_[β] s‖_[p] = s.card ^ (p⁻¹ - 1 : ℝ) :=
-begin
-  have : (s.card : ℝ) ≠ 0 := nat.cast_ne_zero.2 hs.card_pos.ne',
-  rw [mu, Lpnorm_smul'], swap,
-  { exact_mod_cast hp },
-  replace hp := zero_lt_one.trans_le hp,
-  simp only [map_inv₀, smul_eq_mul, Lpnorm_eq_sum hp.ne'],
-  have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) :=
-    λ x, by split_ifs; simp,
-  simp_rw [indicate_apply, apply_ite has_norm.norm, norm_one, norm_zero, norm_inv,
-    is_R_or_C.norm_nat_cast, this, zero_rpow (nnreal.coe_ne_zero.2 hp.ne'), one_rpow, sum_boole,
-    filter_mem_eq_inter, univ_inter, rpow_sub_one ‹_›, inv_mul_eq_div],
-end
+by rw [mu, Lpnorm_smul (ennreal.one_le_coe_iff.2 hp) (s.card⁻¹ : β) (𝟭_[β] s), Lpnorm_indicate,
+    norm_inv, is_R_or_C.norm_nat_cast, inv_mul_eq_div, ←rpow_sub_one]; positivity
 
 lemma Lpnorm_mu_le (hp : 1 ≤ p) : ‖μ_[β] s‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) :=
 begin
