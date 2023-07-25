@@ -136,10 +136,10 @@ such that for any $t\in T$ we have
 \end{theorem}
 
 \begin{proof}
-\uses{lp_ap} Let $T$ be as given in \ref{l_ap}
+\uses{lp_ap} Let $T$ be as given in \ref{lp_ap}
 with $f=1_B$ and $m=\lceil \lo{\eta}\rceil$ and $\epsilon=\epsilon/e$. (The size bound on $T$ follows since $e^2\leq 8$.) Fix $t\in T$ and let $F=\tau_t(\mu_A\ast 1_B)-\mu_A\ast 1_B$. We have, for any $x\in G$,
 \[(\tau_t(\mu_A\ast 1_B\ast \mu_C)-\mu_A\ast 1_B\ast \mu_C)(x)=F\ast \mu_C(x)=\sum_y F(y)\mu_{C}(x-y)=\sum_yF(y)\mu_{x-C}(y).\]
-By Holder's inequality, this is (in absolute value), for any $m\geq 1$,
+By Hölder's inequality, this is (in absolute value), for any $m\geq 1$,
 \[\norm{F}_{2m}\norm{\mu_{x-C}}_{1+\frac{1}{2m-1}}.\]
 By the construction of $T$ the first factor is at most
 $\frac{\epsilon}{e}\| 1_B\|_{2m}=\frac{\epsilon}{e}\lvert B\rvert^{1/2m}$.
