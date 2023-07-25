@@ -60,6 +60,24 @@ lemma prod_ite_exists (p : α → Prop) [decidable_pred p] (h : ∀ i j, p i →
   ∏ i, ite (p i) a 1 = ite (∃ i, p i) a 1 :=
 by simp [prod_ite_one' univ p (by simpa using h)]
 
+variables [decidable_eq α]
+
+@[simp, to_additive] lemma prod_dite_eq (a : α) (b : Π x, a = x → β) :
+  ∏ x, (if h : a = x then b x h else 1) = b a rfl :=
+by simp
+
+@[simp, to_additive] lemma prod_dite_eq' (a : α) (b : Π x, x = a → β) :
+  ∏ x, (if h : x = a then b x h else 1) = b a rfl :=
+by simp
+
+@[simp, to_additive] lemma prod_ite_eq (a : α) (b : α → β) :
+  ∏ x, (if a = x then b x else 1) = b a :=
+by simp
+
+@[simp, to_additive] lemma prod_ite_eq' [decidable_eq α] (a : α) (b : α → β) :
+  ∏ x, (if x = a then b x else 1) = b a :=
+by simp
+
 end comm_monoid
 
 variables [comm_monoid_with_zero β] {p : α → Prop} [decidable_pred p]

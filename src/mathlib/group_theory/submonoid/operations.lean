@@ -5,6 +5,14 @@ import group_theory.submonoid.operations
 import mathlib.data.rat.order
 import mathlib.group_theory.submonoid.basic
 
+namespace submonoid
+variables {M : Type*} [mul_one_class M] {S : submonoid M}
+
+@[simp, to_additive] lemma mk_eq_one {a : M} {ha} : (⟨a, ha⟩ : S) = 1 ↔ a = 1 :=
+by simp [←set_like.coe_eq_coe]
+
+end submonoid
+
 open add_submonoid set
 
 namespace nat

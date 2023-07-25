@@ -1,6 +1,8 @@
 import group_theory.order_of_element
 import mathlib.algebra.group_power.order
 
+open fintype
+
 section monoid
 variables {α : Type*} [monoid α] {a : α}
 
@@ -12,6 +14,15 @@ begin
 end
 
 end monoid
+
+section group
+variables {α : Type*} [group α] [fintype α] {n : ℕ}
+
+@[simp, to_additive mod_card_nsmul] lemma pow_mod_card (a : α) (n : ℕ) : a ^ (n % card α) = a ^ n :=
+mul_left_injective (a ^ (card α * (n / card α))) $
+  by simp_rw [←pow_add, nat.mod_add_div, pow_add, pow_mul, pow_card_eq_one, one_pow, mul_one]
+
+end group
 
 section linear_ordered_semiring
 variables {α : Type*} [linear_ordered_semiring α] {a : α}
