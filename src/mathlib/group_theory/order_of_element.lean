@@ -1,6 +1,12 @@
 import group_theory.order_of_element
 import mathlib.algebra.group_power.order
 
+/-!
+### TODO
+
+Rename `exists_pow_eq_one` to `is_of_fin_order_of_finite`
+-/
+
 open fintype
 
 section monoid

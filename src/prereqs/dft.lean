@@ -1,5 +1,5 @@
 import mathlib.number_theory.legendre_symbol.add_char.duality
-import prereqs.convolution
+import prereqs.convolution.basic
 
 /-!
 # Discrete Fourier transform
@@ -9,7 +9,7 @@ Fourier inversion formula for it.
 -/
 
 open add_char finset fintype (card) function.
-open_locale big_operators complex_conjugate expectations
+open_locale big_operators complex_conjugate
 
 variables {α : Type*} [add_comm_group α] [fintype α] {f : α → ℂ} {ψ : add_char α ℂ} {n : ℕ}
 

@@ -1,7 +1,7 @@
 import algebra.order.chebyshev
 import combinatorics.pigeonhole
 import mathlib.data.finset.card
-import prereqs.convolution
+import prereqs.convolution.norm
 import prereqs.marcinkiewicz_zygmund
 import prereqs.misc
 
@@ -106,7 +106,7 @@ open_locale big_operators pointwise nnreal ennreal
 namespace almost_periodicity
 
 def L_prop (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : finset G) (a : fin k → G) : Prop :=
-‖λ x : G, ∑ i : fin k, f (x - a i) - (k • (mu A ∗ f)) x‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m]
+‖λ x : G, ∑ i : fin k, f (x - a i) - (k • (μ A ∗ f)) x‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m]
 
 noncomputable instance : decidable_pred (L_prop k m ε f A) := classical.dec_pred _
 

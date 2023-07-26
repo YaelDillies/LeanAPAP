@@ -3,13 +3,13 @@ import mathlib.analysis.normed.field.basic
 import mathlib.data.is_R_or_C.basic
 import mathlib.linear_algebra.finite_dimensional
 import number_theory.legendre_symbol.add_character
+import prereqs.convolution.basic
 import prereqs.lp_norm
 
 /-!
 ### TODO
 
 Rename
-* `exists_pow_eq_one` to `is_of_fin_order_of_finite`
 * `map_add_mul` → `map_add_eq_mul`
 * `map_zero_one` → `map_zero_eq_one`
 * `map_nsmul_pow` → `map_nsmul_eq_pow`

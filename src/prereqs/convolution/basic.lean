@@ -1,11 +1,23 @@
-import algebra.star.pi
-import algebra.star.pointwise
 import mathlib.algebra.big_operators.basic
-import mathlib.algebra.star.order
-import prereqs.lp_norm
+import mathlib.data.real.nnreal
+import prereqs.translate
 
 /-!
 # Convolution
+
+This file defines several versions of the discrete convolution of functions.
+
+## Main declarations
+
+* `function.conv`: Discrete convolution of two functions
+* `dconv`: Discrete difference convolution of two functions
+* `iter_conv`: Iterated convolution of a function
+
+## Notation
+
+* `f ∗ g`: Convolution
+* `f ○ g`: Difference convolution
+* `f ∗^ n`: Iterated convolution
 
 ## Notes
 
@@ -18,13 +30,12 @@ point in time.
 ## TODO
 
 Multiplicativise? Probably ugly and not very useful.
-
 -/
 
-open finset function real
+open finset function
 open_locale big_operators complex_conjugate nnreal pointwise
 
-variables {ι α β γ : Type*} [fintype α] [decidable_eq α] [add_comm_group α]
+variables {α β γ : Type*} [fintype α] [decidable_eq α] [add_comm_group α]
 
 /-!
 ### Convolution of functions
@@ -282,56 +293,6 @@ by simp [dconv_apply, coe_sum]
 
 end nnreal
 
-/-!
-### Order properties
-
-In this section, we prove order results about the convolution and difference convolution, in
-particular Young's convolution inequality.
--/
-
-section ordered_comm_semiring
-variables [ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
-
-lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
-λ a, sum_nonneg $ λ x _, mul_nonneg (hf _) (hg _)
-
-lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
-λ a, sum_nonneg $ λ x _, mul_nonneg (hf _) $ star_nonneg.2 $ hg _
-
-end ordered_comm_semiring
-
-section strict_ordered_comm_semiring
-variables [strict_ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
-
---TODO: Those can probably be generalised to `ordered_comm_semiring` but we don't really care
-@[simp] lemma support_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ∗ g) = support f + support g :=
-begin
-  refine (support_conv_subset _ _).antisymm _,
-  rintro _ ⟨a, b, ha, hb, rfl⟩,
-  dsimp,
-  rw conv_apply_add,
-  exact ne_of_gt (sum_pos' (λ c _, mul_nonneg (hf _) $ hg _) ⟨0, mem_univ _,
-    mul_pos ((hf _).lt_of_ne' $ by simpa using ha) ((hg _).lt_of_ne' $ by simpa using hb)⟩),
-end
-
-@[simp] lemma support_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ○ g) = support f - support g :=
-by simpa [sub_eq_add_neg] using support_conv hf (conjneg_nonneg.2 hg)
-
-lemma conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g :=
-begin
-  rw pi.lt_def at ⊢ hf hg,
-  obtain ⟨hf, a, ha⟩ := hf,
-  obtain ⟨hg, b, hb⟩ := hg,
-  refine ⟨conv_nonneg hf hg, a + b, _⟩,
-  rw conv_apply_add,
-  exact sum_pos' (λ c _, mul_nonneg (hf _) $ hg _) ⟨0, by simpa using mul_pos ha hb⟩,
-end
-
-lemma dconv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g :=
-by rw ←conv_conjneg; exact conv_pos hf (conjneg_pos.2 hg)
-
-end strict_ordered_comm_semiring
-
 /-! ### Iterated convolution -/
 
 section comm_semiring
@@ -411,268 +372,3 @@ lemma support_iter_conv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n
 | (n + 1) := (support_conv_subset _ _).trans $ set.add_subset_add_left $ support_iter_conv_subset _
 
 end comm_semiring
-
-section ordered_comm_semiring
-variables [ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β} {n : ℕ}
-
-@[simp] lemma iter_conv_nonneg (hf : 0 ≤ f) : ∀ {n}, 0 ≤ f ∗^ n
-| 0 := λ _, by dsimp; split_ifs; norm_num
-| (n + 1) := conv_nonneg hf iter_conv_nonneg
-
-end ordered_comm_semiring
-
-section strict_ordered_comm_semiring
-variables [strict_ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β} {n : ℕ}
-
-@[simp] lemma iter_conv_pos (hf : 0 < f) : ∀ {n}, 0 < f ∗^ n
-| 0 := pi.lt_def.2 ⟨iter_conv_nonneg hf.le, 0, by simp⟩
-| (n + 1) := conv_pos hf iter_conv_pos
-
-end strict_ordered_comm_semiring
-
-namespace tactic
-section
-variables [ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
-
-private lemma conv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
-conv_nonneg hf.le hg
-
-private lemma conv_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ∗ g :=
-conv_nonneg hf hg.le
-
-private lemma dconv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
-dconv_nonneg hf.le hg
-
-private lemma dconv_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ○ g :=
-dconv_nonneg hf hg.le
-
-end
-
-open positivity
-
-/-- Extension for the `positivity` tactic: convolution/difference convolution/iterated convolution
-is nonnegative/positive if both multiplicands are. -/
-@[positivity]
-meta def positivity_conv : expr → tactic strictness
-| e@`(%%f ∗ %%g) := do
-  strictness_f ← core f,
-  strictness_g ← core g,
-  match strictness_f, strictness_g with
-  | positive pf, positive pg := positive <$> mk_app ``conv_pos [pf, pg]
-  | positive pf, nonnegative pg := nonnegative <$> mk_mapp ``conv_nonneg_of_pos_of_nonneg
-      [none, none, none, none, none, none, none, f, g, pf, pg]
-  | nonnegative pf, positive pg := nonnegative <$> mk_mapp ``conv_nonneg_of_nonneg_of_pos
-      [none, none, none, none, none, none, none, f, g, pf, pg]
-  | nonnegative pf, nonnegative pg := nonnegative <$> mk_mapp ``conv_nonneg
-      [none, none, none, none, none, none, none, f, g, pf, pg]
-  | sf@_, sg@ _ := positivity_fail e f g sf sg
-  end
-| e@`(%%f ○ %%g) := do
-  strictness_f ← core f,
-  strictness_g ← core g,
-  match strictness_f, strictness_g with
-  | positive pf, positive pg := positive <$> mk_app ``dconv_pos [pf, pg]
-  | positive pf, nonnegative pg := nonnegative <$> mk_mapp ``dconv_nonneg_of_pos_of_nonneg
-      [none, none, none, none, none, none, none, f, g, pf, pg]
-  | nonnegative pf, positive pg := nonnegative <$> mk_mapp ``dconv_nonneg_of_nonneg_of_pos
-      [none, none, none, none, none, none, none, f, g, pf, pg]
-  | nonnegative pf, nonnegative pg := nonnegative <$> mk_mapp ``dconv_nonneg
-      [none, none, none, none, none, none, none, f, g, pf, pg]
-  | sf@_, sg@ _ := positivity_fail e f g sf sg
-  end
-| e@`(%%f ∗^ %%n) := do
-  strictness_f ← core f,
-  match strictness_f with
-  | positive p := positive <$> mk_mapp ``iter_conv_pos
-      [none, none, none, none, none, none, none, none, p, n]
-  | nonnegative p := nonnegative <$> mk_mapp ``iter_conv_nonneg
-      [none, none, none, none, none, none, none, none, p, n]
-  | _ := failed
-  end
-| e := pp e >>= fail ∘ format.bracket "The expression `"
-    "` isn't of the form `f ∗ g`, `f ○ g` or `f ∗^ n`"
-
-variables [strict_ordered_comm_semiring β] [star_ordered_ring β] {f g : α → β}
-
-example (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by positivity
-example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g := by positivity
-example (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ∗ g := by positivity
-example (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g := by positivity
-
-example (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by positivity
-example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ○ g := by positivity
-example (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ○ g := by positivity
-example (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g := by positivity
-
-example (hf : 0 < f) (n : ℕ) : 0 < f ∗^ n := by positivity
-example (hf : 0 ≤ f) (n : ℕ) : 0 ≤ f ∗^ n := by positivity
-
-end tactic
-
-section is_R_or_C
-variables [is_R_or_C β]
-
-lemma conv_eq_inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a (λ x, g (-x))⟫_[β] :=
-by simp [L2inner_eq_sum, conv_eq_sum_sub', map_sum]
-
-lemma dconv_eq_inner (f g : α → β) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[β] :=
-by simp [L2inner_eq_sum, dconv_eq_sum_sub, map_sum]
-
--- TODO: This proof would feel much less painful if we had `ℝ≥0`-valued Lp-norms.
-/-- A special case of **Young's convolution inequality**. -/
-lemma Lpnorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] :=
-begin
-  obtain rfl | hp := hp.eq_or_lt,
-  { simp_rw [ennreal.coe_one, L1norm_eq_sum, sum_mul_sum, conv_eq_sum_sub'],
-    calc
-        ∑ x, ‖∑ y, f y * g (x - y)‖ ≤ ∑ x, ∑ y, ‖f y * g (x - y)‖
-          : sum_le_sum $ λ x _, norm_sum_le _ _
-      ... = _ : _,
-    rw sum_comm,
-    simp_rw [norm_mul, sum_product],
-    exact sum_congr rfl (λ x _, fintype.sum_equiv (equiv.sub_right x) _ _ $ λ _, rfl) },
-  have hp₀ := zero_lt_one.trans hp,
-  rw [←rpow_le_rpow_iff _ (mul_nonneg _ _) hp₀, mul_rpow],
-  any_goals { exact Lpnorm_nonneg },
-  simp_rw [Lpnorm_rpow_eq_sum hp₀.ne', conv_eq_sum_sub'],
-  have hpconj : is_conjugate_exponent p (1 - p⁻¹)⁻¹ :=
-    ⟨hp, by simp_rw [one_div, inv_inv, add_sub_cancel'_right]⟩,
-  have : ∀ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
-    (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ),
-  { intro x,
-    rw [←le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ←rpow_mul, sub_one_mul, mul_inv_cancel],
-    rotate 1,
-    { positivity },
-    { exact sum_nonneg (λ _ _, norm_nonneg _) },
-    { exact sum_nonneg (λ _ _, by positivity) },
-    { exact rpow_nonneg (sum_nonneg $ λ _ _, norm_nonneg _) },
-    { exact mul_nonneg (sum_nonneg $ λ _ _, by positivity)
-        (rpow_nonneg $ sum_nonneg $ λ _ _, norm_nonneg _) },
-    { positivity },
-    calc
-      _ ≤ ∑ y, ‖f y * g (x - y)‖ : norm_sum_le _ _
-    ... = ∑ y, ‖f y‖ * ‖g (x - y)‖ ^ (p⁻¹ : ℝ) * ‖g (x - y)‖ ^ (1 - p⁻¹ : ℝ) : _
-    ... ≤ _ : inner_le_Lp_mul_Lq _ _ _ hpconj
-    ... = _ : _,
-    { congr' with t,
-      rw [norm_mul, mul_assoc, ←rpow_add' (norm_nonneg _), add_sub_cancel'_right, rpow_one],
-      simp },
-    { have : (1 - p⁻¹ : ℝ) ≠ 0 := sub_ne_zero.2 (inv_ne_one.2 $ by exact_mod_cast hp.ne').symm,
-      simp only [abs_mul, abs_rpow_of_nonneg, mul_rpow, rpow_nonneg_of_nonneg, hp₀.ne', this,
-        abs_norm, norm_nonneg, rpow_inv_rpow, ne.def, nnreal.coe_eq_zero, not_false_iff, one_div,
-        rpow_rpow_inv, div_inv_eq_mul, one_mul] } },
-  calc
-    ∑ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ)
-      ≤ ∑ x, (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ)
-      : sum_le_sum $ λ i _, this _
-  ... = _ : _,
-  have hg : ∀ x, ∑ y, ‖g (x - y)‖ = ‖g‖_[1],
-  { simp_rw L1norm_eq_sum,
-    exact λ x, fintype.sum_equiv (equiv.sub_left _) _ _ (λ _, rfl) },
-  have hg' : ∀ y, ∑ x, ‖g (x - y)‖ = ‖g‖_[1],
-  { simp_rw L1norm_eq_sum,
-    exact λ x, fintype.sum_equiv (equiv.sub_right _) _ _ (λ _, rfl) },
-  simp_rw hg,
-  rw [←sum_mul, sum_comm],
-  simp_rw [←mul_sum, hg'],
-  rw [←sum_mul, mul_assoc, ←rpow_one_add' Lpnorm_nonneg, add_sub_cancel'_right],
-  { rw add_sub_cancel'_right,
-    positivity }
-end
-
-/-- A special case of **Young's convolution inequality**. -/
-lemma Lpnorm_dconv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ○ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] :=
-by simpa only [conv_conjneg, Lpnorm_conjneg] using Lpnorm_conv_le hp f (conjneg g)
-
-end is_R_or_C
-
-section real
-variables {f g : α → ℝ} --TODO: Include `f : α → ℂ`
-
-lemma L1norm_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ∗ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
-begin
-  have : ∀ x, 0 ≤ ∑ y, f y * g (x - y) := λ x, sum_nonneg (λ y _, mul_nonneg (hf _) (hg _)),
-  simp only [L1norm_eq_sum, ←sum_conv, conv_eq_sum_sub', norm_of_nonneg (this _),
-    norm_of_nonneg (hf _), norm_of_nonneg (hg _)],
-end
-
-lemma L1norm_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ○ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
-by simpa using L1norm_conv hf (conjneg_nonneg.2 hg)
-
-end real
-
-/-!
-### The ring of functions under convolution
-
-In this section, for a finite group `α`, we define a type synonym `with_conv α β` of the functions
-`α → β`. We endow that type synonym with the ring structure given by pointwise addition and
-convolution as multiplication.
--/
-
-/-- Type synonym for the functions `α → β` where multiplication is given by convolution. -/
-def with_conv (α β : Type*) : Type* := α → β
-
-/-- `to_conv` is the "identity" function from `α → β` to `with_conv α β`. -/
-@[nolint unused_arguments]
-def to_conv : (α → β) ≃ with_conv α β := equiv.refl _
-
-/-- `of_conv` is the "identity" function from `with_conv α β` to `α → β`. -/
-@[nolint unused_arguments]
-def of_conv : with_conv α β ≃ (α → β) := equiv.refl _
-
-@[simp] lemma to_conv_symm_eq : (to_conv : (α → β) ≃ with_conv α β).symm = of_conv := rfl
-@[simp] lemma of_conv_symm_eq : (of_conv : with_conv α β ≃ (α → β)).symm = to_conv := rfl
-@[simp] lemma to_conv_of_conv (f : with_conv α β) : to_conv (of_conv f) = f := rfl
-@[simp] lemma of_conv_to_conv (f : α → β) : of_conv (to_conv f) = f := rfl
-@[simp] lemma to_conv_inj {f g : α → β} : to_conv f = to_conv g ↔ f = g := iff.rfl
-@[simp] lemma of_conv_inj {f g : with_conv α β} : of_conv f = of_conv g ↔ f = g := iff.rfl
-
-@[simp] lemma to_conv_apply (f : α → β) (a : α) : to_conv f a = f a := rfl
-@[simp] lemma of_conv_apply (f : with_conv α β) (a : α) : of_conv f a = f a := rfl
-
-@[nolint unused_arguments fintype_finite decidable_classical]
-instance [nonempty β] : nonempty (with_conv α β) := pi.nonempty
-
-section comm_semiring
-variables [comm_semiring β] [star_ring β]
-
-instance : comm_semiring (with_conv α β) :=
-{ one := to_conv (pi.single 0 1 : α → β),
-  mul := λ f g, to_conv $ of_conv f ∗ of_conv g,
-  mul_assoc := conv_assoc,
-  mul_comm := conv_comm,
-  mul_zero := conv_zero,
-  zero_mul := zero_conv,
-  mul_one := λ f, funext $ λ a, by simp [conv_eq_sum_sub, pi.single_apply],
-  one_mul := λ f, funext $ λ a, by simp [conv_eq_sum_sub', pi.single_apply],
-  left_distrib := conv_add,
-  right_distrib := add_conv,
-  ..pi.add_comm_monoid }
-
-@[nolint unused_arguments]
-instance [has_smul γ β] : has_smul γ (with_conv α β) := pi.has_smul
-
-@[simp] lemma to_conv_zero : to_conv (0 : α → β) = 0 := rfl
-@[simp] lemma of_conv_zero : (of_conv 0 : α → β) = 0 := rfl
-@[simp] lemma to_conv_add (f g : α → β) : to_conv (f + g) = to_conv f + to_conv g := rfl
-@[simp] lemma of_conv_add (f g : with_conv α β) : of_conv (f + g) = of_conv f + of_conv g := rfl
-@[simp] lemma to_conv_smul [has_smul γ β] (c : γ) (f : α → β) : to_conv (c • f) = c • f := rfl
-@[simp] lemma of_conv_smul [has_smul γ β] (c : γ) (f : with_conv α β) :
-  of_conv (c • f) = c • of_conv f := rfl
-
-@[simp] lemma of_conv_mul (f g : with_conv α β) : of_conv (f * g) = of_conv f ∗ of_conv g := rfl
-@[simp] lemma to_conv_conv (f g : α → β) : to_conv (f ∗ g) = to_conv f * to_conv g := rfl
-
-end comm_semiring
-
-section comm_ring
-variables [comm_ring β] [star_ring β]
-
-instance : comm_ring (with_conv α β) := { ..with_conv.comm_semiring, ..pi.add_comm_group }
-
-@[simp] lemma to_conv_neg (f : α → β) : to_conv (-f) = -to_conv f := rfl
-@[simp] lemma of_conv_neg (f : with_conv α β) : of_conv (-f) = -of_conv f := rfl
-@[simp] lemma to_conv_sub (f g : α → β) : to_conv (f - g) = to_conv f - to_conv g := rfl
-@[simp] lemma of_conv_sub (f g : with_conv α β) : of_conv (f - g) = of_conv f - of_conv g := rfl
-
-end comm_ring

@@ -5,7 +5,8 @@ import mathlib.algebra.order.lattice_group
 import mathlib.analysis.special_functions.log.basic
 import mathlib.data.complex.exponential
 import mathlib.data.nat.order.basic
-import prereqs.convolution
+import prereqs.convolution.basic
+import prereqs.lp_norm
 
 /-!
 # Unbalancing

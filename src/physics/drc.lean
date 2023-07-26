@@ -4,7 +4,7 @@ import mathlib.data.complex.exponential
 import mathlib.data.finset.basic
 import mathlib.data.fintype.lattice
 import mathlib.data.real.sqrt
-import prereqs.convolution
+import prereqs.convolution.norm
 
 /-!
 # Dependent Random Choice
