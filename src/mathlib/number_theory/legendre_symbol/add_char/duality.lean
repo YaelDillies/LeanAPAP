@@ -180,22 +180,28 @@ end
 lemma forall_apply_eq_zero : (∀ ψ : add_char α ℂ, ψ a = 1) ↔ a = 0 :=
 by simpa using exists_apply_ne_zero.not
 
-lemma double_dual_emb_injective :
-  injective (double_dual_emb : α → add_char (additive $ add_char α ℂ) ℂ) :=
+lemma double_dual_emb_injective : injective (double_dual_emb : α → add_char (add_char α ℂ) ℂ) :=
 injective_iff.2 $ λ a ha, forall_apply_eq_zero.1 $ λ ψ,
   by simpa using fun_like.congr_fun ha (additive.of_mul ψ)
 
+lemma double_dual_emb_bijective : bijective (double_dual_emb : α → add_char (add_char α ℂ) ℂ) :=
+by casesI nonempty_fintype α; exact (fintype.bijective_iff_injective_and_card _).2
+  ⟨double_dual_emb_injective, card_eq.symm.trans card_eq.symm⟩
+
 @[simp] lemma double_dual_emb_inj :
-  (double_dual_emb a : add_char (additive (add_char α ℂ)) ℂ) = double_dual_emb b ↔ a = b :=
+  (double_dual_emb a : add_char (add_char α ℂ) ℂ) = double_dual_emb b ↔ a = b :=
 double_dual_emb_injective.eq_iff
 
-@[simp] lemma double_dual_emb_eq_one :
-  (double_dual_emb a : add_char (additive (add_char α ℂ)) ℂ) = 1 ↔ a = 0 :=
-by rw [←map_zero_one double_dual_emb, double_dual_emb_inj]
+@[simp] lemma double_dual_emb_eq_zero :
+  (double_dual_emb a : add_char (add_char α ℂ) ℂ) = 0 ↔ a = 0 :=
+by rw [←map_zero double_dual_emb, double_dual_emb_inj]
 
-lemma double_dual_emb_ne_one :
-  (double_dual_emb a : add_char (additive (add_char α ℂ)) ℂ) ≠ 1 ↔ a ≠ 0 :=
-double_dual_emb_eq_one.not
+lemma double_dual_emb_ne_zero : (double_dual_emb a : add_char (add_char α ℂ) ℂ) ≠ 0 ↔ a ≠ 0 :=
+double_dual_emb_eq_zero.not
+
+/-- The double dual isomorphism. -/
+def double_dual_equiv : α ≃+ add_char (add_char α ℂ) ℂ :=
+add_equiv.of_bijective _ double_dual_emb_bijective
 
 end finite
 
@@ -206,7 +212,7 @@ lemma sum_apply [decidable_eq α] (a : α) :
 begin
   split_ifs,
   { simp [h, card_univ, card_eq] },
-  { exact sum_eq_zero_iff_ne_one.2 (double_dual_emb_ne_one.2 h) }
+  { exact sum_eq_zero_iff_ne_zero.2 (double_dual_emb_ne_zero.2 h) }
 end
 
 lemma sum_apply_eq_zero_iff_ne_zero : ∑ ψ : add_char α ℂ, ψ a = 0 ↔ a ≠ 0 :=

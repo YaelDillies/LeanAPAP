@@ -57,10 +57,10 @@ lemma dft_inv (ψ : add_char α ℂ) (hf : is_self_adjoint f) : dft f ψ⁻¹ = 
 by simp_rw [dft_apply, L2inner_eq_sum, map_sum, add_char.inv_apply', map_mul,
   add_char.inv_apply_eq_conj, complex.conj_conj, (hf.apply _).conj_eq]
 
-@[simp] lemma dft_balance (f : α → ℂ) (hψ : ψ ≠ 1) : dft (balance f) ψ = dft f ψ :=
+@[simp] lemma dft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : dft (balance f) ψ = dft f ψ :=
 begin
   simp only [dft_apply, L2inner_eq_sum, balance, mul_sub, sum_sub_distrib],
-  rw [←sum_mul, ←map_sum, sum_eq_zero_iff_ne_one.2 hψ, map_zero, zero_mul, sub_zero],
+  rw [←sum_mul, ←map_sum, sum_eq_zero_iff_ne_zero.2 hψ, map_zero, zero_mul, sub_zero],
 end
 
 lemma dft_dilate (f : α → ℂ) (ψ : add_char α ℂ) (hn : n.coprime (card α)) :
@@ -76,11 +76,8 @@ end
 
 variables [decidable_eq α]
 
-@[simp] lemma dft_indicate_one (A : finset α) : dft (𝟭 A) 1 = A.card :=
-begin
-  rw [dft_apply, L2inner_eq_sum, ←sum_indicate],
-  simp only [monoid_hom.one_apply, coe_one_unit_sphere, map_one, one_mul],
-end
+@[simp] lemma dft_indicate_zero (A : finset α) : dft (𝟭 A) 0 = A.card :=
+by simp only [dft_apply, L2inner_eq_sum, sum_indicate, add_char.zero_apply, map_one, one_mul]
 
 lemma dft_conv_apply (f g : α → ℂ) (ψ : add_char α ℂ) : dft (f ∗ g) ψ = dft f ψ * dft g ψ :=
 begin

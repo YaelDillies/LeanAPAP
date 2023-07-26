@@ -31,6 +31,8 @@ namespace add_char
 section add_monoid
 variables [add_monoid G] [add_monoid H] [comm_monoid R] {ψ : add_char G R}
 
+instance : add_comm_monoid (add_char G R) := additive.add_comm_monoid
+
 instance fun_like : fun_like (add_char G R) G (λ _, R) :=
 { coe := coe_fn,
   coe_injective' := λ ψ χ h, by cases ψ; cases χ; congr' }
@@ -64,14 +66,30 @@ def to_add_monoid_hom : add_char G R ≃ (G →+ additive R) := monoid_hom.to_ad
 @[simp] lemma to_add_monoid_hom_symm_apply (ψ : G →+ additive R) (a : G) :
   to_add_monoid_hom.symm ψ a = additive.to_mul (ψ a) := rfl
 
-lemma eq_one_iff : ψ = 1 ↔ ∀ x, ψ x = 1 := fun_like.ext_iff
-lemma ne_one_iff : ψ ≠ 1 ↔ ∃ x, ψ x ≠ 1 := fun_like.ne_iff
+lemma eq_one_iff : ψ = 0 ↔ ∀ x, ψ x = 1 := fun_like.ext_iff
+lemma ne_one_iff : ψ ≠ 0 ↔ ∃ x, ψ x ≠ 1 := fun_like.ne_iff
 
 @[simp, norm_cast] lemma coe_one : ⇑(1 : add_char G R) = 1 := rfl
-@[simp, norm_cast] lemma coe_eq_one : ⇑ψ = 1 ↔ ψ = 1 := by rw [←coe_one, fun_like.coe_fn_eq]
+lemma one_apply (a : G) : (1 : add_char G R) a = 1 := rfl
+
+@[simp, norm_cast] lemma coe_mul (ψ χ : add_char G R) : ⇑(ψ * χ) = ψ * χ := rfl
+lemma mul_apply (ψ χ : add_char G R) (a : G) : (ψ * χ) a = ψ a * χ a := rfl
 
 @[simp, norm_cast] lemma coe_pow (n : ℕ) (ψ : add_char G R) : ⇑(ψ ^ n) = ψ ^ n := rfl
 lemma pow_apply (n : ℕ) (ψ : add_char G R) (a : G) : (ψ ^ n) a = (ψ a) ^ n := rfl
+
+lemma eq_zero_iff : ψ = 0 ↔ ∀ x, ψ x = 1 := fun_like.ext_iff
+lemma ne_zero_iff : ψ ≠ 0 ↔ ∃ x, ψ x ≠ 1 := fun_like.ne_iff
+
+@[simp, norm_cast] lemma coe_zero : ⇑(0 : add_char G R) = 1 := rfl
+lemma zero_apply (a : G) : (0 : add_char G R) a = 1 := rfl
+@[simp, norm_cast] lemma coe_eq_zero : ⇑ψ = 1 ↔ ψ = 0 := by rw [←coe_zero, fun_like.coe_fn_eq]
+
+@[simp, norm_cast] lemma coe_add (ψ χ : add_char G R) : ⇑(ψ + χ) = ψ * χ := rfl
+lemma add_apply (ψ χ : add_char G R) (a : G) : (ψ + χ) a = ψ a * χ a := rfl
+
+@[simp, norm_cast] lemma coe_nsmul (n : ℕ) (ψ : add_char G R) : ⇑(n • ψ) = ψ ^ n := rfl
+lemma nsmul_apply (n : ℕ) (ψ : add_char G R) (a : G) : (ψ ^ n) a = (ψ a) ^ n := rfl
 
 noncomputable instance : decidable_eq (add_char G R) := classical.dec_eq _
 
@@ -96,13 +114,9 @@ begin
 end
 
 /-- The double dual embedding. -/
-def double_dual_emb : add_char G (add_char (additive $ add_char G R) R) := monoid_hom.eval
+def double_dual_emb : G →+ add_char (add_char G R) R := monoid_hom.eval.to_additive
 
-@[simp] lemma double_dual_emb_apply (a : G) (ψ : additive $ add_char G R) :
-  double_dual_emb a ψ = ψ.to_mul a := rfl
-
-lemma double_dual_emb_apply_of_mul (a : G) (ψ : add_char G R) :
-  double_dual_emb a (additive.of_mul ψ) = ψ a := rfl
+@[simp] lemma double_dual_emb_apply (a : G) (ψ : add_char G R) : double_dual_emb a ψ = ψ a := rfl
 
 end add_monoid
 
@@ -145,7 +159,7 @@ end is_R_or_C
 
 variables [fintype G] [comm_semiring R] [is_domain R] [char_zero R] {ψ : add_char G R}
 
-lemma sum_eq_zero_iff_ne_one : ∑ x, ψ x = 0 ↔ ψ ≠ 1 :=
+lemma sum_eq_zero_iff_ne_zero : ∑ x, ψ x = 0 ↔ ψ ≠ 0 :=
 begin
   refine ⟨_, λ h, _⟩,
   { rintro h rfl,
@@ -156,20 +170,35 @@ begin
   exact fintype.sum_equiv (equiv.add_left x) _ _ (λ y, (map_add_mul _ _ _).symm),
 end
 
-lemma sum_ne_zero_iff_eq_one : ∑ x, ψ x ≠ 0 ↔ ψ = 1 := sum_eq_zero_iff_ne_one.not_left
+lemma sum_ne_zero_iff_eq_zero : ∑ x, ψ x ≠ 0 ↔ ψ = 0 := sum_eq_zero_iff_ne_zero.not_left
 
 end add_group
 
 section add_comm_group
 variables [add_comm_group G]
 
+section comm_monoid
+variables [comm_monoid R]
+
+/-- The additive characters on a commutative additive group form a commutative group. -/
+instance : add_comm_group (add_char G R) := @additive.add_comm_group (add_char G R) _
+
+@[simp] lemma neg_apply (ψ : add_char G R) (a : G) : (-ψ) a = ψ (-a) := rfl
+
+end comm_monoid
+
 section division_comm_monoid
 variables [division_comm_monoid R]
+
+-- TODO: Replace `map_zsmul_zpow`
+@[simp] lemma map_zsmul_eq_zpow (ψ : add_char G R) (n : ℤ) (a : G) : ψ (n • a) = ψ a ^ n :=
+map_zpow ψ.to_monoid_hom _ _
 
 lemma map_neg_eq_inv (ψ : add_char G R) (x : G) : ψ (-x) = (ψ x)⁻¹ :=
 eq_inv_of_mul_eq_one_left $ by simp [←map_add_mul]
 
 lemma inv_apply' (ψ : add_char G R) (x : G) : ψ⁻¹ x = (ψ x)⁻¹ := map_neg_eq_inv _ _
+lemma neg_apply' (ψ : add_char G R) (x : G) : (-ψ) x = (ψ x)⁻¹ := map_neg_eq_inv _ _
 
 end division_comm_monoid
 
@@ -183,7 +212,7 @@ begin
   { rw [h, add_char.L2inner_self] },
   have : ψ₁⁻¹ * ψ₂ ≠ 1, { rwa [ne.def, inv_mul_eq_one] },
   simp_rw [L2inner_eq_sum, ←inv_apply_eq_conj],
-  simpa [inv_apply'] using sum_eq_zero_iff_ne_one.2 this,
+  simpa [inv_apply'] using sum_eq_zero_iff_ne_zero.2 this,
 end
 
 lemma L2inner_eq_zero_iff_ne [fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫_[R] = 0 ↔ ψ₁ ≠ ψ₂ :=
