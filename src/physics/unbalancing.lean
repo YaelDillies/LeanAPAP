@@ -44,7 +44,7 @@ end
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg {f : G → ℝ} (hf : coe ∘ f = g ○ g) (hν : coe ∘ ν = h ○ h) (k : ℕ) :
-  0 ≤ ⟪(coe ∘ ν : G → ℝ), f ^ k⟫_[ℝ] :=
+  (0 : ℝ) ≤ ⟪coe ∘ ν, f ^ k⟫_[ℝ] :=
 by simpa [←complex.zero_le_real, L2inner_eq_sum, mul_comm] using pow_inner_nonneg' hf hν k
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
