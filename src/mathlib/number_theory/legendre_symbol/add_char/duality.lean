@@ -26,7 +26,7 @@ noncomputable theory
 open circle finset fintype (card) function
 open_locale big_operators direct_sum
 
-variables {α : Type*} [add_comm_group α] {n : ℕ}
+variables {α : Type*} [add_comm_group α] {n : ℕ} {a b : α}
 
 namespace add_char
 
@@ -110,7 +110,7 @@ add_char.direct_sum_injective.comp $ λ f g h, by simpa [function.funext_iff, hn
 
 /-- The circle-valued characters of a finite abelian group are the same as its complex-valued
 characters. -/
-def circle_equiv_complex [finite α] : add_char α circle ≃* add_char α ℂ :=
+def circle_equiv_complex [finite α] : add_char α circle ≃+ add_char α ℂ :=
 { to_fun := circle.subtype.comp,
   inv_fun := λ ψ, add_char.to_monoid_hom'.symm
     { to_fun := λ a, (⟨ψ a.to_add, mem_circle_iff_abs.2 $ ψ.norm_apply _⟩ : circle),
@@ -118,7 +118,7 @@ def circle_equiv_complex [finite α] : add_char α circle ≃* add_char α ℂ :
       map_mul' := λ a b, by ext; simp },
   left_inv := λ ψ, by ext; simp,
   right_inv := λ ψ, by ext; simp,
-  map_mul' := λ ψ χ, rfl }
+  map_add' := λ ψ χ, rfl }
 
 @[simp] lemma card_eq [fintype α] : card (add_char α ℂ) = card α :=
 begin
@@ -134,17 +134,18 @@ begin
   exact (card_add_char_le _ _).antisymm (fintype.card_le_of_injective _ hf),
 end
 
-def zmod_mul_equiv (hn : n ≠ 0) : multiplicative (zmod n) ≃* add_char (zmod n) ℂ :=
+/-- `zmod n` is (noncanonically) isomorphic to its group of characters. -/
+def zmod_add_equiv (hn : n ≠ 0) : zmod n ≃+ add_char (zmod n) ℂ :=
 begin
   haveI : ne_zero n := ⟨hn⟩,
-  refine mul_equiv.of_bijective (circle_equiv_complex.to_monoid_hom.comp
-    (add_char.zmod_hom n).to_monoid_hom) _,
+  refine add_equiv.of_bijective (circle_equiv_complex.to_add_monoid_hom.comp
+    (add_char.zmod_hom n).to_add_monoid_hom) _,
   rw [fintype.bijective_iff_injective_and_card, card_eq],
   exact ⟨circle_equiv_complex.injective.comp $ add_char.zmod_injective hn, rfl⟩,
 end
 
-@[simp] lemma zmod_mul_equiv_apply [ne_zero n] (x : multiplicative (zmod n)) :
-  add_char.zmod_mul_equiv (ne_zero.ne _) x = circle_equiv_complex (add_char.zmod n x) := rfl
+@[simp] lemma zmod_add_equiv_apply [ne_zero n] (x : zmod n) :
+  add_char.zmod_add_equiv (ne_zero.ne _) x = circle_equiv_complex (add_char.zmod n x) := rfl
 
 section finite
 variables (α) [finite α]
@@ -157,7 +158,7 @@ basis_of_linear_independent_of_card_eq_finrank (add_char.linear_independent _ _)
 @[simp, norm_cast] lemma coe_complex_basis : ⇑(complex_basis α) = coe_fn :=
 by rw [complex_basis, coe_basis_of_linear_independent_of_card_eq_finrank]
 
-variables {α} {a b : α}
+variables {α}
 
 @[simp] lemma complex_basis_apply (ψ : add_char α ℂ) : complex_basis α ψ = ψ :=
 by rw coe_complex_basis
@@ -203,23 +204,30 @@ double_dual_emb_eq_zero.not
 def double_dual_equiv : α ≃+ add_char (add_char α ℂ) ℂ :=
 add_equiv.of_bijective _ double_dual_emb_bijective
 
+@[simp] lemma coe_double_dual_equiv :
+  ⇑(double_dual_equiv : α ≃+ add_char (add_char α ℂ) ℂ) = double_dual_emb := rfl
+
+@[simp] lemma double_dual_emb_double_dual_equiv_symm_apply (a : add_char (add_char α ℂ) ℂ) :
+  double_dual_emb (double_dual_equiv.symm a) = a := double_dual_equiv.apply_symm_apply _
+
+@[simp] lemma double_dual_equiv_symm_double_dual_emb_apply (a : add_char (add_char α ℂ) ℂ) :
+  double_dual_equiv.symm (double_dual_emb a) = a := double_dual_equiv.symm_apply_apply _
+
 end finite
 
-variables [fintype α] {a : α}
-
-lemma sum_apply [decidable_eq α] (a : α) :
+lemma sum_apply [fintype α] [decidable_eq α] (a : α) :
   ∑ ψ : add_char α ℂ, ψ a = if a = 0 then fintype.card α else 0 :=
-begin
-  split_ifs,
-  { simp [h, card_univ, card_eq] },
-  { exact sum_eq_zero_iff_ne_zero.2 (double_dual_emb_ne_zero.2 h) }
-end
+by simpa using sum_eq (double_dual_emb a : add_char (add_char α ℂ) ℂ)
 
-lemma sum_apply_eq_zero_iff_ne_zero : ∑ ψ : add_char α ℂ, ψ a = 0 ↔ a ≠ 0 :=
+lemma sum_apply_eq_zero_iff_ne_zero [finite α] : ∑ ψ : add_char α ℂ, ψ a = 0 ↔ a ≠ 0 :=
 begin
   classical,
+  casesI nonempty_fintype α,
   rw [add_char.sum_apply, ne.ite_eq_right_iff],
   exact nat.cast_ne_zero.2 fintype.card_ne_zero,
 end
+
+lemma sum_apply_ne_zero_iff_eq_zero [finite α] : ∑ ψ : add_char α ℂ, ψ a ≠ 0 ↔ a = 0 :=
+sum_apply_eq_zero_iff_ne_zero.not_left
 
 end add_char

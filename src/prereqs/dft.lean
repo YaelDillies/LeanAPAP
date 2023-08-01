@@ -11,7 +11,7 @@ Fourier inversion formula for it.
 open add_char finset fintype (card) function.
 open_locale big_operators complex_conjugate
 
-variables {α : Type*} [add_comm_group α] [fintype α] {f : α → ℂ} {ψ : add_char α ℂ} {n : ℕ}
+variables {α γ : Type*} [add_comm_group α] [fintype α] {f : α → ℂ} {ψ : add_char α ℂ} {n : ℕ}
 
 /-- The discrete Fourier transform. -/
 def dft (f : α → ℂ) : add_char α ℂ → ℂ := λ ψ, ⟪ψ, f⟫_[ℂ]
@@ -25,6 +25,10 @@ by ext : 1; simp [L2inner_add_right, dft_apply]
 
 @[simp] lemma dft_sub (f g : α → ℂ) : dft (f - g) = dft f - dft g :=
 by ext : 1; simp [L2inner_sub_right, dft_apply]
+
+@[simp] lemma dft_smul [distrib_smul γ ℂ] [has_star γ] [star_module γ ℂ] [smul_comm_class γ ℂ ℂ]
+  (c : γ) (f : α → ℂ) : dft (c • f) = c • dft f :=
+by ext : 1; simp [L2inner_smul_right, dft_apply]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma L2inner_dft (f g : α → ℂ) : ⟪dft f, dft g⟫_[ℂ] = card α * ⟪f, g⟫_[ℂ] :=
@@ -53,6 +57,19 @@ begin
     ite_mul, zero_mul, fintype.sum_ite_eq],
 end
 
+lemma dft_dft_double_dual_emb (f : α → ℂ) (a : α) :
+  dft (dft f) (double_dual_emb a) = card α * f (-a) :=
+by simp only [←dft_inversion, mul_comm (conj _), dft_apply, L2inner_eq_sum,
+  map_neg_eq_inv, add_char.inv_apply_eq_conj, double_dual_emb_apply]
+
+lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * (f ∘ double_dual_equiv.symm ∘ has_neg.neg) :=
+funext $ λ a, by simp_rw [pi.mul_apply, function.comp_app, map_neg, pi.nat_apply,
+  ←dft_dft_double_dual_emb, double_dual_emb_double_dual_equiv_symm_apply]
+
+lemma dft_injective : injective (dft : (α → ℂ) → add_char α ℂ → ℂ) :=
+λ f g h, funext $ λ a, mul_right_injective₀ (nat.cast_ne_zero.2 fintype.card_ne_zero) $
+    (dft_inversion _ _).symm.trans $ by rw [h, dft_inversion]
+
 lemma dft_inv (ψ : add_char α ℂ) (hf : is_self_adjoint f) : dft f ψ⁻¹ = conj (dft f ψ) :=
 by simp_rw [dft_apply, L2inner_eq_sum, map_sum, add_char.inv_apply', map_mul,
   add_char.inv_apply_eq_conj, complex.conj_conj, (hf.apply _).conj_eq]
@@ -76,6 +93,12 @@ end
 
 variables [decidable_eq α]
 
+@[simp] lemma dft_triv_char : dft (triv_char : α → ℂ) = 1 :=
+by ext ψ : 1; simp [triv_char_apply, dft_apply, L2inner_eq_sum, ←map_sum]
+
+@[simp] lemma dft_one : dft (1 : α → ℂ) = card α • triv_char :=
+dft_injective $ by rw [dft_smul, dft_triv_char, dft_dft, pi.one_comp, nsmul_eq_mul]
+
 @[simp] lemma dft_indicate_zero (A : finset α) : dft (𝟭 A) 0 = A.card :=
 by simp only [dft_apply, L2inner_eq_sum, sum_indicate, add_char.zero_apply, map_one, one_mul]
 
@@ -89,3 +112,7 @@ begin
 end
 
 @[simp] lemma dft_conv (f g : α → ℂ) : dft (f ∗ g) = dft f * dft g := funext $ dft_conv_apply _ _
+
+@[simp] lemma dft_iter_conv (f : α → ℂ) : ∀ n, dft (f ∗^ n) = dft f ^ n
+| 0 := dft_triv_char
+| (n + 1) := by simp [iter_conv_succ, pow_succ, dft_iter_conv]

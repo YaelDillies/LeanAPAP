@@ -159,15 +159,21 @@ end is_R_or_C
 
 variables [fintype G] [comm_semiring R] [is_domain R] [char_zero R] {ψ : add_char G R}
 
-lemma sum_eq_zero_iff_ne_zero : ∑ x, ψ x = 0 ↔ ψ ≠ 0 :=
+lemma sum_eq [decidable_eq G] (ψ : add_char G R) : ∑ a, ψ a = if ψ = 0 then card G else 0 :=
 begin
-  refine ⟨_, λ h, _⟩,
-  { rintro h rfl,
-    simpa [card_univ, fintype.card_ne_zero] using h },
+  split_ifs,
+  { simp [h, card_univ] },
   obtain ⟨x, hx⟩ := ne_one_iff.1 h,
   refine eq_zero_of_mul_eq_self_left hx _,
   rw finset.mul_sum,
   exact fintype.sum_equiv (equiv.add_left x) _ _ (λ y, (map_add_mul _ _ _).symm),
+end
+
+lemma sum_eq_zero_iff_ne_zero : ∑ x, ψ x = 0 ↔ ψ ≠ 0 :=
+begin
+  classical,
+  rw [sum_eq, ne.ite_eq_right_iff],
+  exact nat.cast_ne_zero.2 fintype.card_ne_zero
 end
 
 lemma sum_ne_zero_iff_eq_zero : ∑ x, ψ x ≠ 0 ↔ ψ = 0 := sum_eq_zero_iff_ne_zero.not_left
