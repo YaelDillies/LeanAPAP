@@ -91,13 +91,13 @@ begin
     eq_self_iff_true, forall_const] },
 end
 
-variables [decidable_eq α]
-
-@[simp] lemma dft_triv_char : dft (triv_char : α → ℂ) = 1 :=
+@[simp] lemma dft_triv_char [decidable_eq α] : dft (triv_char : α → ℂ) = 1 :=
 by ext ψ : 1; simp [triv_char_apply, dft_apply, L2inner_eq_sum, ←map_sum]
 
 @[simp] lemma dft_one : dft (1 : α → ℂ) = card α • triv_char :=
-dft_injective $ by rw [dft_smul, dft_triv_char, dft_dft, pi.one_comp, nsmul_eq_mul]
+dft_injective $ by classical; rw [dft_smul, dft_triv_char, dft_dft, pi.one_comp, nsmul_eq_mul]
+
+variables [decidable_eq α]
 
 @[simp] lemma dft_indicate_zero (A : finset α) : dft (𝟭 A) 0 = A.card :=
 by simp only [dft_apply, L2inner_eq_sum, sum_indicate, add_char.zero_apply, map_one, one_mul]

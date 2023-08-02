@@ -29,6 +29,15 @@ begin
   { exact (curlog_pos hx₀ hx).le }
 end
 
+lemma inv_le_exp_curlog : x⁻¹ ≤ exp (curlog x) :=
+begin
+  obtain hx | hx := le_or_lt x 0,
+  { exact (inv_nonpos.2 hx).trans (exp_pos _).le },
+  rw [curlog, exp_log, ←one_div, div_le_div_right hx],
+  { norm_num },
+  { positivity }
+end
+
 lemma log_one_div_le_curlog (hx : 0 ≤ x) : log (1 / x) ≤ curlog x :=
 begin
   rcases hx.eq_or_lt with rfl | hx,
@@ -36,7 +45,7 @@ begin
   exact log_le_log_of_le (by positivity) (div_le_div_of_le hx.le (one_le_exp two_pos.le))
 end
 
-lemma log_inv_le_curlog (hx : 0 ≤ x) : log (x⁻¹) ≤ curlog x :=
+lemma log_inv_le_curlog (hx : 0 ≤ x) : log x⁻¹ ≤ curlog x :=
 by { rw ←one_div, exact log_one_div_le_curlog hx }
 
 -- This might work with x = 1, not sure

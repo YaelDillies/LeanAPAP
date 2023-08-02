@@ -38,6 +38,8 @@ We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G
 \begin{lemma}
 \label{general_hoelder}
 \uses{large_spec, weight_energy}
+\lean{general_hoelder}
+\leanok
 Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\nu:G\to \bbr_{\geq 0}$ be such that whenever $\abs{f}\neq 0$ we have $\nu \geq 1$. Let $\Delta\subseteq \Delta_\eta(f)$. Then, for any $m\geq 1$.
 \[\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\leq E_{2m}(\Delta;\nu).\]
 \end{lemma}
@@ -70,12 +72,15 @@ The result follows by the triangle inequality.
 \begin{lemma}
 \label{spec_hoelder}
 \uses{energy}
+\lean{spec_hoelder}
+\leanok
 Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\Delta\subseteq \Delta_\eta(f)$. Then, for any $m\geq 1$.
 \[N^{-1}\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\leq E_{2m}(\Delta).\]
 \end{lemma}
 
 \begin{proof}
 \uses{general_hoelder}
+\leanok
 Apply Lemma~\ref{general_hoelder} with $\nu\equiv 1$, and use the fact that $\sum_x \lambda(x)$ is $N$ if $\lambda\equiv 1$ and $0$ otherwise.
 \end{proof}
 
@@ -98,6 +103,8 @@ Expand out definitions.
 \begin{lemma}
 \label{diss_energy}
 \uses{dissociated, energy}
+\lean{finset.add_dissociated.boring_energy_le}
+\leanok
 If $A\subseteq G$ is dissociated then $E_{2m}(A) \leq m! \abs{A}^m$.
 \end{lemma}
 \begin{proof}
@@ -138,6 +145,8 @@ which is in the span as required.
 \begin{theorem}[Chang's lemma]
 \label{chang}
 \uses{large_spec}
+\lean{chang}
+\leanok
 Let $G$ be a finite abelian group and $f:G\to \bbc$. Let $\eta >0$ and $\alpha=N^{-1}\norm{f}_1^2/\norm{f}_2^2$. There exists some $\Delta\subseteq \Delta_\eta(f)$ such that
 \[\abs{\Delta}\leq \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil \]
 and
@@ -146,6 +155,7 @@ and
 
 \begin{proof}
 \uses{diss_energy, diss_span, spec_hoelder}
+\leanok
 By Lemma~\ref{diss_span} it suffices to show that $\Delta_\eta(f)$ contains no dissociated set with at least
 \[K= \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil+1\]
 many elements. Suppose not, and let $\Delta\subseteq \Delta_\eta(f)$ be a dissociated set of size $K$. Then by Lemma~\ref{diss_energy} we have, for any $m\geq 1$,
@@ -154,6 +164,6 @@ On the other hand, by Lemma~\ref{spec_hoelder},
 
 \[\eta^{2m}\alpha K^{2m}\leq E_{2m}(\Delta).\]
 Rearranging these bounds, we have
-\[K^m \leq m! \alpha^{-1}\eta^{-2m}\leq m^m\alpha^{-1}\eta^{2m}.\]
+\[K^m \leq m! \alpha^{-1}\eta^{-2m}\leq m^m\alpha^{-1}\eta^{-2m}.\]
 Therefore $K\leq \alpha^{-1/m}m\eta^{-2}$. This is a contradiction to the choice of $K$ if we choose $m=\mathcal{L}(\alpha)$, since $\alpha^{-1/m}\leq e$.
 \end{proof}
