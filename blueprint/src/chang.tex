@@ -7,19 +7,22 @@ Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\eta\in \bbr$. The $\et
 \end{definition}
 
 
-\begin{definition}[Energy]
-\label{energy}
-Let $G$ be a finite abelian group and $A\subseteq G$. Let $m\geq 1$. We define
-\[E_{2m}(A)=\sum_{a_1,\ldots,a_{2m}\in A}1_{a_1+\cdots-a_{2m}=0}.\]
-\end{definition}
-
-
 \begin{definition}[Weighted energy]
 \label{weight_energy}
 \lean{energy}
 \leanok
 Let $\Delta\subseteq \widehat{G}$ and $m\geq 1$. Let $\nu:G\to \bbc$. Then
 \[E_{2m}(\Delta;\nu)=\sum_{\gamma_1,\ldots,\gamma_{2m}\in \Delta}\abs{\widehat{\nu}(\gamma_1+\cdots-\gamma_{2m})}.\]
+\end{definition}
+
+
+\begin{definition}[Energy]
+\label{energy}
+\uses{weight_energy}
+\lean{boring_energy}
+\leanok
+Let $G$ be a finite abelian group and $A\subseteq G$. Let $m\geq 1$. We define
+\[E_{2m}(A)=\sum_{a_1,\ldots,a_{2m}\in A}1_{a_1+\cdots-a_{2m}=0}.\]
 \end{definition}
 
 
@@ -87,6 +90,7 @@ If $A\subset G$ and $m\geq 1$ then
 \end{lemma}
 
 \begin{proof}
+\leanok
 Expand out definitions.
 \end{proof}
 
