@@ -1,3 +1,5 @@
+import mathlib.analysis.mean_inequalities
+import mathlib.data.nat.cast.field
 import prereqs.dft
 import prereqs.energy
 import prereqs.misc
@@ -7,10 +9,7 @@ import prereqs.misc
 -/
 
 open finset fintype real
-open_locale big_operators nnreal
-
-@[simp] lemma real.exp_one_pow (n : ℕ) : exp 1 ^ n = exp n := by rw [←rpow_nat_cast, exp_one_rpow]
-open real
+open_locale big_operators complex_conjugate complex_order nnreal
 
 variables {G : Type*} [add_comm_group G] [fintype G] {f : G → ℂ} {η : ℝ} {ψ : add_char G ℂ}
   {Δ : finset (add_char G ℂ)} {m : ℕ}
@@ -37,9 +36,24 @@ lemma general_hoelder (ν : G → ℝ≥0) (hfν : ∀ x, f x ≠ 0 → 1 ≤ ν
   (hm : m ≠ 0) :
   ↑Δ.card ^ (2 * m) * (η ^ (2 * m) * (‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2)) ≤ energy m Δ (dft $ λ a, ν a) :=
 begin
-  have : η * ‖f‖_[1] * Δ.card ≤ ∑ γ in Δ, ‖dft f γ‖,
+  choose c norm_c hc using λ γ, is_R_or_C.exists_norm_eq_mul_self (dft f γ),
+  have :=
+  calc
+    η * ‖f‖_[1] * Δ.card ≤ ∑ γ in Δ, ‖dft f γ‖ : _
+    ... ≤ ‖∑ x, f x * ∑ γ in Δ, c γ * conj (γ x)‖ : _
+    ... ≤ ∑ x, ‖f x * ∑ γ in Δ, c γ * conj (γ x)‖ : norm_sum_le _ _
+    ... = ∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ : by simp_rw norm_mul
+    ... ≤ _ : weighted_hoelder' m _ _ _ (λ _, norm_nonneg _) (λ _, norm_nonneg _)
+    ... = (∑ x, ‖f x‖) ^ (1 - m⁻¹ : ℝ) *
+            (∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ (m : ℝ)) ^ (m⁻¹ : ℝ) : by push_cast,
+  rotate 1,
   { rw ←nsmul_eq_mul',
     exact card_nsmul_le_sum _ _ _ (λ x hx, mem_large_spec.1 $ hΔ hx) },
+  { simp_rw [mul_sum, mul_comm (f _), mul_assoc (c _), @sum_comm _ _ G, ←mul_sum, ←L2inner_eq_sum,
+      ←dft_apply, ←hc, ←complex.of_real_sum, is_R_or_C.norm_of_real],
+    exact le_abs_self _ },
+  { norm_cast,
+    exact hm.bot_lt },
   sorry
 end
 
@@ -59,15 +73,15 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
 begin
   refine diss_add_span (λ Δ hΔη hΔ, _),
   obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ Δ.card,
-  sorry { simp [hΔ'] },
+  { simp [hΔ'] },
   have : 0 < α f := α_pos hf,
-  set β := ⌈curlog (α f)⌉₊ with hβ,
-  refine le_of_pow_le_pow _ zero_le' (nat.ceil_pos.2 $ curlog_pos (α_pos hf) $ α_le_one _)
-    (nat.cast_le.1 $ le_of_mul_le_mul_right _
+  set β := ⌈curlog (α f)⌉₊,
+  have hβ : 0 < β := nat.ceil_pos.2 (curlog_pos (α_pos hf) $ α_le_one _),
+  refine le_of_pow_le_pow _ zero_le' hβ (nat.cast_le.1 $ le_of_mul_le_mul_right _
       (by positivity : 0 < ↑Δ.card ^ β * (η ^ (2 * β) * α f))),
   push_cast,
-  rw [←hβ, ←mul_assoc, ←pow_add, ←two_mul, mul_pow, mul_mul_mul_comm],
-  refine ((spec_hoelder hΔη sorry).trans $ hΔ.boring_energy_le _).trans _,
+  rw [←mul_assoc, ←pow_add, ←two_mul, mul_pow, mul_mul_mul_comm],
+  refine ((spec_hoelder hΔη hβ.ne').trans $ hΔ.boring_energy_le _).trans _,
   rw mul_right_comm,
   refine mul_le_mul_of_nonneg_left _ (by positivity),
   rw ←div_le_iff,

@@ -14,6 +14,11 @@ instance {M : Type*} [ordered_add_comm_monoid M] [module ℝ M] [ordered_smul �
 @[simp, norm_cast] lemma one_le_coe : 1 ≤ (x : ℝ) ↔ 1 ≤ x :=
 by rw [←nnreal.coe_le_coe, nnreal.coe_one]
 
+@[simp, norm_cast] lemma one_lt_coe : 1 < (x : ℝ) ↔ 1 < x :=
+by rw [←nnreal.coe_lt_coe, nnreal.coe_one]
+
+lemma coe_ne_one : (x : ℝ) ≠ 1 ↔ x ≠ 1 := x.coe_eq_one.not
+
 instance : star_ring ℝ≥0 := star_ring_of_comm
 instance : has_trivial_star ℝ≥0 := ⟨λ _, rfl⟩
 

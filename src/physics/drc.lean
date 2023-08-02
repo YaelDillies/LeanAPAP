@@ -1,5 +1,6 @@
 import logic.lemmas
 import mathlib.algebra.big_operators.ring
+import mathlib.analysis.mean_inequalities
 import mathlib.data.complex.exponential
 import mathlib.data.finset.basic
 import mathlib.data.fintype.lattice

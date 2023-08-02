@@ -674,20 +674,3 @@ lemma L1norm_mu (hs : s.nonempty) : ‖μ_[β] s‖_[1] = 1 := by simpa using Lp
 lemma L1norm_mu_le_one : ‖μ_[β] s‖_[1] ≤ 1 := by simpa using Lpnorm_mu_le le_rfl
 
 end mu
-
-/-! ### Things that should go earlier -/
-
-namespace real
-variables {f g : ι → ℝ}
-
-open finset
-open_locale big_operators
-
--- TODO: `nnreal` version
-/-- Square root version of the **Cauchy-Schwarz inequality**. -/
-lemma sum_sqrt_mul_sqrt_le (s : finset ι) (hf : ∀ i, 0 ≤ f i) (hg : ∀ i, 0 ≤ g i) :
-  ∑ i in s, sqrt (f i) * sqrt (g i) ≤ sqrt (∑ i in s, f i) * sqrt (∑ i in s, g i) :=
-by simpa [←@sum_attach _ _ s, L2inner_eq_sum, L2norm_eq_sum, hf _, hg _]
-    using L2inner_le_L2norm_mul_L2norm (λ i : s, sqrt $ f i) (λ i : s, sqrt $ g i)
-
-end real
