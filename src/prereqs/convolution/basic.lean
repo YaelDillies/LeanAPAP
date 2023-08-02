@@ -1,6 +1,8 @@
 import mathlib.algebra.big_operators.basic
+import mathlib.data.finset.basic
+import mathlib.data.fintype.basic
 import mathlib.data.real.nnreal
-import prereqs.translate
+import prereqs.indicator
 
 /-!
 # Convolution
@@ -32,7 +34,7 @@ point in time.
 Multiplicativise? Probably ugly and not very useful.
 -/
 
-open finset function
+open finset fintype function
 open_locale big_operators complex_conjugate nnreal pointwise
 
 variables {α β γ : Type*} [fintype α] [decidable_eq α] [add_comm_group α]
@@ -258,6 +260,21 @@ end
 lemma support_dconv_subset (f g : α → β) : support (f ○ g) ⊆ support f - support g :=
 by simpa [sub_eq_add_neg] using support_conv_subset f (conjneg g)
 
+lemma indicate_conv_indicate_apply (s t : finset α) (a : α) :
+  (𝟭_[β] s ∗ 𝟭 t) a = ((s ×ˢ t).filter $ λ x : α × α, x.1 + x.2 = a).card :=
+begin
+  simp only [conv_apply, indicate_apply, ←ite_and, filter_comm, boole_mul, sum_boole],
+  simp_rw [←mem_product, filter_mem_univ],
+end
+
+lemma indicate_dconv_indicate_apply (s t : finset α) (a : α) :
+  (𝟭_[β] s ○ 𝟭 t) a = ((s ×ˢ t).filter $ λ x : α × α, x.1 - x.2 = a).card :=
+begin
+  simp only [dconv_apply, indicate_apply, ←ite_and, filter_comm, boole_mul, sum_boole,
+    apply_ite conj, map_one, map_zero],
+  simp_rw [←mem_product, filter_mem_univ],
+end
+
 end comm_semiring
 
 section comm_ring
@@ -283,12 +300,12 @@ by simp only [sub_eq_add_neg, add_dconv, neg_dconv]
 end comm_ring
 
 namespace nnreal
-variables {f g : α → ℝ≥0}
+variables (f g : α → ℝ≥0) (a : α)
 
-@[simp, norm_cast] lemma coe_conv (x : α) : (↑((f ∗ g) x) : ℝ) = (coe ∘ f ∗ coe ∘ g) x :=
-by simp [conv_apply, coe_sum]
+@[simp, norm_cast] lemma coe_conv : (↑((f ∗ g) a) : ℝ) = (coe ∘ f ∗ coe ∘ g) a :=
+map_conv nnreal.to_real_hom _ _ _
 
-@[simp, norm_cast] lemma coe_dconv (x : α) : (↑((f ○ g) x) : ℝ) = (coe ∘ f ○ coe ∘ g) x :=
+@[simp, norm_cast] lemma coe_dconv : (↑((f ○ g) a) : ℝ) = (coe ∘ f ○ coe ∘ g) a :=
 by simp [dconv_apply, coe_sum]
 
 end nnreal
@@ -371,4 +388,33 @@ lemma support_iter_conv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n
   triv_char_apply]
 | (n + 1) := (support_conv_subset _ _).trans $ set.add_subset_add_left $ support_iter_conv_subset _
 
+lemma indicate_iter_conv_apply (s : finset α) (n : ℕ) (a : α) :
+  (𝟭_[ℝ] s ∗^ n) a = ((pi_finset $ λ i, s).filter $ λ x : fin n → α, ∑ i, x i = a).card :=
+begin
+  induction n with n ih generalizing a,
+  { simp [apply_ite card, eq_comm] },
+  simp_rw [iter_conv_succ, conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite,
+    filter_mem_univ, sum_const_zero, add_zero, ←nat.cast_sum, ←finset.card_sigma, nat.cast_inj],
+  refine finset.card_congr (λ f _, fin.cons f.1 f.2) _ _ _,
+  { simp only [fin.sum_cons, eq_sub_iff_add_eq', mem_sigma, mem_filter, mem_pi_finset, and_imp],
+    refine λ bf hb hf ha, ⟨fin.cases _ _, ha⟩,
+    { exact hb },
+    { simpa only [fin.cons_succ] } },
+  { simp only [sigma.ext_iff, fin.cons_eq_cons, heq_iff_eq, imp_self, implies_true_iff,
+      forall_const, sigma.forall] },
+  { simp only [mem_filter, mem_pi_finset, mem_sigma, exists_prop, sigma.exists, and_imp,
+      eq_sub_iff_add_eq', and_assoc],
+    exact λ f hf ha, ⟨f 0, fin.tail f, hf _, λ _, hf _, (fin.sum_univ_succ _).symm.trans ha,
+      fin.cons_self_tail _⟩ }
+end
+
 end comm_semiring
+
+namespace nnreal
+variables {f : α → ℝ≥0}
+
+@[simp, norm_cast] lemma coe_iter_conv (f : α → ℝ≥0) (n : ℕ) (a : α) :
+  (↑((f ∗^ n) a) : ℝ) = (coe ∘ f ∗^ n) a :=
+map_iter_conv nnreal.to_real_hom _ _ _
+
+end nnreal

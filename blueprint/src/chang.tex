@@ -16,6 +16,8 @@ Let $G$ be a finite abelian group and $A\subseteq G$. Let $m\geq 1$. We define
 
 \begin{definition}[Weighted energy]
 \label{weight_energy}
+\lean{energy}
+\leanok
 Let $\Delta\subseteq \widehat{G}$ and $m\geq 1$. Let $\nu:G\to \bbc$. Then
 \[E_{2m}(\Delta;\nu)=\sum_{\gamma_1,\ldots,\gamma_{2m}\in \Delta}\abs{\widehat{\nu}(\gamma_1+\cdots-\gamma_{2m})}.\]
 \end{definition}
@@ -31,7 +33,7 @@ We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G
 
 
 \begin{lemma}
-\label{general_holder}
+\label{general_hoelder}
 \uses{large_spec, weight_energy}
 Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\nu:G\to \bbr_{\geq 0}$ be such that whenever $\abs{f}\neq 0$ we have $\nu \geq 1$. Let $\Delta\subseteq \Delta_\eta(f)$. Then, for any $m\geq 1$.
 \[\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\leq E_{2m}(\Delta;\nu).\]
@@ -63,21 +65,23 @@ The result follows by the triangle inequality.
 
 
 \begin{lemma}
-\label{spec_holder}
+\label{spec_hoelder}
 \uses{energy}
 Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\Delta\subseteq \Delta_\eta(f)$. Then, for any $m\geq 1$.
 \[N^{-1}\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\leq E_{2m}(\Delta).\]
 \end{lemma}
 
 \begin{proof}
-\uses{general_holder}
-Apply Lemma~\ref{general_holder} with $\nu\equiv 1$, and use the fact that $\sum_x \lambda(x)$ is $N$ if $\lambda\equiv 1$ and $0$ otherwise.
+\uses{general_hoelder}
+Apply Lemma~\ref{general_hoelder} with $\nu\equiv 1$, and use the fact that $\sum_x \lambda(x)$ is $N$ if $\lambda\equiv 1$ and $0$ otherwise.
 \end{proof}
 
 
 \begin{lemma}
 \label{energy_alt}
 \uses{energy}
+\lean{boring_energy_eq}
+\leanok
 If $A\subset G$ and $m\geq 1$ then
 \[E_{2m}(A) = \sum_x 1_A^{(m)}(x)^2.\]
 \end{lemma}
@@ -99,6 +103,8 @@ By Lemma~\ref{energy_alt}
 \[E_{2m}(A) = \sum_x 1_A^{(m)}(x)^2.\]
 By the definition of dissociativity, $1_A^{(m)}(x)\leq m!$ for all $x\in G$. We are done since
 \[ \sum_x 1_A^{(m)}(x) = \abs{A}^m.\]
+
+TODO(Thomas): This proof is wrong.
 \end{proof}
 
 
@@ -135,12 +141,12 @@ and
 \end{theorem}
 
 \begin{proof}
-\uses{diss_energy, diss_span, spec_holder}
+\uses{diss_energy, diss_span, spec_hoelder}
 By Lemma~\ref{diss_span} it suffices to show that $\Delta_\eta(f)$ contains no dissociated set with at least
 \[K= \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil+1\]
 many elements. Suppose not, and let $\Delta\subseteq \Delta_\eta(f)$ be a dissociated set of size $K$. Then by Lemma~\ref{diss_energy} we have, for any $m\geq 1$,
 \[E_{2m}(\Delta)\leq m!K^m.\]
-On the other hand, by Lemma~\ref{spec_holder},
+On the other hand, by Lemma~\ref{spec_hoelder},
 
 \[\eta^{2m}\alpha K^{2m}\leq E_{2m}(\Delta).\]
 Rearranging these bounds, we have

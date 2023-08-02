@@ -6,6 +6,9 @@ open finset
 namespace fintype
 variables {α : Type*} {β γ : α → Type*} [fintype α] [decidable_eq α] [Π a, decidable_eq (γ a)]
 
+@[simp] lemma pi_finset_of_is_empty [is_empty α] (s : Π a, finset (β a)) : pi_finset s = univ :=
+eq_univ_of_forall $ λ _, by simp
+
 lemma pi_finset_image (f : Π a, β a → γ a) (s : Π a, finset (β a)) :
   pi_finset (λ a, image (f a) (s a)) = image (λ (b : Π a, β a) a, f _ (b a)) (pi_finset s) :=
 by ext;
