@@ -480,19 +480,30 @@ open positivity
 
 private alias Lpnorm_pos ↔ _ Lpnorm_pos_of_ne_zero
 
-private lemma Lpnorm_pos_of_pos {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] :=
+lemma Lpnorm_pos_of_ne_zero' {α : Type*} [normed_add_comm_group α] {p : ℝ≥0∞} {f : ι → α}
+  (hf : f ≠ 0) : 0 < ‖f‖_[p] :=
+Lpnorm_pos_of_ne_zero hf
+
+lemma Lpnorm_pos_of_pos {α : ι → Type*} [Π i, normed_add_comm_group (α i)] [Π i, preorder (α i)]
+  {p : ℝ≥0∞} {f : Π i, α i} (hf : 0 < f) : 0 < ‖f‖_[p] :=
+Lpnorm_pos_of_ne_zero hf.ne'
+
+lemma Lpnorm_pos_of_pos' {α : Type*} [normed_add_comm_group α] [preorder α]
+  {p : ℝ≥0∞} {f : ι → α} (hf : 0 < f) : 0 < ‖f‖_[p] :=
 Lpnorm_pos_of_ne_zero hf.ne'
 
 /-- Extension for the `positivity` tactic: Lp norms are nonnegative, and is strictly positive if its
 input is nonzero. -/
 @[positivity]
 meta def positivity_Lpnorm : expr → tactic strictness
-| `(‖%%f‖_[%%p]) := do
+| `(@Lpnorm %%ι %%hι %%α %%hα %%p %%f) := do
   (do -- if can prove `0 < a` or `a ≠ 0`, report positivity
-    strict_a ← core f,
-    match strict_a with
-    | positive hp := positive <$> mk_mapp ``Lpnorm_pos_of_pos [none, none, p, f, hp]
-    | nonzero hp := positive <$> mk_mapp ``Lpnorm_pos_of_ne_zero [none, none, none, none, p, f, hp]
+    strict_f ← core f,
+    match strict_f with
+    | positive hp := (positive <$> mk_mapp ``Lpnorm_pos_of_pos [ι, hι, α, hα, p, f, hp])
+      <|>  positive <$> mk_mapp ``Lpnorm_pos_of_pos' [ι, hι, none, none, none, p, f, hp]
+    | nonzero hp := (positive <$> mk_mapp ``Lpnorm_pos_of_ne_zero [ι, hι, α, hα, p, f, hp])
+      <|> (positive <$> mk_mapp ``Lpnorm_pos_of_ne_zero' [ι, hι, none, none, p, f, hp])
     | _ := failed
     end) <|>
   -- else report nonnegativity
@@ -509,6 +520,7 @@ meta def positivity_wLpnorm : expr → tactic strictness
 end tactic
 
 section examples
+section normed_add_comm_group
 variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] {w : ι → ℝ≥0} {f : Π i, α i}
 
 example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
@@ -516,6 +528,17 @@ example {p : ℝ≥0∞} (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
 example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
 example {p : ℝ≥0} : 0 ≤ ‖f‖_[p, w] := by positivity
 
+end normed_add_comm_group
+
+section complex
+variables {w : ι → ℝ≥0} {f : ι → ℂ}
+
+example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0} : 0 ≤ ‖f‖_[p, w] := by positivity
+
+end complex
 end examples
 
 /-! ### Hölder inequality -/
