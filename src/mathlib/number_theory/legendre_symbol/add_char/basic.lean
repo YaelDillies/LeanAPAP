@@ -91,6 +91,13 @@ lemma add_apply (ψ χ : add_char G R) (a : G) : (ψ + χ) a = ψ a * χ a := rf
 @[simp, norm_cast] lemma coe_nsmul (n : ℕ) (ψ : add_char G R) : ⇑(n • ψ) = ψ ^ n := rfl
 lemma nsmul_apply (n : ℕ) (ψ : add_char G R) (a : G) : (ψ ^ n) a = (ψ a) ^ n := rfl
 
+variables {ι : Type*}
+
+@[simp, norm_cast] lemma coe_sum (s : finset ι) (ψ : ι → add_char G R) :
+  ⇑(∑ i in s, ψ i) = ∏ i in s, ψ i := by induction s using finset.cons_induction; simp [*]
+lemma sum_apply (s : finset ι) (ψ : ι → add_char G R) (a : G) :
+  (∑ i in s, ψ i) a = ∏ i in s, ψ i a := by rw [coe_sum, finset.prod_apply]
+
 noncomputable instance : decidable_eq (add_char G R) := classical.dec_eq _
 
 /-- Precompose a `R`-valued character of `H` with a homomorphism `G → H` to get a `R`-valued
@@ -190,6 +197,7 @@ variables [comm_monoid R]
 instance : add_comm_group (add_char G R) := @additive.add_comm_group (add_char G R) _
 
 @[simp] lemma neg_apply (ψ : add_char G R) (a : G) : (-ψ) a = ψ (-a) := rfl
+@[simp] lemma sub_apply (ψ χ : add_char G R) (a : G) : (ψ - χ) a = ψ a * χ (-a) := rfl
 
 end comm_monoid
 
@@ -205,6 +213,8 @@ eq_inv_of_mul_eq_one_left $ by simp [←map_add_mul]
 
 lemma inv_apply' (ψ : add_char G R) (x : G) : ψ⁻¹ x = (ψ x)⁻¹ := map_neg_eq_inv _ _
 lemma neg_apply' (ψ : add_char G R) (x : G) : (-ψ) x = (ψ x)⁻¹ := map_neg_eq_inv _ _
+lemma sub_apply' (ψ χ : add_char G R) (a : G) : (ψ - χ) a = ψ a / χ a :=
+by rw [sub_apply, map_neg_eq_inv, div_eq_mul_inv]
 
 end division_comm_monoid
 

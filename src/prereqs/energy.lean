@@ -10,8 +10,10 @@ open_locale big_operators nat
 variables {G : Type*} [add_comm_group G] [fintype G] {A : finset G}
 
 def energy (n : ℕ) (A : finset G) (ν : G → ℂ) : ℝ :=
-∑ γ in fintype.pi_finset (λ _ : fin n, A), ∑ δ in fintype.pi_finset (λ _ : fin n, A),
-  ‖ν (∑ i, γ i - ∑ i, δ i)‖
+∑ γ in pi_finset (λ _ : fin n, A), ∑ δ in pi_finset (λ _ : fin n, A), ‖ν (∑ i, γ i - ∑ i, δ i)‖
+
+@[simp] lemma energy_nonneg (n : ℕ) (A : finset G) (ν : G → ℂ) : 0 ≤ energy n A ν :=
+sum_nonneg $ λ γ _, sum_nonneg $ λ δ _, norm_nonneg _
 
 lemma energy_nsmul (m n : ℕ) (A : finset G) (ν : G → ℂ) : energy n A (m • ν) = m • energy n A ν :=
 by simp only [energy, nsmul_eq_mul, mul_sum, @pi.coe_nat G (λ _, ℂ) _ m, pi.mul_apply, norm_mul,
