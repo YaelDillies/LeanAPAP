@@ -378,6 +378,14 @@ by simp_rw [sub_eq_add_neg, L2inner_add_right, L2inner_neg_right]
 
 end comm_ring
 
+section ordered_comm_semiring
+variables [ordered_comm_semiring 𝕜] [star_ordered_ring 𝕜] {f g : ι → 𝕜}
+
+lemma L2inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
+sum_nonneg $ λ _ _, mul_nonneg (star_nonneg.2 $ hf _) $ hg _
+
+end ordered_comm_semiring
+
 section is_R_or_C
 variables {κ : Type*} [is_R_or_C 𝕜] {f : ι → 𝕜}
 
@@ -492,6 +500,20 @@ lemma Lpnorm_pos_of_pos' {α : Type*} [normed_add_comm_group α] [preorder α]
   {p : ℝ≥0∞} {f : ι → α} (hf : 0 < f) : 0 < ‖f‖_[p] :=
 Lpnorm_pos_of_ne_zero hf.ne'
 
+section ordered_comm_semiring
+variables [ordered_comm_semiring 𝕜] [star_ordered_ring 𝕜] {f g : ι → 𝕜}
+
+private lemma L2inner_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
+L2inner_nonneg hf.le hg
+
+private lemma L2inner_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
+L2inner_nonneg hf hg.le
+
+private lemma L2inner_nonneg_of_pos_of_pos (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
+L2inner_nonneg hf.le hg.le
+
+end ordered_comm_semiring
+
 /-- Extension for the `positivity` tactic: Lp norms are nonnegative, and is strictly positive if its
 input is nonzero. -/
 @[positivity]
@@ -517,6 +539,24 @@ meta def positivity_wLpnorm : expr → tactic strictness
 | `(‖%%f‖_[%%p, %%w]) := nonnegative <$> mk_mapp ``wLpnorm_nonneg [none, none, none, none, p, w, f]
 | e := pp e >>= fail ∘ format.bracket "The expression `" "` isn't of the form `‖f‖_[p, w]`"
 
+/-- Extension for the `positivity` tactic: The inner product of nonnegative functions is
+nonnegative. -/
+@[positivity]
+meta def positivity_L2inner : expr → tactic strictness
+| `(⟪%%f, %%g⟫_[%%𝕜]) :=  do
+    strict_f ← core f,
+    strict_g ← core g,
+    match strict_f, strict_g with
+    | positive hf, positive hg := nonnegative <$> mk_app ``L2inner_nonneg_of_pos_of_pos [hf, hg]
+    | positive hf, nonnegative hg :=
+        nonnegative <$> mk_app ``L2inner_nonneg_of_pos_of_nonneg [hf, hg]
+    | nonnegative hf, positive hg :=
+        nonnegative <$> mk_app ``L2inner_nonneg_of_nonneg_of_pos [hf, hg]
+    | nonnegative hf, nonnegative hg := nonnegative <$> mk_app ``L2inner_nonneg [hf, hg]
+    | _, _ := failed
+    end
+| e := pp e >>= fail ∘ format.bracket "The expression `" "` isn't of the form `⟪f, g⟫_[𝕜]`"
+
 end tactic
 
 section examples
@@ -529,6 +569,16 @@ example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by p
 example {p : ℝ≥0} : 0 ≤ ‖f‖_[p, w] := by positivity
 
 end normed_add_comm_group
+
+section ordered_comm_semiring
+variables [ordered_comm_semiring 𝕜] [star_ordered_ring 𝕜] {f g : ι → 𝕜}
+
+example (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
+example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
+example (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
+example (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
+
+end ordered_comm_semiring
 
 section complex
 variables {w : ι → ℝ≥0} {f : ι → ℂ}
