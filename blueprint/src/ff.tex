@@ -1,59 +1,172 @@
 \chapter{Finite field model}
 
-\begin{lemma}\label{global_dichotomy}
-Let $\epsilon >0$. If $A,C\subseteq G$, where $C$ has density at least $\gamma$, then either
-\begin{enumerate}
-\item  $\abs{\langle \mu_A\ast \mu_A,\mu_C\rangle -1}\leq \epsilon$ or
-\item $\norm{\mu_A\circ \mu_A-1}_p \geq \epsilon/2$ for some $p\ll\log(2.\gamma)$.
-\end{enumerate}
-\end{lemma}
+\begin{theorem}\label{ap_in_ff}
+If $A_1,A_2,S\subseteq \bbf_q^n$ are such that $A_1$ and $A_2$ both have density at least $\alpha$ then there is a subspace $V$ of codimension
+
+\[\mathrm{codim}(V)\leq 2^{27}\lo(\alpha)^2\lo(\epsilon \alpha)^2\epsilon^{-2}\]
+such that
+\[\abs{\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle-\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle}\leq \epsilon.\]
+\end{theorem}
+
 \begin{proof}
-If the first alternative fails, then by H\"{o}lder's inequality, for any $p\geq 1$
-\[\epsilon < \abs{ \langle \mu_A \ast \mu_A - 1, \mu_C \rangle } \leq \norm{\mu_A\ast \mu_A-1}_p\gamma^{-1/p}.\]
-In particular if we choose $p=2\lceil K\log{\gamma}\rceil$ for some large constant $K$ then we deduce that
-\[\norm{\mu_A\ast \mu_A-1}_{p}\geq \tfrac{1}{2}\epsilon.\]
-It remains to note that, since $p$ is even,
-\[\norm{\mu_A\ast \mu_A-1}_{p}^p=(\widehat{\mu_A}^2\ind{\neq 0})^{(p)}(0)\leq(\Abs{\widehat{\mu_A}}^2\ind{\neq 0})^{(p)}(0)=\norm{\mu_A\circ \mu_A-1}_p^p. \qedhere \]
+\uses{chang, linfty_ap_boosted}
+(In this proof we write $G=\mathbb{F}_q^n$.) Let $k=\lceil \lo(\epsilon\alpha/4)\rceil$. Note that $\lvert A_1+G\rvert=\lvert G\rvert\leq \alpha^{-1}\lvert A\rvert$. Furthermore, $\lvert A_2\rvert/\lvert S\rvert\geq \alpha$. Therefore by Theorem~\ref{linfty_ap_boosted} there exists some $T\subseteq G$ with
+\[\lvert T\rvert \geq \exp(-2^{16}\lo(\alpha)^2k^2\epsilon^{-2})\lvert S\rvert\]
+such that
+\[\| \mu_T^{(k)}\ast \mu_{A_1}\ast \mu_{A_2}\circ \ind{S}-\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}\|_{\infty}\leq \epsilon/4.\]
+Let $\Delta=\Delta_{1/2}(\mu_T)$ and
+\[V = \{ x \in G : \gamma(x)=1\textrm{ for all }\gamma\in\Delta\}.\]
+Note that 
+\[\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle = \langle \mu_V,\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}\rangle=\frac{1}{\abs{V}}\sum_{v\in V}\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)\]
+and
+\[\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle = \mu_{A_1}\ast \mu_{A_2}\circ\ind{S}(0).\]
+Therefore
+\[\abs{\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle-\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle}\leq \frac{1}{\abs{V}}\sum_{v\in V}\abs{\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)-\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(0)}.\]
+In particular it suffices to show that, for any $v\in V$, 
+\[\abs{\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)-\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(0)}\leq \epsilon.\]
+By the triangle inequality and construction of $T$, it suffices to show that
+
+\[\abs{\mu_T^{(k)}\ast \mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)-\mu_T^{(k)}\ast\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(0)}\leq \epsilon/2.\]
+By the Fourier transform we have, for any $x\in G$,
+\[\mu_T^{(k)}\ast \mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(x)=\frac{1}{N}\sum_{\gamma\in \widehat{G}}\widehat{\mu_T}(\gamma)^k\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)\gamma(x).\]
+Therefore the left-hand side of the desired inequality is, by the triangle inequality, at most
+\[\frac{1}{N}\sum_{\gamma\in \widehat{G}}\abs{\widehat{\mu_T}(\gamma)}^k\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}\abs{\gamma(v)-1}.\]
+By choice of $v\in V$ the summand vanishes when $\gamma\in\Delta$. When $\gamma\not\in \Delta$ the summand is bounded above by 
+\[2^{1-k}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}.\]
+Therefore the left-hand side of the desired inequality is at most
+\[2^{1-k}\frac{1}{N}\sum_{\gamma}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}\leq 2^{1-k}\abs{S}\frac{1}{N}\sum_{\gamma}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)}\]
+using the trivial bound $\lvert\widehat{\ind{S}}\rvert\leq \abs{S}$. By the Cauchy-Schwarz inequality the sum on the right is at most
+\[\brac{\sum_\gamma \abs{\widehat{\mu_{A_1}}}^2}^{1/2}\brac{\sum_\gamma \abs{\widehat{\mu_{A_2}}}^2}^{1/2}.\]
+By Parseval's identity this is at most $\alpha^{-1}$. Therefore the desired inequality follows from
+\[2^{1-k}\abs{S}\frac{1}{N}\alpha^{-1}\leq 2^{1-k}\alpha^{-1}\leq \epsilon/2.\]
+
+It remains to check the codimension of $V$. For this, let $\Delta'\subseteq \Delta$ be as provided by Chang's lemma, Lemma~\ref{chang}, so that
+
+\[\Delta\subseteq \left\{ \sum_{\gamma\in\Delta'}c_\gamma \gamma : c_\gamma\in \{-1,0,1\} \right\}.\]
+Let 
+
+\[W= \{ x \in G : \gamma(x)=1\textrm{ for all }\gamma\in\Delta'\}.\]
+It follows that $W\leq V$, so it suffices to bound the codimension of $W$. This we can bound trivially using the bound from Chang's lemma and the fact that $\lo(\delta)=\log(e^2/\delta)\leq 2+\log(1/\delta)\leq 4\log(1/\delta)$, provided $\log(1/\delta)\geq 1$, so 
+\[\abs{\Delta'}\leq  \lceil 4e\mathcal{L}(\delta)\rceil\leq 2^7\log(1/\delta),\]
+where
+\[\delta=\abs{T}/N\geq \exp(-2^{16}\lo(\alpha)^2k^2\epsilon^{-2}),\]
+so
+\[\mathrm{codim}(V)\leq \abs{\Delta'}\leq 2^{23}\lo(\alpha)^2k^2\epsilon^{-2}\leq 2^{25}\lo(\alpha)^2\lo(\epsilon \alpha/4)^2\epsilon^{-2},\]
+and now use $\lo(\epsilon\alpha/4)\leq 2\lo(\epsilon\alpha)$, say.
 \end{proof}
 
+\begin{lemma}\label{ast_to_circ}
+For any function $f:G\to \mathbb{C}$ and integer $k\geq 1$
+\[\| f\ast f\|_{2k}\leq \| f\circ f\|_{2k}.\]
+\end{lemma}
+\begin{proof}
+To finish, similar trick to unbalancing.
+\end{proof}
 
+\begin{lemma}\label{ast_expand}
+For any function $f$ with $\sum f(x)=1$
+\[f\ast f-1/N = (f-1/N)\ast (f-1/N).\]
+\end{lemma}
+
+
+\begin{lemma}\label{circ_expand}
+For any function $f$ with $\sum f(x)=1$
+\[f\circ f-1/N = (f-1/N)\circ (f-1/N).\]
+\end{lemma}
+
+\begin{lemma}\label{global_dichotomy}
+Let $\epsilon >0$ and $\mu\equiv 1/N$. If $A,C\subseteq G$, where $C$ has density at least $\gamma$, and 
+\[\abs{N\langle \mu_A\ast \mu_A,\mu_C\rangle -1}>\epsilon\]
+then, if $f=(\mu_A-1/N)$, $\norm{f\circ f}_{p(\mu)} \geq \epsilon /2N$ for $p=2\lceil \lo(\gamma)\rceil$.
+\end{lemma}
+\begin{proof}
+\uses{ast_to_circ, ast_expand, circ_expand}
+By H\"{o}lder's inequality, for any $p\geq 1$
+\[\epsilon < \abs{ N\langle \mu_A \ast \mu_A - 1/N, \mu_C \rangle } \leq \norm{\mu_A\ast \mu_A-1/N}_p\gamma^{-1/p}N^{1-1/p}.\]
+In particular if we choose $p=2\lceil\lo(\gamma)\rceil$ then $\gamma^{-1/p}\leq e^{1/2}\leq 2$ and so we deduce that, by Lemma~\ref{ast_expand},
+\[\norm{f\ast f}_{p}\geq \tfrac{1}{2}\epsilon N^{1/p-1}.\]
+It remains to use Lemmas~\ref{ast_expand} and \ref{circ_expand} and apply Lemma~\ref{ast_to_circ}, and note that we can pass from the $L^p$ norm to the $L^p(\mu)$ norm losing a factor of $N^{1/p}$. 
+\end{proof}
+  
 \begin{proposition}\label{di_in_ff}
-Let $\epsilon \in (0,1)$. If $A,C\subseteq \bbf_q^n$, where $C$ has density at least $\gamma$, then either
-\begin{enumerate}
-\item $\abs{\langle \mu_A\ast \mu_A,\mu_C\rangle -1}\leq \epsilon$ or
-\item there is a subspace $V$ of codimension
-\[\ll_\epsilon \log(2/\gamma)^4\log(2/\alpha)^4\]
-such that $\norm{\ind{A}\ast \mu_V}_\infty \geq (1+\Omega(\epsilon))\alpha$.
-\end{enumerate}
+Let $\epsilon \in (0,1)$. If $A,C\subseteq \bbf_q^n$, where $C$ has density at least $\gamma$, and
+\[\abs{N\langle \mu_A\ast \mu_A,\mu_C\rangle -1}> \epsilon\]
+then there is a subspace $V$ of codimension ???
+such that $\norm{\ind{A}\ast \mu_V}_\infty \geq (1+\epsilon/32)\alpha$.
 \end{proposition}
-\begin{proof}\uses{global_dichotomy,global_drc,unbalancing,ap_in_ff}
-By Lemma~\ref{lem-ff1}, if the first alternative fails then $\norm{\mu_A\circ \mu_A-1}_p\geq \epsilon/2$ for some $p\ll \lo{\gamma}$. By Lemma~\ref{lem-key-spec} (applied to $f=\mu_A\circ \mu_A-1$) we deduce that $\norm{\mu_A\circ \mu_A}_p\geq 1+\epsilon/4$ for some $p\ll_\epsilon \lo{\gamma}$. Hence, by Corollary~\ref{cor-key}, there are $A_1,A_2$, both of density
-\[\geq \alpha^{O_\epsilon(\lo{\gamma})},\]
-such that $\langle \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle \geq 1-\epsilon/32$, where $S=\{x : \mu_A\circ \mu_A(x)\geq 1+\epsilon/8\}$ . By Theorem~\ref{th-ap} there is a subspace $V$ of the required codimension such that
-\[\langle \mu_V\ast \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle \geq 1-\tfrac{1}{16}\epsilon.\]
-By definition of $S$, it follows that
+\begin{proof}
+\uses{global_dichotomy,global_drc,unbalancing,ap_in_ff, circ_expand, cor_sifting}
+By Lemma~\ref{global_dichotomy}, if $f=\mu_A-1/N$,
+\[\norm{f\circ f}_{p(\mu)}\geq \epsilon /2N.\]
+By Lemma~\ref{unbalancing} there exists some $p'$ such that 
+\[p'\leq 128\epsilon^{-1}\log(96/\epsilon)\lo(\gamma)\]
+such that
+\[\norm{f\circ f+1/N}_{p'(\mu)}\geq (1+\epsilon/4)/N.\]
+By Lemma~\ref{circ_expand} $f\circ f+1/N=\mu_A\circ \mu_A$. 
+
+Let $q=2\lceil p'+2^8\epsilon^{-2}\log(64/\epsilon)\rceil$. By Corollary~\ref{cor_sifting}, there are $A_1,A_2$, both of density $\geq \alpha^{2q}$ such that
+\[\langle \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle \geq 1-\epsilon/32\]
+where 
+\[S=\{x : \mu_A\circ \mu_A(x)\geq (1-\epsilon/16)\| \mu_A\circ \mu_A\|_{q(\mu)}\}.\]
+Since
+\[\| \mu_A\circ \mu_A\|_{q(\mu)}\geq \| \mu_A\circ \mu_A\|_{p'(\mu)}\geq (1+\epsilon/4)/N\]
+we know
+\[S\subseteq S'=\{x : \mu_A\circ \mu_A(x)\geq (1+\epsilon/8)/N\}.\]
+
+By Theorem~\ref{ap_in_ff} there is a subspace $V$ of the required codimension such that
+\[\langle \mu_V\ast \mu_{A_1}\circ \mu_{A_2},\ind{S'}\rangle \geq 1-\tfrac{1}{16}\epsilon.\]
+By definition of $S'$, it follows that
 \begin{align*}
-1+\Omega(\epsilon)
-&\leq (1+\epsilon/8)(1-\epsilon/16)\\
+(1+\epsilon/32)/N
+&\leq ((1+\epsilon/8)/N)(1-\epsilon/16)\\
 &\leq \langle \mu_V\ast \mu_{A_1}\circ \mu_{A_2},\mu_A\circ \mu_A\rangle\\
 &\leq \norm{\mu_V\ast \mu_A}_\infty \norm{\mu_{A}\ast \mu_{A_2}\circ \mu_{A_1}}_1\\
-&= \norm{\mu_V\ast \ind{A}}_\infty \alpha^{-1},
+&= \norm{\mu_V\ast \ind{A}}_\infty\abs{A}^{-1},
 \end{align*}
 and the proof is complete.
 \end{proof}
 
-\begin{theorem}\label{3aps_in_ff_count}
-If $A\subseteq \mathbb{F}_q^n$ has density $\alpha$ then
-\[\langle \ind{A}\ast \ind{A},\ind{2\cdot A}\rangle \gg \exp(-O(\log(1/\alpha)^9)).\]
-\end{theorem}
-\begin{proof}\uses{di_in_ff}
-Test.
+\begin{lemma}\label{no3aps_inn_product}
+If $A\subseteq G$ has no non-trivial three-term arithmetic progressions and $G$ has odd order then
+\[\langle \mu_A\ast \mu_A,\mu_{2\cdot A}\rangle = 1/\abs{A}^2.\]
+\end{lemma}
+\begin{proof}
+Expand out using definitions.
 \end{proof}
 
-\begin{theorem}\label{3aps_in_ff}
-If $A\subseteq \bbf_q^n$ has only trivial three-term arithmetic progressions then
-\[\alpha \leq \exp(-n^{1/9}).\]
+\begin{theorem}
+Let $q$ be an odd prime power. If $A\subseteq \mathbb{F}_q^n$ with $\alpha=\abs{A}/q^n$ has no non-trivial three-term arithmetic progressions then 
+\[n \ll \lo(\alpha)^9.\]
 \end{theorem}
-\begin{proof}\uses{3aps_in_ff_count}
-Test.
+\begin{proof}
+\uses{no3aps_inn_product, di_in_ff}
+Let $t\geq 0$ be maximal such that there is a sequence of subspaces $\bbf_q^n=V_0\geq \cdots \geq V_t$ and associated $A_i\subseteq V_i$ with $A_0=A$ such that
+\begin{enumerate}
+\item for $0\leq i\leq t$ there exists $x_i$ such that $A_i\subseteq A-x_i$,
+\item with $\alpha_i=\abs{A_i}/\abs{V_i}$ we have
+\[\alpha_{i+1}\geq \frac{65}{64}\alpha_i\]
+for $0\leq i<t$, and 
+\item \[\mathrm{codim} (V_{i+1}) \leq \mathrm{codim}(V_i)+O(\lo(\alpha)^8)\]
+for $0\leq i<t$. (here the second summand should be replaced with whatever explicit codimension bound we get from the above). 
+\end{enumerate}
+
+Note this is well-defined since $t=0$ meets the requirements, and this process is finite and $t \ll \lo(\alpha)$, since $\alpha_i\leq 1$ for all $i$. Therefore
+\[\mathrm{codim}(V_t) \ll \lo(\alpha)^9.\]
+
+Suppose first that
+\[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle<1/2.\]
+In this case we now apply Proposition~\ref{di_in_ff} to $A_t\subseteq V_t$ with $\epsilon=1/2$ (note that $N=\lvert V_t\rvert$ and all inner product, $\mu$ etc, are relative to the ambient group $V_t$ now). Therefore there is a subspace $V\leq V_t$ of codimension (relative to $V_t$) of $\ll \lo(\alpha)^8$ such that there exists some $x\in V_t$ with
+\[\frac{\lvert (A_t-x)\cap V\rvert}{\lvert V\rvert}=1_{A_t}\ast \mu_V(x)=\| 1_{A_t}\ast \mu_V\|_\infty \geq (1+1/64)\alpha_t,\]
+which contradicts the maximality of $t$, letting $V_{t+1}=V$ and $A_{t+1}=(A_t-x)\cap V_t$. 
+
+Therefore 
+
+\[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle\geq 1/2.\]
+By Lemma~\ref{no3aps_inn_product} the left-hand side is equal to $\lvert V_t\rvert/\lvert A_t\rvert^2$, and therefore
+\[\alpha^2 \leq \alpha_t^2 \leq 2/\lvert V_t\rvert.\]
+By the codimension bound the right-hand side is at most
+\[2q^{O(\lo(\alpha)^9)-n}.\]
+If $\alpha^2 \leq 2q^{-n/2}$ we are done, otherwise we deduce that $\lo(\alpha)^9 \gg n$ as required.
 \end{proof}
+
+\end{document}
