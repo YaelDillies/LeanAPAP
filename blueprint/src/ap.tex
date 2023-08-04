@@ -179,14 +179,57 @@ The right-hand side is at most
 and we are done by choice of $T$.
 \end{proof}
 
+
 \begin{theorem}\label{ap_in_ff}
 If $A_1,A_2,S\subseteq \bbf_q^n$ are such that $A_1$ and $A_2$ both have density at least $\alpha$ then there is a subspace $V$ of codimension
-\[\mathrm{codim}(V)\ll_\epsilon \log(2/\alpha)^4\]
+
+\[\mathrm{codim}(V)\leq 2^{27}\lo{\alpha}^2\lo{\epsilon \alpha}^2\epsilon^{-2}\]
 such that
 \[\abs{\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle-\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle}\leq \epsilon.\]
 \end{theorem}
 
 \begin{proof}
 \uses{chang, linfty_ap_boosted}
-Test.
+Let $k\geq 1$ be chosen later. Note that $\lvert A_1+G\rvert=\lvert G\rvert\leq \alpha^{-1}\lvert A\rvert$. Furthermore, $\lvert A_2\rvert/\lvert S\rvert\geq \alpha$. Therefore by Theorem~\ref{linfty_ap_boosted} there exists some $T\subseteq G$ with
+\[\lvert T\rvert \geq \exp(-2^{16}\lo{\alpha}^2k^2\epsilon^{-2})\lvert S\rvert\]
+such that
+\[\| \mu_T^{(k)}\ast \mu_{A_1}\ast \mu_{A_2}\circ \ind{S}-\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}\|_{\infty}\leq \epsilon/2.\]
+Let $\Delta=\Delta_{1/2}(\mu_T)$ and
+\[V = \{ x \in G : \gamma(x)=1\textrm{ for all }\gamma\in\Delta\}.\]
+To show
+
+\[\abs{\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle-\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle}\leq \epsilon\]
+by the triangle inequality it suffices to show that, for any $v\in V$, 
+\[\abs{\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)-\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(0)}\leq \epsilon.\]
+By the triangle inequality and construction of $T$, it suffices to show that
+
+\[\abs{\mu_T^{(k)}\ast \mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)-\mu_T^{(k)}\ast\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(0)}\leq \epsilon/2.\]
+By the Fourier transform we have, for any $x\in G$,
+\[\mu_T^{(k)}\ast \mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(x)=\frac{1}{N}\sum_{\gamma\in \widehat{G}}\widehat{\mu_T}(\gamma)^k\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)\gamma(x).\]
+Therefore the left-hand side of the desired inequality is, by the triangle inequality, at most
+\[\frac{1}{N}\sum_{\gamma\in \widehat{G}}\abs{\widehat{\mu_T}(\gamma)}^k\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}\abs{\gamma(v)-1}.\]
+By choice of $v\in V$ the summand vanishes when $\gamma\in\Delta$. When $\gamma\not\in \Delta$ the summand is bounded above by 
+\[2^{1-k}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}.\]
+Therefore the left-hand side of the desired inequality is at most
+\[2^{1-k}\frac{1}{N}\sum_{\gamma}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}\leq 2^{1-k}\abs{S}\frac{1}{N}\sum_{\gamma}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)}\]
+using the trivial bound $\lvert\widehat{\ind{S}}\rvert\leq \abs{S}$. By the Cauchy-Schwarz inequality the sum on the right is at most
+\[\brac{\sum_\gamma \abs{\widehat{\mu_{A_1}}}^2}^{1/2}\brac{\sum_\gamma \abs{\widehat{\mu_{A_2}}}^2}^{1/2}.\]
+By Parseval's identity this is at most $\alpha^{-1}$. Therefore the desired inequality follows from
+\[2^{1-k}\abs{S}\frac{1}{N}\alpha^{-1}\leq 2^{1-k}\alpha^{-1}\leq \epsilon/2\]
+if we choose $k=\lceil \lo{\epsilon\alpha/4}\rceil$.
+
+It remains to check the codimension of $V$. For this, let $\Delta'\subseteq \Delta$ be as provided by Chang's lemma, Lemma~\ref{chang}, so that
+
+\[\Delta\subseteq \left\{ \sum_{\gamma\in\Delta'}c_\gamma \gamma : c_\gamma\in \{-1,0,1\} \right\}.\]
+Let 
+
+\[W= \{ x \in G : \gamma(x)=1\textrm{ for all }\gamma\in\Delta'\}.\]
+It follows that $W\leq V$, so it suffices to bound the codimension of $W$. This we can bound trivially using the bound from Chang's lemma and the fact that $\lo{\delta}=\log(e^2/\delta)\leq 2+\log(1/\delta)\leq 4\log(1/\delta)$, provided $\log(1/\delta)\geq 1$, so 
+\[\abs{\Delta'}\leq  \lceil 4e\mathcal{L}(\delta)\rceil\leq 2^7\log(1\delta),\]
+where
+\[\delta=\abs{T}/N\geq \exp(-2^{16}\lo{\alpha}^2k^2\epsilon^{-2}),\]
+so
+\[\mathrm{codim}(V)\leq \abs{\Delta'}\leq 2^{23}\lo{\alpha}^2k^2\epsilon^{-2}\leq 2^{25}\lo{\alpha}^2\lo{\epsilon \alpha/4}^2\epsilon^{-2},\]
+and now use $\lo{\epsilon\alpha/4}\leq 2\lo{\epsilon\alpha}$, say.
 \end{proof}
+
