@@ -6,10 +6,24 @@ open finset
 open_locale pointwise
 
 namespace finset
-variables {α : Type*} [decidable_eq α] [has_involutive_inv α] {s : finset α} {a : α}
+variables {α : Type*} [decidable_eq α]
+
+section has_involutive_inv
+variables [has_involutive_inv α] {s : finset α} {a : α}
 
 @[simp, to_additive] lemma mem_inv' : a ∈ s⁻¹ ↔ a⁻¹ ∈ s := by simp [mem_inv, inv_eq_iff_eq_inv]
 
+@[simp, to_additive] lemma inv_univ [fintype α] : (univ : finset α)⁻¹ = univ := by ext; simp
+
+end has_involutive_inv
+
+section division_monoid
+variables [division_monoid α] [fintype α]
+
+@[simp, to_additive] lemma univ_div_univ : (univ / univ : finset α) = univ :=
+by simp [div_eq_mul_inv]
+
+end division_monoid
 end finset
 
 namespace fintype

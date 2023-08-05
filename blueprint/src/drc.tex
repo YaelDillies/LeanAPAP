@@ -2,7 +2,7 @@
 
 
 \begin{lemma}
-\label{lem-drc}
+\label{drc}
 \lean{drc}
 \leanok
 Let $p\geq 2$ be an even integer. Let $B_1,B_2\subseteq G$ and $\mu=\mu_{B_1}\circ\mu_{B_2}$. For any finite set $A\subseteq G$ and function $f:G\to\bbr_{\geq 0}$ there exist $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that
@@ -66,7 +66,7 @@ The final bound now follows since $xy \leq \min(x,y)$ when $x,y\leq 1$.
 
 
 \begin{lemma}
-\label{lem-sift}
+\label{sift}
 \lean{sifting}
 \leanok
 Let $\epsilon,\delta >0$ and $p\geq \max(2,\epsilon^{-1}\log(2/\delta))$ be an even integer. Let $B_1,B_2\subseteq G$, and let $\mu=\mu_{B_1}\circ\mu_{B_2}$. For any finite set $A\subseteq G$, if
@@ -78,9 +78,9 @@ and
 \end{lemma}
 
 \begin{proof}
-\uses{lem-drc}
+\uses{drc}
 \leanok
-Apply Lemma~\ref{lem-drc} with $f=\ind{G\backslash S}$. This produces some $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that
+Apply Lemma~\ref{drc} with $f=\ind{G\backslash S}$. This produces some $A_1\subseteq B_1$ and $A_2\subseteq B_2$ such that
 \[\langle \mu_{A_1}\circ \mu_{A_2}, \ind{G\backslash S}\rangle\leq 2\frac{\langle (\ind{A}\circ \ind{A})^p,\ind{G\backslash S}\rangle_\mu}{\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^p}\]
 and
 \[\min\brac{\frac{\abs{A_1}}{\abs{B_1}},\frac{\abs{A_2}}{\abs{B_2}}}\geq \frac{1}{4}\abs{A}^{-2p}\norm{\ind{A}\circ \ind{A}}_{p(\mu)}^{2p}.\]
@@ -92,8 +92,9 @@ Now use the fact that $p\geq \epsilon^{-1}\log(2/\delta)$ together with the ineq
 \end{proof}
 
 
-
-\begin{corollary}\label{cor_sifting}
+\begin{corollary}\label{sift_cor}
+\lean{sifting_cor}
+\leanok
 Let $\epsilon,\delta>0$ and $p\geq \max(2,\epsilon^{-1}\log(2/\delta))$ be an even integer and $\mu\equiv 1/N$. If $A\subseteq G$ has density $\alpha$ and
 \[S = \{ x : \mu_A\circ \mu_A(x) \geq (1-\epsilon)\| \mu_A\circ \mu_A\|_{p(\mu)}\}\]
 then there are $A_1,A_2\subseteq G$ such that
@@ -101,8 +102,10 @@ then there are $A_1,A_2\subseteq G$ such that
 and both $A_1$ and $A_2$ have density
 \[\geq \frac{1}{4}\alpha^{2p}.\]
 \end{corollary}
+
 \begin{proof}
-\uses{lem-sift}
-We apply Lemma~\ref{lem-sift} with $B_1=B_2=G$. It remains to note that 
+\uses{sift}
+\leanok
+We apply Lemma~\ref{sift} with $B_1=B_2=G$. It remains to note that
 \[\| 1_A\circ 1_A\|_{p(\mu)}\geq \| 1_A\circ 1_A\|_{1(\mu)}=\lvert A\rvert^2/N.\]
 \end{proof}

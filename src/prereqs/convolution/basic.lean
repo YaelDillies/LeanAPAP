@@ -299,6 +299,17 @@ by simp only [sub_eq_add_neg, add_dconv, neg_dconv]
 
 end comm_ring
 
+section semifield
+variables [semifield β] [star_ring β]
+
+@[simp] lemma mu_univ_conv_mu_univ : μ_[β] (univ : finset α) ∗ μ univ = μ univ :=
+by ext; cases eq_or_ne (card α : β) 0; simp [mu_apply, conv_eq_sum_add, card_univ, *]
+
+@[simp] lemma mu_univ_dconv_mu_univ : μ_[β] (univ : finset α) ○ μ univ = μ univ :=
+by ext; cases eq_or_ne (card α : β) 0; simp [mu_apply, dconv_eq_sum_add, card_univ, *]
+
+end semifield
+
 namespace nnreal
 variables (f g : α → ℝ≥0) (a : α)
 

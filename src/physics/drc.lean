@@ -3,15 +3,40 @@ import mathlib.algebra.big_operators.ring
 import mathlib.analysis.mean_inequalities
 import mathlib.data.complex.exponential
 import mathlib.data.finset.basic
+import mathlib.data.finset.pointwise
 import mathlib.data.fintype.lattice
 import mathlib.data.real.sqrt
+import mathlib.tactic.positivity
 import prereqs.convolution.norm
 
 /-!
 # Dependent Random Choice
 -/
 
-open real finset
+namespace fintype
+variables {ι M : Type*} [ordered_cancel_add_comm_monoid M] [fintype ι] {f : ι → M}
+
+open_locale big_operators
+
+lemma sum_pos (hf : 0 < f) : 0 < ∑ x, f x :=
+finset.sum_pos' (λ _ _, hf.le _) $ (pi.lt_def.1 hf).2.imp $ by simp
+
+end fintype
+
+namespace function
+variables {α R M : Type*} {n : ℕ}
+
+@[simp] lemma support_mul' [mul_zero_class R] [no_zero_divisors R] (f g : α → R) :
+  support (f * g) = support f ∩ support g :=
+support_mul f g
+
+@[simp] lemma support_pow [monoid_with_zero M] [no_zero_divisors M] (f : α → M) (hn : n ≠ 0) :
+  support (f ^ n) = support f :=
+by ext; exact (pow_eq_zero_iff hn.bot_lt).not
+
+end function
+
+open real finset fintype function
 open_locale big_operators nnreal pointwise
 
 variables {G : Type*} [decidable_eq G] [fintype G] [add_comm_group G] {p : ℕ} {B₁ B₂ A : finset G}
@@ -66,7 +91,7 @@ begin
   { positivity }
 end
 
-lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : 0 < ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x)
+lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ ∧ x ∈ A - A ∧ x ∈ f.support)
   (hB : (B₁ ∩ B₂).nonempty) (hA : A.nonempty) :
   ∃ (A₁ ⊆ B₁) (A₂ ⊆ B₂), ⟪μ_[ℝ] A₁ ○ μ A₂, coe ∘ f⟫_[ℝ] * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p ≤
     2 * ∑ x, (μ B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x ∧
@@ -81,6 +106,13 @@ begin
   set M : ℝ := 2⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p * (sqrt B₁.card * sqrt B₂.card) /
     A.card ^ p with hM_def,
   have hM : 0 < M := by rw hM_def; positivity,
+  replace hf : 0 < ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x,
+  { have : 0 ≤ μ_[ℝ] B₁ ○ μ B₂ * (𝟭 A ○ 𝟭 A) ^ p * coe ∘ f :=
+      mul_nonneg (by positivity) (λ _, nnreal.coe_nonneg _),
+    refine fintype.sum_pos (this.gt_iff_ne.2 $ support_nonempty_iff.1 _),
+    simpa only [support_comp_eq, set.nonempty, and_assoc, support_mul', support_dconv,
+      indicate_nonneg, mu_nonneg, support_indicate, support_mu, nnreal.coe_eq_zero, iff_self,
+      forall_const, set.mem_inter_iff, ←coe_sub, mem_coe, support_pow _ hp₀] },
   set A₁ := λ s, B₁ ∩ C p A s,
   set A₂ := λ s, B₂ ∩ C p A s,
   set g : (fin p → G) → ℝ := λ s, (A₁ s).card * (A₂ s).card with hg_def,
@@ -162,14 +194,15 @@ univ.filter $ λ x, (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ 
 by simp [S]
 
 --TODO: When `1 < ε`, the result is trivial since `S = univ`.
-lemma sifting (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : even p) (hp₂ : 2 ≤ p)
+lemma sifting (B₁ B₂ : finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : even p) (hp₂ : 2 ≤ p)
   (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hB : (B₁ ∩ B₂).nonempty) (hA : A.nonempty)
-  (hf : 0 < ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * 𝟭_[ℝ≥0] (S p ε B₁ B₂ A)ᶜ x) :
+  (hf : ∃ x, x ∈ B₁ - B₂ ∧ x ∈ A - A ∧ x ∉ S p ε B₁ B₂ A) :
   ∃ (A₁ ⊆ B₁) (A₂ ⊆ B₂), 1 - δ ≤ ∑ x in S p ε B₁ B₂ A, (μ A₁ ○ μ A₂) x ∧
     (4 : ℝ)⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p) ≤ A₁.card / B₁.card ∧
     (4 : ℝ)⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p) ≤ A₂.card / B₂.card :=
 begin
-  obtain ⟨A₁, hAB₁, A₂, hAB₂, h, hcard₁, hcard₂⟩ := drc hp₂ (𝟭 (S p ε B₁ B₂ A)ᶜ) hf hB hA,
+  obtain ⟨A₁, hAB₁, A₂, hAB₂, h, hcard₁, hcard₂⟩ := drc hp₂ (𝟭 (S p ε B₁ B₂ A)ᶜ)
+    (by simpa only [support_indicate, coe_compl, set.mem_compl_iff, mem_coe]) hB hA,
   refine ⟨A₁, hAB₁, A₂, hAB₂, _, hcard₁, hcard₂⟩,
   have hp₀ : 0 < p := by positivity,
   have aux : ∀ (C : finset G) r,
@@ -217,4 +250,29 @@ begin
     ... = exp (-(ε * p)) : by rw [←neg_mul, exp_mul, rpow_nat_cast]
     ... ≤ exp (-log (2 / δ)) : exp_monotone $ neg_le_neg $ (inv_mul_le_iff $ by positivity).1 hpε
     ... = δ / 2 : by rw [exp_neg, exp_log, inv_div]; positivity,
+end
+
+--TODO: When `1 < ε`, the result is trivial since `S = univ`.
+/-- Special case of `sifting` when `B₁ = B₂ = univ`. -/
+lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : even p) (hp₂ : 2 ≤ p)
+  (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hA : A.nonempty)
+  (hf : ∃ x, x ∈ A - A ∧ (𝟭 A ○ 𝟭 A) x ≤ (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ]) :
+  ∃ A₁ A₂, 1 - δ ≤ ∑ x in S p ε univ univ A, (μ A₁ ○ μ A₂) x ∧
+    (4 : ℝ)⁻¹ * (A.card / card G : ℝ) ^ (2 * p) ≤ A₁.card / card G ∧
+    (4 : ℝ)⁻¹ * (A.card / card G : ℝ) ^ (2 * p) ≤ A₂.card / card G :=
+begin
+  have hp₀ : p ≠ 0 := by positivity,
+  have : (4 : ℝ)⁻¹ * (A.card / card G) ^ (2 * p)
+    ≤ 4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / A.card ^ (2 * p),
+  { rw [mul_div_assoc, ←div_pow],
+    refine mul_le_mul_of_nonneg_left (pow_le_pow_of_le_left (by positivity) _ _) (by norm_num),
+    rw [le_div_iff, ←mul_div_right_comm],
+    calc
+        _ = ‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ]
+          : by simp [mu, wLpnorm_smul_right, hp₀, L1norm_dconv, card_univ, inv_mul_eq_div]
+      ... ≤ _ : wLpnorm_mono_right (one_le_two.trans $ by norm_cast; assumption) _ _,
+    { exact nat.cast_pos.2 (finset.card_pos.2 hA) } },
+  obtain ⟨A₁, -, A₂, -, h, hcard₁, hcard₂⟩ := sifting univ univ hε hε₁ hδ hp hp₂ hpε
+    (by simp [univ_nonempty]) hA (by simpa),
+  exact ⟨A₁, A₂, h, this.trans $ by simpa using hcard₁, this.trans $ by simpa using hcard₂⟩,
 end

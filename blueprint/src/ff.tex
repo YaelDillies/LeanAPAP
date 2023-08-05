@@ -16,13 +16,13 @@ such that
 \[\| \mu_T^{(k)}\ast \mu_{A_1}\ast \mu_{A_2}\circ \ind{S}-\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}\|_{\infty}\leq \epsilon/4.\]
 Let $\Delta=\Delta_{1/2}(\mu_T)$ and
 \[V = \{ x \in G : \gamma(x)=1\textrm{ for all }\gamma\in\Delta\}.\]
-Note that 
+Note that
 \[\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle = \langle \mu_V,\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}\rangle=\frac{1}{\abs{V}}\sum_{v\in V}\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)\]
 and
 \[\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle = \mu_{A_1}\ast \mu_{A_2}\circ\ind{S}(0).\]
 Therefore
 \[\abs{\langle \mu_V\ast \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle-\langle \mu_{A_1}\ast \mu_{A_2},\ind{S}\rangle}\leq \frac{1}{\abs{V}}\sum_{v\in V}\abs{\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)-\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(0)}.\]
-In particular it suffices to show that, for any $v\in V$, 
+In particular it suffices to show that, for any $v\in V$,
 \[\abs{\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(v)-\mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(0)}\leq \epsilon.\]
 By the triangle inequality and construction of $T$, it suffices to show that
 
@@ -31,7 +31,7 @@ By the Fourier transform we have, for any $x\in G$,
 \[\mu_T^{(k)}\ast \mu_{A_1}\ast \mu_{A_2}\circ \ind{S}(x)=\frac{1}{N}\sum_{\gamma\in \widehat{G}}\widehat{\mu_T}(\gamma)^k\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)\gamma(x).\]
 Therefore the left-hand side of the desired inequality is, by the triangle inequality, at most
 \[\frac{1}{N}\sum_{\gamma\in \widehat{G}}\abs{\widehat{\mu_T}(\gamma)}^k\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}\abs{\gamma(v)-1}.\]
-By choice of $v\in V$ the summand vanishes when $\gamma\in\Delta$. When $\gamma\not\in \Delta$ the summand is bounded above by 
+By choice of $v\in V$ the summand vanishes when $\gamma\in\Delta$. When $\gamma\not\in \Delta$ the summand is bounded above by
 \[2^{1-k}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}.\]
 Therefore the left-hand side of the desired inequality is at most
 \[2^{1-k}\frac{1}{N}\sum_{\gamma}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)\widehat{\ind{-S}}(\gamma)}\leq 2^{1-k}\abs{S}\frac{1}{N}\sum_{\gamma}\abs{\widehat{\mu_{A_1}}(\gamma)\widehat{\mu_{A_2}}(\gamma)}\]
@@ -43,10 +43,10 @@ By Parseval's identity this is at most $\alpha^{-1}$. Therefore the desired ineq
 It remains to check the codimension of $V$. For this, let $\Delta'\subseteq \Delta$ be as provided by Chang's lemma, Lemma~\ref{chang}, so that
 
 \[\Delta\subseteq \left\{ \sum_{\gamma\in\Delta'}c_\gamma \gamma : c_\gamma\in \{-1,0,1\} \right\}.\]
-Let 
+Let
 
 \[W= \{ x \in G : \gamma(x)=1\textrm{ for all }\gamma\in\Delta'\}.\]
-It follows that $W\leq V$, so it suffices to bound the codimension of $W$. This we can bound trivially using the bound from Chang's lemma and the fact that $\lo(\delta)=\log(e^2/\delta)\leq 2+\log(1/\delta)\leq 4\log(1/\delta)$, provided $\log(1/\delta)\geq 1$, so 
+It follows that $W\leq V$, so it suffices to bound the codimension of $W$. This we can bound trivially using the bound from Chang's lemma and the fact that $\lo(\delta)=\log(e^2/\delta)\leq 2+\log(1/\delta)\leq 4\log(1/\delta)$, provided $\log(1/\delta)\geq 1$, so
 \[\abs{\Delta'}\leq  \lceil 4e\mathcal{L}(\delta)\rceil\leq 2^7\log(1/\delta),\]
 where
 \[\delta=\abs{T}/N\geq \exp(-2^{16}\lo(\alpha)^2k^2\epsilon^{-2}),\]
@@ -75,7 +75,7 @@ For any function $f$ with $\sum f(x)=1$
 \end{lemma}
 
 \begin{lemma}\label{global_dichotomy}
-Let $\epsilon >0$ and $\mu\equiv 1/N$. If $A,C\subseteq G$, where $C$ has density at least $\gamma$, and 
+Let $\epsilon >0$ and $\mu\equiv 1/N$. If $A,C\subseteq G$, where $C$ has density at least $\gamma$, and
 \[\abs{N\langle \mu_A\ast \mu_A,\mu_C\rangle -1}>\epsilon\]
 then, if $f=(\mu_A-1/N)$, $\norm{f\circ f}_{p(\mu)} \geq \epsilon /2N$ for $p=2\lceil \lo(\gamma)\rceil$.
 \end{lemma}
@@ -85,9 +85,9 @@ By H\"{o}lder's inequality, for any $p\geq 1$
 \[\epsilon < \abs{ N\langle \mu_A \ast \mu_A - 1/N, \mu_C \rangle } \leq \norm{\mu_A\ast \mu_A-1/N}_p\gamma^{-1/p}N^{1-1/p}.\]
 In particular if we choose $p=2\lceil\lo(\gamma)\rceil$ then $\gamma^{-1/p}\leq e^{1/2}\leq 2$ and so we deduce that, by Lemma~\ref{ast_expand},
 \[\norm{f\ast f}_{p}\geq \tfrac{1}{2}\epsilon N^{1/p-1}.\]
-It remains to use Lemmas~\ref{ast_expand} and \ref{circ_expand} and apply Lemma~\ref{ast_to_circ}, and note that we can pass from the $L^p$ norm to the $L^p(\mu)$ norm losing a factor of $N^{1/p}$. 
+It remains to use Lemmas~\ref{ast_expand} and \ref{circ_expand} and apply Lemma~\ref{ast_to_circ}, and note that we can pass from the $L^p$ norm to the $L^p(\mu)$ norm losing a factor of $N^{1/p}$.
 \end{proof}
-  
+
 \begin{proposition}\label{di_in_ff}
 Let $\epsilon \in (0,1)$. If $A,C\subseteq \bbf_q^n$, where $C$ has density at least $\gamma$, and
 \[\abs{N\langle \mu_A\ast \mu_A,\mu_C\rangle -1}> \epsilon\]
@@ -95,18 +95,18 @@ then there is a subspace $V$ of codimension ???
 such that $\norm{\ind{A}\ast \mu_V}_\infty \geq (1+\epsilon/32)\alpha$.
 \end{proposition}
 \begin{proof}
-\uses{global_dichotomy,global_drc,unbalancing,ap_in_ff, circ_expand, cor_sifting}
+\uses{global_dichotomy,global_drc,unbalancing,ap_in_ff, circ_expand, sift_cor}
 By Lemma~\ref{global_dichotomy}, if $f=\mu_A-1/N$,
 \[\norm{f\circ f}_{p(\mu)}\geq \epsilon /2N.\]
-By Lemma~\ref{unbalancing} there exists some $p'$ such that 
+By Lemma~\ref{unbalancing} there exists some $p'$ such that
 \[p'\leq 128\epsilon^{-1}\log(96/\epsilon)\lo(\gamma)\]
 such that
 \[\norm{f\circ f+1/N}_{p'(\mu)}\geq (1+\epsilon/4)/N.\]
-By Lemma~\ref{circ_expand} $f\circ f+1/N=\mu_A\circ \mu_A$. 
+By Lemma~\ref{circ_expand} $f\circ f+1/N=\mu_A\circ \mu_A$.
 
-Let $q=2\lceil p'+2^8\epsilon^{-2}\log(64/\epsilon)\rceil$. By Corollary~\ref{cor_sifting}, there are $A_1,A_2$, both of density $\geq \alpha^{2q}$ such that
+Let $q=2\lceil p'+2^8\epsilon^{-2}\log(64/\epsilon)\rceil$. By Corollary~\ref{sift_cor}, there are $A_1,A_2$, both of density $\geq \alpha^{2q}$ such that
 \[\langle \mu_{A_1}\circ \mu_{A_2},\ind{S}\rangle \geq 1-\epsilon/32\]
-where 
+where
 \[S=\{x : \mu_A\circ \mu_A(x)\geq (1-\epsilon/16)\| \mu_A\circ \mu_A\|_{q(\mu)}\}.\]
 Since
 \[\| \mu_A\circ \mu_A\|_{q(\mu)}\geq \| \mu_A\circ \mu_A\|_{p'(\mu)}\geq (1+\epsilon/4)/N\]
@@ -135,7 +135,7 @@ Expand out using definitions.
 \end{proof}
 
 \begin{theorem}
-Let $q$ be an odd prime power. If $A\subseteq \mathbb{F}_q^n$ with $\alpha=\abs{A}/q^n$ has no non-trivial three-term arithmetic progressions then 
+Let $q$ be an odd prime power. If $A\subseteq \mathbb{F}_q^n$ with $\alpha=\abs{A}/q^n$ has no non-trivial three-term arithmetic progressions then
 \[n \ll \lo(\alpha)^9.\]
 \end{theorem}
 \begin{proof}
@@ -145,9 +145,9 @@ Let $t\geq 0$ be maximal such that there is a sequence of subspaces $\bbf_q^n=V_
 \item for $0\leq i\leq t$ there exists $x_i$ such that $A_i\subseteq A-x_i$,
 \item with $\alpha_i=\abs{A_i}/\abs{V_i}$ we have
 \[\alpha_{i+1}\geq \frac{65}{64}\alpha_i\]
-for $0\leq i<t$, and 
+for $0\leq i<t$, and
 \item \[\mathrm{codim} (V_{i+1}) \leq \mathrm{codim}(V_i)+O(\lo(\alpha)^8)\]
-for $0\leq i<t$. (here the second summand should be replaced with whatever explicit codimension bound we get from the above). 
+for $0\leq i<t$. (here the second summand should be replaced with whatever explicit codimension bound we get from the above).
 \end{enumerate}
 
 Note this is well-defined since $t=0$ meets the requirements, and this process is finite and $t \ll \lo(\alpha)$, since $\alpha_i\leq 1$ for all $i$. Therefore
@@ -157,9 +157,9 @@ Suppose first that
 \[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle<1/2.\]
 In this case we now apply Proposition~\ref{di_in_ff} to $A_t\subseteq V_t$ with $\epsilon=1/2$ (note that $N=\lvert V_t\rvert$ and all inner product, $\mu$ etc, are relative to the ambient group $V_t$ now). Therefore there is a subspace $V\leq V_t$ of codimension (relative to $V_t$) of $\ll \lo(\alpha)^8$ such that there exists some $x\in V_t$ with
 \[\frac{\lvert (A_t-x)\cap V\rvert}{\lvert V\rvert}=1_{A_t}\ast \mu_V(x)=\| 1_{A_t}\ast \mu_V\|_\infty \geq (1+1/64)\alpha_t,\]
-which contradicts the maximality of $t$, letting $V_{t+1}=V$ and $A_{t+1}=(A_t-x)\cap V_t$. 
+which contradicts the maximality of $t$, letting $V_{t+1}=V$ and $A_{t+1}=(A_t-x)\cap V_t$.
 
-Therefore 
+Therefore
 
 \[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle\geq 1/2.\]
 By Lemma~\ref{no3aps_inn_product} the left-hand side is equal to $\lvert V_t\rvert/\lvert A_t\rvert^2$, and therefore

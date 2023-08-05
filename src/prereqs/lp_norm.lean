@@ -22,7 +22,7 @@ variables {ι 𝕜 : Type*} [fintype ι]
 /-! ### Lp norm -/
 
 section normed_add_comm_group
-variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] {p : ℝ≥0∞} {f g h : Π i, α i}
+variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] {p q : ℝ≥0∞} {f g h : Π i, α i}
 
 /-- The Lp norm of a function. -/
 noncomputable def Lpnorm (p : ℝ≥0∞) (f : Π i, α i) : ℝ := ‖(pi_Lp.equiv p _).symm f‖
@@ -109,6 +109,8 @@ end
 
 @[simp] lemma Lpnorm_pos : 0 < ‖f‖_[p] ↔ f ≠ 0 := Lpnorm_nonneg.gt_iff_ne.trans Lpnorm_eq_zero.not
 
+lemma Lpnorm_mono_right (hpq : p ≤ q) (f : Π i, α i) : ‖f‖_[p] ≤ ‖f‖_[q] := sorry
+
 section one_le
 
 lemma Lpnorm_add_le (hp : 1 ≤ p) (f g : Π i, α i) : ‖f + g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
@@ -182,7 +184,7 @@ end real
 /-! #### Weighted Lp norm -/
 
 section normed_add_comm_group
-variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] {p : ℝ≥0} {w : ι → ℝ≥0}
+variables {α : ι → Type*} [Π i, normed_add_comm_group (α i)] {p q : ℝ≥0} {w : ι → ℝ≥0}
   {f g h : Π i, α i}
 
 /-- The weighted Lp norm of a function. -/
@@ -240,6 +242,9 @@ by simp [←wLpnorm_neg _ (f - g)]
 
 @[simp] lemma wLpnorm_nonneg : 0 ≤ ‖f‖_[p, w] := Lpnorm_nonneg
 
+lemma wLpnorm_mono_right (hpq : p ≤ q) (w : ι → ℝ≥0) (f : Π i, α i) : ‖f‖_[p, w] ≤ ‖f‖_[q, w] :=
+sorry
+
 section one_le
 
 lemma wLpnorm_add_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : Π i, α i) :
@@ -285,6 +290,14 @@ begin
   rw ←this,
   congr' with i : 1,
   simp only [pi.smul_apply, algebra.id.smul_eq_mul, algebra.mul_smul_comm, norm_smul],
+end
+
+@[simp] lemma wLpnorm_smul_right (hp : p ≠ 0) (c : ℝ≥0) (f : Π i, α i) :
+  ‖f‖_[p, c • w] = c ^ (p⁻¹ : ℝ) * ‖f‖_[p, w] :=
+begin
+  simp only [wLpnorm_eq_sum hp, nnreal.smul_def, pi.smul_apply, algebra.id.smul_eq_mul,
+    nnreal.coe_mul, mul_assoc, ←mul_sum],
+  exact mul_rpow (by positivity) (sum_nonneg $ λ _ _, by positivity),
 end
 
 -- TODO: Why is it so hard to use `wLpnorm_smul` directly? `function.has_smul` seems to have a hard
