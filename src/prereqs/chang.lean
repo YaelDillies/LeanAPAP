@@ -12,68 +12,6 @@ import prereqs.misc
 # Chang's lemma
 -/
 
-namespace finset
-variables {β α : Type*} {s : finset α} {f g : α → β} [comm_monoid β]
-
-open_locale big_operators
-
-@[to_additive]
-lemma prod_mul_prod_comm (f g h i : α → β) :
-  (∏ a in s, f a * g a) * (∏ a in s, h a * i a) = (∏ a in s, f a * h a) * (∏ a in s, g a * i a) :=
-by simp_rw [prod_mul_distrib, mul_mul_mul_comm]
-
-end finset
-
-namespace is_R_or_C
-variables {K : Type*} [is_R_or_C K]
-
-open_locale complex_conjugate
-
-lemma mul_conj' (x : K) : x * conj x = ‖x‖ ^ 2 := by rw [mul_conj, norm_sq_eq_def']; norm_cast
-lemma conj_mul' (x : K) : conj x * x = ‖x‖ ^ 2 := by rw [conj_mul, norm_sq_eq_def']; norm_cast
-
-@[simp] lemma conj_div (x y : K) : conj (x / y) = conj x / conj y := map_div' conj conj_inv _ _
-
-end is_R_or_C
-
-namespace nnreal
-open_locale nnreal
-variables {x : ℝ≥0}
-
-@[simp] lemma one_le_sqrt : 1 ≤ x.sqrt ↔ 1 ≤ x := by rw [←sqrt_one, sqrt_le_sqrt_iff, sqrt_one]
-
-end nnreal
-
-namespace real
-variables {x y : ℝ}
-
-lemma rpow_nat_cast_mul (hx : 0 ≤ x) (y : ℕ) (z : ℝ) : x ^ (↑y * z) = (x ^ y) ^ z :=
-by rw [rpow_mul hx, rpow_nat_cast]
-
-lemma rpow_mul_nat_cast (hx : 0 ≤ x) (y : ℝ) (z : ℕ) : x ^ (y * z) = (x ^ y) ^ z :=
-by rw [rpow_mul hx, rpow_nat_cast]
-
-lemma rpow_int_cast_mul (hx : 0 ≤ x) (y : ℤ) (z : ℝ) : x ^ (↑y * z) = (x ^ y) ^ z :=
-by rw [rpow_mul hx, rpow_int_cast]
-
-lemma rpow_mul_int_cast (hx : 0 ≤ x) (y : ℝ) (z : ℤ) : x ^ (y * z) = (x ^ y) ^ z :=
-by rw [rpow_mul hx, rpow_int_cast]
-
-lemma sqrt_le_sqrt_iff' (hx : 0 < x) : x.sqrt ≤ y.sqrt ↔ x ≤ y :=
-begin
-  obtain hy | hy := le_total y 0,
-  { exact iff_of_false ((sqrt_eq_zero_of_nonpos hy).trans_lt $ sqrt_pos.2 hx).not_le
-      (hy.trans_lt hx).not_le },
-  { exact sqrt_le_sqrt_iff hy }
-end
-
-@[simp] lemma one_le_sqrt : 1 ≤ x.sqrt ↔ 1 ≤ x :=
-by rw [←sqrt_one, sqrt_le_sqrt_iff' zero_lt_one, sqrt_one]
-
-end real
-
---TODO: `complex.ext` lemma is a bad `ext` lemma to have globally
-
 open finset fintype real
 open_locale big_operators complex_conjugate complex_order nnreal
 
@@ -141,7 +79,6 @@ begin
     { simp [hfx] },
     { exact le_mul_of_one_le_right (norm_nonneg _)
         (one_le_sqrt.2 $ nnreal.one_le_coe.2 $ hfν _ hfx) } },
-
   replace this :=
   calc
       _ ≤ (∑ x, ‖f x‖ * sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2

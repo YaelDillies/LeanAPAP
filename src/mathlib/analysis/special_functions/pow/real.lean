@@ -21,6 +21,18 @@ by rw [←rpow_inj _ hy hz, rpow_inv_rpow hx hz]; positivity
 lemma eq_rpow_inv (hx : 0 ≤ x) (hy : 0 ≤ y) (hz : z ≠ 0) : x = y ^ z⁻¹ ↔ x ^ z = y :=
 by rw [←rpow_inj hx _ hz, rpow_inv_rpow hy hz]; positivity
 
+lemma rpow_nat_cast_mul (hx : 0 ≤ x) (y : ℕ) (z : ℝ) : x ^ (↑y * z) = (x ^ y) ^ z :=
+by rw [rpow_mul hx, rpow_nat_cast]
+
+lemma rpow_mul_nat_cast (hx : 0 ≤ x) (y : ℝ) (z : ℕ) : x ^ (y * z) = (x ^ y) ^ z :=
+by rw [rpow_mul hx, rpow_nat_cast]
+
+lemma rpow_int_cast_mul (hx : 0 ≤ x) (y : ℤ) (z : ℝ) : x ^ (↑y * z) = (x ^ y) ^ z :=
+by rw [rpow_mul hx, rpow_int_cast]
+
+lemma rpow_mul_int_cast (hx : 0 ≤ x) (y : ℝ) (z : ℤ) : x ^ (y * z) = (x ^ y) ^ z :=
+by rw [rpow_mul hx, rpow_int_cast]
+
 lemma rpow_add_int' (hx : 0 ≤ x) {n : ℤ} (h : y + n ≠ 0) : x ^ (y + n) = x ^ y * x ^ n :=
 by rw [rpow_add' hx h, rpow_int_cast]
 

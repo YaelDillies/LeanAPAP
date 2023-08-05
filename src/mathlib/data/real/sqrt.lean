@@ -29,3 +29,26 @@ lemma cauchy_schwarz_sqrt {α : Type*} (s : finset α) (f g : α → ℝ) :
   real.sqrt_mul (sum_nonneg $ λ _ _, sq_nonneg _) _
 
 end finset
+
+namespace nnreal
+variables {x : ℝ≥0}
+
+@[simp] lemma one_le_sqrt : 1 ≤ x.sqrt ↔ 1 ≤ x := by rw [←sqrt_one, sqrt_le_sqrt_iff, sqrt_one]
+
+end nnreal
+
+namespace real
+variables {x y : ℝ}
+
+lemma sqrt_le_sqrt_iff' (hx : 0 < x) : x.sqrt ≤ y.sqrt ↔ x ≤ y :=
+begin
+  obtain hy | hy := le_total y 0,
+  { exact iff_of_false ((sqrt_eq_zero_of_nonpos hy).trans_lt $ sqrt_pos.2 hx).not_le
+      (hy.trans_lt hx).not_le },
+  { exact sqrt_le_sqrt_iff hy }
+end
+
+@[simp] lemma one_le_sqrt : 1 ≤ x.sqrt ↔ 1 ≤ x :=
+by rw [←sqrt_one, sqrt_le_sqrt_iff' zero_lt_one, sqrt_one]
+
+end real

@@ -16,6 +16,11 @@ variables {α β γ : Type*} [comm_monoid β] {s s₁ s₂ : finset α} {t : fin
   {g : γ → β}
 
 @[to_additive]
+lemma prod_mul_prod_comm (f g h i : α → β) :
+  (∏ a in s, f a * g a) * (∏ a in s, h a * i a) = (∏ a in s, f a * h a) * (∏ a in s, g a * i a) :=
+by simp_rw [prod_mul_distrib, mul_mul_mul_comm]
+
+@[to_additive]
 lemma prod_nbij (i : α → γ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
   (i_inj : ∀ a₁ a₂, a₁ ∈ s → a₂ ∈ s → i a₁ = i a₂ → a₁ = a₂) (i_surj : ∀ b ∈ t, ∃ a ∈ s, b = i a) :
   ∏ x in s, f x = ∏ x in t, g x :=

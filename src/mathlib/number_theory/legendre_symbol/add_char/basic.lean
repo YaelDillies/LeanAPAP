@@ -166,7 +166,7 @@ end is_R_or_C
 
 variables [fintype G] [comm_semiring R] [is_domain R] [char_zero R] {ψ : add_char G R}
 
-lemma sum_eq [decidable_eq G] (ψ : add_char G R) : ∑ a, ψ a = if ψ = 0 then card G else 0 :=
+lemma sum_eq_ite [decidable_eq G] (ψ : add_char G R) : ∑ a, ψ a = if ψ = 0 then card G else 0 :=
 begin
   split_ifs,
   { simp [h, card_univ] },
@@ -179,7 +179,7 @@ end
 lemma sum_eq_zero_iff_ne_zero : ∑ x, ψ x = 0 ↔ ψ ≠ 0 :=
 begin
   classical,
-  rw [sum_eq, ne.ite_eq_right_iff],
+  rw [sum_eq_ite, ne.ite_eq_right_iff],
   exact nat.cast_ne_zero.2 fintype.card_ne_zero
 end
 

@@ -215,15 +215,15 @@ add_equiv.of_bijective _ double_dual_emb_bijective
 
 end finite
 
-lemma sum_apply [fintype α] [decidable_eq α] (a : α) :
+lemma sum_apply_eq_ite [fintype α] [decidable_eq α] (a : α) :
   ∑ ψ : add_char α ℂ, ψ a = if a = 0 then fintype.card α else 0 :=
-by simpa using sum_eq (double_dual_emb a : add_char (add_char α ℂ) ℂ)
+by simpa using sum_eq_ite (double_dual_emb a : add_char (add_char α ℂ) ℂ)
 
 lemma sum_apply_eq_zero_iff_ne_zero [finite α] : ∑ ψ : add_char α ℂ, ψ a = 0 ↔ a ≠ 0 :=
 begin
   classical,
   casesI nonempty_fintype α,
-  rw [add_char.sum_apply, ne.ite_eq_right_iff],
+  rw [sum_apply_eq_ite, ne.ite_eq_right_iff],
   exact nat.cast_ne_zero.2 fintype.card_ne_zero,
 end
 

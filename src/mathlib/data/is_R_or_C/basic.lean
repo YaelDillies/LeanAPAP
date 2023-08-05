@@ -16,4 +16,9 @@ begin
   { exact ⟨‖x‖ / x, by simp [norm_ne_zero_iff.2, hx]⟩ }
 end
 
+lemma mul_conj' (x : K) : x * conj x = ‖x‖ ^ 2 := by rw [mul_conj, norm_sq_eq_def']; norm_cast
+lemma conj_mul' (x : K) : conj x * x = ‖x‖ ^ 2 := by rw [conj_mul, norm_sq_eq_def']; norm_cast
+
+@[simp] lemma conj_div (x y : K) : conj (x / y) = conj x / conj y := map_div' conj conj_inv _ _
+
 end is_R_or_C
