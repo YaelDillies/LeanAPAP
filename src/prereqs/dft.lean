@@ -36,8 +36,8 @@ begin
   classical,
   simp_rw [dft, L2inner_eq_sum, map_sum, map_mul, star_ring_end_self_apply, sum_mul,
     mul_sum, @sum_comm _ _ (add_char _ _), mul_mul_mul_comm _ (conj $ f _), ←sum_mul,
-    ←add_char.inv_apply_eq_conj, ←map_neg_eq_inv, ←map_add_mul, add_char.sum_apply, add_neg_eq_zero,
-    ite_mul, zero_mul, fintype.sum_ite_eq],
+    ←add_char.inv_apply_eq_conj, ←map_neg_eq_inv, ←map_add_mul, add_char.sum_apply_eq_ite,
+    add_neg_eq_zero, ite_mul, zero_mul, fintype.sum_ite_eq],
 end
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
@@ -53,8 +53,8 @@ lemma dft_inversion (f : α → ℂ) (a : α) : ∑ ψ : add_char α ℂ, dft f 
 begin
   classical,
   simp_rw [dft, L2inner_eq_sum, sum_mul, @sum_comm _ α, mul_right_comm _ (f _), ←sum_mul,
-    ←add_char.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div, add_char.sum_apply, sub_eq_zero,
-    ite_mul, zero_mul, fintype.sum_ite_eq],
+    ←add_char.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div, add_char.sum_apply_eq_ite,
+    sub_eq_zero, ite_mul, zero_mul, fintype.sum_ite_eq],
 end
 
 lemma dft_dft_double_dual_emb (f : α → ℂ) (a : α) :
@@ -76,7 +76,7 @@ by simp_rw [dft_apply, L2inner_eq_sum, map_sum, add_char.inv_apply', map_mul,
 
 @[simp] lemma dft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : dft (balance f) ψ = dft f ψ :=
 begin
-  simp only [dft_apply, L2inner_eq_sum, balance, mul_sub, sum_sub_distrib],
+  simp only [dft_apply, L2inner_eq_sum, balance_apply, mul_sub, sum_sub_distrib],
   rw [←sum_mul, ←map_sum, sum_eq_zero_iff_ne_zero.2 hψ, map_zero, zero_mul, sub_zero],
 end
 

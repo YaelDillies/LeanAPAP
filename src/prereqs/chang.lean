@@ -4,6 +4,7 @@ import mathlib.algebra.big_operators.ring
 import mathlib.analysis.mean_inequalities
 import mathlib.data.nat.cast.field
 import mathlib.data.nat.order.basic
+import mathlib.data.real.sqrt
 import prereqs.dft
 import prereqs.energy
 import prereqs.misc
