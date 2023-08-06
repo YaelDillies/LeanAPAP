@@ -30,6 +30,10 @@ lemma expect_comm (s : finset α) (t : finset β) (f : α → β → 𝕜) :
 by rw [expect, expect, ←expect_sum_comm, ←expect_sum_comm, expect, expect, div_div, mul_comm,
   div_div, sum_comm]
 
+lemma expect_add_distrib (s : finset α) (f g : α → 𝕜) :
+  𝔼 i in s, (f i + g i) = 𝔼 i in s, f i + 𝔼 i in s, g i :=
+by simp [expect, sum_add_distrib, add_div]
+
 lemma expect_mul (s : finset α) (f : α → 𝕜) (x : 𝕜) : (𝔼 i in s, f i) * x = 𝔼 i in s, f i * x :=
 by { rw [expect, div_mul_eq_mul_div, sum_mul], refl }
 
@@ -95,14 +99,35 @@ by simp only [expect, map_div₀, map_nat_cast, map_sum]
 
 variables [char_zero 𝕜]
 
-lemma expect_const (hs : s.nonempty) (b : 𝕜) : 𝔼 i in s, b = b :=
+@[simp] lemma card_smul_expect (s : finset α) (f : α → 𝕜) :
+  s.card • 𝔼 i in s, f i = ∑ i in s, f i :=
+begin
+  obtain rfl | hs := s.eq_empty_or_nonempty,
+  { simp },
+  { rw [expect, nsmul_eq_mul, mul_div_cancel'],
+    exact nat.cast_ne_zero.2 hs.card_pos.ne' }
+end
+
+@[simp] lemma card_mul_expect (s : finset α) (f : α → 𝕜) :
+  ↑s.card * 𝔼 i in s, f i = ∑ i in s, f i :=
+by rw [←nsmul_eq_mul, card_smul_expect]
+
+@[simp] lemma _root_.fintype.card_smul_expect [fintype α] (f : α → 𝕜) :
+  (fintype.card α) • 𝔼 i, f i = ∑ i, f i :=
+card_smul_expect _ _
+
+@[simp] lemma _root_.fintype.card_mul_expect [fintype α] (f : α → 𝕜) :
+  ↑(fintype.card α) * 𝔼 i, f i = ∑ i, f i :=
+card_mul_expect _ _
+
+@[simp] lemma expect_const (hs : s.nonempty) (b : 𝕜) : 𝔼 i in s, b = b :=
 begin
   rw [expect, sum_const, nsmul_eq_mul, mul_div_cancel_left],
   exact nat.cast_ne_zero.2 hs.card_pos.ne',
 end
 
-lemma expect_indicate_eq [fintype α] [nonempty α] [decidable_eq α]
-  (f : α → 𝕜) (x : α) : 𝔼 i, ite (x = i) (fintype.card α : 𝕜) 0 * f i = f x :=
+lemma expect_indicate_eq [fintype α] [nonempty α] [decidable_eq α] (f : α → 𝕜) (x : α) :
+  𝔼 i, ite (x = i) (fintype.card α : 𝕜) 0 * f i = f x :=
 begin
   simp_rw [expect_univ, ite_mul, zero_mul, sum_ite_eq, if_pos (mem_univ _)],
   rw mul_div_cancel_left,
@@ -120,20 +145,24 @@ open_locale expectations
 section field
 variables [field 𝕜] {s : finset α}
 
-lemma expect_sub (s : finset α) (f g : α → 𝕜) :
+lemma expect_sub_distrib (s : finset α) (f g : α → 𝕜) :
   𝔼 i in s, (f i - g i) = 𝔼 i in s, f i - 𝔼 i in s, g i :=
 by rw [expect, expect, expect, sum_sub_distrib, sub_div]
 
 variables [fintype α]
 
-def balance (f : α → 𝕜) (x : α) : 𝕜 := f x - 𝔼 y, f y
+def balance (f : α → 𝕜) : α → 𝕜 := f - function.const _ (𝔼 y, f y)
 
-lemma expect_balance [char_zero 𝕜] (f : α → 𝕜) : 𝔼 x, balance f x = 0 :=
-begin
-  casesI is_empty_or_nonempty α,
-  { simp },
-  { simp only [balance, expect_sub, expect_const univ_nonempty, sub_self] }
-end
+lemma balance_apply (f : α → 𝕜) (x : α) : balance f x = f x - 𝔼 y, f y := rfl
+
+@[simp] lemma sum_balance [char_zero 𝕜] (f : α → 𝕜) : ∑ x, balance f x = 0 :=
+by casesI is_empty_or_nonempty α; simp [balance_apply, card_smul_expect]
+
+@[simp] lemma expect_balance [char_zero 𝕜] (f : α → 𝕜) : 𝔼 x, balance f x = 0 :=
+by simp [expect]
+
+@[simp] lemma balance_idem [char_zero 𝕜] (f : α → 𝕜) : balance (balance f) = balance f :=
+by casesI is_empty_or_nonempty α; ext x; simp [balance, expect_sub_distrib, univ_nonempty]
 
 end field
 end finset

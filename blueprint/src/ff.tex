@@ -63,16 +63,32 @@ For any function $f:G\to \mathbb{C}$ and integer $k\geq 1$
 To finish, similar trick to unbalancing.
 \end{proof}
 
+
 \begin{lemma}\label{ast_expand}
+\lean{balance_conv}
+\leanok
 For any function $f$ with $\sum f(x)=1$
 \[f\ast f-1/N = (f-1/N)\ast (f-1/N).\]
 \end{lemma}
 
+\begin{proof}
+\leanok
+Expand everything out.
+\end{proof}
+
 
 \begin{lemma}\label{circ_expand}
+\lean{balance_dconv}
+\leanok
 For any function $f$ with $\sum f(x)=1$
 \[f\circ f-1/N = (f-1/N)\circ (f-1/N).\]
 \end{lemma}
+
+\begin{proof}
+\leanok
+Expand everything out.
+\end{proof}
+
 
 \begin{lemma}\label{global_dichotomy}
 Let $\epsilon >0$ and $\mu\equiv 1/N$. If $A,C\subseteq G$, where $C$ has density at least $\gamma$, and

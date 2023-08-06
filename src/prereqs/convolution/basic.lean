@@ -35,7 +35,7 @@ Multiplicativise? Probably ugly and not very useful.
 -/
 
 open finset fintype function
-open_locale big_operators complex_conjugate nnreal pointwise
+open_locale big_operators complex_conjugate expectations nnreal pointwise
 
 variables {α β γ : Type*} [fintype α] [decidable_eq α] [add_comm_group α]
 
@@ -241,6 +241,18 @@ by simpa only [sum_mul_sum, sum_product, pi.one_apply, mul_one] using sum_conv_m
 lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) :=
 by simpa only [sum_mul_sum, sum_product, pi.one_apply, mul_one] using sum_dconv_mul f g 1
 
+@[simp] lemma conv_const (f : α → β) (b : β) : f ∗ const _ b = const _ ((∑ x, f x) * b) :=
+by ext; simp [conv_eq_sum_sub', sum_mul]
+
+@[simp] lemma const_conv (b : β) (f : α → β) : const _ b ∗ f = const _ (b * ∑ x, f x) :=
+by ext; simp [conv_eq_sum_sub, mul_sum]
+
+@[simp] lemma dconv_const (f : α → β) (b : β) : f ○ const _ b = const _ ((∑ x, f x) * conj b) :=
+by ext; simp [dconv_eq_sum_sub, sum_mul]
+
+@[simp] lemma const_dconv (b : β) (f : α → β) : const _ b ○ f = const _ (b * ∑ x, conj (f x)) :=
+by ext; simp [dconv_eq_sum_add, mul_sum]
+
 @[simp] lemma conv_triv_char (f : α → β) : f ∗ triv_char = f := by { ext a, simp [conv_eq_sum_sub] }
 @[simp] lemma triv_char_conv (f : α → β) : triv_char ∗ f = f := by rw [conv_comm, conv_triv_char]
 
@@ -308,7 +320,30 @@ by ext; cases eq_or_ne (card α : β) 0; simp [mu_apply, conv_eq_sum_add, card_u
 @[simp] lemma mu_univ_dconv_mu_univ : μ_[β] (univ : finset α) ○ μ univ = μ univ :=
 by ext; cases eq_or_ne (card α : β) 0; simp [mu_apply, dconv_eq_sum_add, card_univ, *]
 
+lemma expect_conv (f g : α → β) : 𝔼 a, (f ∗ g) a = (∑ a, f a) * 𝔼 a, g a :=
+by simp_rw [expect, sum_conv, mul_div_assoc]
+
+lemma expect_dconv (f g : α → β) : 𝔼 a, (f ○ g) a = (∑ a, f a) * 𝔼 a, conj (g a) :=
+by simp_rw [expect, sum_dconv, mul_div_assoc]
+
+lemma expect_conv' (f g : α → β) : 𝔼 a, (f ∗ g) a = (𝔼 a, f a) * ∑ a, g a :=
+by simp_rw [expect, sum_conv, mul_div_right_comm]
+
+lemma expect_dconv' (f g : α → β) : 𝔼 a, (f ○ g) a = (𝔼 a, f a) * ∑ a, conj (g a) :=
+by simp_rw [expect, sum_dconv, mul_div_right_comm]
+
 end semifield
+
+section field
+variables [field β] [star_ring β] [char_zero β]
+
+@[simp] lemma balance_conv (f g : α → β) : balance (f ∗ g) = balance f ∗ balance g :=
+by simp [balance, conv_sub, sub_conv, expect_conv]
+
+@[simp] lemma balance_dconv (f g : α → β) : balance (f ○ g) = balance f ○ balance g :=
+by simp [balance, dconv_sub, sub_dconv, expect_dconv, map_expect]
+
+end field
 
 namespace nnreal
 variables (f g : α → ℝ≥0) (a : α)
@@ -420,6 +455,16 @@ begin
 end
 
 end comm_semiring
+
+section field
+variables [field β] [star_ring β] [char_zero β]
+
+@[simp] lemma balance_iter_conv (f : α → β) : ∀ {n}, n ≠ 0 → balance (f ∗^ n) = balance f ∗^ n
+| 0 h := by cases h rfl
+| 1 h := by simp
+| (n + 2) h := by simp [iter_conv_succ _ (n + 1), balance_iter_conv n.succ_ne_zero]
+
+end field
 
 namespace nnreal
 variables {f : α → ℝ≥0}
