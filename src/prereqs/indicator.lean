@@ -43,8 +43,18 @@ variables (β)
   𝟭_[β] (s.image e) a = 𝟭 s (e.symm a) :=
 by simp only [indicate, ←e.injective.mem_finset_image, equiv.apply_symm_apply]
 
-@[simp] lemma support_indicate [nontrivial β] : support (𝟭_[β] s) = s :=
-by ext; simp [indicate_apply]
+section nontrivial
+variables {β} [nontrivial β] {a : α}
+
+@[simp] lemma indicate_eq_zero : 𝟭_[β] s a = 0 ↔ a ∉ s := one_ne_zero.ite_eq_right_iff
+
+lemma indicate_ne_zero : 𝟭_[β] s a ≠ 0 ↔ a ∈ s := one_ne_zero.ite_ne_right_iff
+
+variables (β)
+
+@[simp] lemma support_indicate : support (𝟭_[β] s) = s := by ext; exact indicate_ne_zero
+
+end nontrivial
 
 lemma sum_indicate [fintype α] (s : finset α) : ∑ x, 𝟭_[β] s x = s.card :=
 by simp [indicate_apply, ←finset.mem_coe, set.filter_mem_univ_eq_to_finset]
@@ -129,8 +139,24 @@ by simp_rw [mu, pi.smul_apply, smul_eq_mul, map_mul, map_indicate, map_inv₀, m
 
 variables (β)
 
-@[simp] lemma support_mu [char_zero β] (s : finset α) : support (μ_[β] s) = s :=
+section nontrivial
+variables {β} [nontrivial β] [char_zero β] {a : α}
+
+@[simp] lemma mu_eq_zero : μ_[β] s a = 0 ↔ a ∉ s :=
+begin
+  simp only [mu_apply, mul_boole, ite_eq_right_iff, inv_eq_zero, nat.cast_eq_zero, card_eq_zero],
+  refine imp_congr_right (λ ha, _),
+  simp only [ne_empty_of_mem ha],
+end
+
+lemma mu_ne_zero : μ_[β] s a ≠ 0 ↔ a ∈ s := mu_eq_zero.not_left
+
+variables (β)
+
+@[simp] lemma support_mu (s : finset α) : support (μ_[β] s) = s :=
 by ext; simpa [mu_apply, ne_empty_of_mem] using ne_empty_of_mem
+
+end nontrivial
 
 lemma card_smul_mu [char_zero β] (s : finset α) : s.card • μ_[β] s = 𝟭 s :=
 begin

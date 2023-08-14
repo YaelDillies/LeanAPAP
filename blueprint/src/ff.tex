@@ -142,20 +142,27 @@ By definition of $S'$, it follows that
 and the proof is complete.
 \end{proof}
 
-\begin{lemma}\label{no3aps_inn_product}
+
+\begin{lemma}
+\label{no3aps_inner_prod}
+\lean{add_salem_spencer.L2inner_mu_conv_mu_mu_two_smul_mu}
+\leanok
 If $A\subseteq G$ has no non-trivial three-term arithmetic progressions and $G$ has odd order then
 \[\langle \mu_A\ast \mu_A,\mu_{2\cdot A}\rangle = 1/\abs{A}^2.\]
 \end{lemma}
+
 \begin{proof}
+\leanok
 Expand out using definitions.
 \end{proof}
+
 
 \begin{theorem}
 Let $q$ be an odd prime power. If $A\subseteq \mathbb{F}_q^n$ with $\alpha=\abs{A}/q^n$ has no non-trivial three-term arithmetic progressions then
 \[n \ll \lo(\alpha)^9.\]
 \end{theorem}
 \begin{proof}
-\uses{no3aps_inn_product, di_in_ff}
+\uses{no3aps_inner_prod, di_in_ff}
 Let $t\geq 0$ be maximal such that there is a sequence of subspaces $\bbf_q^n=V_0\geq \cdots \geq V_t$ and associated $A_i\subseteq V_i$ with $A_0=A$ such that
 \begin{enumerate}
 \item for $0\leq i\leq t$ there exists $x_i$ such that $A_i\subseteq A-x_i$,
@@ -178,7 +185,7 @@ which contradicts the maximality of $t$, letting $V_{t+1}=V$ and $A_{t+1}=(A_t-x
 Therefore
 
 \[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle\geq 1/2.\]
-By Lemma~\ref{no3aps_inn_product} the left-hand side is equal to $\lvert V_t\rvert/\lvert A_t\rvert^2$, and therefore
+By Lemma~\ref{no3aps_inner_prod} the left-hand side is equal to $\lvert V_t\rvert/\lvert A_t\rvert^2$, and therefore
 \[\alpha^2 \leq \alpha_t^2 \leq 2/\lvert V_t\rvert.\]
 By the codimension bound the right-hand side is at most
 \[2q^{O(\lo(\alpha)^9)-n}.\]

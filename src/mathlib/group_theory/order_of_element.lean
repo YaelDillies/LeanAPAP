@@ -7,7 +7,7 @@ import mathlib.algebra.group_power.order
 Rename `exists_pow_eq_one` to `is_of_fin_order_of_finite`
 -/
 
-open fintype
+open fintype function
 
 section monoid
 variables {α : Type*} [monoid α] {a : α}
@@ -27,6 +27,18 @@ variables {α : Type*} [group α] [fintype α] {n : ℕ}
 @[simp, to_additive mod_card_nsmul] lemma pow_mod_card (a : α) (n : ℕ) : a ^ (n % card α) = a ^ n :=
 mul_left_injective (a ^ (card α * (n / card α))) $
   by simp_rw [←pow_add, nat.mod_add_div, pow_add, pow_mul, pow_card_eq_one, one_pow, mul_one]
+
+@[to_additive]
+lemma nat.coprime.pow_bijective (hn : n.coprime (card α)) : bijective (λ a : α, a ^ n) :=
+begin
+  refine (bijective_iff_injective_and_card _).2 ⟨_, rfl⟩,
+  casesI subsingleton_or_nontrivial α,
+  { exact injective_of_subsingleton _ },
+  obtain ⟨m, hm⟩ := nat.exists_mul_mod_eq_one_of_coprime hn fintype.one_lt_card,
+  refine left_inverse.injective (λ a, _),
+  { exact λ a, a ^ m },
+  rw [←pow_mul, ←pow_mod_card, hm, pow_one],
+end
 
 end group
 

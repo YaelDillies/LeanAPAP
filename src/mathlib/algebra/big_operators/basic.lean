@@ -50,6 +50,11 @@ eq.symm $ prod_subset (subset_union_left _ _) $ λ a ha ha',
   ∏ a in s₁ ∪ s₂, f a = ∏ a in s₂, f a :=
 by rw [union_comm, prod_union_eq_left hs]
 
+@[simp, to_additive] lemma prod_diag (s : finset α) (f : α × α → β) :
+  ∏ i in s.diag, f i = ∏ i in s, f (i, i) :=
+eq.symm $ prod_nbij (λ i, (i, i)) (λ i hi, mem_diag.2 ⟨hi, rfl⟩) (λ i _, rfl) (λ i j _ _ h,
+  (prod.ext_iff.1 h).1) $ λ i hi, ⟨i.1, (mem_diag.1 hi).1, prod.ext rfl (mem_diag.1 hi).2.symm⟩
+
 end finset
 
 open finset
