@@ -5,7 +5,7 @@ import mathlib.algebra.star.self_adjoint
 import mathlib.data.fintype.lattice
 import prereqs.translate
 
-open finset function
+open finset fintype (card) function
 open_locale big_operators expectations pointwise
 
 /-! ### Indicator -/
@@ -179,6 +179,14 @@ lemma translate_mu [add_comm_group α] (a : α) (s : finset α) : τ a (μ_[β] 
 by ext; simp [mu_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
 
 end division_semiring
+
+section semifield
+variables (β) [semifield β] {s : finset α}
+
+lemma expect_mu [char_zero β] [fintype α] (hs : s.nonempty) : 𝔼 x, μ_[β] s x = (card α)⁻¹ :=
+by rw [expect, card_univ, sum_mu _ hs, one_div]; apply_instance
+
+end semifield
 
 namespace nnreal
 open_locale nnreal

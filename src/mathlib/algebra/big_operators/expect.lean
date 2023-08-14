@@ -1,8 +1,9 @@
 import algebra.big_operators.ring
 import data.fintype.card
 import mathlib.algebra.big_operators.basic
+import mathlib.data.pi.algebra
 
-open fintype (card)
+open fintype (card) function
 open_locale big_operators
 
 variables {α β 𝕜 𝕝 : Type*}
@@ -20,6 +21,8 @@ localized "notation `𝔼` binders `, ` r:(scoped:67 f, finset.expect finset.uni
 
 @[simp] lemma expect_empty (f : α → 𝕜) : expect ∅ f = 0 := by simp [expect]
 @[simp] lemma expect_singleton (f : α → 𝕜) (a : α) : expect {a} f = f a := by simp [expect]
+
+@[simp] lemma expect_const_zero (s : finset α) : 𝔼 x in s, (0 : 𝕜) = 0 := by simp [expect]
 
 lemma expect_sum_comm (s : finset α) (t : finset β) (f : α → β → 𝕜) :
   𝔼 x in s, ∑ y in t, f x y = ∑ y in t, 𝔼 x in s, f x y :=
@@ -155,13 +158,20 @@ def balance (f : α → 𝕜) : α → 𝕜 := f - function.const _ (𝔼 y, f y
 
 lemma balance_apply (f : α → 𝕜) (x : α) : balance f x = f x - 𝔼 y, f y := rfl
 
-@[simp] lemma sum_balance [char_zero 𝕜] (f : α → 𝕜) : ∑ x, balance f x = 0 :=
+@[simp] lemma balance_zero : balance (0 : α → 𝕜) = 0 := by simp [balance]
+
+@[simp] lemma balance_add (f g : α → 𝕜) : balance (f + g) = balance f + balance g :=
+by simp only [balance, expect_add_distrib, const_add, add_sub_add_comm, pi.add_apply]
+
+variables [char_zero 𝕜]
+
+@[simp] lemma sum_balance (f : α → 𝕜) : ∑ x, balance f x = 0 :=
 by casesI is_empty_or_nonempty α; simp [balance_apply, card_smul_expect]
 
-@[simp] lemma expect_balance [char_zero 𝕜] (f : α → 𝕜) : 𝔼 x, balance f x = 0 :=
+@[simp] lemma expect_balance (f : α → 𝕜) : 𝔼 x, balance f x = 0 :=
 by simp [expect]
 
-@[simp] lemma balance_idem [char_zero 𝕜] (f : α → 𝕜) : balance (balance f) = balance f :=
+@[simp] lemma balance_idem (f : α → 𝕜) : balance (balance f) = balance f :=
 by casesI is_empty_or_nonempty α; ext x; simp [balance, expect_sub_distrib, univ_nonempty]
 
 end field

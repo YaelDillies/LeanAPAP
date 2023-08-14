@@ -29,7 +29,7 @@ begin
   obtain rfl | hp := hp.eq_or_lt,
   { simp_rw [ennreal.coe_one, L1norm_eq_sum, sum_mul_sum, conv_eq_sum_sub'],
     calc
-        ∑ x, ‖∑ y, f y * g (x - y)‖ ≤ ∑ x, ∑ y, ‖f y * g (x - y)‖
+        ∑ x, ‖∑ y, f y * g (x - y)‖ ≤ ∑ x y, ‖f y * g (x - y)‖
           : sum_le_sum $ λ x _, norm_sum_le _ _
       ... = _ : _,
     rw sum_comm,
@@ -91,7 +91,7 @@ by simpa only [conv_conjneg, Lpnorm_conjneg] using Lpnorm_conv_le hp f (conjneg 
 end is_R_or_C
 
 section real
-variables {f g : α → ℝ} --TODO: Include `f : α → ℂ`
+variables {f g : α → ℝ} {n : ℕ} --TODO: Include `f : α → ℂ`
 
 lemma L1norm_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ∗ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
 begin
@@ -102,5 +102,7 @@ end
 
 lemma L1norm_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ○ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
 by simpa using L1norm_conv hf (conjneg_nonneg.2 hg)
+
+lemma Lpnorm_conv_le_Lpnorm_dconv (hn : even n) : ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := sorry
 
 end real

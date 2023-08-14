@@ -74,4 +74,20 @@ lemma rpow_nonneg (hx : 0 ≤ x) : 0 ≤ x ^ y := rpow_nonneg_of_nonneg hx _
 
 @[simp] lemma exp_one_pow (n : ℕ) : exp 1 ^ n = exp n := by rw [←rpow_nat_cast, exp_one_rpow]
 
+lemma rpow_lt_rpow_of_neg (hx : 0 < x) (hxy : x < y) (hz : z < 0) : y ^ z < x ^ z :=
+begin
+  have := hx.trans hxy,
+  rw [←inv_lt_inv, ←rpow_neg, ←rpow_neg],
+  refine rpow_lt_rpow _ hxy (neg_pos.2 hz),
+  all_goals { positivity },
+end
+
+lemma rpow_le_rpow_of_nonpos (hx : 0 < x) (hxy : x ≤ y) (hz : z ≤ 0) : y ^ z ≤ x ^ z :=
+begin
+  have := hx.trans_le hxy,
+  rw [←inv_le_inv, ←rpow_neg, ←rpow_neg],
+  refine rpow_le_rpow _ hxy (neg_nonneg.2 hz),
+  all_goals { positivity },
+end
+
 end real

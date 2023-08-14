@@ -55,10 +55,15 @@ so
 and now use $\lo(\epsilon\alpha/4)\leq 2\lo(\epsilon\alpha)$, say.
 \end{proof}
 
-\begin{lemma}\label{ast_to_circ}
+
+\begin{lemma}
+\label{ast_le_circ}
+\lean{Lpnorm_conv_le_Lpnorm_dconv}
+\leanok
 For any function $f:G\to \mathbb{C}$ and integer $k\geq 1$
 \[\| f\ast f\|_{2k}\leq \| f\circ f\|_{2k}.\]
 \end{lemma}
+
 \begin{proof}
 To finish, similar trick to unbalancing.
 \end{proof}
@@ -90,19 +95,25 @@ Expand everything out.
 \end{proof}
 
 
-\begin{lemma}\label{global_dichotomy}
+\begin{lemma}
+\label{global_dichotomy}
+\lean{global_dichotomy}
+\leanok
 Let $\epsilon >0$ and $\mu\equiv 1/N$. If $A,C\subseteq G$, where $C$ has density at least $\gamma$, and
 \[\abs{N\langle \mu_A\ast \mu_A,\mu_C\rangle -1}>\epsilon\]
 then, if $f=(\mu_A-1/N)$, $\norm{f\circ f}_{p(\mu)} \geq \epsilon /2N$ for $p=2\lceil \lo(\gamma)\rceil$.
 \end{lemma}
+
 \begin{proof}
-\uses{ast_to_circ, ast_expand, circ_expand}
+\uses{ast_le_circ, ast_expand, circ_expand}
+\leanok
 By H\"{o}lder's inequality, for any $p\geq 1$
 \[\epsilon < \abs{ N\langle \mu_A \ast \mu_A - 1/N, \mu_C \rangle } \leq \norm{\mu_A\ast \mu_A-1/N}_p\gamma^{-1/p}N^{1-1/p}.\]
 In particular if we choose $p=2\lceil\lo(\gamma)\rceil$ then $\gamma^{-1/p}\leq e^{1/2}\leq 2$ and so we deduce that, by Lemma~\ref{ast_expand},
 \[\norm{f\ast f}_{p}\geq \tfrac{1}{2}\epsilon N^{1/p-1}.\]
-It remains to use Lemmas~\ref{ast_expand} and \ref{circ_expand} and apply Lemma~\ref{ast_to_circ}, and note that we can pass from the $L^p$ norm to the $L^p(\mu)$ norm losing a factor of $N^{1/p}$.
+It remains to use Lemmas~\ref{ast_expand} and \ref{circ_expand} and apply Lemma~\ref{ast_le_circ}, and note that we can pass from the $L^p$ norm to the $L^p(\mu)$ norm losing a factor of $N^{1/p}$.
 \end{proof}
+
 
 \begin{proposition}\label{di_in_ff}
 Let $\epsilon \in (0,1)$. If $A,C\subseteq \bbf_q^n$, where $C$ has density at least $\gamma$, and

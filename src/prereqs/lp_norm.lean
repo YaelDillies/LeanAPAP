@@ -14,7 +14,7 @@ import prereqs.indicator
 # Lp norms
 -/
 
-open finset real
+open finset function real
 open_locale big_operators complex_conjugate ennreal nnreal
 
 variables {ι 𝕜 : Type*} [fintype ι]
@@ -196,6 +196,10 @@ notation `‖` f `‖_[` p `, ` w `]` := wLpnorm p w f
 @[simp] lemma wLpnorm_one_eq_Lpnorm (p : ℝ≥0) (f : Π i, α i) : ‖f‖_[p, 1] = ‖f‖_[p] :=
 by obtain rfl | hp := @eq_zero_or_pos _ _ p; simp [wLpnorm, L0norm_eq_card, Lpnorm_eq_sum, *]
 
+@[simp] lemma wLpnorm_const (p : ℝ≥0) (w : ℝ≥0) (f : Π i, α i) :
+  ‖f‖_[p, const _ w] = w ^ (p⁻¹ : ℝ) * ‖f‖_[p] :=
+sorry
+
 lemma wLpnorm_eq_sum (hp : p ≠ 0) (w : ι → ℝ≥0) (f : Π i, α i) :
   ‖f‖_[p, w] = (∑ i, w i • ‖f i‖ ^ (p : ℝ)) ^ (p⁻¹ : ℝ) :=
 begin
@@ -352,6 +356,13 @@ by simp [L2inner_eq_sum, map_sum, mul_comm]
 @[simp] lemma L2inner_zero_left (g : ι → 𝕜) : ⟪0, g⟫_[𝕜] = 0 := by simp [L2inner_eq_sum]
 @[simp] lemma L2inner_zero_right (f : ι → 𝕜) : ⟪f, 0⟫_[𝕜] = 0 := by simp [L2inner_eq_sum]
 
+@[simp] lemma L2inner_const_left (a : 𝕜) (f : ι → 𝕜) : ⟪const _ a, f⟫_[𝕜] = conj a * ∑ x, f x :=
+by simp only [L2inner_eq_sum, const_apply, mul_sum]
+
+@[simp] lemma L2inner_const_right (f : ι → 𝕜) (a : 𝕜) :
+  ⟪f, const _ a⟫_[𝕜] = (∑ x, conj (f x)) * a :=
+by simp only [L2inner_eq_sum, const_apply, sum_mul]
+
 lemma L2inner_add_left (f₁ f₂ g : ι → 𝕜) : ⟪f₁ + f₂, g⟫_[𝕜] = ⟪f₁, g⟫_[𝕜] + ⟪f₂, g⟫_[𝕜] :=
 by simp_rw [L2inner_eq_sum, pi.add_apply, map_add, add_mul, sum_add_distrib]
 
@@ -398,6 +409,16 @@ lemma L2inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
 sum_nonneg $ λ _ _, mul_nonneg (star_nonneg.2 $ hf _) $ hg _
 
 end ordered_comm_semiring
+
+section linear_ordered_comm_ring
+variables [linear_ordered_comm_ring 𝕜] [star_ordered_ring 𝕜] [has_trivial_star 𝕜] {f g : ι → 𝕜}
+
+--TODO: Can we remove the `has_trivial_star` assumption?
+lemma abs_L2inner_le_L2inner_abs : |⟪f, g⟫_[𝕜]| ≤ ⟪|f|, |g|⟫_[𝕜] :=
+(abs_sum_le_sum_abs _ _).trans_eq $ sum_congr rfl $ λ i _,
+  by simp only [abs_mul, conj_trivial, pi.abs_apply]
+
+end linear_ordered_comm_ring
 
 section is_R_or_C
 variables {κ : Type*} [is_R_or_C 𝕜] {f : ι → 𝕜}
@@ -636,7 +657,7 @@ lemma Lpnorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → ℝ) :
 by rw [←ennreal.coe_div hq, Lpnorm_rpow (div_ne_zero hp hq) hq
     (lattice_ordered_comm_group.abs_nonneg f), Lpnorm_abs, ←ennreal.coe_mul, div_mul_cancel _ hq]
 
---TODO: Generalise the following three to include `f g : α → ℂ`
+--TODO: Generalise the following four to include `f g : α → ℂ`
 /-- Hölder's inequality, binary case. -/
 lemma L2inner_le_Lpnorm_mul_Lpnorm (hpq : is_conjugate_exponent p q) (f g : α → ℝ) :
   ⟪f, g⟫_[ℝ] ≤ ‖f‖_[p] * ‖g‖_[q] :=
@@ -646,6 +667,12 @@ begin
   norm_cast at hp hq,
   simpa [L2inner_eq_sum, Lpnorm_eq_sum, *] using inner_le_Lp_mul_Lq _ f g hpq,
 end
+
+/-- Hölder's inequality, binary case. -/
+lemma abs_L2inner_le_Lpnorm_mul_Lpnorm (hpq : is_conjugate_exponent p q) (f g : α → ℝ) :
+  |⟪f, g⟫_[ℝ]| ≤ ‖f‖_[p] * ‖g‖_[q] :=
+abs_L2inner_le_L2inner_abs.trans $ (L2inner_le_Lpnorm_mul_Lpnorm hpq _ _).trans_eq $
+  by simp_rw Lpnorm_abs
 
 /-- Hölder's inequality, binary case. -/
 lemma Lpnorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ + q⁻¹ = r⁻¹) (f g : α → ℝ) :
