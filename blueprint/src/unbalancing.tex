@@ -16,7 +16,7 @@ Test.
 \label{unbalancing}
 \lean{unbalancing}
 \leanok
-Let $\epsilon\in(0,1)$ and $\nu:G\to\bbr_{\geq 0}$ be some probability measure such that $\widehat{\nu}\geq 0$. Let $f:G\to\bbr$. If $\norm{f\circ f}_{p(\nu)}\geq \epsilon$ for some $p\geq 1$ then $\norm{f\circ f+1}_{p'(\nu)}\geq 1+\tfrac{1}{2}\epsilon$ for some $p'\ll_\epsilon p$.
+Let $\epsilon\in(0,1)$ and $\nu:G\to\bbr_{\geq 0}$ be some probability measure such that $\widehat{\nu}\geq 0$. Let $f:G\to\bbr$. If $\norm{f\circ f}_{p(\nu)}\geq \epsilon$ for some $p\geq 1$ then $\norm{f\circ f+1}_{p'(\nu)}\geq 1+\tfrac{1}{2}\epsilon$ for $p'=16\epsilon^{-1}\log(48/\epsilon)$.
 \end{lemma}
 
 \begin{proof}
@@ -32,5 +32,5 @@ On the other hand, by the triangle inequality
 \[\norm{f}_{2p(\nu)}\leq 1+\norm{f+1}_{2p(\nu)}\leq 3,\]
 or else we are done, with $p'=2p$. Hence $\nu(T)\geq (\epsilon/10)^{2p}$. It follows that, for any $p'\geq 1$,
 \[\norm{f+1}_{p'(\nu)}\geq \langle \ind{T},\abs{f+1}^{p'}\rangle_\nu^{1/p'}\geq  (1+\tfrac{3}{4}\epsilon)(\epsilon/10)^{2p/p'}.\]
-The desired bound now follows if we choose $p'$ a sufficiently large multiple (depending on $\epsilon$) of $p$.
+The desired bound now follows if we choose $p'=16\epsilon^{-1}\log(48/\epsilon)p$, using $1-x\leq e^{-x}$.
 \end{proof}
