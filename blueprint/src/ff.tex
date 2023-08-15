@@ -118,7 +118,8 @@ It remains to use Lemmas~\ref{ast_expand} and \ref{circ_expand} and apply Lemma~
 \begin{proposition}\label{di_in_ff}
 Let $\epsilon \in (0,1)$. If $A,C\subseteq \bbf_q^n$, where $C$ has density at least $\gamma$, and
 \[\abs{N\langle \mu_A\ast \mu_A,\mu_C\rangle -1}> \epsilon\]
-then there is a subspace $V$ of codimension ???
+then there is a subspace $V$ of codimension 
+\[\leq 2^{171}\epsilon^{-24}\lo(\alpha)^4\lo(\gamma)^4.\]
 such that $\norm{\ind{A}\ast \mu_V}_\infty \geq (1+\epsilon/32)\alpha$.
 \end{proposition}
 \begin{proof}
@@ -140,9 +141,16 @@ Since
 we know
 \[S\subseteq S'=\{x : \mu_A\circ \mu_A(x)\geq (1+\epsilon/8)/N\}.\]
 
-By Theorem~\ref{ap_in_ff} there is a subspace $V$ of the required codimension such that
+By Theorem~\ref{ap_in_ff} (applied with $\epsilon$ replaced by $\epsilon/32$) there is a subspace $V$ of codimension
+\[\leq 2^{37}\lo(\alpha^{2q})^2\lo(\epsilon\alpha^{2q}/32)^2\epsilon^{-2}\] such that
 \[\langle \mu_V\ast \mu_{A_1}\circ \mu_{A_2},\ind{S'}\rangle \geq 1-\tfrac{1}{16}\epsilon.\]
-By definition of $S'$, it follows that
+Using $\lo(xy)\leq x^{-1}\lo(y)$ we have
+\[\lo(\epsilon \alpha^{2q}/32)\leq 32\epsilon^{-1}\lo(\alpha^{2q}),\]
+and we also use $\lo(x^y)\leq y\lo(x)$ to simplify the codimension bound to
+\[\leq 2^{51}q^4\lo(\alpha)^4\epsilon^{-4}.\]
+We further note that (using $\log x\leq x$ say)
+\[q\leq 2^{10}p'\epsilon^{-2}\log(64/\epsilon)\leq 2^{30}\epsilon^{-5}\lo(\gamma).\]
+Therefore the desired codimension bound follows. Finally, by definition of $S'$, it follows that
 \begin{align*}
 (1+\epsilon/32)/N
 &\leq ((1+\epsilon/8)/N)(1-\epsilon/16)\\
