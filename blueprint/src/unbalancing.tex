@@ -16,12 +16,13 @@ Test.
 \label{unbalancing}
 \lean{unbalancing}
 \leanok
-Let $\epsilon\in(0,1)$ and $\nu:G\to\bbr_{\geq 0}$ be some probability measure such that $\widehat{\nu}\geq 0$. Let $f:G\to\bbr$. If $\norm{f\circ f}_{p(\nu)}\geq \epsilon$ for some $p\geq 1$ then $\norm{f\circ f+1}_{p'(\nu)}\geq 1+\tfrac{1}{2}\epsilon$ for $p'=16\epsilon^{-1}\log(48/\epsilon)$.
+Let $\epsilon\in(0,1)$ and $\nu:G\to\bbr_{\geq 0}$ be some probability measure such that $\widehat{\nu}\geq 0$. Let $f:G\to\bbr$. If $\norm{f\circ f}_{p(\nu)}\geq \epsilon$ for some $p\geq 1$ then $\norm{f\circ f+1}_{p'(\nu)}\geq 1+\tfrac{1}{2}\epsilon$ for $p'=120\epsilon^{-1}\log(3/\epsilon)$.
 \end{lemma}
 
 \begin{proof}
 \uses{nonneg_moments}
-Without loss of generality we can assume that $p\geq 5$ is an odd integer. % Want (3/4)^p \leq 1/4
+\leanok
+Up to gaining a factor of 5 in $p'$, we can assume that $p\geq 5$ is an odd integer. % Want (3/4)^p \leq 1/4
 Since the Fourier transforms of $f$ and $\nu$ are non-negative,
 \[\bbe \nu f^{p}= \widehat{\nu}\ast\widehat{f}^{(p)}(0_{\widehat{G}})\geq 0.\]
 It follows that, since $2\max(x,0)=x+\abs{x}$ for $x\in\bbr$,
@@ -30,7 +31,7 @@ Therefore, if $P=\{ x : f(x) \geq 0\}$, then $\langle \ind{P},f^{p}\rangle_\nu\g
 \[\nu(T)^{1/2}\norm{f}_{2p(\nu)}^{p}\geq \langle \ind{T}, f^{p}\rangle_\nu \geq \tfrac{1}{4}\epsilon^{p}.\]
 On the other hand, by the triangle inequality
 \[\norm{f}_{2p(\nu)}\leq 1+\norm{f+1}_{2p(\nu)}\leq 3,\]
-or else we are done, with $p'=2p$. Hence $\nu(T)\geq (\epsilon/10)^{2p}$. It follows that, for any $p'\geq 1$,
-\[\norm{f+1}_{p'(\nu)}\geq \langle \ind{T},\abs{f+1}^{p'}\rangle_\nu^{1/p'}\geq  (1+\tfrac{3}{4}\epsilon)(\epsilon/10)^{2p/p'}.\]
-The desired bound now follows if we choose $p'=16\epsilon^{-1}\log(48/\epsilon)p$, using $1-x\leq e^{-x}$.
+or else we are done, with $p'=2p$. Hence $\nu(T)\geq (\epsilon/3)^{3p}$. It follows that, for any $p'\geq 1$,
+\[\norm{f+1}_{p'(\nu)}\geq \langle \ind{T},\abs{f+1}^{p'}\rangle_\nu^{1/p'}\geq  (1+\tfrac{3}{4}\epsilon)(\epsilon/3)^{3p/p'}.\]
+The desired bound now follows if we choose $p'=24\epsilon^{-1}\log(3/\epsilon)p$, using $1-x\leq e^{-x}$.
 \end{proof}
