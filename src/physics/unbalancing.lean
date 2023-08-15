@@ -56,8 +56,9 @@ private lemma p'_pos (hp : 5 ≤ p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < 
 by have := log_ε_pos hε₀ hε₁; positivity
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
-lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : odd p) (hν₁ : ‖(coe ∘ ν : G → ℝ)‖_[1] = 1)
-  (hν : coe ∘ ν = h ○ h) (hf : coe ∘ f = g ○ g) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hε : ε ≤ ‖f‖_[p, ν]) :
+private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : odd p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1)
+  (hf : coe ∘ f = g ○ g) (hν : coe ∘ ν = h ○ h) (hν₁ : ‖(coe ∘ ν : G → ℝ)‖_[1] = 1)
+  (hε : ε ≤ ‖f‖_[p, ν]) :
   1 + ε / 2 ≤ ‖f + 1‖_[(⟨24 / ε * log (3 / ε) * p, (p'_pos hp hε₀ hε₁).le⟩ : ℝ≥0), ν] :=
 begin
   simp only [L1norm_eq_sum, nnreal.norm_eq] at hν₁,
@@ -188,27 +189,26 @@ end
 
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier
 transform. -/
-lemma unbalancing (p : ℕ) (hp : 1 ≤ p) (hν₁ : ‖(coe ∘ ν : G → ℝ)‖_[1] = 1) (hν : coe ∘ ν = h ○ h)
-  (hf : coe ∘ f = g ○ g) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hε : ε ≤ ‖f‖_[p, ν]) :
+lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (ν : G → ℝ≥0)
+  (f : G → ℝ) (g h : G → ℂ) (hf : coe ∘ f = g ○ g) (hν : coe ∘ ν = h ○ h)
+  (hν₁ : ‖(coe ∘ ν : G → ℝ)‖_[1] = 1) (hε : ε ≤ ‖f‖_[p, ν]) :
   1 + ε / 2 ≤
     ‖f + 1‖_[(⟨120 / ε * log (3 / ε) * p, by have := log_ε_pos hε₀ hε₁; positivity⟩ : ℝ≥0), ν] :=
 begin
   have := log_ε_pos hε₀ hε₁,
   have := calc
       5 = 2 * 1 + 3 : by norm_num
-    ... ≤ 2 * p + 3 : add_le_add_right (mul_le_mul_left' hp _) _,
+    ... ≤ 2 * p + 3 : add_le_add_right (mul_le_mul_left' (pos_iff_ne_zero.2 hp) _) _,
   calc
     _ ≤ ‖f + 1‖_[(⟨_, (p'_pos this hε₀ hε₁).le⟩ : ℝ≥0), ν]
-      : unbalancing' (2 * p + 3) this ((even_two_mul _).add_odd $ odd_bit1 _) hν₁ hν hf hε₀ hε₁ $
+      : unbalancing' (2 * p + 3) this ((even_two_mul _).add_odd $ odd_bit1 _) hε₀ hε₁ hf hν hν₁ $
           hε.trans $ wLpnorm_mono_right (nat.cast_le.2 $ le_add_of_le_left $
           le_mul_of_one_le_left' one_le_two) _ _
     ... ≤ _ : wLpnorm_mono_right _ _ _,
   calc
     _ ≤ 24 / ε * log (3 / ε) * ↑(2 * p + 3 * p)
       : mul_le_mul_of_nonneg_left
-          (nat.cast_le.2 $ add_le_add_left (le_mul_of_one_le_right _ hp) _) _
-    ... = _ : _,
-  any_goals { positivity },
-  push_cast,
-  ring,
+          (nat.cast_le.2 $ add_le_add_left (le_mul_of_one_le_right _ $ pos_iff_ne_zero.2 hp) _) _
+    ... = _ : by push_cast; ring,
+  all_goals { positivity },
 end

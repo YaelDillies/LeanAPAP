@@ -345,6 +345,20 @@ by simp [balance, dconv_sub, sub_dconv, expect_dconv, map_expect]
 
 end field
 
+namespace is_R_or_C
+variables {𝕜 : Type} [is_R_or_C 𝕜] (f g : α → ℝ) (a : α)
+
+@[simp, norm_cast] lemma coe_conv : (↑((f ∗ g) a) : 𝕜) = (coe ∘ f ∗ coe ∘ g) a :=
+map_conv (algebra_map ℝ 𝕜) _ _ _
+
+@[simp, norm_cast] lemma coe_dconv : (↑((f ○ g) a) : 𝕜) = (coe ∘ f ○ coe ∘ g) a :=
+by simp [dconv_apply, coe_sum]
+
+@[simp] lemma coe_comp_conv : (coe : ℝ → 𝕜) ∘ (f ∗ g) = coe ∘ f ∗ coe ∘ g := funext $ coe_conv _ _
+@[simp] lemma coe_comp_dconv : (coe : ℝ → 𝕜) ∘ (f ○ g) = coe ∘ f ○ coe ∘ g := funext $ coe_dconv _ _
+
+end is_R_or_C
+
 namespace nnreal
 variables (f g : α → ℝ≥0) (a : α)
 
@@ -353,6 +367,9 @@ map_conv nnreal.to_real_hom _ _ _
 
 @[simp, norm_cast] lemma coe_dconv : (↑((f ○ g) a) : ℝ) = (coe ∘ f ○ coe ∘ g) a :=
 by simp [dconv_apply, coe_sum]
+
+@[simp] lemma coe_comp_conv : (coe : _ → ℝ) ∘ (f ∗ g) = coe ∘ f ∗ coe ∘ g := funext $ coe_conv _ _
+@[simp] lemma coe_comp_dconv : (coe : _ → ℝ) ∘ (f ○ g) = coe ∘ f ○ coe ∘ g := funext $ coe_dconv _ _
 
 end nnreal
 

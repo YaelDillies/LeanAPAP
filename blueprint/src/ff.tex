@@ -1,6 +1,9 @@
 \chapter{Finite field model}
 
-\begin{theorem}\label{ap_in_ff}
+\begin{theorem}
+  \label{ap_in_ff}
+\lean{ap_in_ff}
+\leanok
 If $A_1,A_2,S\subseteq \bbf_q^n$ are such that $A_1$ and $A_2$ both have density at least $\alpha$ then there is a subspace $V$ of codimension
 
 \[\mathrm{codim}(V)\leq 2^{27}\lo(\alpha)^2\lo(\epsilon \alpha)^2\epsilon^{-2}\]
@@ -115,15 +118,19 @@ It remains to use Lemmas~\ref{ast_expand} and \ref{circ_expand} and apply Lemma~
 \end{proof}
 
 
-\begin{proposition}\label{di_in_ff}
+\begin{proposition}
+\label{di_in_ff}
+\lean{di_in_ff}
+\leanok
 Let $\epsilon \in (0,1)$. If $A,C\subseteq \bbf_q^n$, where $C$ has density at least $\gamma$, and
 \[\abs{N\langle \mu_A\ast \mu_A,\mu_C\rangle -1}> \epsilon\]
-then there is a subspace $V$ of codimension 
+then there is a subspace $V$ of codimension
 \[\leq 2^{171}\epsilon^{-24}\lo(\alpha)^4\lo(\gamma)^4.\]
 such that $\norm{\ind{A}\ast \mu_V}_\infty \geq (1+\epsilon/32)\alpha$.
 \end{proposition}
+
 \begin{proof}
-\uses{global_dichotomy,global_drc,unbalancing,ap_in_ff, circ_expand, sift_cor}
+\uses{global_dichotomy, global_drc, unbalancing, ap_in_ff, circ_expand, sift_cor}
 By Lemma~\ref{global_dichotomy}, if $f=\mu_A-1/N$,
 \[\norm{f\circ f}_{p(\mu)}\geq \epsilon /2N,\]
 where $p=2\lceil \lo(\gamma)\rceil\leq 4\lo(\gamma)$. By Lemma~\ref{unbalancing} there exists some $p'$ such that

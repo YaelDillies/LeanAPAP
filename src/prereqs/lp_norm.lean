@@ -196,9 +196,10 @@ notation `‖` f `‖_[` p `, ` w `]` := wLpnorm p w f
 @[simp] lemma wLpnorm_one_eq_Lpnorm (p : ℝ≥0) (f : Π i, α i) : ‖f‖_[p, 1] = ‖f‖_[p] :=
 by obtain rfl | hp := @eq_zero_or_pos _ _ p; simp [wLpnorm, L0norm_eq_card, Lpnorm_eq_sum, *]
 
-@[simp] lemma wLpnorm_const (p : ℝ≥0) (w : ℝ≥0) (f : Π i, α i) :
+@[simp] lemma wLpnorm_const_right (hp : 1 ≤ p) (w : ℝ≥0) (f : Π i, α i) :
   ‖f‖_[p, const _ w] = w ^ (p⁻¹ : ℝ) * ‖f‖_[p] :=
-sorry
+by simpa [wLpnorm, -norm_eq_abs, norm_of_nonneg, pi.smul_def, nnreal.smul_def, rpow_nonneg]
+    using Lpnorm_smul (ennreal.one_le_coe_iff.2 hp) (w ^ (p⁻¹ : ℝ) : ℝ) (λ i, ‖f i‖)
 
 lemma wLpnorm_eq_sum (hp : p ≠ 0) (w : ι → ℝ≥0) (f : Π i, α i) :
   ‖f‖_[p, w] = (∑ i, w i • ‖f i‖ ^ (p : ℝ)) ^ (p⁻¹ : ℝ) :=
@@ -323,6 +324,17 @@ lemma wLpnorm_nsmul' {α : Type*} [normed_add_comm_group α] [normed_space ℝ �
 wLpnorm_nsmul hp _ _ _
 
 end one_le
+end normed_add_comm_group
+
+section normed_add_comm_group
+variables {α : Type*} [normed_add_comm_group α] {p : ℝ≥0}
+
+@[simp] lemma Lpnorm_const (hp : p ≠ 0) (a : α) :
+  ‖const ι a‖_[p] = ↑(fintype.card ι) ^ (p⁻¹ : ℝ) * ‖a‖ :=
+by simp only [Lpnorm_eq_sum hp, card_univ, mul_rpow, norm_nonneg, rpow_nonneg,
+  nnreal.coe_ne_zero.2 hp, rpow_rpow_inv, const_apply, sum_const, nsmul_eq_mul, nat.cast_nonneg,
+  ne.def, not_false_iff]
+
 end normed_add_comm_group
 
 section real

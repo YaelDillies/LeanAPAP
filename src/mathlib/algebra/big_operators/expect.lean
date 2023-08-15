@@ -1,10 +1,12 @@
 import algebra.big_operators.ring
 import data.fintype.card
+import data.is_R_or_C.basic
+import data.real.nnreal
 import mathlib.algebra.big_operators.basic
 import mathlib.data.pi.algebra
 
 open fintype (card) function
-open_locale big_operators
+open_locale big_operators nnreal
 
 variables {α β 𝕜 𝕝 : Type*}
 
@@ -146,7 +148,7 @@ end semifield
 open_locale expectations
 
 section field
-variables [field 𝕜] {s : finset α}
+variables [field 𝕜] [field 𝕝] {s : finset α}
 
 lemma expect_sub_distrib (s : finset α) (f g : α → 𝕜) :
   𝔼 i in s, (f i - g i) = 𝔼 i in s, f i - 𝔼 i in s, g i :=
@@ -163,6 +165,10 @@ lemma balance_apply (f : α → 𝕜) (x : α) : balance f x = f x - 𝔼 y, f y
 @[simp] lemma balance_add (f g : α → 𝕜) : balance (f + g) = balance f + balance g :=
 by simp only [balance, expect_add_distrib, const_add, add_sub_add_comm, pi.add_apply]
 
+@[simp] lemma map_balance {F : Type*} [ring_hom_class F 𝕜 𝕝] (g : F) (f : α → 𝕜) (a : α) :
+  g (balance f a) = balance (g ∘ f) a :=
+by simp [balance, map_expect]
+
 variables [char_zero 𝕜]
 
 @[simp] lemma sum_balance (f : α → 𝕜) : ∑ x, balance f x = 0 :=
@@ -176,3 +182,16 @@ by casesI is_empty_or_nonempty α; ext x; simp [balance, expect_sub_distrib, uni
 
 end field
 end finset
+
+open finset
+
+namespace is_R_or_C
+variables [is_R_or_C 𝕜] [fintype α] (f : α → ℝ) (a : α)
+
+@[simp, norm_cast] lemma coe_balance : (↑(balance f a) : 𝕜) = balance (coe ∘ f) a :=
+map_balance (algebra_map ℝ 𝕜) _ _
+
+@[simp] lemma coe_comp_balance : (coe : ℝ → 𝕜) ∘ (balance f) = balance (coe ∘ f) :=
+funext $ coe_balance _
+
+end is_R_or_C

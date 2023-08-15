@@ -188,14 +188,22 @@ by rw [expect, card_univ, sum_mu _ hs, one_div]; apply_instance
 
 end semifield
 
+namespace is_R_or_C
+variables {𝕜 : Type*} [is_R_or_C 𝕜] [fintype α] (s : finset α) (a : α)
+
+@[simp, norm_cast] lemma coe_mu : ↑(μ_[ℝ] s a) = μ_[𝕜] s a := map_mu (algebra_map ℝ 𝕜) _ _
+
+@[simp] lemma coe_comp_mu : coe ∘ (μ_[ℝ] s) = μ_[𝕜] s := funext $ coe_mu _
+
+end is_R_or_C
+
 namespace nnreal
 open_locale nnreal
 
 @[simp, norm_cast] lemma coe_mu (s : finset α) (x : α) : ↑(μ_[ℝ≥0] s x) = μ_[ℝ] s x :=
 map_mu nnreal.to_real_hom _ _
 
-@[simp] lemma coe_comp_mu (s : finset α) : coe ∘ μ_[ℝ≥0] s = μ_[ℝ] s :=
-by ext; exact coe_mu _ _
+@[simp] lemma coe_comp_mu (s : finset α) : coe ∘ μ_[ℝ≥0] s = μ_[ℝ] s := funext $ coe_mu _
 
 end nnreal
 
