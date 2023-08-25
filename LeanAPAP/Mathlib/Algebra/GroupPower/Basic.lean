@@ -1,21 +1,19 @@
-import Mathbin.Algebra.GroupPower.Basic
-import Mathbin.GroupTheory.GroupAction.Defs
+import Mathlib.Algebra.GroupPower.Basic
+import Mathlib.GroupTheory.GroupAction.Defs
 
 #align_import mathlib.algebra.group_power.basic
 
 section Pow
-
-variable {α β : Type _} [Pow α β]
+variable {α β : Type*} [Pow α β]
 
 -- TODO: Replace `pow_ite`
-@[simp, to_additive ite_smul]
-theorem pow_ite' (P : Prop) [Decidable P] (a : α) (b c : β) :
+@[to_additive (attr := simp) ite_smul]
+lemma pow_ite' (P : Prop) [Decidable P] (a : α) (b c : β) :
     (a ^ if P then b else c) = if P then a ^ b else a ^ c := by split_ifs <;> rfl
 
 -- TODO: Replace `ite_pow`
-@[simp, to_additive smul_ite]
-theorem ite_pow' (P : Prop) [Decidable P] (a b : α) (c : β) :
+@[to_additive (attr := simp) smul_ite]
+lemma ite_pow' (P : Prop) [Decidable P] (a b : α) (c : β) :
     (if P then a else b) ^ c = if P then a ^ c else b ^ c := by split_ifs <;> rfl
 
 end Pow
-

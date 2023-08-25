@@ -1,22 +1,21 @@
-import Mathbin.Tactic.Positivity
+import Mathlib.Tactic.Positivity
 
 #align_import mathlib.tactic.positivity
 
 namespace Tactic
-
 open Positivity
 
 open scoped Positivity
 
-variable {R : Type _}
+variable {R : Type*}
 
-private theorem pow_nonneg_of_pos [OrderedSemiring R] {a : R} (ha : 0 < a) (n : ℕ) : 0 ≤ a ^ n :=
+private lemma pow_nonneg_of_pos [OrderedSemiring R] {a : R} (ha : 0 < a) (n : ℕ) : 0 ≤ a ^ n :=
   pow_nonneg ha.le _
 
-private theorem pow_zero_pos [OrderedSemiring R] [Nontrivial R] (a : R) : 0 < a ^ 0 :=
+private lemma pow_zero_pos [OrderedSemiring R] [Nontrivial R] (a : R) : 0 < a ^ 0 :=
   zero_lt_one.trans_le (pow_zero a).ge
 
-private theorem zpow_zero_pos [LinearOrderedSemifield R] (a : R) : 0 < a ^ (0 : ℤ) :=
+private lemma zpow_zero_pos [LinearOrderedSemifield R] (a : R) : 0 < a ^ (0 : ℤ) :=
   zero_lt_one.trans_le (zpow_zero a).ge
 
 -- PLEASE REPORT THIS TO MATHPORT DEVS, THIS SHOULD NOT HAPPEN.
@@ -126,4 +125,3 @@ private theorem zpow_zero_pos [LinearOrderedSemifield R] (a : R) : 0 < a ^ (0 : 
       | e => pp e >>= fail ∘ format.bracket "The expression `" "` isn't of the form `a ^ n`"
 
 end Tactic
-

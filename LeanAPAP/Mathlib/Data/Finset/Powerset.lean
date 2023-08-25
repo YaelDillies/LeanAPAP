@@ -1,4 +1,4 @@
-import Mathbin.Data.Finset.Powerset
+import Mathlib.Data.Finset.Powerset
 
 #align_import mathlib.data.finset.powerset
 
@@ -8,16 +8,13 @@ import Mathbin.Data.Finset.Powerset
 Rename `finset.powerset_len_empty` to `finset.powerset_len_eq_empty`
 -/
 
-
 namespace Finset
-
-variable {α : Type _}
+variable {α : Type*}
 
 attribute [simp] mem_powerset_len
 
-theorem powersetLen_empty_subsingleton (n : ℕ) :
+lemma powersetLen_empty_subsingleton (n : ℕ) :
     (powersetLen n (∅ : Finset α) : Set <| Finset α).Subsingleton := by
   simp [Set.Subsingleton, subset_empty]
 
 end Finset
-

@@ -1,7 +1,7 @@
-import Mathbin.Data.Real.Sqrt
-import Project.Mathlib.Data.Real.Nnreal
-import Project.Mathlib.Algebra.BigOperators.Order
-import Project.Mathlib.GroupTheory.Submonoid.Basic
+import Mathlib.Data.Real.Sqrt
+import LeanAPAP.Mathlib.Data.Real.Nnreal
+import LeanAPAP.Mathlib.Algebra.BigOperators.Order
+import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
 
 #align_import mathlib.data.real.sqrt
 
@@ -11,7 +11,7 @@ open scoped BigOperators NNReal
 
 instance : StarOrderedRing ℝ≥0 :=
   { NNReal.orderedCommSemiring with
-    le_iff := fun x y => by
+    le_iff := λ x y => by
       constructor; swap
       · rintro ⟨p, hp, rfl⟩
         exact le_self_add
@@ -19,7 +19,7 @@ instance : StarOrderedRing ℝ≥0 :=
       rintro ⟨p, hp, h⟩
       refine'
         ⟨⟨p,
-            (AddSubmonoid.closure_le.2 (range_subset_iff.2 fun x => _) hp :
+            (AddSubmonoid.closure_le.2 (range_subset_iff.2 λ x => _) hp :
               p ∈ AddSubmonoid.nonneg ℝ)⟩,
           _, NNReal.coe_injective h⟩
       · simp [mul_self_nonneg]
@@ -30,28 +30,25 @@ instance : StarOrderedRing ℝ≥0 :=
 
 namespace Finset
 
-theorem cauchy_schwarz_sqrt {α : Type _} (s : Finset α) (f g : α → ℝ) :
+lemma cauchy_schwarz_sqrt {α : Type*} (s : Finset α) (f g : α → ℝ) :
     ∑ i in s, f i * g i ≤ (∑ i in s, f i ^ 2).sqrt * (∑ i in s, g i ^ 2).sqrt :=
-  (Real.le_sqrt_of_sq_le <| sum_hMul_sq_le_sq_hMul_sq _ _ _).trans_eq <|
-    Real.sqrt_mul (sum_nonneg fun _ _ => sq_nonneg _) _
+  (Real.le_sqrt_of_sq_le <| sum_mul_sq_le_sq_mul_sq _ _ _).trans_eq <|
+    Real.sqrt_mul (sum_nonneg λ _ _ => sq_nonneg _) _
 
 end Finset
 
 namespace NNReal
-
 variable {x : ℝ≥0}
 
 @[simp]
-theorem one_le_sqrt : 1 ≤ x.sqrt ↔ 1 ≤ x := by rw [← sqrt_one, sqrt_le_sqrt_iff, sqrt_one]
+lemma one_le_sqrt : 1 ≤ x.sqrt ↔ 1 ≤ x := by rw [← sqrt_one, sqrt_le_sqrt_iff, sqrt_one]
 
 end NNReal
 
 namespace Real
-
 variable {x y : ℝ}
 
-theorem sqrt_le_sqrt_iff' (hx : 0 < x) : x.sqrt ≤ y.sqrt ↔ x ≤ y :=
-  by
+lemma sqrt_le_sqrt_iff' (hx : 0 < x) : x.sqrt ≤ y.sqrt ↔ x ≤ y := by
   obtain hy | hy := le_total y 0
   ·
     exact
@@ -60,8 +57,7 @@ theorem sqrt_le_sqrt_iff' (hx : 0 < x) : x.sqrt ≤ y.sqrt ↔ x ≤ y :=
   · exact sqrt_le_sqrt_iff hy
 
 @[simp]
-theorem one_le_sqrt : 1 ≤ x.sqrt ↔ 1 ≤ x := by
+lemma one_le_sqrt : 1 ≤ x.sqrt ↔ 1 ≤ x := by
   rw [← sqrt_one, sqrt_le_sqrt_iff' zero_lt_one, sqrt_one]
 
 end Real
-
