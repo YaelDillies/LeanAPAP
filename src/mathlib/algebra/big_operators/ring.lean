@@ -1,6 +1,6 @@
 import algebra.big_operators.ring
 import data.fintype.big_operators
-import data.fintype.card
+import data.fintype.prod
 
 /-!
 ## TODO
@@ -50,6 +50,10 @@ variables {α β : Type*} [fintype α] [comm_semiring β]
 
 lemma sum_pow (f : α → β) (n : ℕ) : (∑ a, f a) ^ n = ∑ p : fin n → α, ∏ i, f (p i) :=
 by simp [finset.sum_pow']
+
+lemma sum_mul_sum {ι₁ : Type*} {ι₂ : Type*} [fintype ι₁] [fintype ι₂] (f₁ : ι₁ → β) (f₂ : ι₂ → β) :
+  (∑ x₁, f₁ x₁) * (∑ x₂, f₂ x₂) = ∑ p : ι₁ × ι₂, f₁ p.1 * f₂ p.2 :=
+finset.sum_mul_sum _ _ _ _
 
 end fintype
 

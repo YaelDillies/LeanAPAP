@@ -247,7 +247,7 @@ begin
     (λ ψ₁ ψ₂, L2inner_eq_zero_iff_ne.2),
 end
 
-noncomputable instance fintype_add_char [finite G] : fintype (add_char G R) :=
+noncomputable instance [finite G] : fintype (add_char G R) :=
 @fintype.of_finite _ (add_char.linear_independent G R).finite'
 
 @[simp] lemma card_add_char_le [fintype G] : card (add_char G R) ≤ card G :=

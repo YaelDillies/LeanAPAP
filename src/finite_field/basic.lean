@@ -1,5 +1,6 @@
 import physics.unbalancing
 import prereqs.convolution.norm
+import prereqs.dft
 import prereqs.misc
 
 /-!
@@ -31,8 +32,8 @@ begin
     ... ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[↑(1 - p⁻¹ : ℝ≥0)⁻¹]
         : abs_L2inner_le_Lpnorm_mul_Lpnorm ⟨by exact_mod_cast hp, _⟩ _ _
     ... ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-p⁻¹ : ℝ) * γ ^ (-p⁻¹ : ℝ))
-        : mul_le_mul (Lpnorm_conv_le_Lpnorm_dconv $ even_two_mul _) _ (by positivity)
-            (by positivity)
+        : mul_le_mul (Lpnorm_conv_le_Lpnorm_dconv' (by positivity) (even_two_mul _) _) _
+            (by positivity) (by positivity)
     ... = ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈γ.curlog⌉₊), const _ (card G)⁻¹]
             * γ ^ (-p⁻¹ : ℝ) : _
     ... ≤ _ : mul_le_mul_of_nonneg_left _ $ by positivity,

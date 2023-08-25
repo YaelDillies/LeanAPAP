@@ -103,6 +103,4 @@ end
 lemma L1norm_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ○ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] :=
 by simpa using L1norm_conv hf (conjneg_nonneg.2 hg)
 
-lemma Lpnorm_conv_le_Lpnorm_dconv (hn : even n) : ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := sorry
-
 end real
