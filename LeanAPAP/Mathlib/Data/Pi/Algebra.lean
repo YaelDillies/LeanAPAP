@@ -1,4 +1,4 @@
-import Mathbin.Data.Pi.Algebra
+import Mathlib.Data.Pi.Algebra
 
 #align_import mathlib.data.pi.algebra
 
@@ -8,14 +8,11 @@ import Mathbin.Data.Pi.Algebra
 Replace the `pi.const_...` lemmas.
 -/
 
-
-variable {α β : Type _}
+variable {α β : Type*}
 
 namespace Function
 
 @[to_additive]
-theorem const_hMul [Mul β] (a b : β) : const α (a * b) = const α a * const α b :=
-  rfl
+lemma const_mul [Mul β] (a b : β) : const α (a * b) = const α a * const α b := rfl
 
 end Function
-

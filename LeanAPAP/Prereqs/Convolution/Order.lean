@@ -1,5 +1,5 @@
-import Project.Mathlib.Algebra.Star.Order
-import Project.Prereqs.Convolution.Basic
+import LeanAPAP.Mathlib.Algebra.Star.Order
+import LeanAPAP.Prereqs.Convolution.Basic
 
 #align_import prereqs.convolution.order
 
@@ -7,73 +7,67 @@ open Finset Function Real
 
 open scoped BigOperators ComplexConjugate NNReal Pointwise
 
-variable {α β : Type _} [Fintype α] [DecidableEq α] [AddCommGroup α]
+variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 
 section OrderedCommSemiring
-
 variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
 
-theorem conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g := fun a =>
-  sum_nonneg fun x _ => mul_nonneg (hf _) (hg _)
+lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g := λ a =>
+  sum_nonneg λ x _ => mul_nonneg (hf _) (hg _)
 
-theorem dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g := fun a =>
-  sum_nonneg fun x _ => mul_nonneg (hf _) <| star_nonneg.2 <| hg _
+lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g := λ a =>
+  sum_nonneg λ x _ => mul_nonneg (hf _) <| star_nonneg.2 <| hg _
 
 end OrderedCommSemiring
 
 section StrictOrderedCommSemiring
-
 variable [StrictOrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
 
 --TODO: Those can probably be generalised to `ordered_comm_semiring` but we don't really care
 @[simp]
-theorem support_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ∗ g) = support f + support g :=
-  by
+lemma support_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ∗ g) = support f + support g := by
   refine' (support_conv_subset _ _).antisymm _
   rintro _ ⟨a, b, ha, hb, rfl⟩
   dsimp
   rw [conv_apply_add]
   exact
     ne_of_gt
-      (sum_pos' (fun c _ => mul_nonneg (hf _) <| hg _)
+      (sum_pos' (λ c _ => mul_nonneg (hf _) <| hg _)
         ⟨0, mem_univ _,
           mul_pos ((hf _).lt_of_ne' <| by simpa using ha) ((hg _).lt_of_ne' <| by simpa using hb)⟩)
 
 @[simp]
-theorem support_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ○ g) = support f - support g := by
+lemma support_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ○ g) = support f - support g := by
   simpa [sub_eq_add_neg] using support_conv hf (conjneg_nonneg.2 hg)
 
-theorem conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g :=
-  by
+lemma conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by
   rw [Pi.lt_def] at hf hg ⊢
   obtain ⟨hf, a, ha⟩ := hf
   obtain ⟨hg, b, hb⟩ := hg
   refine' ⟨conv_nonneg hf hg, a + b, _⟩
   rw [conv_apply_add]
-  exact sum_pos' (fun c _ => mul_nonneg (hf _) <| hg _) ⟨0, by simpa using mul_pos ha hb⟩
+  exact sum_pos' (λ c _ => mul_nonneg (hf _) <| hg _) ⟨0, by simpa using mul_pos ha hb⟩
 
-theorem dconv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by
+lemma dconv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by
   rw [← conv_conjneg] <;> exact conv_pos hf (conjneg_pos.2 hg)
 
 end StrictOrderedCommSemiring
 
 section OrderedCommSemiring
-
 variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β} {n : ℕ}
 
 @[simp]
-theorem iterConv_nonneg (hf : 0 ≤ f) : ∀ {n}, 0 ≤ f ∗^ n
-  | 0 => fun _ => by dsimp <;> split_ifs <;> norm_num
+lemma iterConv_nonneg (hf : 0 ≤ f) : ∀ {n}, 0 ≤ f ∗^ n
+  | 0 => λ _ => by dsimp <;> split_ifs <;> norm_num
   | n + 1 => conv_nonneg hf iterConv_nonneg
 
 end OrderedCommSemiring
 
 section StrictOrderedCommSemiring
-
 variable [StrictOrderedCommSemiring β] [StarOrderedRing β] {f g : α → β} {n : ℕ}
 
 @[simp]
-theorem iterConv_pos (hf : 0 < f) : ∀ {n}, 0 < f ∗^ n
+lemma iterConv_pos (hf : 0 < f) : ∀ {n}, 0 < f ∗^ n
   | 0 => Pi.lt_def.2 ⟨iterConv_nonneg hf.le, 0, by simp⟩
   | n + 1 => conv_pos hf iterConv_pos
 
@@ -85,16 +79,16 @@ section
 
 variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
 
-private theorem conv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
+private lemma conv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
   conv_nonneg hf.le hg
 
-private theorem conv_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ∗ g :=
+private lemma conv_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ∗ g :=
   conv_nonneg hf hg.le
 
-private theorem dconv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
+private lemma dconv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
   dconv_nonneg hf.le hg
 
-private theorem dconv_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ○ g :=
+private lemma dconv_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ f ○ g :=
   dconv_nonneg hf hg.le
 
 end
@@ -238,4 +232,3 @@ example (hf : 0 < f) (n : ℕ) : 0 < f ∗^ n := by positivity
 example (hf : 0 ≤ f) (n : ℕ) : 0 ≤ f ∗^ n := by positivity
 
 end Tactic
-

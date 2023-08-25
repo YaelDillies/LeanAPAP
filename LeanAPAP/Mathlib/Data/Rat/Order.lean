@@ -1,19 +1,18 @@
-import Mathbin.Data.Rat.Order
-import Mathbin.Tactic.Positivity
+import Mathlib.Data.Rat.Order
+import Mathlib.Tactic.Positivity
 
 #align_import mathlib.data.rat.order
 
 namespace Rat
-
 variable {q : ℚ}
 
 #print Rat.num_eq_zero /-
 @[simp]
-theorem num_eq_zero : q.num = 0 ↔ q = 0 :=
+lemma num_eq_zero : q.num = 0 ↔ q = 0 :=
   zero_iff_num_zero.symm
 -/
 
-theorem num_ne_zero : q.num ≠ 0 ↔ q ≠ 0 :=
+lemma num_ne_zero : q.num ≠ 0 ↔ q ≠ 0 :=
   num_eq_zero.Not
 
 alias num_nonneg := num_nonneg_iff_zero_le
@@ -22,7 +21,7 @@ alias num_pos := num_pos_iff_pos
 
 #print Rat.den_pos /-
 @[simp]
-theorem den_pos (q : ℚ) : 0 < q.den :=
+lemma den_pos (q : ℚ) : 0 < q.den :=
   pos_iff_ne_zero.2 q.den_nz
 -/
 
@@ -31,7 +30,6 @@ end Rat
 open Rat
 
 namespace Tactic
-
 open Positivity
 
 /- ./././Mathport/Syntax/Translate/Tactic/Basic.lean:87:10: unsupported modifiers in user command -/
@@ -68,4 +66,3 @@ example (hq : q ≠ 0) : q.num ≠ 0 := by positivity
 example : 0 < q.den := by positivity
 
 end Tactic
-
