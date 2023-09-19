@@ -1,7 +1,5 @@
 import Mathlib.Algebra.GroupPower.Order
 
-#align_import mathlib.algebra.group_power.order
-
 variable {α : Type*}
 
 section OrderedSemiring

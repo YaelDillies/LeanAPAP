@@ -1,8 +1,6 @@
 import Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.LinearAlgebra.Ray
 
-#align_import mathlib.analysis.normed_space.ray
-
 section NormedAddCommGroup
 variable {E : Type*} [NormedAddCommGroup E]
 

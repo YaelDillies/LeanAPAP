@@ -1,14 +1,14 @@
 import Mathlib.Algebra.Star.Pi
 
-#align_import mathlib.algebra.star.pi
-
 open scoped ComplexConjugate
 
+-- TODO: Rename `Pi.instStarRingForAllNonUnitalNonAssocSemiringToNonUnitalNonAssocSemiring`
+alias Pi.instStarRing := Pi.instStarRingForAllNonUnitalNonAssocSemiringToNonUnitalNonAssocSemiring
 --TODO: This is a hack to help Lean synthesize the instance. It has nothing to do with type
--- dependency. Rather, it seems to be about the `non_unital_semiring` structure on `α`.
-instance Function.starRing {ι α : Type*} [CommSemiring α] [StarRing α] : StarRing (ι → α) :=
-  Pi.starRing
+-- dependency. Rather, it seems to be about the `NonUnitalSemiring` structure on `α`.
+instance Function.instStarRing {ι α : Type*} [CommSemiring α] [StarRing α] : StarRing (ι → α) :=
+  Pi.instStarRing
 
 @[simp]
 lemma Pi.conj_apply {ι : Type*} {α : ι → Type*} [∀ i, CommSemiring (α i)] [∀ i, StarRing (α i)]
-    (f : ∀ i, α i) (i : ι) : @starRingEnd (∀ i, α i) _ (@Pi.starRing ι α _ _) f i = conj (f i) := rfl
+    (f : ∀ i, α i) (i : ι) : @starRingEnd (∀ i, α i) _ (@Pi.instStarRing ι α _ _) f i = conj (f i) := rfl

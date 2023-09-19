@@ -1,7 +1,5 @@
 import Mathlib.Data.Fintype.Lattice
 
-#align_import mathlib.data.fintype.lattice
-
 namespace Finset
 
 lemma mem_inf {α β} [Fintype β] [DecidableEq β] {s : Finset α} {f : α → Finset β} {x : β} :

@@ -1,68 +1,54 @@
 import Mathlib.Data.Rat.Order
 import Mathlib.Tactic.Positivity
 
-#align_import mathlib.data.rat.order
-
 namespace Rat
 variable {q : ℚ}
 
-#print Rat.num_eq_zero /-
-@[simp]
-lemma num_eq_zero : q.num = 0 ↔ q = 0 :=
-  zero_iff_num_zero.symm
--/
-
-lemma num_ne_zero : q.num ≠ 0 ↔ q ≠ 0 :=
-  num_eq_zero.Not
+lemma num_ne_zero : q.num ≠ 0 ↔ q ≠ 0 := num_eq_zero.not
 
 alias num_nonneg := num_nonneg_iff_zero_le
-
 alias num_pos := num_pos_iff_pos
-
-#print Rat.den_pos /-
-@[simp]
-lemma den_pos (q : ℚ) : 0 < q.den :=
-  pos_iff_ne_zero.2 q.den_nz
--/
 
 end Rat
 
 open Rat
 
-namespace Tactic
-open Positivity
+namespace Mathlib.Meta.Positivity
+open Lean Meta Qq Function
 
-/- ./././Mathport/Syntax/Translate/Tactic/Basic.lean:87:10: unsupported modifiers in user command -/
-alias ⟨_, num_pos_of_pos⟩ := num_pos
+private alias ⟨_, num_pos_of_pos⟩ := num_pos
+private alias ⟨_, num_nonneg_of_nonneg⟩ := num_nonneg
+private alias ⟨_, num_ne_zero_of_ne_zero⟩ := num_ne_zero
 
-/- ./././Mathport/Syntax/Translate/Tactic/Basic.lean:87:10: unsupported modifiers in user command -/
-alias ⟨_, num_nonneg_of_nonneg⟩ := num_nonneg
+/-- The `positivity` extension which identifies expressions of the form `Rat.num a`,
+such that `positivity` successfully recognises `a`. -/
+@[positivity Rat.num _]
+def evalRatnum : PositivityExt where eval _zα _pα (e : Q(ℤ)) := do
+  let ~q(Rat.num $a) := e | throwError "not Rat.num"
+  let zα' : Q(Zero ℚ) := q(inferInstance)
+  let pα' : Q(PartialOrder ℚ) := q(inferInstance)
+  -- TODO: what's the right way to write these `: Expr`s?
+  match ← core zα' pα' a with
+  | .positive pa =>
+    return .positive (q(num_pos_of_pos $pa) : Expr)
+  | .nonnegative pa =>
+    return .nonnegative (q(num_nonneg_of_nonneg $pa) : Expr)
+  | .nonzero pa =>
+    return .nonzero (q(num_ne_zero_of_ne_zero $pa) : Expr)
+  | .none =>
+    return .none
 
-/- ./././Mathport/Syntax/Translate/Tactic/Basic.lean:87:10: unsupported modifiers in user command -/
-alias ⟨_, num_ne_zero_of_ne_zero⟩ := num_ne_zero
-
-/-- Extension for the `positivity` tactic: `int.floor` is nonnegative if its input is. -/
-@[positivity]
-unsafe def positivity_num_denom : expr → tactic strictness
-  | q(Rat.num $(a)) => do
-    let strictness_a ← core a
-    match strictness_a with
-      | positive p => positive <$> mk_app `` num_pos_of_pos [p]
-      | nonnegative p => nonnegative <$> mk_app `` num_nonneg_of_nonneg [p]
-      | nonzero p => nonzero <$> mk_mapp `` num_ne_zero_of_ne_zero [none, p]
-  | q(Rat.den $(a)) => positive <$> mk_app `` denom_pos [a]
-  | e =>
-    pp e >>=
-      fail ∘ format.bracket "The expression `" "` is not of the form `rat.num q` or `rat.denom q`"
+/-- The `positivity` extension which identifies expressions of the form `Rat.den a`. -/
+@[positivity Rat.den _]
+def evalRatden : PositivityExt where eval _zα _pα (e : Q(ℕ)) := do
+  let ~q(Rat.den $a) := e | throwError "not Rat.den"
+  return .positive (q(den_pos $a) :)
 
 variable {q : ℚ}
 
 example (hq : 0 < q) : 0 < q.num := by positivity
-
 example (hq : 0 ≤ q) : 0 ≤ q.num := by positivity
-
 example (hq : q ≠ 0) : q.num ≠ 0 := by positivity
-
 example : 0 < q.den := by positivity
 
-end Tactic
+end Mathlib.Meta.Positivity

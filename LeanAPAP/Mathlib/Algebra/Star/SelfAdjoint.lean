@@ -1,8 +1,6 @@
 import Mathlib.Algebra.Star.SelfAdjoint
 import Mathlib.Algebra.Star.Pi
 
-#align_import mathlib.algebra.star.self_adjoint
-
 open Function
 
 open scoped ComplexConjugate
@@ -20,9 +18,8 @@ end CommSemiring
 namespace Pi
 variable {ι : Type*} {α : ι → Type*} [∀ i, Star (α i)] {f : ∀ i, α i}
 
-protected lemma isSelfAdjoint : IsSelfAdjoint f ↔ ∀ i, IsSelfAdjoint (f i) :=
-  funext_iff
+protected lemma isSelfAdjoint : IsSelfAdjoint f ↔ ∀ i, IsSelfAdjoint (f i) := funext_iff
 
-alias ⟨_root_.is_self_adjoint.apply, _⟩ := Pi.isSelfAdjoint
+alias ⟨_root_.IsSelfAdjoint.apply, _⟩ := Pi.isSelfAdjoint
 
 end Pi

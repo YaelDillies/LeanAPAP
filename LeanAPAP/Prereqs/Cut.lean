@@ -4,8 +4,6 @@ import Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Data.Finset.NatAntidiagonal
 
-#align_import prereqs.cut
-
 noncomputable section
 
 variable {ι α : Type*} [DecidableEq ι]
@@ -18,30 +16,27 @@ open scoped BigOperators Pointwise
 /--
 Functions defined only on `s`, which sum to `n`. In other words, a partition of `n` indexed by `s`.
 Every function in here is finitely supported, and the support is a subset of `s`.
-This should be thought of as a generalisation of `finset.nat.antidiagonal_tuple` where
-`antidiagonal_tuple k n` is the same thing as `cut (s : finset.univ (fin k)) n`.
+This should be thought of as a generalisation of `finset.Nat.antidiagonalTuple` where
+`antidiagonalTuple k n` is the same thing as `cut (s : finset.univ (fin k)) n`.
 -/
 def cut (s : Finset ι) (n : ℕ) : Finset (ι → ℕ) :=
-  Finset.filter (λ f => s.Sum f = n)
-    ((s.pi λ _ => range (n + 1)).map
-      ⟨λ f i => if h : i ∈ s then f i h else 0, λ f g h => by ext i hi;
-        simpa [dif_pos hi] using congr_λ h i⟩)
+  Finset.filter (λ f ↦ s.sum f = n) ((s.pi λ _ ↦ range (n + 1)).map
+    ⟨λ f i ↦ if h : i ∈ s then f i h else 0, λ f g h ↦ by
+      ext i hi; simpa [dif_pos hi] using congr_fun h i⟩)
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:635:2: warning: expanding binder collection (i «expr ∉ » s) -/
 lemma mem_cut (s : Finset ι) (n : ℕ) (f : ι → ℕ) :
-    f ∈ cut s n ↔ s.Sum f = n ∧ ∀ (i) (_ : i ∉ s), f i = 0 := by
-  rw [cut, mem_filter, and_comm', and_congr_right]
+    f ∈ cut s n ↔ s.sum f = n ∧ ∀ i, i ∉ s → f i = 0 := by
+  rw [cut, mem_filter, and_comm, and_congr_right]
   intro h
   simp only [mem_map, exists_prop, Function.Embedding.coeFn_mk, mem_pi]
-  refine' ⟨_, λ hf => ⟨λ i hi => f i, λ i hi => _, _⟩⟩
-  · rintro ⟨_, _, rfl⟩ _ _
-    simp [dif_neg H]
-  · rw [mem_range, Nat.lt_succ_iff, ← h]
-    apply single_le_sum _ hi
-    simp
+  refine' ⟨_, λ hf ↦ ⟨λ i _ ↦ f i, λ i hi ↦ _, _⟩⟩
+  · rintro ⟨_, _, rfl⟩ i hi
+    simp [dif_neg hi]
+  · rw [mem_range, Nat.lt_succ_iff, ←h]
+    exact single_le_sum (λ _ _ ↦ zero_le _) hi
   · ext
     rw [dite_eq_ite, ite_eq_left_iff, eq_comm]
-    exact hf x
+    exact hf _
 
 lemma cut_equiv_antidiag (n : ℕ) :
     Equiv.finsetCongr (Equiv.boolArrowEquivProd _) (cut univ n) = Nat.antidiagonal n := by
@@ -51,11 +46,10 @@ lemma cut_equiv_antidiag (n : ℕ) :
   simp [mem_cut, add_comm]
 
 lemma cut_univ_fin_eq_antidiagonalTuple (n k : ℕ) : cut univ n = Nat.antidiagonalTuple k n := by
-  ext; simp [nat.mem_antidiagonal_tuple, mem_cut]
+  ext; simp [Nat.mem_antidiagonalTuple, mem_cut]
 
 /-- There is only one `cut` of 0. -/
-@[simp]
-lemma cut_zero (s : Finset ι) : cut s 0 = {0} := by
+@[simp] lemma cut_zero (s : Finset ι) : cut s 0 = {0} := by
   -- In general it's nice to prove things using `mem_cut` but in this case it's easier to just
   -- use the definition.
   rw [cut, range_one, pi_const_singleton, map_singleton, Function.Embedding.coeFn_mk,
@@ -65,41 +59,33 @@ lemma cut_zero (s : Finset ι) : cut s 0 = {0} := by
   intro x hx
   apply dif_pos hx
 
-@[simp]
-lemma cut_empty_succ (n : ℕ) : cut (∅ : Finset ι) (n + 1) = ∅ :=
-  eq_empty_of_forall_not_mem λ x hx => by simpa using hx
+@[simp] lemma cut_empty_succ (n : ℕ) : cut (∅ : Finset ι) (n + 1) = ∅ :=
+  eq_empty_of_forall_not_mem λ x ↦ by simp [mem_cut, @eq_comm _ 0]
 
-lemma cut_insert (n : ℕ) (a : ι) (s : Finset ι) (h : a ∉ s) : by
-    classical exact
-      cut (insert a s) n =
-        (nat.antidiagonal n).biUnion λ p : ℕ × ℕ =>
-          (cut s p.snd).map
-            ⟨λ f => f + λ t => if t = a then p.fst else 0, add_left_injective _⟩ := by
+lemma cut_insert [DecidableEq (ι → ℕ)] (n : ℕ) (a : ι) (s : Finset ι) (h : a ∉ s) :
+    cut (insert a s) n = (Nat.antidiagonal n).biUnion λ p : ℕ × ℕ ↦ (cut s p.snd).map
+      (addLeftEmbedding λ t ↦ if t = a then p.fst else 0) := by
   ext f
-  rw [mem_cut, mem_bUnion, sum_insert h]
+  rw [mem_cut, mem_biUnion, sum_insert h]
   constructor
   · rintro ⟨rfl, h₁⟩
-    simp only [exists_prop, Function.Embedding.coeFn_mk, mem_map, nat.mem_antidiagonal, Prod.exists]
-    refine' ⟨f a, s.sum f, rfl, λ i => if i = a then 0 else f i, _, _⟩
+    simp only [exists_prop, Function.Embedding.coeFn_mk, mem_map, Nat.mem_antidiagonal, Prod.exists]
+    refine' ⟨f a, s.sum f, rfl, λ i ↦ if i = a then 0 else f i, _, _⟩
     · rw [mem_cut]
       refine' ⟨_, _⟩
       · rw [sum_ite]
-        have : Filter (λ x => x ≠ a) s = s :=
-          by
-          apply filter_true_of_mem
-          rintro i hi rfl
-          apply h hi
+        have : filter (· ≠ a) s = s := by apply filter_true_of_mem; rintro i hi rfl; apply h hi
         simp [this]
       · intro i hi
         rw [ite_eq_left_iff]
         intro hne
         apply h₁
         simp [not_or, hne, hi]
-    · ext
+    · ext x
       obtain rfl | h := eq_or_ne x a
       · simp
       · simp [if_neg h]
-  · simp only [mem_insert, Function.Embedding.coeFn_mk, mem_map, nat.mem_antidiagonal, Prod.exists,
+  · simp only [mem_insert, Function.Embedding.coeFn_mk, mem_map, Nat.mem_antidiagonal, Prod.exists,
       exists_prop, mem_cut, not_or]
     rintro ⟨p, q, rfl, g, ⟨rfl, hg₂⟩, rfl⟩
     refine' ⟨_, _⟩
@@ -108,34 +94,34 @@ lemma cut_insert (n : ℕ) (a : ι) (s : Finset ι) (h : a ∉ s) : by
       simp [if_neg h₁, hg₂ _ h₂]
 
 lemma cut_insert_disjoint_bUnion (n : ℕ) (a : ι) (s : Finset ι) (h : a ∉ s) :
-    (n.antidiagonal : Set (ℕ × ℕ)).PairwiseDisjoint λ p : ℕ × ℕ =>
-      (cut s p.snd).map ⟨λ f => f + λ t => if t = a then p.fst else 0, add_left_injective _⟩ := by
+    (Nat.antidiagonal n : Set (ℕ × ℕ)).PairwiseDisjoint λ p : ℕ × ℕ ↦
+      (cut s p.snd).map (addLeftEmbedding λ t ↦ if t = a then p.fst else 0) := by
   simp only [Set.PairwiseDisjoint, Function.onFun_apply, Finset.disjoint_iff_ne, mem_map,
     Function.Embedding.coeFn_mk, Ne.def, forall_exists_index, Set.Pairwise, mem_coe, mem_cut,
     and_imp]
   rintro x hx y hy h' f g hg hg' rfl _ f hf hf' e rfl
-  rw [nat.antidiagonal_congr' hx hy] at h'
-  simp only [Function.funext_iff, Pi.add_apply] at e
-  replace e := sum_congr rfl λ i (_ : i ∈ s) => e i
+  rw [Nat.antidiagonal_congr' hx hy] at h'
+  simp only [Function.funext_iff, Pi.add_apply, addLeftEmbedding_apply] at e
+  replace e := sum_congr rfl λ i (_ : i ∈ s) ↦ e i
   rw [sum_add_distrib, hf, sum_ite_eq', if_neg h, sum_add_distrib, hg, sum_ite_eq', if_neg h,
-    add_zero, add_zero] at e
+    zero_add, zero_add] at e
   exact h' e.symm
 
-lemma nsmul_cut (s : Finset ι) (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
+lemma nsmul_cut [DecidableEq (ι → ℕ)] (s : Finset ι) (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
     @SMul.smul _ _ Finset.smulFinset n (cut s m) =
-      (cut s (n * m)).filterₓ λ f : ι → ℕ => ∀ i ∈ s, n ∣ f i := by
-  classical
+      (cut s (n * m)).filter λ f : ι → ℕ ↦ ∀ i ∈ s, n ∣ f i := by
   ext f
+  refine' mem_smul_finset.trans _
   simp only [mem_smul_finset, mem_filter, mem_cut, Function.Embedding.coeFn_mk, exists_prop,
-    and_assoc']
+    and_assoc]
   constructor
   · rintro ⟨f, rfl, hf, rfl⟩
-    simpa [← mul_sum, hn] using hf
+    simpa [←mul_sum, hn] using hf
   rintro ⟨hfsum, hfsup, hfdvd⟩
-  refine' ⟨λ i => f i / n, _⟩
-  rw [← Nat.sum_div hfdvd, hfsum, Nat.mul_div_cancel_left _ hn.bot_lt]
+  refine' ⟨λ i ↦ f i / n, _⟩
+  rw [←Nat.sum_div hfdvd, hfsum, Nat.mul_div_cancel_left _ hn.bot_lt]
   simp only [eq_self_iff_true, true_and_iff, Function.funext_iff]
-  refine' ⟨λ i hi => _, λ i => _⟩
+  refine' ⟨λ i hi ↦ _, λ i ↦ _⟩
   · rw [hfsup _ hi, Nat.zero_div]
   dsimp
   by_cases i ∈ s
@@ -143,18 +129,18 @@ lemma nsmul_cut (s : Finset ι) (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
   · rw [hfsup _ h, Nat.zero_div, MulZeroClass.mul_zero]
 
 lemma map_nsmul_cut (s : Finset ι) (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
-    (cut s m).map
-        ⟨(· • ·) n, λ f g h => funext λ i => mul_right_injective₀ hn (congr_λ h i)⟩ =
-      (cut s (n * m)).filterₓ λ f : ι → ℕ => ∀ i ∈ s, n ∣ f i := by rw [map_eq_image]; exact nsmul_cut _ _ hn
+    (cut s m).map ⟨(n • ·) , λ f g h ↦ funext λ i ↦ mul_right_injective₀ hn (congr_fun h i)⟩
+      = (cut s (n * m)).filter λ f : ι → ℕ ↦ ∀ i ∈ s, n ∣ f i := by
+  classical rw [map_eq_image]; exact nsmul_cut _ _ hn
 
 lemma nsmul_cut_univ [Fintype ι] (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
     @SMul.smul _ _ Finset.smulFinset n (cut univ m) =
-      (cut univ (n * m)).filterₓ λ f : ι → ℕ => ∀ i, n ∣ f i := by
+      (cut univ (n * m)).filter λ f : ι → ℕ ↦ ∀ i, n ∣ f i := by
   have := nsmul_cut (univ : Finset ι) m hn
   simp at this
   convert this
 
 lemma map_nsmul_cut_univ [Fintype ι] (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
     (cut (univ : Finset ι) m).map
-        ⟨(· • ·) n, λ f g h => funext λ i => mul_right_injective₀ hn (congr_λ h i)⟩ =
-      (cut univ (n * m)).filterₓ λ f : ι → ℕ => ∀ i, n ∣ f i := by simpa using map_nsmul_cut (univ : Finset ι) m hn
+        ⟨(n • ·), λ f g h ↦ funext λ i ↦ mul_right_injective₀ hn (congr_fun h i)⟩ =
+      (cut univ (n * m)).filter λ f : ι → ℕ ↦ ∀ i, n ∣ f i := by simpa using map_nsmul_cut (univ : Finset ι) m hn
