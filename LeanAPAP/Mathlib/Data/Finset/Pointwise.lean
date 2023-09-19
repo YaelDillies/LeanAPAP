@@ -2,8 +2,6 @@ import Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import Mathlib.GroupTheory.GroupAction.Pi
 
-#align_import mathlib.data.finset.pointwise
-
 open Finset
 
 open scoped Pointwise
@@ -18,7 +16,7 @@ variable [InvolutiveInv α] {s : Finset α} {a : α}
 lemma mem_inv' : a ∈ s⁻¹ ↔ a⁻¹ ∈ s := by simp [mem_inv, inv_eq_iff_eq_inv]
 
 @[to_additive (attr := simp)]
-lemma inv_univ [Fintype α] : (univ : Finset α)⁻¹ = univ := by ext <;> simp
+lemma inv_univ [Fintype α] : (univ : Finset α)⁻¹ = univ := by ext; simp
 
 end InvolutiveInv
 

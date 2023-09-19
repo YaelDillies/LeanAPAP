@@ -1,7 +1,5 @@
 import LeanAPAP.Prereqs.Convolution.Basic
 
-#align_import prereqs.convolution.with_conv
-
 /-!
 # The ring of functions under convolution
 
@@ -25,111 +23,65 @@ convolution as multiplication.
 -/
 
 /-- Type synonym for the functions `α → β` where multiplication is given by convolution. -/
-def WithConv (α β : Type*) : Type* :=
-  α → β
+def WithConv (α β : Type*) := α → β
 
 /-- `to_conv` is the "identity" function from `α → β` to `with_conv α β`. -/
-@[nolint unused_arguments]
-def toConv : (α → β) ≃ WithConv α β :=
-  Equiv.refl _
+def toConv : (α → β) ≃ WithConv α β := Equiv.refl _
 
 /-- `of_conv` is the "identity" function from `with_conv α β` to `α → β`. -/
-@[nolint unused_arguments]
-def ofConv : WithConv α β ≃ (α → β) :=
-  Equiv.refl _
+def ofConv : WithConv α β ≃ (α → β) := Equiv.refl _
 
-@[simp]
-lemma toConv_symm_eq : (toConv : (α → β) ≃ WithConv α β).symm = ofConv := rfl
+@[simp] lemma toConv_symm_eq : (toConv : (α → β) ≃ WithConv α β).symm = ofConv := rfl
+@[simp] lemma ofConv_symm_eq : (ofConv : WithConv α β ≃ (α → β)).symm = toConv := rfl
+@[simp] lemma toConv_ofConv (f : WithConv α β) : toConv (ofConv f) = f := rfl
+@[simp] lemma ofConv_toConv (f : α → β) : ofConv (toConv f) = f := rfl
+@[simp] lemma toConv_inj {f g : α → β} : toConv f = toConv g ↔ f = g := Iff.rfl
+@[simp] lemma ofConv_inj {f g : WithConv α β} : ofConv f = ofConv g ↔ f = g := Iff.rfl
+@[simp] lemma toConv_apply (f : α → β) (a : α) : toConv f a = f a := rfl
+@[simp] lemma ofConv_apply (f : WithConv α β) (a : α) : ofConv f a = f a := rfl
 
-@[simp]
-lemma ofConv_symm_eq : (ofConv : WithConv α β ≃ (α → β)).symm = toConv := rfl
-
-@[simp]
-lemma toConv_ofConv (f : WithConv α β) : toConv (ofConv f) = f := rfl
-
-@[simp]
-lemma ofConv_toConv (f : α → β) : ofConv (toConv f) = f := rfl
-
-@[simp]
-lemma toConv_inj {f g : α → β} : toConv f = toConv g ↔ f = g :=
-  Iff.rfl
-
-@[simp]
-lemma ofConv_inj {f g : WithConv α β} : ofConv f = ofConv g ↔ f = g :=
-  Iff.rfl
-
-@[simp]
-lemma toConv_apply (f : α → β) (a : α) : toConv f a = f a := rfl
-
-@[simp]
-lemma ofConv_apply (f : WithConv α β) (a : α) : ofConv f a = f a := rfl
-
-@[nolint unused_arguments fintype_finite decidable_classical]
-instance [Nonempty β] : Nonempty (WithConv α β) :=
-  Pi.nonempty
+instance [Nonempty β] : Nonempty (WithConv α β) := Pi.Nonempty
 
 section CommSemiring
 variable [CommSemiring β] [StarRing β]
 
-instance : CommSemiring (WithConv α β) :=
+instance instCommSemiring : CommSemiring (WithConv α β) :=
   { Pi.addCommMonoid with
     one := toConv (Pi.single 0 1 : α → β)
-    mul := λ f g => toConv <| ofConv f ∗ ofConv g
+    mul := λ f g ↦ toConv $ ofConv f ∗ ofConv g
     mul_assoc := conv_assoc
     mul_comm := conv_comm
     mul_zero := conv_zero
     zero_mul := zero_conv
-    mul_one := λ f => funext λ a => by simp [conv_eq_sum_sub, Pi.single_apply]
-    one_mul := λ f => funext λ a => by simp [conv_eq_sum_sub', Pi.single_apply]
+    mul_one := λ f ↦ funext λ a ↦ show (ofConv f ∗ Pi.single 0 1) a = _ by
+      simp [conv_eq_sum_sub, Pi.single_apply]
+    one_mul := λ f ↦ funext λ a ↦ show (Pi.single 0 1 ∗ ofConv f) a = _ by
+      simp [conv_eq_sum_sub', Pi.single_apply]
     left_distrib := conv_add
     right_distrib := add_conv }
 
-@[nolint unused_arguments]
-instance [SMul γ β] : SMul γ (WithConv α β) :=
-  Pi.instSMul
+instance [SMul γ β] : SMul γ (WithConv α β) := Pi.instSMul
 
-@[simp]
-lemma toConv_zero : toConv (0 : α → β) = 0 := rfl
-
-@[simp]
-lemma ofConv_zero : (ofConv 0 : α → β) = 0 := rfl
-
-@[simp]
-lemma toConv_add (f g : α → β) : toConv (f + g) = toConv f + toConv g := rfl
-
-@[simp]
-lemma ofConv_add (f g : WithConv α β) : ofConv (f + g) = ofConv f + ofConv g := rfl
-
-@[simp]
-lemma toConv_smul [SMul γ β] (c : γ) (f : α → β) : toConv (c • f) = c • f := rfl
-
-@[simp]
-lemma ofConv_smul [SMul γ β] (c : γ) (f : WithConv α β) : ofConv (c • f) = c • ofConv f := rfl
-
-@[simp]
-lemma ofConv_mul (f g : WithConv α β) : ofConv (f * g) = ofConv f ∗ ofConv g := rfl
-
-@[simp]
-lemma toConv_conv (f g : α → β) : toConv (f ∗ g) = toConv f * toConv g := rfl
+@[simp] lemma toConv_zero : toConv (0 : α → β) = 0 := rfl
+@[simp] lemma ofConv_zero : (ofConv 0 : α → β) = 0 := rfl
+@[simp] lemma toConv_add (f g : α → β) : toConv (f + g) = toConv f + toConv g := rfl
+@[simp] lemma ofConv_add (f g : WithConv α β) : ofConv (f + g) = ofConv f + ofConv g := rfl
+@[simp] lemma toConv_smul [SMul γ β] (c : γ) (f : α → β) : toConv (c • f) = c • f := rfl
+@[simp] lemma ofConv_smul [SMul γ β] (c : γ) (f : WithConv α β) : ofConv (c • f) = c • ofConv f :=
+  rfl
+@[simp] lemma ofConv_mul (f g : WithConv α β) : ofConv (f * g) = ofConv f ∗ ofConv g := rfl
+@[simp] lemma toConv_conv (f g : α → β) : toConv (f ∗ g) = toConv f * toConv g := rfl
 
 end CommSemiring
 
 section CommRing
 variable [CommRing β] [StarRing β]
 
-instance : CommRing (WithConv α β) :=
-  { WithConv.commSemiring, Pi.addCommGroup with }
+instance : CommRing (WithConv α β) := { instCommSemiring, Pi.addCommGroup with }
 
-@[simp]
-lemma toConv_neg (f : α → β) : toConv (-f) = -toConv f := rfl
-
-@[simp]
-lemma ofConv_neg (f : WithConv α β) : ofConv (-f) = -ofConv f := rfl
-
-@[simp]
-lemma toConv_sub (f g : α → β) : toConv (f - g) = toConv f - toConv g := rfl
-
-@[simp]
-lemma ofConv_sub (f g : WithConv α β) : ofConv (f - g) = ofConv f - ofConv g := rfl
+@[simp] lemma toConv_neg (f : α → β) : toConv (-f) = -toConv f := rfl
+@[simp] lemma ofConv_neg (f : WithConv α β) : ofConv (-f) = -ofConv f := rfl
+@[simp] lemma toConv_sub (f g : α → β) : toConv (f - g) = toConv f - toConv g := rfl
+@[simp] lemma ofConv_sub (f g : WithConv α β) : ofConv (f - g) = ofConv f - ofConv g := rfl
 
 end CommRing

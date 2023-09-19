@@ -2,8 +2,6 @@ import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Prod
 
-#align_import mathlib.algebra.big_operators.ring
-
 /-!
 ## TODO
 
@@ -17,7 +15,7 @@ variable {ι α β : Type*}
 
 -- TODO: This is a copy of `finset.prod_univ_sum` with patched universe variables
 /-- The product over `univ` of a sum can be written as a sum over the product of sets,
-`fintype.pi_finset`. `finset.prod_sum` is an alternative statement when the product is not
+`fintype.piFinset`. `finset.prod_sum` is an alternative statement when the product is not
 over `univ` -/
 lemma prod_univ_sum' [DecidableEq α] [Fintype α] [CommSemiring β] {δ : α → Type*}
     [∀ a, DecidableEq (δ a)] {t : ∀ a, Finset (δ a)} {f : ∀ a, δ a → β} :
@@ -26,8 +24,8 @@ lemma prod_univ_sum' [DecidableEq α] [Fintype α] [CommSemiring β] {δ : α �
 
 lemma sum_prod_piFinset [DecidableEq ι] [Fintype ι] [CommSemiring β] (s : Finset α)
     (g : ι → α → β) :
-    ∑ f in Fintype.piFinset λ _ : ι => s, ∏ i, g i (f i) = ∏ i, ∑ x in s, g i x := by
-  classical rw [← @Finset.prod_univ_sum' ι]
+    ∑ f in Fintype.piFinset λ _ : ι ↦ s, ∏ i, g i (f i) = ∏ i, ∑ x in s, g i x := by
+  classical rw [←@Finset.prod_univ_sum' ι]
 
 section CommMonoid
 variable [CommMonoid β]
@@ -41,8 +39,8 @@ section CommSemiring
 variable [CommSemiring β]
 
 lemma sum_pow' (s : Finset α) (f : α → β) (n : ℕ) :
-    (∑ a in s, f a) ^ n = ∑ p in Fintype.piFinset λ i : Fin n => s, ∏ i, f (p i) := by
-  classical convert @prod_univ_sum' (Fin n) _ _ _ _ _ _ (λ i => s) λ i d => f d <;> simp
+    (∑ a in s, f a) ^ n = ∑ p in Fintype.piFinset λ _i : Fin n ↦ s, ∏ i, f (p i) := by
+  classical convert @prod_univ_sum' (Fin n) _ _ _ _ _ _ (λ _i ↦ s) λ _i d ↦ f d; simp
 
 end CommSemiring
 
@@ -69,7 +67,7 @@ protected lemma sum_div (hf : ∀ i ∈ s, n ∣ f i) : (∑ i in s, f i) / n = 
   obtain rfl | hn := n.eq_zero_or_pos
   · simp
   rw [Nat.div_eq_iff_eq_mul_left hn (dvd_sum hf), sum_mul]
-  refine' sum_congr rfl λ s hs => _
+  refine' sum_congr rfl λ s hs ↦ _
   rw [Nat.div_mul_cancel (hf _ hs)]
 
 end Nat

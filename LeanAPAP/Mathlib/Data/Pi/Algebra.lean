@@ -1,7 +1,5 @@
 import Mathlib.Data.Pi.Algebra
 
-#align_import mathlib.data.pi.algebra
-
 /-!
 ### TODO
 

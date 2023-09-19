@@ -1,8 +1,6 @@
 import Mathlib.GroupTheory.OrderOfElement
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 
-#align_import mathlib.group_theory.order_of_element
-
 /-!
 ### TODO
 
@@ -26,18 +24,18 @@ variable {α : Type*} [Group α] [Fintype α] {n : ℕ}
 
 @[to_additive (attr := simp) mod_card_nsmul]
 lemma pow_mod_card (a : α) (n : ℕ) : a ^ (n % card α) = a ^ n :=
-  mul_left_injective (a ^ (card α * (n / card α))) <| by
-    simp_rw [← pow_add, Nat.mod_add_div, pow_add, pow_mul, pow_card_eq_one, one_pow, mul_one]
+  mul_left_injective (a ^ (card α * (n / card α))) $ by
+    simp_rw [←pow_add, Nat.mod_add_div, pow_add, pow_mul, pow_card_eq_one, one_pow, mul_one]
 
 @[to_additive]
-lemma Nat.coprime.pow_bijective (hn : n.coprime (card α)) : Bijective λ a : α => a ^ n := by
+lemma Nat.coprime.pow_bijective (hn : n.coprime (card α)) : Bijective λ a : α ↦ a ^ n := by
   refine' (bijective_iff_injective_and_card _).2 ⟨_, rfl⟩
   cases subsingleton_or_nontrivial α
   · exact injective_of_subsingleton _
   obtain ⟨m, hm⟩ := Nat.exists_mul_emod_eq_one_of_coprime hn Fintype.one_lt_card
-  refine' left_inverse.injective λ a => _
-  · exact λ a => a ^ m
-  rw [← pow_mul, ← pow_mod_card, hm, pow_one]
+  refine' LeftInverse.injective λ a ↦ _
+  · exact λ a ↦ a ^ m
+  rw [←pow_mul, ←pow_mod_card, hm, pow_one]
 
 end Group
 
@@ -55,7 +53,7 @@ section LinearOrderedRing
 variable {α : Type*} [LinearOrderedRing α] {a : α}
 
 protected lemma IsOfFinOrder.eq_neg_one (ha₀ : a ≤ 0) (ha : IsOfFinOrder a) : a = -1 :=
-  (sq_eq_one_iff.1 <| ha.pow.eq_one <| sq_nonneg a).resolve_left <| by
-    rintro rfl <;> exact one_pos.not_le ha₀
+  (sq_eq_one_iff.1 $ ha.pow.eq_one $ sq_nonneg a).resolve_left $ by
+    rintro rfl; exact one_pos.not_le ha₀
 
 end LinearOrderedRing

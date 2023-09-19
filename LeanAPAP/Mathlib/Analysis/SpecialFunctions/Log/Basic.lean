@@ -1,7 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
-#align_import mathlib.analysis.special_functions.log.basic
-
 namespace Real
 variable {x y : ℝ}
 

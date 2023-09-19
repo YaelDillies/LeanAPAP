@@ -1,8 +1,6 @@
 import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.GroupTheory.GroupAction.Defs
 
-#align_import mathlib.algebra.group_power.basic
-
 section Pow
 variable {α β : Type*} [Pow α β]
 

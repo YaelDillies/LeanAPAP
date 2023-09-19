@@ -1,7 +1,5 @@
 import Mathlib.Data.Nat.Factorial.BigOperators
 
-#align_import mathlib.data.nat.factorial.big_operators
-
 open Finset
 
 open scoped Nat BigOperators
