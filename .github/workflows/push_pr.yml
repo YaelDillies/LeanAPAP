@@ -2,9 +2,12 @@ on:
   pull_request:
 
 jobs:
-  update_leanapap:
+  build_project:
     runs-on: ubuntu-latest
-    name: Update LeanAPAP
+    name: Build project
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
@@ -12,22 +15,10 @@ jobs:
           fetch-depth: 0
 
       - name: Install elan
-        run: |
-          set -o pipefail
-          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
-          ~/.elan/bin/lean --version
-          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
 
-      - name: Install python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.9
-
-      - name: Install Lean dependencies
-        run: |
-          pip install mathlibtools
+      - name: Get cache
+        run: ~/.elan/bin/lake exe cache get
 
       - name: Build project
-        run: |
-          leanproject get-mathlib-cache
-          lean --make src
+        run: ~/.elan/bin/lake build LeanAPAP

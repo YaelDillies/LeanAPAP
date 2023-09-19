@@ -1,31 +1,35 @@
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
-  update_leanapap:
+  build_project:
     runs-on: ubuntu-latest
-    name: Build LeanAPAP
+    name: Build project
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Update branch
-        if: github.ref == 'refs/heads/master'
-        uses: leanprover-contrib/update-versions-action@master
+      - name: Install elan
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
 
-      - name: Retrieve cached docker container
-        uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
-
-      - name: Build docker container
-        run: docker build -t leanapap .
+      - name: Get cache
+        run: ~/.elan/bin/lake -Kenv=dev exe cache get
 
       - name: Build project
-        run: docker run --rm -v ${{ github.workspace }}:/src leanapap
+        run: ~/.elan/bin/lake -Kenv=dev build LeanAPAP
+
+      - name: Build documentation
+        run: ~/.elan/bin/lake -Kenv=dev build LeanAPAP:docs
+
+      - name: Copy documentation
+        run: cp -R build/doc docs/
 
       - name: Remove .gitignore for gh-pages
         run: rm docs/.gitignore
