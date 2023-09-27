@@ -2,6 +2,7 @@ import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
+import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Data.Complex.Exponential
@@ -30,25 +31,25 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
   simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, IsROrC.inner_apply, map_pow]
   simp_rw [dconv_apply h, mul_sum]
   --TODO: Please make `conv` work here :(
-  have :
-    ∀ x,
-      ∀ yz ∈ univ.filter λ yz : G × G ↦ yz.1 - yz.2 = x,
-        conj ((g ○ g) x) ^ k * (h yz.1 * conj (h yz.2)) =
-          conj ((g ○ g) (yz.1 - yz.2)) ^ k * (h yz.1 * conj (h yz.2)) := by
+  have : ∀ x, ∀ yz ∈ univ.filter λ yz : G × G ↦ yz.1 - yz.2 = x,
+    conj ((g ○ g) x) ^ k * (h yz.1 * conj (h yz.2)) =
+      conj ((g ○ g) (yz.1 - yz.2)) ^ k * (h yz.1 * conj (h yz.2)) := by
     simp only [mem_filter, mem_univ, true_and_iff]
     rintro _ _ rfl
     rfl
-  simp_rw [sum_congr rfl (this _), dconv_apply_sub, sum_fiberwise, ←univ_product_univ, sum_product]
-  simp only [sum_pow', sum_mul_sum, map_mul, starRingEnd_self_apply, Fintype.piFinset_univ, ←
-    inner_self_eq_norm_sq_to_K, sum_product, IsROrC.inner_apply, map_sum, map_prod,
-    mul_mul_mul_comm, ←prod_mul_distrib]
+  refine' (sum_congr rfl λ _ _ ↦ sum_congr rfl $ this _).trans _
+  simp_rw [dconv_apply_sub, sum_fiberwise, ←univ_product_univ, sum_product]
+  simp only [sum_pow', sum_mul_sum, map_mul, starRingEnd_self_apply, Fintype.piFinset_univ,
+    ←Complex.conj_mul', sum_product, map_sum, map_prod,
+    mul_mul_mul_comm (g _), ←prod_mul_distrib]
   simp only [sum_mul, @sum_comm _ _ (Fin k → G), mul_comm (conj _)]
-  exact sum_comm
+  -- exact sum_comm
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg {f : G → ℝ} (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
     (0 : ℝ) ≤ ⟪(↑) ∘ ν, f ^ k⟫_[ℝ] := by
-  simpa [←Complex.zero_le_real, l2inner_eq_sum] using pow_inner_nonneg' hf hν k
+  -- simpa [←Complex.zero_le_real, starRingEnd_apply, l2inner_eq_sum]
+  --   using pow_inner_nonneg' hf hν k
 
 private lemma log_ε_pos (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < log (3 / ε) :=
   log_pos $ (one_lt_div hε₀).2 $ hε₁.trans_lt $ by norm_num

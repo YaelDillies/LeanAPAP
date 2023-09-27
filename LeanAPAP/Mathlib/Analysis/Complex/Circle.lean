@@ -17,7 +17,7 @@ open AddChar Multiplicative Real
 open scoped ComplexConjugate Real
 
 namespace Circle
-variable {r : ℝ}
+variable {r s : ℝ}
 
 @[simp, norm_cast] lemma coe_exp (r : ℝ) : ↑(expMapCircle r) = Complex.exp (r * Complex.I) := rfl
 
@@ -57,5 +57,8 @@ lemma e_apply (r : ℝ) : e r = expMapCircle (2 * π * r) := rfl
 
 lemma e_eq_one : e r = 1 ↔ ∃ n : ℤ, r = n := by
   simp [e_apply, exp_eq_one, mul_comm (2 * π), pi_ne_zero]
+
+lemma e_inj : e r = e s ↔ r ≡ s [PMOD 1] := by
+  simp [AddCommGroup.ModEq, ←e_eq_one, div_eq_one, map_sub_eq_div, eq_comm]
 
 end Circle

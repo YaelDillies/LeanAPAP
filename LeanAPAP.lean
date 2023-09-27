@@ -7,10 +7,10 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
+import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Hom
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
-import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.Hom.Equiv.Basic
 import LeanAPAP.Mathlib.Algebra.Hom.Group
 import LeanAPAP.Mathlib.Algebra.Hom.GroupInstances
@@ -73,7 +73,6 @@ import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Finset
 import LeanAPAP.Mathlib.Order.Partition.Finpartition
 import LeanAPAP.Mathlib.Tactic.Binop
 import LeanAPAP.Mathlib.Tactic.Positivity
-import LeanAPAP.Mathlib.Topology.MetricSpace.Algebra
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
