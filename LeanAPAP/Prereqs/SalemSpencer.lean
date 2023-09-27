@@ -11,7 +11,7 @@ variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {s : Finset G}
 
 lemma AddSalemSpencer.l2inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
     (hs : AddSalemSpencer (s : Set G)) :
-    ⟪μ s ∗ μ s, μ (s.image $ (· • ·) 2)⟫_[ℝ] = (s.card ^ 2 : ℝ)⁻¹ := by
+    ⟪μ s ∗ μ s, μ (s.image (2 • ·))⟫_[ℝ] = (s.card ^ 2 : ℝ)⁻¹ := by
   obtain rfl | hs' := s.eq_empty_or_nonempty
   · simp
   simp only [l2inner_eq_sum, sum_conv_mul, ←sum_product', IsROrC.conj_to_real]

@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Hom.Group
+import Mathlib.Algebra.Hom.Group.Defs
 import Mathlib.Tactic.Coe
 
 namespace AddMonoid.End

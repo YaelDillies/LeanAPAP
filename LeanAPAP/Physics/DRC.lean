@@ -62,9 +62,9 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     ∃ A₁, A₁ ⊆ B₁ ∧ ∃ A₂, A₂ ⊆ B₂ ∧
       ⟪μ_[ℝ] A₁ ○ μ A₂, (↑) ∘ f⟫_[ℝ] * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p
         ≤ 2 * ∑ x, (μ B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x ∧
-      (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ 2 * p / A.card ^ 2 * p
+      (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
         ≤ A₁.card / B₁.card ∧
-      (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ 2 * p / A.card ^ 2 * p
+      (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
         ≤ A₂.card / B₂.card := by
   have := hA.card_pos
   have := (hB.mono $ inter_subset_left _ _).card_pos
@@ -76,11 +76,11 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
       with hM_def
   have hM : 0 < M := by rw [hM_def]; positivity
   replace hf : 0 < ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x
-  · have : 0 ≤ μ_[ℝ] B₁ ○ μ B₂ * 𝟭 A ○ 𝟭 A ^ p * (↑) ∘ f := sorry -- positivity
-    convert Fintype.sum_pos $ this.gt_iff_ne.2 $ support_nonempty_iff.1 _
+  · have : 0 ≤ μ_[ℝ] B₁ ○ μ B₂ * (𝟭 A ○ 𝟭 A) ^ p * (↑) ∘ f := sorry -- positivity
+    refine' Fintype.sum_pos $ this.gt_iff_ne.2 $ support_nonempty_iff.1 _
     simp only [support_comp_eq, Set.Nonempty, and_assoc, support_mul', support_dconv,
       indicate_nonneg, mu_nonneg, support_indicate, support_mu, NNReal.coe_eq_zero, iff_self_iff,
-      forall_const, Set.mem_inter_iff, ←coe_sub, mem_coe, support_pow _ hp₀]
+      forall_const, Set.mem_inter_iff, ←coe_sub, mem_coe, support_pow _ hp₀, hf]
   set A₁ := λ s ↦ B₁ ∩ c p A s
   set A₂ := λ s ↦ B₂ ∩ c p A s
   set g : (Fin p → G) → ℝ := λ s ↦ (A₁ s).card * (A₂ s).card with hg_def
@@ -103,7 +103,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
       have : 0 ≤ 𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s) := by sorry -- positivity
       cases hs.not_le $ mul_nonneg (sum_nonneg λ x _ ↦ mul_nonneg (this _) $ by positivity) $
         by positivity
-    have : (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ 2 * p / A.card ^ 2 * p
+    have : (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
       ≤ (A₁ s).card / B₁.card * ((A₂ s).card / B₂.card)
     · rw [div_mul_div_comm, le_div_iff]
       simpa [hg_def, hM_def, mul_pow, pow_mul', show (2 : ℝ) ^ 2 = 4 by norm_num,
@@ -138,7 +138,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
       _ < ∑ s with g s < M ^ 2 ∧ g s ≠ 0, M * sqrt g s
  :=
           sum_lt_sum_of_nonempty ⟨s, mem_filter.2 ⟨mem_univ _, hs.symm⟩⟩ _
-        _ ≤ ∑ s, M * sqrt g s := sum_le_univ_sum_of_nonneg λ s ↦ by positivity
+        _ ≤ ∑ s, M * sqrt g s
+            := sum_le_univ_sum_of_nonneg λ s ↦ by positivity
         _ = M * ∑ s, sqrt (A₁ s).card * sqrt (A₂ s).card
  :=
           by simp_rw [mul_sum, sqrt_mul Nat.cast_nonneg _]
@@ -167,19 +168,17 @@ noncomputable def s (p : ℝ≥0) (ε : ℝ) (B₁ B₂ A : Finset G) : Finset G
 lemma mem_s {p : ℝ≥0} {ε : ℝ} {B₁ B₂ A : Finset G} {x : G} :
     x ∈ s p ε B₁ B₂ A ↔ (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] < (𝟭 A ○ 𝟭 A) x := by simp [s]
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:635:2: warning: expanding binder collection (A₁ «expr ⊆ » B₁) -/
-/- ./././Mathport/Syntax/Translate/Basic.lean:635:2: warning: expanding binder collection (A₂ «expr ⊆ » B₂) -/
 --TODO: When `1 < ε`, the result is trivial since `S = univ`.
 lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p)
     (hp₂ : 2 ≤ p) (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hB : (B₁ ∩ B₂).Nonempty) (hA : A.Nonempty)
     (hf : ∃ x, x ∈ B₁ - B₂ ∧ x ∈ A - A ∧ x ∉ s p ε B₁ B₂ A) :
-    ∃ (A₁ : _) (_ : A₁ ⊆ B₁) (A₂ : _) (_ : A₂ ⊆ B₂), 1 - δ ≤ ∑ x in s p ε B₁ B₂ A, (μ A₁ ○ μ A₂) x ∧
+    ∃ A₁, A₁ ⊆ B₁ ∧ ∃ A₂, A₂ ⊆ B₂ ∧ 1 - δ ≤ ∑ x in s p ε B₁ B₂ A, (μ A₁ ○ μ A₂) x ∧
         (4 : ℝ)⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p) ≤
             A₁.card / B₁.card ∧
           (4 : ℝ)⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p) ≤
             A₂.card / B₂.card := by
   obtain ⟨A₁, hAB₁, A₂, hAB₂, h, hcard₁, hcard₂⟩ :=
-    drc hp₂ (𝟭 (s p ε B₁ B₂ Aᶜ))
+    drc hp₂ (𝟭 (s p ε B₁ B₂ A)ᶜ)
       (by simpa only [support_indicate, coe_compl, Set.mem_compl_iff, mem_coe]) hB hA
   refine' ⟨A₁, hAB₁, A₂, hAB₂, _, hcard₁, hcard₂⟩
   have hp₀ : 0 < p := by positivity
@@ -190,9 +189,9 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
     rintro c r h rfl
     simp [pow_mul', (zero_lt_four' ℝ).not_le, inv_mul_le_iff (zero_lt_four' ℝ), mul_assoc, div_nonpos_iff, mul_nonpos_iff, (pow_pos (lpNorm_conv_pos hp₀.ne' hB hA) 2).not_le] at h
     norm_cast at h
-    simpa [hp₀, hA.ne_empty] using h
-  have hA₁ : A₁.nonempty := aux _ _ hcard₁
-  have hA₂ : A₂.nonempty := aux _ _ hcard₂
+    simp [hp₀, hA.ne_empty] at h
+  have hA₁ : A₁.Nonempty := aux _ _ hcard₁
+  have hA₂ : A₂.Nonempty := aux _ _ hcard₂
   clear hcard₁ hcard₂ aux
   rw [sub_le_comm]
   calc
@@ -248,7 +247,7 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
     calc
       _ = ‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] := by
         simp [mu, wlpNorm_smul_right, hp₀, L1norm_dconv, card_univ, inv_mul_eq_div]
-      _ ≤ _ := wlpNorm_mono_right (one_le_two.trans $ by norm_cast <;> assumption) _ _
+      _ ≤ _ := wlpNorm_mono_right (one_le_two.trans $ by norm_cast) _ _
     · exact Nat.cast_pos.2 (Finset.card_pos.2 hA)
   obtain ⟨A₁, -, A₂, -, h, hcard₁, hcard₂⟩ :=
     sifting univ univ hε hε₁ hδ hp hp₂ hpε (by simp [univ_nonempty]) hA (by simpa)

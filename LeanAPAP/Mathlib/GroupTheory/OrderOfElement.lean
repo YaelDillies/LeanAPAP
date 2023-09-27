@@ -4,7 +4,7 @@ import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 /-!
 ### TODO
 
-Rename `exists_pow_eq_one` to `is_of_fin_order_of_finite`
+Rename `exists_pow_eq_one` to `isOfFinOrder_of_finite`
 -/
 
 open Fintype Function
@@ -28,7 +28,7 @@ lemma pow_mod_card (a : α) (n : ℕ) : a ^ (n % card α) = a ^ n :=
     simp_rw [←pow_add, Nat.mod_add_div, pow_add, pow_mul, pow_card_eq_one, one_pow, mul_one]
 
 @[to_additive]
-lemma Nat.coprime.pow_bijective (hn : n.coprime (card α)) : Bijective λ a : α ↦ a ^ n := by
+lemma Nat.Coprime.pow_bijective (hn : n.Coprime (card α)) : Bijective λ a : α ↦ a ^ n := by
   refine' (bijective_iff_injective_and_card _).2 ⟨_, rfl⟩
   cases subsingleton_or_nontrivial α
   · exact injective_of_subsingleton _

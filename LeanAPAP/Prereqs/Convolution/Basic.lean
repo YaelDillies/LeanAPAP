@@ -57,8 +57,8 @@ def dconv (f g : α → β) : α → β := λ a ↦ ∑ x : α × α with x.1 - 
 /-- The trivial character. -/
 def trivChar : α → β := λ a ↦ if a = 0 then 1 else 0
 
-infixl:70 " ∗ " => Function.conv
-infixl:70 " ○ " => dconv
+infixl:71 " ∗ " => Function.conv
+infixl:71 " ○ " => dconv
 
 lemma conv_apply (f g : α → β) (a : α) :
     (f ∗ g) a = ∑ x : α × α with x.1 + x.2 = a, f x.1 * g x.2 := rfl

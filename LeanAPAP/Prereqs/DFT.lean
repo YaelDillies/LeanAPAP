@@ -10,11 +10,13 @@ This file defines the discrete Fourier transform and shows the Parseval-Plancher
 Fourier inversion formula for it.
 -/
 
+attribute [-ext] Complex.ext
+
 open AddChar Finset
 
+open Function
 open Fintype (card)
 
-open Function
 
 open scoped BigOperators ComplexConjugate ComplexOrder
 
@@ -25,29 +27,23 @@ def dft (f : α → ℂ) : AddChar α ℂ → ℂ := λ ψ ↦ ⟪ψ, f⟫_[ℂ]
 
 lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_[ℂ] := rfl
 
-@[simp]
-lemma dft_zero : dft (0 : α → ℂ) = 0 := by ext; simp [dft_apply]
+@[simp] lemma dft_zero : dft (0 : α → ℂ) = 0 := by ext; simp [dft_apply]
 
-@[simp]
-lemma dft_add (f g : α → ℂ) : dft (f + g) = dft f + dft g := by
-  ext : 1 <;> simp [l2inner_add_right, dft_apply]
+@[simp] lemma dft_add (f g : α → ℂ) : dft (f + g) = dft f + dft g := by
+  ext; simp [l2inner_add_right, dft_apply]
 
-@[simp]
-lemma dft_sub (f g : α → ℂ) : dft (f - g) = dft f - dft g := by
-  ext : 1 <;> simp [l2inner_sub_right, dft_apply]
+@[simp] lemma dft_sub (f g : α → ℂ) : dft (f - g) = dft f - dft g := by
+  ext; simp [l2inner_sub_right, dft_apply]
 
-@[simp]
-lemma dft_const (a : ℂ) (hψ : ψ ≠ 0) : dft (const α a) ψ = 0 := by
+@[simp] lemma dft_const (a : ℂ) (hψ : ψ ≠ 0) : dft (const α a) ψ = 0 := by
   simp only [dft_apply, l2inner_eq_sum, const_apply, ←sum_mul, ←map_sum,
     sum_eq_zero_iff_ne_zero.2 hψ, map_zero, MulZeroClass.zero_mul]
 
-@[simp]
-lemma dft_smul [DistribSMul γ ℂ] [Star γ] [StarModule γ ℂ] [SMulCommClass γ ℂ ℂ] (c : γ)
-    (f : α → ℂ) : dft (c • f) = c • dft f := by ext : 1 <;> simp [l2inner_smul_right, dft_apply]
+@[simp] lemma dft_smul [DistribSMul γ ℂ] [Star γ] [StarModule γ ℂ] [SMulCommClass γ ℂ ℂ] (c : γ)
+    (f : α → ℂ) : dft (c • f) = c • dft f := by ext; simp [l2inner_smul_right, dft_apply]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
-@[simp]
-lemma l2inner_dft (f g : α → ℂ) : ⟪dft f, dft g⟫_[ℂ] = card α * ⟪f, g⟫_[ℂ] := by
+@[simp] lemma l2inner_dft (f g : α → ℂ) : ⟪dft f, dft g⟫_[ℂ] = card α * ⟪f, g⟫_[ℂ] := by
   classical simp_rw [dft, l2inner_eq_sum, map_sum, map_mul, starRingEnd_self_apply, sum_mul,
     mul_sum, @sum_comm _ _ (AddChar _ _), mul_mul_mul_comm _ (conj $ f _), ←sum_mul, ←
     AddChar.inv_apply_eq_conj, ←map_neg_eq_inv, ←map_add_mul, AddChar.sum_apply_eq_ite,
@@ -55,11 +51,10 @@ lemma l2inner_dft (f g : α → ℂ) : ⟪dft f, dft g⟫_[ℂ] = card α * ⟪f
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 lemma L2norm_dft_sq (f : α → ℂ) : ‖dft f‖_[2] ^ 2 = card α * ‖f‖_[2] ^ 2 :=
-  Complex.ofReal_injective $ by push_cast <;> simpa only [l2inner_self] using l2inner_dft f f
+  Complex.ofReal_injective $ by push_cast; simpa only [l2inner_self] using l2inner_dft f f
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
-@[simp]
-lemma L2norm_dft (f : α → ℂ) : ‖dft f‖_[2] = Real.sqrt (card α) * ‖f‖_[2] := by
+@[simp] lemma L2norm_dft (f : α → ℂ) : ‖dft f‖_[2] = Real.sqrt (card α) * ‖f‖_[2] := by
   simpa using congr_arg Real.sqrt (L2norm_dft_sq f)
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
@@ -76,7 +71,7 @@ lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
 lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
   funext λ a ↦ by
     simp_rw [Pi.mul_apply, Function.comp_apply, map_neg, Pi.nat_apply, ←dft_dft_doubleDualEmb,
-      doubleDualEmb_double_dual_equiv_symm_apply]
+      doubleDualEmb_doubleDualEquiv_symm_apply]
 
 lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) := λ f g h ↦
   funext λ a ↦
@@ -94,40 +89,34 @@ lemma dft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conj f) ψ = conj (
 
 lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f) ψ = conj (dft f ψ) := by
   simp only [dft_apply, l2inner_eq_sum, conjneg_apply, map_sum, map_mul, IsROrC.conj_conj]
-  refine' Equiv.sum_comp' (Equiv.neg _) _ _ λ i ↦ _
+  refine' Equiv.sum_comp' (Equiv.neg α) _ _ λ i ↦ _
   simp only [Equiv.neg_apply, ←inv_apply_eq_conj, ←inv_apply', inv_apply]
 
 @[simp]
-lemma dft_conjneg (f : α → ℂ) : dft (conjneg f) = conj (dft f) :=
-  funext $ dft_conjneg_apply _
+lemma dft_conjneg (f : α → ℂ) : dft (conjneg f) = conj (dft f) := funext $ dft_conjneg_apply _
 
-@[simp]
-lemma dft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : dft (balance f) ψ = dft f ψ := by
+@[simp] lemma dft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : dft (balance f) ψ = dft f ψ := by
   simp only [balance, Pi.sub_apply, dft_sub, dft_const _ hψ, sub_zero]
 
-lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : n.coprime (card α)) :
+lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : n.Coprime (card α)) :
     dft (dilate f n) ψ = dft f (ψ ^ n) := by
   simp_rw [dft_apply, l2inner_eq_sum, dilate]
-  refine' sum_nbij' ((· • ·) (n⁻¹ : ZMod (card α)).val) _ (λ x hx ↦ _) ((· • ·) n) _ _ _
+  refine' sum_nbij' ((n⁻¹ : ZMod (card α)).val • ·) _ (λ x hx ↦ _) (n • ·) _ _ _
   · simp only [mem_univ, forall_const]
   · rw [pow_apply, ←map_nsmul_pow, nsmul_zmod_val_inv_nsmul hn]
   all_goals
     simp only [hn, mem_univ, nsmul_zmod_val_inv_nsmul, zmod_val_inv_nsmul_nsmul, eq_self_iff_true,
       forall_const]
 
-@[simp]
-lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
-  ext ψ : 1 <;> simp [trivChar_apply, dft_apply, l2inner_eq_sum, ←map_sum]
+@[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
+  ext; simp [trivChar_apply, dft_apply, l2inner_eq_sum, ←map_sum]
 
-@[simp]
-lemma dft_one : dft (1 : α → ℂ) = card α • trivChar :=
+@[simp] lemma dft_one : dft (1 : α → ℂ) = card α • trivChar :=
   dft_injective $ by classical rw [dft_smul, dft_trivChar, dft_dft, Pi.one_comp, nsmul_eq_mul]
 
 variable [DecidableEq α]
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:177:8: unsupported: ambiguous notation -/
-@[simp]
-lemma dft_indicate_zero (A : Finset α) : dft (𝟭 A) 0 = A.card := by
+@[simp] lemma dft_indicate_zero (A : Finset α) : dft (𝟭 A) 0 = A.card := by
   simp only [dft_apply, l2inner_eq_sum, sum_indicate, AddChar.zero_apply, map_one, one_mul]
 
 lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ = dft f ψ * dft g ψ := by
@@ -142,27 +131,28 @@ lemma dft_dconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
     dft (f ○ g) ψ = dft f ψ * conj (dft g ψ) := by
   rw [←conv_conjneg, dft_conv_apply, dft_conjneg_apply]
 
-@[simp]
-lemma dft_conv (f g : α → ℂ) : dft (f ∗ g) = dft f * dft g :=
-  funext $ dft_conv_apply _ _
+@[simp] lemma dft_conv (f g : α → ℂ) : dft (f ∗ g) = dft f * dft g := funext $ dft_conv_apply _ _
 
 @[simp]
-lemma dft_dconv (f g : α → ℂ) : dft (f ○ g) = dft f * conj (dft g) :=
-  funext $ dft_dconv_apply _ _
+lemma dft_dconv (f g : α → ℂ) : dft (f ○ g) = dft f * conj (dft g) := funext $ dft_dconv_apply _ _
 
-@[simp]
-lemma dft_iterConv (f : α → ℂ) : ∀ n, dft (f ∗^ n) = dft f ^ n
-  | 0 ↦ dft_trivChar
-  | n + 1 ↦ by simp [iterConv_succ, pow_succ, dft_iterConv]
+@[simp] lemma dft_iterConv (f : α → ℂ) : ∀ n, dft (f ∗^ n) = dft f ^ n
+  | 0 => dft_trivChar
+  | n + 1 => by simp [iterConv_succ, pow_succ, dft_iterConv]
 
 lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℂ) :
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
+  cases isEmpty_or_nonempty α
+  · rw [Subsingleton.elim (f ∗ f) (f ○ f)]
   refine' le_of_pow_le_pow _ _ hn₀.bot_lt (le_of_mul_le_mul_left _ (_ : (0 : ℝ) < card α ^ n))
-  any_goals positivity
+  sorry -- positivity
+  swap
+  sorry -- positivity
   obtain ⟨n, rfl⟩ := hn.two_dvd
   simp_rw [lpNorm_pow_eq_sum hn₀, mul_sum, ←mul_pow, ←nsmul_eq_mul, ←norm_nsmul, nsmul_eq_mul, ←
     dft_inversion, dft_conv, dft_dconv, Pi.mul_apply]
-  rw [←Real.norm_of_nonneg (sum_nonneg λ i _ ↦ _), ←Complex.norm_real, IsROrC.ofReal_sum]
+  rw [←Real.norm_of_nonneg (sum_nonneg λ i _ ↦ ?_), ←Complex.norm_real]
+  rw [Complex.ofReal_sum (univ : Finset α)]
   any_goals positivity
   simp_rw [pow_mul', ←norm_pow _ n, Complex.ofReal_pow, ←IsROrC.conj_mul', map_pow, map_sum,
     map_mul, Fintype.sum_pow, Fintype.sum_mul_sum]
@@ -172,7 +162,7 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
   push_cast
   have : ∀ f g : Fin n → AddChar α ℂ, 0 ≤ ∑ a, ∏ i, conj (f i a) * g i a := by
     rintro f g
-    suffices ∑ a, ∏ i, conj (f i a) * g i a = if ∑ i, (g i - f i) = 0 then card α else 0
+    suffices ∑ a, ∏ i, conj (f i a) * g i a = if ∑ i, (g i - f i) = 0 then (card α : ℂ) else 0
       by
       rw [this]
       split_ifs <;> positivity
@@ -180,7 +170,7 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
       AddChar.inv_apply_eq_conj, mul_comm]
   simp only [IsROrC.ofReal_pow, pow_mul, ←IsROrC.conj_mul', map_sum, map_mul, IsROrC.conj_conj,
     Pi.conj_apply, mul_pow, Fintype.sum_pow, ←sq, Fintype.sum_mul_sum]
-  conv_lhs ↦
+  conv_lhs =>
     congr
     skip
     ext

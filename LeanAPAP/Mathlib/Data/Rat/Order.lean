@@ -4,8 +4,6 @@ import Mathlib.Tactic.Positivity
 namespace Rat
 variable {q : ℚ}
 
-lemma num_ne_zero : q.num ≠ 0 ↔ q ≠ 0 := num_eq_zero.not
-
 alias num_nonneg := num_nonneg_iff_zero_le
 alias num_pos := num_pos_iff_pos
 
