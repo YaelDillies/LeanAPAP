@@ -45,18 +45,6 @@ end
 
 section
 
-variable {α K : Type*} {k : ℕ}
-
-open Finset
-
-lemma card_piFinset_fin_const (A : Finset α) :
-    (Fintype.piFinset λ _ : Fin k ↦ A).card = A.card ^ k := by
-  rw [Fintype.card_piFinset, prod_const, card_univ, Fintype.card_fin]
-
-end
-
-section
-
 variable {G : Type*} [DecidableEq G] [AddCommGroup G] {S : Finset G} {k : ℕ}
 
 open Finset
@@ -113,14 +101,14 @@ lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
         ‖λ x : G ↦ ∑ i : Fin k, f (x - a i) - (k • (mu A ∗ f)) x‖_[2 * m] ^ (2 * m) ≤
       1 / 2 * (k * ε * ‖f‖_[2 * m]) ^ (2 * m) * A.card ^ k) :
     (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
-  rw [←Nat.cast_pow, ←card_piFinset_fin_const] at h
+  rw [←Nat.cast_pow, ←Fintype.card_piFinsetConst] at h
   have := my_other_markov ?_ (by norm_num) ?_ h
   rotate_left
   · sorry -- positivity
   · intro a ha
     sorry -- positivity
   norm_num1 at this
-  rw [card_piFinset_fin_const, mul_comm, mul_one_div, Nat.cast_pow] at this
+  rw [Fintype.card_piFinsetConst, mul_comm, mul_one_div, Nat.cast_pow] at this
   refine' this.trans_eq _
   rw [l]
   congr with a : 3
@@ -243,9 +231,10 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
         ∑ a in Fintype.piFinset λ _ : Fin k ↦ A, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
     lemma28_part_two hm hA
   refine' this.trans _
-  simp only [sum_const, card_fin, card_piFinset_fin_const, nsmul_eq_mul, Nat.cast_pow]
+  simp only [sum_const, Fintype.card_piFinsetConst, nsmul_eq_mul, Nat.cast_pow]
   refine' (lemma28_end hε hm hA hk).trans_eq' _
   simp only [mul_assoc]
+  sorry
 
 lemma just_the_triangle_inequality {t : G} {a : Fin k → G} (ha : a ∈ l k m ε f A)
     (ha' : (a + λ _ ↦ t) ∈ l k m ε f A) (hk : 0 < k) (hm : 1 ≤ m) :
@@ -286,12 +275,10 @@ lemma big_shifts_step2 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
   refine' sq_sum_le_card_mul_sum_sq.trans _
   simp_rw [sq, sum_mul, @sum_comm _ _ _ _ (L + S.wideDiag k), boole_mul, sum_ite_eq, mul_assoc]
   refine' mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg _)
-  have :
-    ∀ f : (Fin k → G) → (Fin k → G) → ℝ,
-      ∑ x in L, ∑ y in S.wideDiag k, ite (x + y ∈ L + S.wideDiag k) (f x y) 0 =
-        ∑ x in L, ∑ y in S.wideDiag k, f x y := by
-    intro f
-    refine' sum_congr rfl λ x hx ↦ _
+  have : ∀ f : (Fin k → G) → (Fin k → G) → ℝ,
+    ∑ x in L, ∑ y in S.wideDiag k, (if x + y ∈ L + S.wideDiag k then f x y else 0) =
+      ∑ x in L, ∑ y in S.wideDiag k, f x y := by
+    refine' λ f ↦ sum_congr rfl λ x hx ↦ _
     exact sum_congr rfl λ y hy ↦ if_pos $ add_mem_add hx hy
   rw [this]
   have :
@@ -327,23 +314,19 @@ lemma big_shifts_step2 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
   simp_rw [←sum_mul, mul_comm]
   rfl
 
-/- ./././Mathport/Syntax/Translate/Expr.lean:107:6: warning: expanding binder group (l₁ l₂) -/
 -- might be true for dumb reason when k = 0, since L would be singleton and rhs is |G|,
 -- so its just |S| ≤ |G|
 lemma big_shifts {A : Finset G} (S : Finset G) (L : Finset (Fin k → G)) (hk : k ≠ 0)
     (hL' : L.Nonempty) (hL : L ⊆ Fintype.piFinset λ _ ↦ A) :
-    ∃ a : Fin k → G,
-      a ∈ L ∧
-        L.card * S.card ≤
-          (A + S).card ^ k * (univ.filter λ t : G ↦ (a - λ _ ↦ t) ∈ L).card := by
+    ∃ a : Fin k → G, a ∈ L ∧
+      L.card * S.card ≤ (A + S).card ^ k * (univ.filter λ t : G ↦ (a - λ _ ↦ t) ∈ L).card := by
   rcases S.eq_empty_or_nonempty with (rfl | hS)
   · simpa only [card_empty, MulZeroClass.mul_zero, zero_le', and_true_iff] using hL'
   have hS' : 0 < S.card := by rwa [card_pos]
   have : (L + S.wideDiag k).card ≤ (A + S).card ^ k := by
     refine' (card_le_of_subset (add_subset_add_right hL)).trans _
-    rw [←card_piFinset_fin_const]
-    refine' card_le_of_subset _
-    intro i hi
+    rw [←Fintype.card_piFinsetConst]
+    refine' card_le_of_subset λ i hi ↦ _
     simp only [mem_add, mem_wideDiag, Fintype.mem_piFinset, exists_prop, exists_and_left,
       exists_exists_and_eq_and] at hi ⊢
     obtain ⟨y, hy, a, ha, rfl⟩ := hi
@@ -355,9 +338,8 @@ lemma big_shifts {A : Finset G} (S : Finset G) (L : Finset (Fin k → G)) (hk : 
         (L + S.wideDiag k).card * (univ.filter λ t : G ↦ (a - λ _ ↦ t) ∈ L).card
   · exact ⟨a, ha, h.trans (Nat.mul_le_mul_right _ this)⟩
   clear! A
-  have :
-    L.card ^ 2 * S.card ≤
-      (L + S.wideDiag k).card * ∑ l₁ in L, ∑ l₂ in L, ite (l₁ - l₂ ∈ fintypeWideDiag G k) 1 0 := by
+  have : L.card ^ 2 * S.card ≤
+    (L + S.wideDiag k).card * ∑ l₁ in L, ∑ l₂ in L, ite (l₁ - l₂ ∈ fintypeWideDiag G k) 1 0 := by
     refine' Nat.le_of_mul_le_mul_left _ hS'
     rw [mul_comm, mul_assoc, ←sq, ←mul_pow, mul_left_comm, ←mul_assoc, ←big_shifts_step1 L hk]
     exact_mod_cast @big_shifts_step2 G _ _ _ _ _ L hk

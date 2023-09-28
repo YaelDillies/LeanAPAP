@@ -22,11 +22,3 @@ lemma sum_mul_sq_le_sq_mul_sq (s : Finset α) (f g : α → 𝕜) :
     exact nonneg_of_mul_nonneg_left h h'
 
 end Finset
-
-namespace Fintype
-variable {ι M : Type*} [OrderedCancelAddCommMonoid M] [Fintype ι] {f : ι → M}
-
-lemma sum_pos (hf : 0 < f) : 0 < ∑ x, f x :=
-  Finset.sum_pos' (λ _ _ ↦ hf.le _) $ (Pi.lt_def.1 hf).2.imp $ by simp
-
-end Fintype

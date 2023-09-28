@@ -4,6 +4,8 @@ import Mathlib.Data.Nat.Parity
 namespace Nat
 variable {n : ℕ}
 
+alias _root_.Odd.tsub_odd := Nat.Odd.sub_odd
+
 @[simp] lemma coprime_two_left : Coprime 2 n ↔ Odd n := by
   rw [prime_two.coprime_iff_not_dvd, odd_iff_not_even, even_iff_two_dvd]
 

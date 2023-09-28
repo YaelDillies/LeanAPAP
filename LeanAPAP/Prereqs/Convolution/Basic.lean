@@ -1,3 +1,4 @@
+import Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Basic
 import LeanAPAP.Mathlib.Data.Real.NNReal
@@ -341,6 +342,20 @@ lemma coe_dconv : (↑((f ○ g) a) : 𝕜) = ((↑) ∘ f ○ (↑) ∘ g) a :=
 @[simp] lemma coe_comp_dconv : ((↑) : ℝ → 𝕜) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g := funext $ coe_dconv _ _
 
 end IsROrC
+
+namespace Complex
+variable (f g : α → ℝ) (a : α)
+
+@[simp, norm_cast]
+lemma coe_conv : (↑((f ∗ g) a) : ℂ) = ((↑) ∘ f ∗ (↑) ∘ g) a := IsROrC.coe_conv _ _ _
+
+@[simp, norm_cast]
+lemma coe_dconv : (↑((f ○ g) a) : ℂ) = ((↑) ∘ f ○ (↑) ∘ g) a := IsROrC.coe_dconv _ _ _
+
+@[simp] lemma coe_comp_conv : ((↑) : ℝ → ℂ) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g := funext $ coe_conv _ _
+@[simp] lemma coe_comp_dconv : ((↑) : ℝ → ℂ) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g := funext $ coe_dconv _ _
+
+end Complex
 
 namespace NNReal
 variable (f g : α → ℝ≥0) (a : α)

@@ -1,6 +1,6 @@
 import LeanAPAP.Mathlib.NumberTheory.LegendreSymbol.AddChar.Basic
 import LeanAPAP.Prereqs.Convolution.Order
-import LeanAPAP.Prereqs.Dissociation
+import LeanAPAP.Prereqs.Rudin
 
 noncomputable section
 
@@ -15,7 +15,7 @@ def energy (n : ℕ) (A : Finset G) (ν : G → ℂ) : ℝ :=
 
 @[simp]
 lemma energy_nonneg (n : ℕ) (A : Finset G) (ν : G → ℂ) : 0 ≤ energy n A ν :=
-  sum_nonneg λ γ _ ↦ sum_nonneg λ δ _ ↦ norm_nonneg _
+  sum_nonneg λ _γ _ ↦ sum_nonneg λ _δ _ ↦ norm_nonneg _
 
 lemma energy_nsmul (m n : ℕ) (A : Finset G) (ν : G → ℂ) : energy n A (m • ν) = m • energy n A ν := by
   simp only [energy, nsmul_eq_mul, mul_sum, @Pi.coe_nat G (λ _ ↦ ℂ) _ m, Pi.mul_apply, norm_mul,
@@ -37,8 +37,7 @@ lemma boringEnergy_eq (n : ℕ) (A : Finset G) : boringEnergy n A = ∑ x, (𝟭
   simp_rw [(mem_filter.1 hf).2, eq_comm]
 
 --TODO(Thomas): Figure out the constant
-def thomasConst : ℕ :=
-  sorry
+def thomasConst : ℝ := 8 * Real.exp 1
 
 lemma Finset.AddDissociated.indicate_iterConv_apply_le (hA : A.AddDissociated) :
     ∀ (n : ℕ) (a : G), (𝟭_[ℝ] A ∗^ n) a ≤ thomasConst ^ n * n ^ n :=
@@ -48,7 +47,7 @@ lemma Finset.AddDissociated.boringEnergy_le (hA : A.AddDissociated) (n : ℕ) :
     boringEnergy n A ≤ thomasConst ^ n * n ^ n * A.card ^ n :=
   calc
     boringEnergy n A = ∑ x, (𝟭 A ∗^ n) x * (𝟭 A ∗^ n) x := by simp_rw [boringEnergy_eq, sq]
-    _ ≤ ∑ x, thomasConst ^ n * n ^ n * (𝟭 A ∗^ n) x :=
+    _ ≤ ∑ x, (thomasConst : ℝ) ^ n * n ^ n * (𝟭 A ∗^ n) x :=
       (sum_le_sum λ x _ ↦
         mul_le_mul_of_nonneg_right (hA.indicate_iterConv_apply_le _ _) $
           iterConv_nonneg indicate_nonneg _)

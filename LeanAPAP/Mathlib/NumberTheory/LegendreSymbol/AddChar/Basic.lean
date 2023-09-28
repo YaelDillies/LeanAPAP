@@ -258,7 +258,7 @@ protected lemma linearIndependent [Finite G] : LinearIndependent R ((⇑) : AddC
   exact linearIndependent_of_ne_zero_of_l2inner_eq_zero AddChar.coe_ne_zero λ ψ₁ ψ₂ ↦
     l2inner_eq_zero_iff_ne.2
 
-noncomputable instance [Finite G] : Fintype (AddChar G R) :=
+noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
   @Fintype.ofFinite _ (AddChar.linearIndependent G R).finite'
 
 @[simp] lemma card_addChar_le [Fintype G] : card (AddChar G R) ≤ card G := by
