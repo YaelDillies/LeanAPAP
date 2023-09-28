@@ -1,4 +1,5 @@
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
+import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Logic.Basic
 import LeanAPAP.Mathlib.NumberTheory.LegendreSymbol.AddChar.Duality
 import LeanAPAP.Prereqs.Convolution.Basic
@@ -12,12 +13,8 @@ Fourier inversion formula for it.
 
 attribute [-ext] Complex.ext
 
-open AddChar Finset
-
-open Function
+open AddChar Finset Function
 open Fintype (card)
-
-
 open scoped BigOperators ComplexConjugate ComplexOrder
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
@@ -101,11 +98,8 @@ lemma dft_conjneg (f : α → ℂ) : dft (conjneg f) = conj (dft f) := funext $ 
 lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : n.Coprime (card α)) :
     dft (dilate f n) ψ = dft f (ψ ^ n) := by
   simp_rw [dft_apply, l2inner_eq_sum, dilate]
-  refine' sum_nbij' ((n⁻¹ : ZMod (card α)).val • ·) _ (λ x hx ↦ _) (n • ·) _ _ _
-  · simp only [mem_univ, forall_const]
-  · rw [pow_apply, ←map_nsmul_pow, nsmul_zmod_val_inv_nsmul hn]
-  all_goals
-    simp only [hn, mem_univ, nsmul_zmod_val_inv_nsmul, zmod_val_inv_nsmul_nsmul, eq_self_iff_true,
+  refine' sum_nbij' ((n⁻¹ : ZMod (card α)).val • ·) _ (λ x _ ↦ _) (n • ·) _ _ _ <;>
+    simp only [pow_apply, ←map_nsmul_pow, mem_univ, nsmul_zmod_val_inv_nsmul hn, zmod_val_inv_nsmul_nsmul hn, eq_self_iff_true,
       forall_const]
 
 @[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
@@ -154,7 +148,7 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
   rw [←Real.norm_of_nonneg (sum_nonneg λ i _ ↦ ?_), ←Complex.norm_real]
   rw [Complex.ofReal_sum (univ : Finset α)]
   any_goals positivity
-  simp_rw [pow_mul', ←norm_pow _ n, Complex.ofReal_pow, ←IsROrC.conj_mul', map_pow, map_sum,
+  simp_rw [pow_mul', ←norm_pow _ n, Complex.ofReal_pow, ←Complex.conj_mul', map_pow, map_sum,
     map_mul, Fintype.sum_pow, Fintype.sum_mul_sum]
   simp only [@sum_comm _ _ α, ←mul_sum, prod_mul_prod_comm]
   refine' (norm_sum_le _ _).trans_eq (Complex.ofReal_injective _)
@@ -162,20 +156,18 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
   push_cast
   have : ∀ f g : Fin n → AddChar α ℂ, 0 ≤ ∑ a, ∏ i, conj (f i a) * g i a := by
     rintro f g
-    suffices ∑ a, ∏ i, conj (f i a) * g i a = if ∑ i, (g i - f i) = 0 then (card α : ℂ) else 0
-      by
-      rw [this]
+    suffices : ∑ a, ∏ i, conj (f i a) * g i a = if ∑ i, (g i - f i) = 0 then (card α : ℂ) else 0
+    · rw [this]
       split_ifs <;> positivity
     simp_rw [←AddChar.sum_eq_ite, AddChar.sum_apply, AddChar.sub_apply, AddChar.map_neg_eq_inv,
       AddChar.inv_apply_eq_conj, mul_comm]
-  simp only [IsROrC.ofReal_pow, pow_mul, ←IsROrC.conj_mul', map_sum, map_mul, IsROrC.conj_conj,
+  simp only [IsROrC.ofReal_pow, pow_mul, ←Complex.conj_mul', map_sum, map_mul, Complex.conj_conj,
     Pi.conj_apply, mul_pow, Fintype.sum_pow, ←sq, Fintype.sum_mul_sum]
   conv_lhs =>
-    congr
-    skip
+    arg 2
     ext
     rw [←Complex.eq_coe_norm_of_nonneg (this _ _)]
-  letI : Fintype (Fin n → AddChar α ℂ) := @Pi.fintype _ _ _ _ λ i ↦ AddChar.fintype _ _
+  letI : Fintype (Fin n → AddChar α ℂ) := @Pi.fintype _ _ _ _ λ i ↦ AddChar.instFintype _ _
   simp only [@sum_comm _ _ α, mul_sum, map_prod, map_mul, IsROrC.conj_conj, ←prod_mul_distrib]
   refine' sum_congr rfl λ x _ ↦ sum_congr rfl λ a _ ↦ prod_congr rfl λ i _ ↦ _
   ring
@@ -186,8 +178,11 @@ lemma IsROrC.lpNorm_coe_comp {𝕜 : Type*} [IsROrC 𝕜] (p) (f : α → ℝ) :
   simp only [←lpNorm_norm _ (((↑) : ℝ → 𝕜) ∘ f), ←lpNorm_norm _ f, Function.comp_apply,
     IsROrC.norm_ofReal, Real.norm_eq_abs]
 
+@[simp] lemma Complex.lpNorm_coe_comp (p) (f : α → ℝ) : ‖((↑) : ℝ → ℂ) ∘ f‖_[p] = ‖f‖_[p] :=
+  IsROrC.lpNorm_coe_comp _ _
+
 --TODO: Can we unify with `lpNorm_conv_le_lpNorm_dconv`?
 lemma lpNorm_conv_le_lpNorm_dconv' (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℝ) :
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
-  simpa only [←IsROrC.coe_comp_conv, ←IsROrC.coe_comp_dconv, IsROrC.lpNorm_coe_comp] using
+  simpa only [←Complex.coe_comp_conv, ←Complex.coe_comp_dconv, Complex.lpNorm_coe_comp] using
     lpNorm_conv_le_lpNorm_dconv hn₀ hn ((↑) ∘ f)
