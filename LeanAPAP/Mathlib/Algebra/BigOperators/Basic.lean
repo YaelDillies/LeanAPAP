@@ -1,4 +1,5 @@
 import Mathlib.Algebra.BigOperators.Basic
+import LeanAPAP.Mathlib.Algebra.Group.Basic
 
 /-!
 ## TODO
@@ -248,6 +249,23 @@ lemma prod_diag (s : Finset α) (f : α × α → β) : ∏ i in s.diag, f i = �
     prod_nbij (λ i ↦ (i, i)) (λ _i hi ↦ mem_diag.2 ⟨hi, rfl⟩) (λ _i _ ↦ rfl)
       (λ _i _j _ _ h ↦ (Prod.ext_iff.1 h).1) λ i hi ↦
       ⟨i.1, (mem_diag.1 hi).1, Prod.ext rfl (mem_diag.1 hi).2.symm⟩
+
+end Finset
+
+namespace Finset
+variable {ι α : Type*} [DecidableEq ι] [CancelCommMonoid α] {s t : Finset ι} {f : ι → α}
+
+@[to_additive]
+lemma prod_sdiff_eq_prod_sdiff :
+    ∏ i in s \ t, f i = ∏ i in t \ s, f i ↔ ∏ i in s, f i = ∏ i in t, f i :=
+  eq_comm.trans $ eq_iff_eq_of_mul_eq_mul $ by
+    rw [←prod_union disjoint_sdiff_self_left, ←prod_union disjoint_sdiff_self_left,
+      sdiff_union_self_eq_union, sdiff_union_self_eq_union, union_comm]
+
+@[to_additive]
+lemma prod_sdiff_ne_prod_sdiff :
+    ∏ i in s \ t, f i ≠ ∏ i in t \ s, f i ↔ ∏ i in s, f i ≠ ∏ i in t, f i :=
+  prod_sdiff_eq_prod_sdiff.not
 
 end Finset
 
