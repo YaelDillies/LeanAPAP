@@ -738,3 +738,17 @@ lemma L1norm_mu (hs : s.Nonempty) : ‖μ_[β] s‖_[1] = 1 := by simpa using lp
 lemma L1norm_mu_le_one : ‖μ_[β] s‖_[1] ≤ 1 := by simpa using lpNorm_mu_le le_rfl
 
 end mu
+
+section
+variable {α : Type*} [Fintype α]
+
+@[simp]
+lemma IsROrC.lpNorm_coe_comp {𝕜 : Type*} [IsROrC 𝕜] (p) (f : α → ℝ) :
+    ‖((↑) : ℝ → 𝕜) ∘ f‖_[p] = ‖f‖_[p] := by
+  simp only [←lpNorm_norm _ (((↑) : ℝ → 𝕜) ∘ f), ←lpNorm_norm _ f, Function.comp_apply,
+    IsROrC.norm_ofReal, Real.norm_eq_abs]
+
+@[simp] lemma Complex.lpNorm_coe_comp (p) (f : α → ℝ) : ‖((↑) : ℝ → ℂ) ∘ f‖_[p] = ‖f‖_[p] :=
+  IsROrC.lpNorm_coe_comp _ _
+
+end

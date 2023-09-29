@@ -172,15 +172,6 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
   refine' sum_congr rfl λ x _ ↦ sum_congr rfl λ a _ ↦ prod_congr rfl λ i _ ↦ _
   ring
 
-@[simp]
-lemma IsROrC.lpNorm_coe_comp {𝕜 : Type*} [IsROrC 𝕜] (p) (f : α → ℝ) :
-    ‖((↑) : ℝ → 𝕜) ∘ f‖_[p] = ‖f‖_[p] := by
-  simp only [←lpNorm_norm _ (((↑) : ℝ → 𝕜) ∘ f), ←lpNorm_norm _ f, Function.comp_apply,
-    IsROrC.norm_ofReal, Real.norm_eq_abs]
-
-@[simp] lemma Complex.lpNorm_coe_comp (p) (f : α → ℝ) : ‖((↑) : ℝ → ℂ) ∘ f‖_[p] = ‖f‖_[p] :=
-  IsROrC.lpNorm_coe_comp _ _
-
 --TODO: Can we unify with `lpNorm_conv_le_lpNorm_dconv`?
 lemma lpNorm_conv_le_lpNorm_dconv' (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℝ) :
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
