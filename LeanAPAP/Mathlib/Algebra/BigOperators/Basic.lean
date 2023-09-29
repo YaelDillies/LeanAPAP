@@ -4,7 +4,7 @@ import LeanAPAP.Mathlib.Algebra.Group.Basic
 /-!
 ## TODO
 
-* More explicit arguments to `finset.sum_attach`
+* More explicit arguments to `Finset.sum_attach`
 -/
 
 -- We use a custom namespace instead of `BigOperators` because we want to override the notation from
