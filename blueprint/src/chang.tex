@@ -1,5 +1,49 @@
 \chapter{Chang's lemma}
 
+\begin{definition}[Dissociation]
+\label{dissociated}
+\lean{AddDissociated}
+\leanok
+We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G$, there is at most one $A'\subset A$ of size $\abs{A'}=m$ such that
+\[\sum_{a\in A'}a=x.\]
+\end{definition}
+
+
+\begin{lemma}[Rudin's exponential inequality]
+\label{rudin_exp}
+\uses{dissociated}
+\lean{rudin_exp_ineq}
+\leanok
+If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support, then $\E \exp|\Re f| \le \exp(\frac{\norm f_2^2} 2)$.
+\end{lemma}
+\begin{proof}
+\uses{mzi_complex}
+TODO(Thomas): Write proof
+\end{proof}
+
+
+\begin{lemma}[Rudin's inequality]
+\label{rudin}
+\uses{dissociated}
+\lean{rudin_ineq}
+\leanok
+If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support and $p \ge 2$ is an integer, then $\norm{f}_p \le 2 * \sqrt{pe} \norm f_2$.
+\end{lemma}
+\begin{proof}
+\uses{rudin_exp_ineq}
+\leanok
+It is enough to show that $\norm{\Re f}_p \le \sqrt{pe} \norm f_2$ as then
+$$\norm{f}_p \le \norm{\Re f}_p + \norm{i \Im f}_p = \norm{\Re f}_p + \norm{\Re (-if)}_p \le 2 \sqrt{pe} \norm f_2$$
+
+If $f = 0$, the result is obvious. So assume $f \ne 0$. $\norm{f}_2 > 0$, so WLOG $\norm{f}_2 = \sqrt p$.
+
+Rudin's exponential inequality for $f$ becomes $\E \exp|\Re f| \le \exp(\frac p 2)$. Using $\frac{x^p}{p!} \le e^x$ for positive $x$, we get
+$$\frac{\norm{\Re f}_p^p}{p^p} \le \frac{\norm{\Re f}_p^p}{p!} = \E \frac{|\Re f|^p}{p!} \le \E \exp|\Re f|$$
+Rearranging, $\norm{\Re f}_p \le p\sqrt{e} = \sqrt{pe} \norm f_2$.
+% TODO: Normalisation issue
+\end{proof}
+
+
 \begin{definition}[Large spectrum]
 \label{large_spec}
 \lean{large_spec}
@@ -25,15 +69,6 @@ Let $\Delta\subseteq \widehat{G}$ and $m\geq 1$. Let $\nu:G\to \bbc$. Then
 \leanok
 Let $G$ be a finite abelian group and $A\subseteq G$. Let $m\geq 1$. We define
 \[E_{2m}(A)=\sum_{a_1,\ldots,a_{2m}\in A}1_{a_1+\cdots-a_{2m}=0}.\]
-\end{definition}
-
-
-\begin{definition}[Dissociation]
-\label{dissociated}
-\lean{finset.dissociated}
-\leanok
-We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G$, there is at most one $A'\subset A$ of size $\abs{A'}=m$ such that
-\[\sum_{a\in A'}a=x.\]
 \end{definition}
 
 
@@ -106,12 +141,12 @@ Expand out definitions.
 \begin{lemma}
 \label{diss_energy}
 \uses{dissociated, energy}
-\lean{finset.add_dissociated.boring_energy_le}
+\lean{AddDissociated.boringEnergy_le}
 \leanok
-If $A\subseteq G$ is dissociated then $E_{2m}(A) \leq m! \abs{A}^m$.
+If $A\subseteq G$ is dissociated then $E_{2m}(A) \leq (8e m \abs{A})^m$.
 \end{lemma}
 \begin{proof}
-\uses{energy_alt}
+\uses{energy_alt, rudin}
 By Lemma~\ref{energy_alt}
 
 \[E_{2m}(A) = \sum_x 1_A^{(m)}(x)^2.\]
