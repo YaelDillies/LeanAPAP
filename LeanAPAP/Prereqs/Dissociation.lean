@@ -29,7 +29,8 @@ lemma mulDissociated_empty : MulDissociated (∅ : Set α) := by
 
 @[to_additive (attr := simp)]
 lemma mulDissociated_singleton : MulDissociated ({a} : Set α) ↔ a ≠ 1 := by
-  simp [MulDissociated, Set.Subsingleton, eq_comm, (Finset.singleton_ne_empty _).symm, forall_and, -subset_singleton_iff, Finset.coe_subset_singleton]
+  simp [MulDissociated, Set.Subsingleton, eq_comm, (Finset.singleton_ne_empty _).symm, forall_and,
+    -subset_singleton_iff, Finset.coe_subset_singleton]
 
 @[to_additive (attr := simp)]
 lemma not_mulDissociated :
@@ -55,12 +56,12 @@ lemma not_mulDissociated_iff_exists_disjoint :
   e.forall_congr $ e.finsetCongr.forall_congr $ by
     simp only [mem_setOf_eq, and_imp, toEquiv_eq_coe, Equiv.finsetCongr_apply, coe_toEquiv,
       Finset.coe_map, Equiv.coe_toEmbedding, image_subset_iff, Finset.prod_map]
-    refine' imp_congr_right λ _ ↦ _
+    refine' imp_congr_right fun _ ↦ _
     rw [←map_prod e, EmbeddingLike.apply_eq_iff_eq]
-    refine' imp_congr_right λ _ ↦ e.finsetCongr.forall_congr _
+    refine' imp_congr_right fun _ ↦ e.finsetCongr.forall_congr _
     simp only [toEquiv_eq_coe, Equiv.finsetCongr_apply, Finset.coe_map,
       Equiv.coe_toEmbedding, coe_toEquiv, image_subset_iff, Finset.prod_map, Finset.map_inj]
-    refine' imp_congr_right λ _ ↦ _
+    refine' imp_congr_right fun _ ↦ _
     rw [←map_prod e, EmbeddingLike.apply_eq_iff_eq]
 
 @[to_additive (attr := simp)] lemma mulDissociated_inv : MulDissociated s⁻¹ ↔ MulDissociated s :=
@@ -72,7 +73,7 @@ namespace Finset
 variable [DecidableEq α] [Fintype α] {A B C : Finset α} {a : α} {K : ℕ}
 
 @[to_additive] def mulSpan (A : Finset α) : Finset α :=
-  (Fintype.piFinset λ _a ↦ ({-1, 0, 1} : Finset ℤ)).image λ c ↦ ∏ a in A, a ^ c a
+  (Fintype.piFinset fun _a ↦ ({-1, 0, 1} : Finset ℤ)).image fun c ↦ ∏ a in A, a ^ c a
 
 @[to_additive (attr := simp)]
 lemma mem_mulSpan :
@@ -82,45 +83,44 @@ lemma mem_mulSpan :
 --TODO: Fix additivisation
 @[simp]
 lemma subset_addSpan {α : Type*} [AddCommGroup α] [DecidableEq α] [Fintype α] {A : Finset α} :
-    A ⊆ addSpan A := λ a ha ↦
-  mem_addSpan.2 ⟨Pi.single a 1, λ b ↦ by obtain rfl | hab := eq_or_ne a b <;> simp [*], by
+    A ⊆ addSpan A := fun a ha ↦
+  mem_addSpan.2 ⟨Pi.single a 1, fun b ↦ by obtain rfl | hab := eq_or_ne a b <;> simp [*], by
     simp [Pi.single, Function.update, ite_smul, ha]⟩
 
 @[to_additive existing (attr := simp)]
-lemma subset_mulSpan : A ⊆ mulSpan A := λ a ha ↦
-  mem_mulSpan.2 ⟨Pi.single a 1, λ b ↦ by obtain rfl | hab := eq_or_ne a b <;> simp [*], by
+lemma subset_mulSpan : A ⊆ mulSpan A := fun a ha ↦
+  mem_mulSpan.2 ⟨Pi.single a 1, fun b ↦ by obtain rfl | hab := eq_or_ne a b <;> simp [*], by
     simp [Pi.single, Function.update, pow_ite, ha]⟩
 
 --TODO: Fix additivisation
 lemma sum_sub_sum_mem_addSpan {α : Type*} [AddCommGroup α] [DecidableEq α] [Fintype α]
     {A B C : Finset α} (hB : B ⊆ A) (hC : C ⊆ A) : ∑ a in B, a - ∑ a in C, a ∈ addSpan A :=
   mem_addSpan.2
-    ⟨Set.indicator B 1 - Set.indicator C 1, λ a ↦ by
+    ⟨Set.indicator B 1 - Set.indicator C 1, fun a ↦ by
       by_cases a ∈ B <;> by_cases a ∈ C <;> simp [*], by
-      simp [sum_sub_distrib, sub_smul, Set.indicator, ite_smul, (inter_eq_right_iff_subset _ _).2,
-        *]⟩
+      simp [sum_sub_distrib, sub_smul, Set.indicator, ite_smul, inter_eq_right.2, *]⟩
 
 @[to_additive existing]
 lemma prod_div_prod_mem_mulSpan (hB : B ⊆ A) (hC : C ⊆ A) :
     (∏ a in B, a) / ∏ a in C, a ∈ mulSpan A :=
   mem_mulSpan.2
-    ⟨Set.indicator B 1 - Set.indicator C 1, λ a ↦ by
+    ⟨Set.indicator B 1 - Set.indicator C 1, fun a ↦ by
       by_cases a ∈ B <;> by_cases a ∈ C <;> simp [*], by
-      simp [prod_div_distrib, zpow_sub, ←div_eq_mul_inv, Set.indicator, pow_ite,
-        (inter_eq_right_iff_subset _ _).2, *]⟩
+      simp [prod_div_distrib, zpow_sub, ←div_eq_mul_inv, Set.indicator, pow_ite, inter_eq_right.2,
+        *]⟩
 
 @[to_additive]
 lemma diss_mulSpan (hA : ∀ A', A' ⊆ A → MulDissociated (A' : Set α) → A'.card ≤ K) :
     ∃ A', A' ⊆ A ∧ A'.card ≤ K ∧ A ⊆ mulSpan A' := by
   classical
   obtain ⟨A', hA', hA'max⟩ :=
-    exists_maximal (A.powerset.filter λ A' : Finset α ↦ MulDissociated (A' : Set α))
+    exists_maximal (A.powerset.filter fun A' : Finset α ↦ MulDissociated (A' : Set α))
       ⟨∅, mem_filter.2 ⟨empty_mem_powerset _, by simp⟩⟩
   simp only [mem_filter, mem_powerset, lt_eq_subset, and_imp] at hA' hA'max
-  refine' ⟨A', hA'.1, hA _ hA'.1 hA'.2, λ a ha ↦ _⟩
+  refine' ⟨A', hA'.1, hA _ hA'.1 hA'.2, fun a ha ↦ _⟩
   by_cases ha' : a ∈ A'
   · exact subset_mulSpan ha'
-  obtain ⟨B, C, hB, hC, hBC⟩ := not_mulDissociated_iff_exists_disjoint.1 λ h ↦
+  obtain ⟨B, C, hB, hC, hBC⟩ := not_mulDissociated_iff_exists_disjoint.1 fun h ↦
     hA'max _ (insert_subset_iff.2 ⟨ha, hA'.1⟩) h $ ssubset_insert ha'
   by_cases haB : a ∈ B
   · have : a = (∏ b in C, b) / ∏ b in B.erase a, b := by

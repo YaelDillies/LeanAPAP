@@ -20,7 +20,7 @@ open scoped BigOperators ComplexConjugate ComplexOrder
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 
 /-- The discrete Fourier transform. -/
-def dft (f : α → ℂ) : AddChar α ℂ → ℂ := λ ψ ↦ ⟪ψ, f⟫_[ℂ]
+def dft (f : α → ℂ) : AddChar α ℂ → ℂ := fun ψ ↦ ⟪ψ, f⟫_[ℂ]
 
 lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_[ℂ] := rfl
 
@@ -66,12 +66,12 @@ lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
     AddChar.inv_apply_eq_conj, doubleDualEmb_apply]
 
 lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
-  funext λ a ↦ by
+  funext fun a ↦ by
     simp_rw [Pi.mul_apply, Function.comp_apply, map_neg, Pi.nat_apply, ←dft_dft_doubleDualEmb,
       doubleDualEmb_doubleDualEquiv_symm_apply]
 
-lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) := λ f g h ↦
-  funext λ a ↦
+lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) := fun f g h ↦
+  funext fun a ↦
     mul_right_injective₀ (Nat.cast_ne_zero.2 Fintype.card_ne_zero) $
       (dft_inversion _ _).symm.trans $ by rw [h, dft_inversion]
 
@@ -86,7 +86,7 @@ lemma dft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conj f) ψ = conj (
 
 lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f) ψ = conj (dft f ψ) := by
   simp only [dft_apply, l2inner_eq_sum, conjneg_apply, map_sum, map_mul, IsROrC.conj_conj]
-  refine' Equiv.sum_comp' (Equiv.neg α) _ _ λ i ↦ _
+  refine' Equiv.sum_comp' (Equiv.neg α) _ _ fun i ↦ _
   simp only [Equiv.neg_apply, ←inv_apply_eq_conj, ←inv_apply', inv_apply]
 
 @[simp]
@@ -98,9 +98,9 @@ lemma dft_conjneg (f : α → ℂ) : dft (conjneg f) = conj (dft f) := funext $ 
 lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : n.Coprime (card α)) :
     dft (dilate f n) ψ = dft f (ψ ^ n) := by
   simp_rw [dft_apply, l2inner_eq_sum, dilate]
-  refine' sum_nbij' ((n⁻¹ : ZMod (card α)).val • ·) _ (λ x _ ↦ _) (n • ·) _ _ _ <;>
-    simp only [pow_apply, ←map_nsmul_pow, mem_univ, nsmul_zmod_val_inv_nsmul hn, zmod_val_inv_nsmul_nsmul hn, eq_self_iff_true,
-      forall_const]
+  refine' sum_nbij' ((n⁻¹ : ZMod (card α)).val • ·) _ (fun x _ ↦ _) (n • ·) _ _ _ <;>
+    simp only [pow_apply, ←map_nsmul_pow, mem_univ, nsmul_zmod_val_inv_nsmul hn,
+      zmod_val_inv_nsmul_nsmul hn, eq_self_iff_true, forall_const]
 
 @[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
   ext; simp [trivChar_apply, dft_apply, l2inner_eq_sum, ←map_sum]
@@ -117,7 +117,7 @@ lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ
   simp_rw [dft, l2inner_eq_sum, conv_eq_sum_sub', mul_sum, sum_mul, ←sum_product',
     univ_product_univ]
   refine'
-    sum_nbij' (λ x ↦ (x.1 - x.2, x.2)) (by simp) (λ x _ ↦ _) (λ x ↦ (x.1 + x.2, x.2))
+    sum_nbij' (fun x ↦ (x.1 - x.2, x.2)) (by simp) (fun x _ ↦ _) (fun x ↦ (x.1 + x.2, x.2))
       (by simp) (by simp) (by simp)
   rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel'_right]
 
@@ -148,7 +148,7 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
   obtain ⟨n, rfl⟩ := hn.two_dvd
   simp_rw [lpNorm_pow_eq_sum hn₀, mul_sum, ←mul_pow, ←nsmul_eq_mul, ←norm_nsmul, nsmul_eq_mul, ←
     dft_inversion, dft_conv, dft_dconv, Pi.mul_apply]
-  rw [←Real.norm_of_nonneg (sum_nonneg λ i _ ↦ ?_), ←Complex.norm_real]
+  rw [←Real.norm_of_nonneg (sum_nonneg fun i _ ↦ ?_), ←Complex.norm_real]
   rw [Complex.ofReal_sum (univ : Finset α)]
   any_goals positivity
   simp_rw [pow_mul', ←norm_pow _ n, Complex.ofReal_pow, ←Complex.conj_mul', map_pow, map_sum,
@@ -170,9 +170,9 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
     arg 2
     ext
     rw [←Complex.eq_coe_norm_of_nonneg (this _ _)]
-  letI : Fintype (Fin n → AddChar α ℂ) := @Pi.fintype _ _ _ _ λ i ↦ AddChar.instFintype _ _
+  letI : Fintype (Fin n → AddChar α ℂ) := @Pi.fintype _ _ _ _ fun i ↦ AddChar.instFintype _ _
   simp only [@sum_comm _ _ α, mul_sum, map_prod, map_mul, IsROrC.conj_conj, ←prod_mul_distrib]
-  refine' sum_congr rfl λ x _ ↦ sum_congr rfl λ a _ ↦ prod_congr rfl λ i _ ↦ _
+  refine' sum_congr rfl fun x _ ↦ sum_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
   ring
 
 --TODO: Can we unify with `lpNorm_conv_le_lpNorm_dconv`?

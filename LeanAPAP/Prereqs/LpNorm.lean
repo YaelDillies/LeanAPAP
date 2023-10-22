@@ -43,7 +43,7 @@ lemma lpNorm_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (f : ∀ i, α i) :
 
 lemma lpNorm_rpow_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (f : ∀ i, α i) :
     ‖f‖_[p] ^ (p : ℝ) = ∑ i, ‖f i‖ ^ (p : ℝ) := by
-  rw [lpNorm_eq_sum hp, rpow_inv_rpow (sum_nonneg λ i _ ↦ ?_)] <;> positivity
+  rw [lpNorm_eq_sum hp, rpow_inv_rpow (sum_nonneg fun i _ ↦ ?_)] <;> positivity
 
 lemma lpNorm_pow_eq_sum {p : ℕ} (hp : p ≠ 0) (f : ∀ i, α i) : ‖f‖_[p] ^ p = ∑ i, ‖f i‖ ^ p := by
   simpa using lpNorm_rpow_eq_sum (Nat.cast_ne_zero.2 hp) f
@@ -66,7 +66,7 @@ lemma Linftynorm_eq_csupr (f : ∀ i, α i) : ‖f‖_[∞] = ⨆ i, ‖f i‖ :
   obtain rfl | hp := @eq_zero_or_pos _ _ p
   all_goals simp [Linftynorm_eq_csupr, L0norm_eq_card, lpNorm_eq_sum, *, ne_of_gt]
 
-@[simp] lemma lpNorm_norm (p : ℝ≥0∞) (f : ∀ i, α i) : ‖λ i ↦ ‖f i‖‖_[p] = ‖f‖_[p] := by
+@[simp] lemma lpNorm_norm (p : ℝ≥0∞) (f : ∀ i, α i) : ‖fun i ↦ ‖f i‖‖_[p] = ‖f‖_[p] := by
   obtain p | p := p; swap
   obtain rfl | hp := @eq_zero_or_pos _ _ p
   all_goals simp [Linftynorm_eq_csupr, L0norm_eq_card, lpNorm_eq_sum, *, ne_of_gt]
@@ -79,12 +79,12 @@ lemma lpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖_[p] = ‖g - f‖_[p] :=
 @[simp] lemma lpNorm_nonneg : 0 ≤ ‖f‖_[p] := by
   obtain p | p := p
   · simp only [Linftynorm_eq_csupr, ENNReal.none_eq_top]
-    exact Real.iSup_nonneg λ i ↦ norm_nonneg _
+    exact Real.iSup_nonneg fun i ↦ norm_nonneg _
   obtain rfl | hp := eq_or_ne p 0
   · simp only [L0norm_eq_card, ENNReal.some_eq_coe, ENNReal.coe_zero]
     exact Nat.cast_nonneg _
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe]
-    exact rpow_nonneg (sum_nonneg λ i _ ↦ rpow_nonneg $ norm_nonneg _)
+    exact rpow_nonneg (sum_nonneg fun i _ ↦ rpow_nonneg $ norm_nonneg _)
 
 @[simp] lemma lpNorm_eq_zero : ‖f‖_[p] = 0 ↔ f = 0 := by
   obtain p | p := p
@@ -170,12 +170,12 @@ lemma lpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p] ≤ ‖g‖_[p] :
   · simp only [L0norm_eq_card, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_le]
     exact
       card_mono
-        (Set.Finite.toFinset_mono λ i ↦ mt λ hi ↦ ((hfg i).trans_eq hi).antisymm $ hf i)
+        (Set.Finite.toFinset_mono fun i ↦ mt fun hi ↦ ((hfg i).trans_eq hi).antisymm $ hf i)
   have hp' := hp
   rw [←pos_iff_ne_zero, ←NNReal.coe_pos] at hp
   simp_rw [←rpow_le_rpow_iff lpNorm_nonneg lpNorm_nonneg hp, lpNorm_rpow_eq_sum hp',
     norm_of_nonneg (hf _), norm_of_nonneg (hf.trans hfg _)]
-  exact sum_le_sum λ i _ ↦ rpow_le_rpow (hf _) (hfg _) hp.le
+  exact sum_le_sum fun i _ ↦ rpow_le_rpow (hf _) (hfg _) hp.le
 
 end Real
 
@@ -187,7 +187,7 @@ variable {α : ι → Type*} [∀ i, NormedAddCommGroup (α i)] {p q : ℝ≥0} 
 
 /-- The weighted Lp norm of a function. -/
 noncomputable def wlpNorm (p : ℝ≥0) (w : ι → ℝ≥0) (f : ∀ i, α i) : ℝ :=
-  ‖λ i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖‖_[p]
+  ‖fun i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖‖_[p]
 
 notation "‖" f "‖_[" p ", " w "]" => wlpNorm p w f
 
@@ -199,7 +199,7 @@ lemma wlpNorm_one_eq_lpNorm (p : ℝ≥0) (f : ∀ i, α i) : ‖f‖_[p, 1] = �
 lemma wlpNorm_const_right (hp : 1 ≤ p) (w : ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, const _ w] = w ^ (p⁻¹ : ℝ) * ‖f‖_[p] := by
   simpa [wlpNorm, -norm_eq_abs, norm_of_nonneg, Pi.smul_def, NNReal.smul_def, rpow_nonneg] using
-    lpNorm_smul (ENNReal.one_le_coe_iff.2 hp) (w ^ (p⁻¹ : ℝ) : ℝ) λ i ↦ ‖f i‖
+    lpNorm_smul (ENNReal.one_le_coe_iff.2 hp) (w ^ (p⁻¹ : ℝ) : ℝ) fun i ↦ ‖f i‖
 
 lemma wlpNorm_eq_sum (hp : p ≠ 0) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, w] = (∑ i, w i • ‖f i‖ ^ (p : ℝ)) ^ (p⁻¹ : ℝ) := by
@@ -214,7 +214,7 @@ lemma wlpNorm_eq_sum' {p : ℝ} (hp : 0 < p) (w : ι → ℝ≥0) (f : ∀ i, α
 
 lemma wlpNorm_rpow_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, w] ^ (p : ℝ) = ∑ i, w i • ‖f i‖ ^ (p : ℝ) := by
-  rw [wlpNorm_eq_sum hp, rpow_inv_rpow (sum_nonneg λ i _ ↦ ?_)]
+  rw [wlpNorm_eq_sum hp, rpow_inv_rpow (sum_nonneg fun i _ ↦ ?_)]
   · positivity
   · sorry -- positivity
 
@@ -231,7 +231,7 @@ lemma wL0norm_eq_card (w : ι → ℝ≥0) (f : ∀ i, α i) :
 @[simp]
 lemma wlpNorm_zero (w : ι → ℝ≥0) : ‖(0 : ∀ i, α i)‖_[p, w] = 0 := by simp [wlpNorm, ←Pi.zero_def]
 
-@[simp] lemma wlpNorm_norm (w : ι → ℝ≥0) (f : ∀ i, α i) : ‖λ i ↦ ‖f i‖‖_[p, w] = ‖f‖_[p, w] := by
+@[simp] lemma wlpNorm_norm (w : ι → ℝ≥0) (f : ∀ i, α i) : ‖fun i ↦ ‖f i‖‖_[p, w] = ‖f‖_[p, w] := by
   obtain rfl | hp := @eq_zero_or_pos _ _ p <;> simp [wL0norm_eq_card, wlpNorm_eq_sum, *, ne_of_gt]
 
 @[simp]lemma wlpNorm_neg (w : ι → ℝ≥0) (f : ∀ i, α i) : ‖-f‖_[p, w] = ‖f‖_[p, w] := by
@@ -252,7 +252,7 @@ lemma wlpNorm_add_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : ∀ i, α i) :
   unfold wlpNorm
   refine'
     (lpNorm_add_le (by exact_mod_cast hp) _ _).trans'
-      (lpNorm_mono (λ i ↦ by dsimp; sorry) λ i ↦ _) -- positivity
+      (lpNorm_mono (fun i ↦ by dsimp; sorry) fun i ↦ _) -- positivity
   dsimp
   rw [←smul_add]
   exact smul_le_smul_of_nonneg (norm_add_le _ _) (zero_le _)
@@ -281,7 +281,7 @@ variable [NormedField 𝕜] [∀ i, NormedSpace 𝕜 (α i)]
 lemma wlpNorm_smul (hp : 1 ≤ p) (c : 𝕜) (f : ∀ i, α i) : ‖c • f‖_[p, w] = ‖c‖ * ‖f‖_[p, w] := by
   rw [wlpNorm, wlpNorm]
   have : (1 : ℝ≥0∞) ≤ p := by exact_mod_cast hp
-  have := lpNorm_smul this ‖c‖ λ i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖
+  have := lpNorm_smul this ‖c‖ fun i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖
   rw [norm_norm] at this
   rw [←this]
   congr with i : 1
@@ -292,7 +292,7 @@ lemma wlpNorm_smul_right (hp : p ≠ 0) (c : ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, c • w] = c ^ (p⁻¹ : ℝ) * ‖f‖_[p, w] := by
   simp only [wlpNorm_eq_sum hp, NNReal.smul_def, Pi.smul_apply, Algebra.id.smul_eq_mul,
     NNReal.coe_mul, mul_assoc, ←mul_sum]
-  exact mul_rpow (by positivity) (sum_nonneg λ _ _ ↦ by positivity)
+  exact mul_rpow (by positivity) (sum_nonneg fun _ _ ↦ by positivity)
 
 -- TODO: Why is it so hard to use `wlpNorm_smul` directly? `function.has_smul` seems to have a hard
 -- time unifying `pi.has_smul`
@@ -320,7 +320,8 @@ section NormedAddCommGroup
 variable {α : Type*} [NormedAddCommGroup α] {p : ℝ≥0}
 
 @[simp]
-lemma lpNorm_const (hp : p ≠ 0) (a : α) : ‖const ι a‖_[p] = ↑(Fintype.card ι) ^ (p⁻¹ : ℝ) * ‖a‖ := by
+lemma lpNorm_const (hp : p ≠ 0) (a : α) :
+    ‖const ι a‖_[p] = ↑(Fintype.card ι) ^ (p⁻¹ : ℝ) * ‖a‖ := by
   simp only [lpNorm_eq_sum hp, card_univ, mul_rpow, norm_nonneg, rpow_nonneg,
     NNReal.coe_ne_zero.2 hp, rpow_rpow_inv, const_apply, sum_const, nsmul_eq_mul, Nat.cast_nonneg,
     Ne.def, not_false_iff]
@@ -331,11 +332,12 @@ section Real
 variable {p : ℝ≥0} {w : ι → ℝ≥0} {f g : ι → ℝ}
 
 @[simp]
-lemma wlpNorm_one (hp : p ≠ 0) (w : ι → ℝ≥0) : ‖(1 : ι → ℝ)‖_[p, w] = (∑ i, ↑(w i)) ^ (p⁻¹ : ℝ) := by
+lemma wlpNorm_one (hp : p ≠ 0) (w : ι → ℝ≥0) :
+    ‖(1 : ι → ℝ)‖_[p, w] = (∑ i, ↑(w i)) ^ (p⁻¹ : ℝ) := by
   simp [wlpNorm_eq_sum hp, NNReal.smul_def]
 
 lemma wlpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p, w] ≤ ‖g‖_[p, w] :=
-  lpNorm_mono (λ i ↦ by dsimp; sorry) λ i ↦ -- positivity
+  lpNorm_mono (fun i ↦ by dsimp; sorry) fun i ↦ -- positivity
     smul_le_smul_of_nonneg
         (by rw [norm_of_nonneg (hf _), norm_of_nonneg (hf.trans hfg _)]; exact hfg _) $
       by positivity
@@ -406,7 +408,7 @@ section OrderedCommSemiring
 variable [OrderedCommSemiring 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 lemma l2inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
-  sum_nonneg λ _ _ ↦ mul_nonneg (star_nonneg.2 $ hf _) $ hg _
+  sum_nonneg fun _ _ ↦ mul_nonneg (star_nonneg.2 $ hf _) $ hg _
 
 end OrderedCommSemiring
 
@@ -416,7 +418,7 @@ variable [LinearOrderedCommRing 𝕜] [StarOrderedRing 𝕜] [TrivialStar 𝕜] 
 --TODO: Can we remove the `has_trivial_star` assumption?
 lemma abs_l2inner_le_l2inner_abs : |⟪f, g⟫_[𝕜]| ≤ ⟪|f|, |g|⟫_[𝕜] :=
   (abs_sum_le_sum_abs _ _).trans_eq $
-    sum_congr rfl λ i _ ↦ by simp only [abs_mul, conj_trivial, Pi.abs_apply]
+    sum_congr rfl fun i _ ↦ by simp only [abs_mul, conj_trivial, Pi.abs_apply]
 
 end LinearOrderedCommRing
 
@@ -426,7 +428,7 @@ variable {κ : Type*} [IsROrC 𝕜] {f : ι → 𝕜}
 lemma l2inner_eq_inner (f g : ι → 𝕜) :
     ⟪f, g⟫_[𝕜] = inner ((WithLp.equiv 2 _).symm f) ((WithLp.equiv 2 _).symm g) := rfl
 
-lemma inner_eq_l2inner (f g : PiLp 2 λ _i : ι ↦ 𝕜) :
+lemma inner_eq_l2inner (f g : PiLp 2 fun _i : ι ↦ 𝕜) :
     inner f g = ⟪WithLp.equiv 2 _ f, WithLp.equiv 2 _ g⟫_[𝕜] := rfl
 
 @[simp] lemma l2inner_self (f : ι → 𝕜) : ⟪f, f⟫_[𝕜] = ‖f‖_[2] ^ 2 := by
@@ -437,7 +439,7 @@ lemma l2inner_self_of_norm_eq_one (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫_[𝕜
   simp [-l2inner_self, l2inner_eq_sum, IsROrC.conj_mul, IsROrC.normSq_eq_def', hf, card_univ]
 
 lemma linearIndependent_of_ne_zero_of_l2inner_eq_zero {v : κ → ι → 𝕜} (hz : ∀ k, v k ≠ 0)
-    (ho : Pairwise λ k l ↦ ⟪v k, v l⟫_[𝕜] = 0) : LinearIndependent 𝕜 v := by
+    (ho : Pairwise fun k l ↦ ⟪v k, v l⟫_[𝕜] = 0) : LinearIndependent 𝕜 v := by
   simp_rw [l2inner_eq_inner] at ho
   have := linearIndependent_of_ne_zero_of_inner_eq_zero ?_ ho
   exacts [this, hz]
@@ -451,16 +453,16 @@ variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0∞}
 lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ a f‖_[p] = ‖f‖_[p] := by
   obtain p | p := p
   · simp only [Linftynorm_eq_csupr, ENNReal.none_eq_top, translate_apply]
-    exact (Equiv.subRight _).iSup_congr λ _ ↦ rfl
+    exact (Equiv.subRight _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
   · simp only [L0norm_eq_card, translate_apply, Ne.def, ENNReal.some_eq_coe, ENNReal.coe_zero,
       Nat.cast_inj]
     exact
-      card_congr (λ x _ ↦ x - a) (λ x hx ↦ by simpa using hx)
-        (λ x y _ _ h ↦ by simpa using h) λ x hx ↦ ⟨x + a, by simpa using hx⟩
+      card_congr (fun x _ ↦ x - a) (fun x hx ↦ by simpa using hx)
+        (fun x y _ _ h ↦ by simpa using h) fun x hx ↦ ⟨x + a, by simpa using hx⟩
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe, translate_apply]
     congr 1
-    exact Fintype.sum_equiv (Equiv.subRight _) _ _ λ _ ↦ rfl
+    exact Fintype.sum_equiv (Equiv.subRight _) _ _ fun _ ↦ rfl
 
 @[simp] lemma lpNorm_conj [IsROrC β] (f : α → β) : ‖conj f‖_[p] = ‖f‖_[p] := by
   obtain p | p := p; swap; obtain rfl | hp := eq_or_ne p 0
@@ -473,22 +475,23 @@ lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ 
   simp only [conjneg, lpNorm_conj]
   obtain p | p := p
   · simp only [Linftynorm_eq_csupr, ENNReal.none_eq_top, conjneg, IsROrC.norm_conj]
-    exact (Equiv.neg _).iSup_congr λ _ ↦ rfl
+    exact (Equiv.neg _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
   · simp only [L0norm_eq_card, Ne.def, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
     exact
-      card_congr (λ x _ ↦ -x) (λ x hx ↦ by simpa using hx) (λ x y _ _ ↦ neg_inj.1)
-        λ x hx ↦ ⟨-x, by simpa using hx⟩
+      card_congr (fun x _ ↦ -x) (fun x hx ↦ by simpa using hx) (fun x y _ _ ↦ neg_inj.1)
+        fun x hx ↦ ⟨-x, by simpa using hx⟩
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe]
     congr 1
-    exact Fintype.sum_equiv (Equiv.neg _) _ _ λ _ ↦ rfl
+    exact Fintype.sum_equiv (Equiv.neg _) _ _ fun _ ↦ rfl
 
 end lpNorm
 
 section IsROrC
 variable {α β : Type*} [Fintype α]
 
-lemma L1norm_mul [IsROrC β] (f g : α → β) : ‖f * g‖_[1] = ⟪λ i ↦ ‖f i‖, λ i ↦ ‖g i‖⟫_[ℝ] := by simp [l2inner_eq_sum, L1norm_eq_sum]
+lemma L1norm_mul [IsROrC β] (f g : α → β) :
+    ‖f * g‖_[1] = ⟪fun i ↦ ‖f i‖, fun i ↦ ‖g i‖⟫_[ℝ] := by simp [l2inner_eq_sum, L1norm_eq_sum]
 
 end IsROrC
 
@@ -497,7 +500,7 @@ variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0} {w : α �
 
 @[simp] lemma wlpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) :
     ‖τ a f‖_[p, τ a w] = ‖f‖_[p, w] :=
-  (lpNorm_translate a λ i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖ : _)
+  (lpNorm_translate a fun i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖ : _)
 
 @[simp]
 lemma wlpNorm_conj [IsROrC β] (f : α → β) : ‖conj f‖_[p, w] = ‖f‖_[p, w] := by simp [wlpNorm]
@@ -675,7 +678,8 @@ lemma lpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ +
 
 /-- Hölder's inequality, finitary case. -/
 lemma lpNorm_prod_le {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp : ∀ i, p i ≠ 0) (q : ℝ≥0)
-    (hpq : ∑ i in s, (p i)⁻¹ = q⁻¹) (f : ι → α → ℝ) : ‖∏ i in s, f i‖_[q] ≤ ∏ i in s, ‖f i‖_[p i] := by
+    (hpq : ∑ i in s, (p i)⁻¹ = q⁻¹) (f : ι → α → ℝ) :
+    ‖∏ i in s, f i‖_[q] ≤ ∏ i in s, ‖f i‖_[p i] := by
   induction' s using Finset.cons_induction with i s hi ih generalizing q
   · cases not_nonempty_empty hs
   obtain rfl | hs := s.eq_empty_or_nonempty
@@ -684,7 +688,7 @@ lemma lpNorm_prod_le {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp 
   simp_rw [prod_cons]
   rw [sum_cons, ←inv_inv (∑ _ ∈ _, _ : ℝ≥0)] at hpq
   refine'
-    (lpNorm_mul_le (hp _) (inv_ne_zero (sum_pos (λ _ _ ↦ _) hs).ne') _ hpq _ _).trans
+    (lpNorm_mul_le (hp _) (inv_ne_zero (sum_pos (fun _ _ ↦ _) hs).ne') _ hpq _ _).trans
       (mul_le_mul_of_nonneg_left (ih hs _ (inv_inv _).symm) lpNorm_nonneg)
   exact pos_iff_ne_zero.2 (inv_ne_zero $ hp _)
 
@@ -696,7 +700,7 @@ section indicate
 variable {α β : Type*} [IsROrC β] [Fintype α] [DecidableEq α] {s : Finset α} {p : ℝ≥0}
 
 lemma lpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖_[p] ^ (p : ℝ) = s.card := by
-  have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := λ x ↦
+  have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := fun x ↦
     by split_ifs <;> simp
   simp [lpNorm_rpow_eq_sum, hp, indicate_apply, apply_ite Norm.norm, -sum_const, card_eq_sum_ones,
     sum_boole, this, zero_rpow, filter_mem_eq_inter]

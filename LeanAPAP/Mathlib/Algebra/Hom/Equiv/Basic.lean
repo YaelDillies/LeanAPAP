@@ -13,8 +13,8 @@ lemma MulEquiv.comp_symm (e : β ≃* α) : (e : β →* α).comp (e.symm : α �
 -- cf https://discord.com/channels/@me/827209384811561031/1079538520353423380
 @[to_additive]
 lemma Function.Injective.comp_mulEquiv (f : α → β →* γ) (hf : Injective f) (e : δ ≃* β) :
-    Injective λ a ↦ (f a).comp (e : δ →* β) := by
+    Injective fun a ↦ (f a).comp (e : δ →* β) := by
   refine'
-    (LeftInverse.injective λ i ↦ _ : Injective λ i : β →* γ ↦ i.comp (e : δ →* β)).comp hf
-  · exact λ i ↦ i.comp (e.symm : β →* δ)
+    (LeftInverse.injective fun i ↦ _ : Injective fun i : β →* γ ↦ i.comp (e : δ →* β)).comp hf
+  · exact fun i ↦ i.comp (e.symm : β →* δ)
   · simp [MonoidHom.comp_assoc]

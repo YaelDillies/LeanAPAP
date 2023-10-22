@@ -61,13 +61,14 @@ lemma sum_indicate [Fintype α] (s : Finset α) : ∑ x, 𝟭_[β] s x = s.card 
 lemma card_eq_sum_indicate [Fintype α] (s : Finset α) : s.card = ∑ x, 𝟭_[ℕ] s x :=
   (sum_indicate _ _).symm
 
-lemma translate_indicate [AddCommGroup α] (a : α) (s : Finset α) : τ a (𝟭_[β] s) = 𝟭 (a +ᵥ s) := by ext; simp [indicate_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
+lemma translate_indicate [AddCommGroup α] (a : α) (s : Finset α) : τ a (𝟭_[β] s) = 𝟭 (a +ᵥ s) := by
+  ext; simp [indicate_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
 
 variable {β}
 variable [StarRing β]
 
 lemma indicate_isSelfAdjoint (s : Finset α) : IsSelfAdjoint (𝟭_[β] s) :=
-  Pi.isSelfAdjoint.2 λ g ↦ by rw [indicate]; split_ifs <;> simp
+  Pi.isSelfAdjoint.2 fun g ↦ by rw [indicate]; split_ifs <;> simp
 
 end Semiring
 
@@ -79,7 +80,7 @@ lemma indicate_inf_apply [Fintype α] (s : Finset ι) (t : ι → Finset α) (x 
 
 lemma indicate_inf [Fintype α] (s : Finset ι) (t : ι → Finset α) :
     𝟭_[β] (s.inf t) = ∏ i in s, 𝟭 (t i) :=
-  funext λ x ↦ by rw [Finset.prod_apply, indicate_inf_apply]
+  funext fun x ↦ by rw [Finset.prod_apply, indicate_inf_apply]
 
 end CommSemiring
 
@@ -106,7 +107,8 @@ end NNReal
 section OrderedSemiring
 variable [OrderedSemiring β] {s : Finset α}
 
-@[simp] lemma indicate_nonneg : 0 ≤ 𝟭_[β] s := λ a ↦ by rw [indicate_apply]; split_ifs <;> norm_num
+@[simp] lemma indicate_nonneg : 0 ≤ 𝟭_[β] s := fun a ↦ by
+  rw [indicate_apply]; split_ifs <;> norm_num
 
 @[simp] lemma indicate_pos [Nontrivial β] : 0 < 𝟭_[β] s ↔ s.Nonempty := by
   simp [indicate_apply, Pi.lt_def, Function.funext_iff, lt_iff_le_and_ne, @eq_comm β 0,
@@ -138,7 +140,7 @@ variable [Nontrivial β] [CharZero β] {a : α}
 
 @[simp] lemma mu_apply_eq_zero : μ_[β] s a = 0 ↔ a ∉ s := by
   simp only [mu_apply, mul_boole, ite_eq_right_iff, inv_eq_zero, Nat.cast_eq_zero, card_eq_zero]
-  refine' imp_congr_right λ ha ↦ _
+  refine' imp_congr_right fun ha ↦ _
   simp only [ne_empty_of_mem ha]
 
 lemma mu_apply_ne_zero : μ_[β] s a ≠ 0 ↔ a ∈ s := mu_apply_eq_zero.not_left
@@ -206,7 +208,7 @@ end NNReal
 section LinearOrderedSemifield
 variable [LinearOrderedSemifield β] {s : Finset α}
 
-@[simp] lemma mu_nonneg : 0 ≤ μ_[β] s := λ a ↦ by rw [mu_apply]; split_ifs <;> norm_num
+@[simp] lemma mu_nonneg : 0 ≤ μ_[β] s := fun a ↦ by rw [mu_apply]; split_ifs <;> norm_num
 @[simp] lemma mu_pos : 0 < μ_[β] s ↔ s.Nonempty := mu_nonneg.gt_iff_ne.trans mu_ne_zero
 
 end LinearOrderedSemifield

@@ -23,6 +23,6 @@ lemma one_lt_coe : 1 < (x : ℝ) ↔ 1 < x := by rw [←NNReal.coe_lt_coe, NNRea
 lemma coe_ne_one : (x : ℝ) ≠ 1 ↔ x ≠ 1 := x.coe_eq_one.not
 
 instance : StarRing ℝ≥0 := starRingOfComm
-instance : TrivialStar ℝ≥0 := ⟨λ _ ↦ rfl⟩
+instance : TrivialStar ℝ≥0 := ⟨fun _ ↦ rfl⟩
 
 end NNReal

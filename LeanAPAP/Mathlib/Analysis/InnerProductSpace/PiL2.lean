@@ -6,6 +6,6 @@ variable {𝕜 ι : Type*} [AddCommMonoid 𝕜] [Fintype ι] {α : ι → Type*}
 
 local notation "⟪" x ", " y "⟫" => @inner 𝕜 _ _ x y
 
-instance PiLp.innerProductSpace' : Inner 𝕜 (PiLp 2 α) := ⟨λ x y ↦ ∑ i, inner (x i) (y i)⟩
+instance PiLp.innerProductSpace' : Inner 𝕜 (PiLp 2 α) := ⟨fun x y ↦ ∑ i, inner (x i) (y i)⟩
 
 @[simp] lemma PiLp.inner_apply' (x y : PiLp 2 α) : ⟪x, y⟫ = ∑ i, ⟪x i, y i⟫ := rfl

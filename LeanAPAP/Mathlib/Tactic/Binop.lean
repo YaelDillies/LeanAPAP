@@ -25,8 +25,9 @@ The elaborator for `binop%`, `binop_lazy%`, and `unop%` terms.
 It works as follows:
 
 1- Expand macros.
-2- Convert `Syntax` object corresponding to the `binop%` (`binop_lazy%` and `unop%`) term into a `Tree`.
-   The `toTree` method visits nested `binop%` (`binop_lazy%` and `unop%`) terms and parentheses.
+2- Convert `Syntax` object corresponding to the `binop%` (`binop_lazy%` and `unop%`) term into a
+  `Tree`. The `toTree` method visits nested `binop%` (`binop_lazy%` and `unop%`) terms and
+  parentheses.
 3- Synthesize pending metavariables without applying default instances and using the
    `(mayPostpone := true)`.
 4- Tries to compute a maximal type for the tree computed at step 2.
@@ -41,8 +42,8 @@ Recall that the coercions are expanded eagerly by the elaborator.
 
 Properties:
 
-a) Given `n : Nat` and `i : Nat`, it can successfully elaborate `n + i` and `i + n`. Recall that Lean 3
-   fails on the former.
+a) Given `n : Nat` and `i : Nat`, it can successfully elaborate `n + i` and `i + n`. Recall that
+  Lean 3 fails on the former.
 
 b) The coercions are inserted in the "leaves" like in Lean 3.
 
@@ -104,7 +105,8 @@ private inductive Tree where
   | action (ref : Syntax) (right : Bool) (f : Expr) (lhs rhs : Tree)
   /--
   Used for assembling the info tree. We store this information
-  to make sure "go to definition" behaves similarly to notation defined without using `binop%` helper elaborator.
+  to make sure "go to definition" behaves similarly to notation defined without using `binop%`
+  helper elaborator.
   -/
   | macroExpansion (macroName : Name) (stx stx' : Syntax) (nested : Tree)
 
@@ -174,7 +176,8 @@ private def hasCoe (fromType toType : Expr) : TermElabM Bool := do
 
 private structure AnalyzeResult where
   max?            : Option Expr := none
-  hasUncomparable : Bool := false -- `true` if there are two types `α` and `β` where we don't have coercions in any direction.
+  -- `true` if there are two types `α` and `β` where we don't have coercions in any direction.
+  hasUncomparable : Bool := false
 
 private def isUnknow : Expr → Bool
   | .mvar ..        => true
@@ -218,10 +221,12 @@ private def mkBinOp (lazy : Bool) (f : Expr) (lhs rhs : Expr) : TermElabM Expr :
   let mut rhs := rhs
   if lazy then
     rhs ← mkFunUnit rhs
-  elabAppArgs f #[] #[Arg.expr lhs, Arg.expr rhs] (expectedType? := none) (explicit := false) (ellipsis := false) (resultIsOutParamSupport := false)
+  elabAppArgs f #[] #[Arg.expr lhs, Arg.expr rhs] (expectedType? := none) (explicit := false)
+    (ellipsis := false) (resultIsOutParamSupport := false)
 
 private def mkUnOp (f : Expr) (arg : Expr) : TermElabM Expr := do
-  elabAppArgs f #[] #[Arg.expr arg] (expectedType? := none) (explicit := false) (ellipsis := false) (resultIsOutParamSupport := false)
+  elabAppArgs f #[] #[Arg.expr arg] (expectedType? := none) (explicit := false) (ellipsis := false)
+    (resultIsOutParamSupport := false)
 
 private def toExprCore (t : Tree) : TermElabM Expr := do
   match t with
@@ -249,8 +254,9 @@ private def toExprCore (t : Tree) : TermElabM Expr := do
   It returns true IF
   - `f` is a constant of the form `Cls.op` where `Cls` is a class name, and
   - `maxType` is of the form `C ...` where `C` is a constant, and
-  - There are more than one default instance. That is, it assumes the class `Cls` for the heterogeneous operator `f`, and
-    always has the monomorphic instance. (e.g., for `HAdd`, we have `instance [Add α] : HAdd α α α`), and
+  - There are more than one default instance. That is, it assumes the class `Cls` for the
+    heterogeneous operator `f`, and always has the monomorphic instance. (e.g., for `HAdd`, we have
+    `instance [Add α] : HAdd α α α`), and
   - If `lhs == true`, then there is a default instance of the form `Cls _ (C ..) _`, and
   - If `lhs == false`, then there is a default instance of the form `Cls (C ..) _ _`.
 
@@ -262,10 +268,11 @@ private def toExprCore (t : Tree) : TermElabM Expr := do
 
   #eval 2 * #[3, 4, 5]
   ```
-  If the type of an argument is unknown we should not coerce it to `maxType` because it would prevent
-  the default instance above from being even tried.
+  If the type of an argument is unknown we should not coerce it to `maxType` because it would
+  prevent the default instance above from being even tried.
 -/
-private def hasHeterogeneousDefaultInstances (f : Expr) (maxType : Expr) (lhs : Bool) : MetaM Bool := do
+private def hasHeterogeneousDefaultInstances (f : Expr) (maxType : Expr) (lhs : Bool) :
+    MetaM Bool := do
   let .const fName .. := f | return false
   let .const typeName .. := maxType.getAppFn | return false
   let className := fName.getPrefix
@@ -297,21 +304,24 @@ private def hasHomogeneousInstance (f : Expr) (maxType : Expr) : MetaM Bool := d
 mutual
   /--
     Try to coerce elements in the `t` to `maxType` when needed.
-    If the type of an element in `t` is unknown we only coerce it to `maxType` if `maxType` does not have heterogeneous
-    default instances. This extra check is approximated by `hasHeterogeneousDefaultInstances`.
+    If the type of an element in `t` is unknown we only coerce it to `maxType` if `maxType` does not
+    have heterogeneous default instances. This extra check is approximated by
+    `hasHeterogeneousDefaultInstances`.
 
-    Remark: If `maxType` does not implement heterogeneous default instances, we do want to assign unknown types `?m` to
-    `maxType` because it produces better type information propagation. Our test suite has many tests that would break if
-    we don't do this. For example, consider the term
+    Remark: If `maxType` does not implement heterogeneous default instances, we do want to assign
+    unknown types `?m` to `maxType` because it produces better type information propagation. Our
+    test suite has many tests that would break if we don't do this. For example, consider the term
     ```
     eq_of_isEqvAux a b hsz (i+1) (Nat.succ_le_of_lt h) heqv.2
     ```
-    `Nat.succ_le_of_lt h` type depends on `i+1`, but `i+1` only reduces to `Nat.succ i` if we know that `1` is a `Nat`.
-    There are several other examples like that in our test suite, and one can find them by just replacing the
-    `← hasHeterogeneousDefaultInstances f maxType lhs` test with `true`
+    `Nat.succ_le_of_lt h` type depends on `i+1`, but `i+1` only reduces to `Nat.succ i` if we know
+    that `1` is a `Nat`. There are several other examples like that in our test suite, and one can
+    find them by just replacing the `← hasHeterogeneousDefaultInstances f maxType lhs` test with
+    `true`
 
 
-    Remark: if `hasHeterogeneousDefaultInstances` implementation is not good enough we should refine it in the future.
+    Remark: if `hasHeterogeneousDefaultInstances` implementation is not good enough we should refine
+    it in the future.
   -/
   private partial def applyCoe (t : Tree) (maxType : Expr) (isPred : Bool) : TermElabM Tree := do
     go t none false isPred
@@ -320,8 +330,8 @@ mutual
       match t with
       | .binop ref lazy f lhs rhs =>
         /-
-          We only keep applying coercions to `maxType` if `f` is predicate or
-          `f` has a homogenous instance with `maxType`. See `hasHomogeneousInstance` for additional details.
+          We only keep applying coercions to `maxType` if `f` is predicate or `f` has a homogenous
+          instance with `maxType`. See `hasHomogeneousInstance` for additional details.
 
           Remark: We assume `binrel%` elaborator is only used with homogenous predicates.
         -/
@@ -389,25 +399,28 @@ def elabRightAct : TermElab := elabOp
 
 /--
   Elaboration functionf for `binrel%` and `binrel_no_prop%` notations.
-  We use the infrastructure for `binop%` to make sure we propagate information between the left and right hand sides
-  of a binary relation.
+  We use the infrastructure for `binop%` to make sure we propagate information between the left and
+  right hand sides of a binary relation.
 
-  Recall that the `binrel_no_prop%` notation is used for relations such as `==` which do not support `Prop`, but
-  we still want to be able to write `(5 > 2) == (2 > 1)`.
+  Recall that the `binrel_no_prop%` notation is used for relations such as `==` which do not support
+  `Prop`, but we still want to be able to write `(5 > 2) == (2 > 1)`.
 -/
-def elabBinRelCore (noProp : Bool) (stx : Syntax) (expectedType? : Option Expr) : TermElabM Expr :=  do
+def elabBinRelCore (noProp : Bool) (stx : Syntax) (expectedType? : Option Expr) :
+    TermElabM Expr :=  do
   match (← resolveId? stx[1]) with
   | some f => withSynthesizeLight do
     /-
-    We used to use `withSynthesize (mayPostpone := true)` here instead of `withSynthesizeLight` here.
-    Recall that `withSynthesizeLight` is equivalent to `withSynthesize (mayPostpone := true) (synthesizeDefault := false)`.
-    It seems too much to apply default instances at binary relations. For example, we cannot elaborate
+    We used to use `withSynthesize (mayPostpone := true)` here instead of `withSynthesizeLight`
+    here. Recall that `withSynthesizeLight` is equivalent to
+    `withSynthesize (mayPostpone := true) (synthesizeDefault := false)`. It seems too much to apply
+    default instances at binary relations. For example, we cannot elaborate
     ```
     def as : List Int := [-1, 2, 0, -3, 4]
     #eval as.map fun a => ite (a ≥ 0) [a] []
     ```
     The problem is that when elaborating `a ≥ 0` we don't know yet that `a` is an `Int`.
-    Then, by applying default instances, we apply the default instance to `0` that forces it to become an `Int`,
+    Then, by applying default instances, we apply the default instance to `0` that forces it to
+    become an `Int`,
     and Lean infers that `a` has type `Nat`.
     Then, later we get a type error because `as` is `List Int` instead of `List Nat`.
     This behavior is quite counterintuitive since if we avoid this elaborator by writing
@@ -416,17 +429,20 @@ def elabBinRelCore (noProp : Bool) (stx : Syntax) (expectedType? : Option Expr) 
     #eval as.map fun a => ite (GE.ge a 0) [a] []
     ```
     everything works.
-    However, there is a drawback of using `withSynthesizeLight` instead of `withSynthesize (mayPostpone := true)`.
+    However, there is a drawback of using `withSynthesizeLight` instead of
+    `withSynthesize (mayPostpone := true)`.
     The following cannot be elaborated
     ```
     have : (0 == 1) = false := rfl
     ```
-    We get a type error at `rfl`. `0 == 1` only reduces to `false` after we have applied the default instances that force
-    the numeral to be `Nat`. We claim this is defensible behavior because the same happens if we do not use this elaborator.
+    We get a type error at `rfl`. `0 == 1` only reduces to `false` after we have applied the default
+    instances that force the numeral to be `Nat`. We claim this is defensible behavior because the
+    same happens if we do not use this elaborator.
     ```
     have : (BEq.beq 0 1) = false := rfl
     ```
-    We can improve this failure in the future by applying default instances before reporting a type mismatch.
+    We can improve this failure in the future by applying default instances before reporting a type
+    mismatch.
     -/
     let lhs ← withRef stx[2] <| toTree stx[2]
     let rhs ← withRef stx[3] <| toTree stx[3]
@@ -441,10 +457,12 @@ def elabBinRelCore (noProp : Bool) (stx : Syntax) (expectedType? : Option Expr) 
       let rhs ← toBoolIfNecessary rhs
       let lhsType ← inferType lhs
       let rhs ← ensureHasType lhsType rhs
-      elabAppArgs f #[] #[Arg.expr lhs, Arg.expr rhs] expectedType? (explicit := false) (ellipsis := false) (resultIsOutParamSupport := false)
+      elabAppArgs f #[] #[Arg.expr lhs, Arg.expr rhs] expectedType? (explicit := false)
+        (ellipsis := false) (resultIsOutParamSupport := false)
     else
       let mut maxType := r.max?.get!
-      /- If `noProp == true` and `maxType` is `Prop`, then set `maxType := Bool`. `See toBoolIfNecessary` -/
+      /- If `noProp == true` and `maxType` is `Prop`, then set `maxType := Bool`. See
+      `toBoolIfNecessary` -/
       if noProp then
         if (← withNewMCtxDepth <| isDefEq maxType (mkSort levelZero)) then
           maxType := Lean.mkConst ``Bool

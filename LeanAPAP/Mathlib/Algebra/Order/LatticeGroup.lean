@@ -15,13 +15,13 @@ lemma posPart_apply [∀ i, Lattice (α i)] [∀ i, AddCommGroup (α i)] (f : �
 lemma negPart_apply [∀ i, Lattice (α i)] [∀ i, AddCommGroup (α i)] (f : ∀ i, α i) (i : ι) :
     f⁻ i = (f i)⁻ := rfl
 
-lemma abs_def [∀ i, Neg (α i)] [∀ i, Sup (α i)] (f : ∀ i, α i) : |f| = λ i ↦ |f i| := rfl
+lemma abs_def [∀ i, Neg (α i)] [∀ i, Sup (α i)] (f : ∀ i, α i) : |f| = fun i ↦ |f i| := rfl
 
 lemma posPart_def [∀ i, Lattice (α i)] [∀ i, AddCommGroup (α i)] (f : ∀ i, α i) :
-    f⁺ = λ i ↦ (f i)⁺ := rfl
+    f⁺ = fun i ↦ (f i)⁺ := rfl
 
 lemma negPart_def [∀ i, Lattice (α i)] [∀ i, AddCommGroup (α i)] (f : ∀ i, α i) :
-    f⁻ = λ i ↦ (f i)⁻ := rfl
+    f⁻ = fun i ↦ (f i)⁻ := rfl
 
 end Pi
 

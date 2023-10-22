@@ -48,14 +48,14 @@ variable [CommSemiring β] [StarRing β]
 instance instCommSemiring : CommSemiring (WithConv α β) :=
   { Pi.addCommMonoid with
     one := toConv (Pi.single 0 1 : α → β)
-    mul := λ f g ↦ toConv $ ofConv f ∗ ofConv g
+    mul := fun f g ↦ toConv $ ofConv f ∗ ofConv g
     mul_assoc := conv_assoc
     mul_comm := conv_comm
     mul_zero := conv_zero
     zero_mul := zero_conv
-    mul_one := λ f ↦ funext λ a ↦ show (ofConv f ∗ Pi.single 0 1) a = _ by
+    mul_one := fun f ↦ funext fun a ↦ show (ofConv f ∗ Pi.single 0 1) a = _ by
       simp [conv_eq_sum_sub, Pi.single_apply]
-    one_mul := λ f ↦ funext λ a ↦ show (Pi.single 0 1 ∗ ofConv f) a = _ by
+    one_mul := fun f ↦ funext fun a ↦ show (Pi.single 0 1 ∗ ofConv f) a = _ by
       simp [conv_eq_sum_sub', Pi.single_apply]
     left_distrib := conv_add
     right_distrib := add_conv }

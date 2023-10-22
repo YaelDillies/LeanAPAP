@@ -44,7 +44,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
   rw [hfp, sq_sqrt] at h
   -- We currently can't fill the next `sorry`
   have : Fintype.card α * p ! ≤ p ^ p := sorry -- false because wrong normalisation
-  replace h := (expect_le_expect λ a _ ↦ pow_div_factorial_le_exp sorry p).trans h
+  replace h := (expect_le_expect fun a _ ↦ pow_div_factorial_le_exp sorry p).trans h
   simp_rw [←expect_div, expect, ←norm_eq_abs, card_univ, div_div, ←Nat.cast_mul] at h
   rw [←lpNorm_pow_eq_sum, div_le_iff, div_eq_inv_mul, exp_mul, rpow_nat_cast] at h
   replace h := h.trans $ mul_le_mul_of_nonneg_left (Nat.cast_le.2 this) $ by positivity

@@ -83,11 +83,11 @@ pure $ ml.popn_back (string.length "_target/deps/mathlib/src/") ++ "src/"
 meta def lint_decls : tactic (list declaration) := do
 e ← tactic.get_env,
 src ← get_src_dir,
-pure $ e.filter $ λ d, e.is_prefix_of_file src d.to_name
+pure $ e.filter $ fun d, e.is_prefix_of_file src d.to_name
 
 meta def enabled_linters : list name :=
   -- Enable linters by editing this list.
-  let enabled_linter_names := list.map (λ x, "linter." ++ x) [
+  let enabled_linter_names := list.map (fun x, "linter." ++ x) [
     "check_type",
     "def_lemma",
     -- "doc_blame",
@@ -109,7 +109,7 @@ meta def enabled_linters : list name :=
     "simp_var_head"
     -- "simp_nf"
     ] in
-  mathlib_linters.filter $ λ x: name, x.to_string ∈ enabled_linter_names
+  mathlib_linters.filter $ fun x: name, x.to_string ∈ enabled_linter_names
 
 /-- Runs when called with `lean --run`.
 Edit the list in `enabled_linters` to run additional linters.
@@ -121,7 +121,7 @@ env ← tactic.get_env,
 decls ← lint_decls,
 linters ← get_linters enabled_linters,
 path_len ← string.length <$> get_src_dir,
-let non_auto_decls := decls.filter (λ d, ¬ d.is_auto_or_internal env),
+let non_auto_decls := decls.filter (fun d, ¬ d.is_auto_or_internal env),
 results₀ ← lint_core decls non_auto_decls linters,
 nolint_file ← read_nolints_file,
 let results := (do
@@ -130,4 +130,4 @@ let results := (do
 io.print $ to_string $ format_linter_results env results decls non_auto_decls
   path_len "in LeanAPAP" tt lint_verbosity.medium linters.length,
 io.write_file "nolints.txt" $ to_string $ mk_nolint_file env path_len results₀,
-if results.all (λ r, r.2.2.empty) then pure () else io.fail ""
+if results.all (fun r, r.2.2.empty) then pure () else io.fail ""

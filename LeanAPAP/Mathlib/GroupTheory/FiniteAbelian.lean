@@ -5,12 +5,12 @@ open scoped DirectSum
 
 private def myThingForward {ι : Type} [DecidableEq ι] (p : ι → ℕ) (n : ι → ℕ) :
     (⨁ i : {i // n i ≠ 0}, ZMod (p i ^ n i)) →+ ⨁ i, ZMod (p i ^ n i) :=
-  DirectSum.toAddMonoid λ i ↦ DirectSum.of (λ i ↦ ZMod (p i ^ n i)) i
+  DirectSum.toAddMonoid fun i ↦ DirectSum.of (fun i ↦ ZMod (p i ^ n i)) i
 
 private def myThingBackward {ι : Type} [DecidableEq ι] (p : ι → ℕ) (n : ι → ℕ) :
     (⨁ i, ZMod (p i ^ n i)) →+ ⨁ i : {i // n i ≠ 0}, ZMod (p i ^ n i) :=
-  DirectSum.toAddMonoid λ i ↦
-    if h : n i = 0 then 0 else DirectSum.of (λ j : {i // n i ≠ 0} ↦ ZMod (p j ^ n j)) ⟨i, h⟩
+  DirectSum.toAddMonoid fun i ↦
+    if h : n i = 0 then 0 else DirectSum.of (fun j : {i // n i ≠ 0} ↦ ZMod (p j ^ n j)) ⟨i, h⟩
 
 private def myThing (ι : Type) [DecidableEq ι] (p : ι → ℕ) (n : ι → ℕ) :
     (⨁ i : {i // n i ≠ 0}, ZMod (p i ^ n i)) ≃+ ⨁ i, ZMod (p i ^ n i) where
@@ -41,6 +41,6 @@ lemma AddCommGroup.equiv_directSum_zmod_of_finite (G : Type*) [AddCommGroup G] [
   classical
   obtain ⟨ι, hι, p, hp, n, ⟨e⟩⟩ := AddCommGroup.equiv_directSum_zmod_of_fintype G
   skip
-  refine' ⟨{i : ι // n i ≠ 0}, inferInstance, λ i ↦ p i ^ n i, _, ⟨e.trans (myThing ι _ _).symm⟩⟩
+  refine' ⟨{i : ι // n i ≠ 0}, inferInstance, fun i ↦ p i ^ n i, _, ⟨e.trans (myThing ι _ _).symm⟩⟩
   rintro ⟨i, hi⟩
   exact one_lt_pow (hp _).one_lt hi
