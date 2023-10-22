@@ -14,11 +14,31 @@ We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G
 \uses{dissociated}
 \lean{rudin_exp_ineq}
 \leanok
-If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support, then $\E \exp|\Re f| \le \exp(\frac{\norm f_2^2} 2)$.
+If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support, then $\E \exp(\Re f) \le \exp(\frac{\norm f_2^2} 2)$.
 \end{lemma}
 \begin{proof}
 \uses{mzi_complex}
-TODO(Thomas): Write proof
+Using the convexity of $t\mapsto e^{tx}$ (for all $x\geq 0$ and $t\in[-1,1]$) we have
+\[e^{tx}\leq \cosh(x)+t\sinh(x).\]
+It follows (taking $x=\lvert z\rvert$ and $t=\Re(z)/\lvert z\rvert$) that, for any $z\in \mathbb{C}$,
+\[e^{\Re z}\leq \cosh(\lvert z\rvert)+\Re(z/\lvert z\rvert)\sinh(\lvert z\rvert).\]
+In particular, if $c_\gamma\in \mathbb{C}$ with $\lvert c_\gamma\rvert=1$ is such that $\widehat{f}(\gamma)=c_\gamma\lvert \widehat{f}(\gamma)\rvert$, then
+\begin{align*}
+e^{\Re f(x)}
+&= \exp\left( \Re \sum_{\gamma\in\Gamma}\widehat{f}(\gamma)\gamma(x)\right)\\
+&=\prod_{\gamma\in \Gamma} \exp\left( \Re \widehat{f}(\gamma)\gamma(x)\right)\\
+&\leq \prod_{\gamma\in \Gamma}\left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma))\right).
+\end{align*}
+Therefore
+\[\mathbb{E}_x e^{\Re f(x)}\leq \mathbb{E}_x \left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma))\right).\]
+Using $\Re z=(z+\overline{z})/2$ the product here can be expanded as the sum of
+\[\prod_{\gamma\in \Gamma_2}\frac{c_\gamma}{2}\prod_{\gamma\in \Gamma_3}\frac{\overline{c_\gamma}}{2}\left(\prod_{\gamma\in \Gamma_1}\cosh(\lvert \widehat{f}(\gamma)\rvert)\right)\left(\prod_{\gamma\in \Gamma_2\cup\Gamma_3}\sinh(\lvert \widehat{f}(\gamma)\rvert)\right)\left(\sum_{\gamma\in \Gamma_2}\gamma-\sum_{\lambda\in \Gamma_3}\lambda\right)(x)\]
+as $\Gamma_1\sqcup \Gamma_2\sqcup \Gamma_3=\Gamma$ ranges over all partitions of $\Gamma$ into three disjoint parts. Using the definition of dissociativity we see that
+\[\sum_{\gamma\in \Gamma_2}\gamma-\sum_{\lambda\in \Gamma_3}\lambda\neq 0\]
+unless $\Gamma_2=\Gamma_2=\emptyset$. In particular summing this term over all $x\in G$ gives $0$. Therefore the only term that survives averaging over $x$ is when $\Gamma_1=\Gamma$, and so
+\[\mathbb{E}_x e^{\Re f(x)}\leq \prod_{\gamma\in \Gamma} \cosh (\lvert \widehat{f}(\gamma)\rvert).\]
+The conclusion now follows using $\cosh(x) \leq e^{x^2/2}$ and $\sum_{\gamma\in \Gamma}\lvert \widehat{f}(\gamma)\rvert^2=\| f\|_2^2$. The second conclusion follows by applying it to $f(x)$ and $-f(x)$ and using
+\[e^{\abs{y}}\leq e^y+e^{-y}.\]
 \end{proof}
 
 
