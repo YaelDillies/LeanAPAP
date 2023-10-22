@@ -35,7 +35,7 @@ private lemma step_one (hA : A.Nonempty) (f : G → ℝ) (a : Fin n → G)
     _ = (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ m / (A^^n).card := by
       rw [div_div, ←_root_.pow_succ']
     _ ≤ _ := by simpa using div_le_div_of_le (by positivity)
-                  (Real.pow_sum_div_card_le_sum_pow (A^^n) m λ i _ ↦ by positivity)
+                  (Real.pow_sum_div_card_le_sum_pow (A^^n) m fun i _ ↦ by positivity)
 
 private lemma step_one' (hA : A.Nonempty) (f : G → ℝ) (hf : ∀ i : Fin n, ∑ a in A^^n, f (a i) = 0)
     (a : Fin n → G) :
@@ -64,7 +64,7 @@ private lemma step_two_aux (A : Finset G) (f : G → ℝ) (ε : Fin n → ℝ)
   rw [←sum_product', ←sum_product']
   let swapper : (Fin n → G) × (Fin n → G) → (Fin n → G) × (Fin n → G) := by
     intro xy
-    exact (λ i ↦ if ε i = 1 then xy.1 i else xy.2 i, λ i ↦ if ε i = 1 then xy.2 i else xy.1 i)
+    exact (fun i ↦ if ε i = 1 then xy.1 i else xy.2 i, fun i ↦ if ε i = 1 then xy.2 i else xy.1 i)
   have h₁ : ∀ a ∈ (A^^n) ×ˢ (A^^n), swapper a ∈ (A^^n) ×ˢ (A^^n) := by
     intro a
     simp only [mem_product, and_imp, mem_piFinset, ←forall_and]
@@ -72,7 +72,7 @@ private lemma step_two_aux (A : Finset G) (f : G → ℝ) (ε : Fin n → ℝ)
     split_ifs
     · exact h i
     exact (h i).symm
-  have h₂ : ∀ a ∈ (A^^n) ×ˢ (A^^n), swapper (swapper a) = a := λ a _ ↦ by
+  have h₂ : ∀ a ∈ (A^^n) ×ˢ (A^^n), swapper (swapper a) = a := fun a _ ↦ by
     ext <;> simp only <;> split_ifs <;> rfl
   refine' sum_nbij' swapper h₁ _ swapper h₁ h₂ h₂
   · rintro ⟨a, b⟩ _
@@ -91,7 +91,7 @@ private lemma step_two (f : G → ℝ) :
   have : ∀ ε ∈ ({-1, 1} : Finset ℝ)^^n,
     ∑ a in A^^n, ∑ b in A^^n, (∑ i, ε i * (f (a i) - f (b i))) ^ (2 * m) =
       ∑ a in A^^n, ∑ b in A^^n, (∑ i, (f (a i) - f (b i))) ^ (2 * m) :=
-    λ ε hε ↦ step_two_aux A f _ hε λ z : Fin n → ℝ ↦ univ.sum z ^ (2 * m)
+    fun ε hε ↦ step_two_aux A f _ hε fun z : Fin n → ℝ ↦ univ.sum z ^ (2 * m)
   rw [Finset.sum_congr rfl this, sum_const, card_piFinsetConst, card_doubleton, nsmul_eq_mul,
     Nat.cast_pow, Nat.cast_two, inv_pow, inv_mul_cancel_left₀]
   · positivity
@@ -104,19 +104,19 @@ private lemma step_three (f : G → ℝ) :
           (multinomial univ k * ∏ t, (f (a t) - f (b t)) ^ k t) *
             ∑ ε in ({-1, 1} : Finset ℝ)^^n, ∏ t, ε t ^ k t := by
   simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A^^n), ←Complex.abs_pow, multinomial_expansion']
-  refine' sum_congr rfl λ a _ ↦ _
-  refine' sum_congr rfl λ b _ ↦ _
+  refine' sum_congr rfl fun a _ ↦ _
+  refine' sum_congr rfl fun b _ ↦ _
   simp only [mul_pow, prod_mul_distrib, @sum_comm _ _ (Fin n → ℝ), ←mul_sum, ←sum_mul]
-  refine' sum_congr rfl λ k _ ↦ _
+  refine' sum_congr rfl fun k _ ↦ _
   rw [←mul_assoc, mul_right_comm]
 
 private lemma step_four {k : Fin n → ℕ} :
     ∑ ε in ({-1, 1} : Finset ℝ)^^n, ∏ t, ε t ^ k t = 2 ^ n * ite (∀ i, Even (k i)) 1 0 := by
-  have := sum_prod_piFinset ({-1, 1} : Finset ℝ) λ i fi ↦ fi ^ k i
+  have := sum_prod_piFinset ({-1, 1} : Finset ℝ) fun i fi ↦ fi ^ k i
   rw [piFinsetConst, this, ←Fintype.prod_boole]
   have : (2 : ℝ) ^ n = ∏ i : Fin n, 2 := by simp
   rw [this, ←prod_mul_distrib]
-  refine' prod_congr rfl λ t _ ↦ _
+  refine' prod_congr rfl fun t _ ↦ _
   rw [sum_pair, one_pow, mul_boole]
   swap
   · norm_num
@@ -129,13 +129,13 @@ private lemma step_four {k : Fin n → ℕ} :
 -- double_multinomial
 private lemma step_six {f : G → ℝ} {a b : Fin n → G} :
     ∑ k : Fin n → ℕ in cut univ m,
-        (multinomial univ λ a ↦ 2 * k a : ℝ) * ∏ i : Fin n, (f (a i) - f (b i)) ^ (2 * k i) ≤
+        (multinomial univ fun a ↦ 2 * k a : ℝ) * ∏ i : Fin n, (f (a i) - f (b i)) ^ (2 * k i) ≤
       m ^ m * (∑ i : Fin n, (f (a i) - f (b i)) ^ 2) ^ m := by
   rw [multinomial_expansion', mul_sum]
-  convert sum_le_sum λ k hk ↦ _
+  convert sum_le_sum fun k hk ↦ _
   rw [mem_cut] at hk
   simp only [←mul_assoc, pow_mul]
-  refine' mul_le_mul_of_nonneg_right _ (prod_nonneg λ i _ ↦ by positivity)
+  refine' mul_le_mul_of_nonneg_right _ (prod_nonneg fun i _ ↦ by positivity)
   norm_cast
   refine' double_multinomial.trans _
   rw [hk.1]
@@ -145,11 +145,11 @@ private lemma step_seven {f : G → ℝ} {a b : Fin n → G} :
       m ^ m * 2 ^ m * (∑ i : Fin n, (f (a i) ^ 2 + f (b i) ^ 2)) ^ m := by
   rw [←mul_pow, ←mul_pow, ←mul_pow]
   refine' pow_le_pow_of_le_left _ _ _
-  · exact mul_nonneg (Nat.cast_nonneg _) (sum_nonneg λ i _ ↦ by positivity)
+  · exact mul_nonneg (Nat.cast_nonneg _) (sum_nonneg fun i _ ↦ by positivity)
   rw [mul_assoc]
   refine' mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg _)
   rw [mul_sum]
-  refine' sum_le_sum λ i _ ↦ _
+  refine' sum_le_sum fun i _ ↦ _
   rw [sub_eq_add_neg]
   refine' add_sq_le.trans_eq _
   simp
@@ -161,24 +161,24 @@ private lemma step_eight {f : G → ℝ} {a b : Fin n → G} :
   rw [pow_add, ←mul_assoc _ _ (2 ^ _), mul_assoc _ (2 ^ (m - 1))]
   refine' mul_le_mul_of_nonneg_left _ (by positivity)
   rw [sum_add_distrib]
-  refine' add_pow_le _ _ m <;> exact sum_nonneg λ i _ ↦ by positivity
+  refine' add_pow_le _ _ m <;> exact sum_nonneg fun i _ ↦ by positivity
 
 private lemma end_step {f : G → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
     (∑ a in A^^n, ∑ b in A^^n, ∑ k : Fin n → ℕ in cut univ m,
-      ↑(multinomial univ λ i ↦ 2 * k i) * ∏ t : Fin n, (f (a t) - f (b t)) ^ (2 * k t)) /
+      ↑(multinomial univ fun i ↦ 2 * k i) * ∏ t : Fin n, (f (a t) - f (b t)) ^ (2 * k t)) /
         A.card ^ n ≤ (4 * m) ^ m * ∑ a in A^^n, (∑ i, f (a i) ^ 2) ^ m :=
   calc
     (∑ a in A^^n, ∑ b in A^^n,
             ∑ k : Fin n → ℕ in cut univ m,
-              (multinomial univ λ i ↦ 2 * k i : ℝ) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) /
+              (multinomial univ fun i ↦ 2 * k i : ℝ) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) /
           A.card ^ n
       ≤ (∑ a in A^^n, ∑ b in A^^n, m ^ m *
           2 ^ m * (∑ i : Fin n, (f (a i) ^ 2 + f (b i) ^ 2)) ^ m : ℝ) / A.card ^ n :=
-        div_le_div_of_le (by positivity) $ sum_le_sum λ a _ ↦ sum_le_sum λ b _ ↦
+        div_le_div_of_le (by positivity) $ sum_le_sum fun a _ ↦ sum_le_sum fun b _ ↦
           step_six.trans step_seven
     _ ≤ (∑ a in A^^n, ∑ b in A^^n, m ^ m * 2 ^ (m + (m - 1)) *
           ((∑ i : Fin n, f (a i) ^ 2) ^ m + (∑ i : Fin n, f (b i) ^ 2) ^ m) : ℝ) / A.card ^ n :=
-        div_le_div_of_le (by positivity) $ sum_le_sum λ a _ ↦ sum_le_sum λ b _ ↦ step_eight
+        div_le_div_of_le (by positivity) $ sum_le_sum fun a _ ↦ sum_le_sum fun b _ ↦ step_eight
     _ = _ := by
       simp only [mul_add, sum_add_distrib, sum_const, nsmul_eq_mul, ←mul_sum]
       rw [←mul_add, ←two_mul, ←mul_assoc 2, ←mul_assoc 2, mul_right_comm 2, ←_root_.pow_succ,
@@ -199,7 +199,7 @@ lemma basic_marcinkiewicz_zygmund (f : G → ℝ) (hf : ∀ i : Fin n, ∑ a in 
     · cases m <;> simp
     · rw [piFinsetConst, piFinset_empty, Finset.sum_empty]
       cases m <;> simp
-  refine' (sum_le_sum λ a (_ : a ∈ A^^n) ↦ @step_one' _ _ _ _ hA f hf a).trans _
+  refine' (sum_le_sum fun a (_ : a ∈ A^^n) ↦ @step_one' _ _ _ _ hA f hf a).trans _
   rw [←sum_div]
   simp only [pow_mul, sq_abs]
   simp only [←pow_mul]
@@ -226,9 +226,9 @@ lemma other_marcinkiewicz_zygmund (f : G → ℝ) (hm : m ≠ 0)
   refine' mul_le_mul_of_nonneg_left _ (by positivity)
   rw [Nat.succ_sub_one]
   simp only [pow_mul, mul_sum]
-  refine' sum_le_sum λ a _ ↦ _
+  refine' sum_le_sum fun a _ ↦ _
   rw [←mul_sum, ←div_le_iff']
-  have := Real.pow_sum_div_card_le_sum_pow (f := λ i ↦ |f (a i)| ^ 2) univ m λ i _ ↦ ?_
+  have := Real.pow_sum_div_card_le_sum_pow (f := fun i ↦ |f (a i)| ^ 2) univ m fun i _ ↦ ?_
   simpa only [Finset.card_fin] using this
   all_goals { positivity }
 
@@ -242,10 +242,10 @@ lemma complex_marcinkiewicz_zygmund (f : G → ℂ) (hm : m ≠ 0)
     (hf : ∀ i : Fin n, ∑ a in A^^n, f (a i) = 0) :
     ∑ a in A^^n, ‖∑ i, f (a i)‖ ^ (2 * m) ≤
       (8 * m) ^ m * n ^ (m - 1) * ∑ a in A^^n, ∑ i, ‖f (a i)‖ ^ (2 * m) := by
-  let f₁ : G → ℝ := λ x ↦ (f x).re
-  let f₂ : G → ℝ := λ x ↦ (f x).im
-  have hf₁ : ∀ i, ∑ a in A^^n, f₁ (a i) = 0 := λ i ↦ by rw [←Complex.re_sum, hf, Complex.zero_re]
-  have hf₂ : ∀ i, ∑ a in A^^n, f₂ (a i) = 0 := λ i ↦ by rw [←Complex.im_sum, hf, Complex.zero_im]
+  let f₁ : G → ℝ := fun x ↦ (f x).re
+  let f₂ : G → ℝ := fun x ↦ (f x).im
+  have hf₁ : ∀ i, ∑ a in A^^n, f₁ (a i) = 0 := fun i ↦ by rw [←Complex.re_sum, hf, Complex.zero_re]
+  have hf₂ : ∀ i, ∑ a in A^^n, f₂ (a i) = 0 := fun i ↦ by rw [←Complex.im_sum, hf, Complex.zero_im]
   have h₁ := other_marcinkiewicz_zygmund' _ hm hf₁
   have h₂ := other_marcinkiewicz_zygmund' _ hm hf₂
   simp only [pow_mul, Complex.norm_eq_abs, Complex.sq_abs, Complex.normSq_apply]
@@ -260,7 +260,7 @@ lemma complex_marcinkiewicz_zygmund (f : G → ℂ) (hm : m ≠ 0)
           ∑ a in A^^n, ∑ i, ((f (a i)).re ^ (2 * m) + (f (a i)).im ^ (2 * m)) := ?_
     _ ≤ (8 * m) ^ m * n ^ (m - 1) * ∑ a in A^^n, ∑ i, ((f (a i)).re ^ 2 + (f (a i)).im ^ 2) ^ m :=
         ?_
-  · exact sum_le_sum λ a _ ↦ add_pow_le (sq_nonneg _) (sq_nonneg _) m
+  · exact sum_le_sum fun a _ ↦ add_pow_le (sq_nonneg _) (sq_nonneg _) m
   · simp only [mul_sum, pow_mul]
   · rw [mul_assoc, mul_assoc, sum_add_distrib]
     refine' mul_le_mul_of_nonneg_left _ _
@@ -269,8 +269,8 @@ lemma complex_marcinkiewicz_zygmund (f : G → ℂ) (hm : m ≠ 0)
     simp only [sum_add_distrib, mul_add, ←mul_assoc]
     exact add_le_add h₁ h₂
   simp only [mul_sum]
-  refine' sum_le_sum λ a _ ↦ _
-  refine' sum_le_sum λ i _ ↦ _
+  refine' sum_le_sum fun a _ ↦ _
+  refine' sum_le_sum fun i _ ↦ _
   rw [pow_mul, pow_mul]
   refine' (mul_le_mul_of_nonneg_left (pow_add_pow_le' (sq_nonneg (f (a i)).re) $
     sq_nonneg (f (a i)).im) _).trans_eq _

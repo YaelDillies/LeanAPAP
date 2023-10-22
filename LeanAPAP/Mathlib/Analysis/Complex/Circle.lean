@@ -35,7 +35,7 @@ lemma exp_eq_one : expMapCircle r = 1 ↔ ∃ n : ℤ, r = n * (2 * π) := by
 
 noncomputable def e : AddChar ℝ circle :=
   AddChar.toMonoidHom'.symm
-    { toFun := λ r ↦ expMapCircle (2 * π * (toAdd r))
+    { toFun := fun r ↦ expMapCircle (2 * π * (toAdd r))
       map_one' := by simp
       map_mul' := by simp [mul_add, Complex.exp_add] }
 

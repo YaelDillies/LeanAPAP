@@ -17,7 +17,7 @@ variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 section IsROrC
 variable [IsROrC β]
 
-lemma conv_eq_inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a λ x ↦ g (-x)⟫_[β] := by
+lemma conv_eq_inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a fun x ↦ g (-x)⟫_[β] := by
   simp [l2inner_eq_sum, conv_eq_sum_sub', map_sum]
 
 lemma dconv_eq_inner (f g : α → β) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[β] := by
@@ -30,11 +30,11 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
   · simp_rw [ENNReal.coe_one, L1norm_eq_sum, sum_mul_sum, conv_eq_sum_sub']
     calc
       ∑ x, ‖∑ y, f y * g (x - y)‖ ≤ ∑ x, ∑ y, ‖f y * g (x - y)‖ :=
-        sum_le_sum λ x _ ↦ norm_sum_le _ _
+        sum_le_sum fun x _ ↦ norm_sum_le _ _
       _ = _ := ?_
     rw [sum_comm]
     simp_rw [norm_mul, sum_product]
-    exact sum_congr rfl λ x _ ↦ Fintype.sum_equiv (Equiv.subRight x) _ _ λ _ ↦ rfl
+    exact sum_congr rfl fun x _ ↦ Fintype.sum_equiv (Equiv.subRight x) _ _ fun _ ↦ rfl
   have hp₀ := zero_lt_one.trans hp
   rw [←rpow_le_rpow_iff _ (mul_nonneg _ _) hp₀, mul_rpow]
   any_goals exact lpNorm_nonneg
@@ -48,11 +48,11 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
     rw [←le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ←rpow_mul, sub_one_mul, mul_inv_cancel]
     rotate_left
     · positivity
-    · exact sum_nonneg λ _ _ ↦ norm_nonneg _
-    · exact sum_nonneg λ _ _ ↦ by positivity
-    · exact rpow_nonneg (sum_nonneg λ _ _ ↦ norm_nonneg _)
-    · exact mul_nonneg (sum_nonneg λ _ _ ↦ by positivity)
-        (rpow_nonneg $ sum_nonneg λ _ _ ↦ norm_nonneg _)
+    · exact sum_nonneg fun _ _ ↦ norm_nonneg _
+    · exact sum_nonneg fun _ _ ↦ by positivity
+    · exact rpow_nonneg (sum_nonneg fun _ _ ↦ norm_nonneg _)
+    · exact mul_nonneg (sum_nonneg fun _ _ ↦ by positivity)
+        (rpow_nonneg $ sum_nonneg fun _ _ ↦ norm_nonneg _)
     · positivity
     calc
       _ ≤ ∑ y, ‖f y * g (x - y)‖ := norm_sum_le _ _
@@ -69,14 +69,14 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
   calc
     ∑ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
         ∑ x, (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ) :=
-      sum_le_sum λ i _ ↦ this _
+      sum_le_sum fun i _ ↦ this _
     _ = _ := ?_
   have hg : ∀ x, ∑ y, ‖g (x - y)‖ = ‖g‖_[1] := by
     simp_rw [L1norm_eq_sum]
-    exact λ x ↦ Fintype.sum_equiv (Equiv.subLeft _) _ _ λ _ ↦ rfl
+    exact fun x ↦ Fintype.sum_equiv (Equiv.subLeft _) _ _ fun _ ↦ rfl
   have hg' : ∀ y, ∑ x, ‖g (x - y)‖ = ‖g‖_[1] := by
     simp_rw [L1norm_eq_sum]
-    exact λ x ↦ Fintype.sum_equiv (Equiv.subRight _) _ _ λ _ ↦ rfl
+    exact fun x ↦ Fintype.sum_equiv (Equiv.subRight _) _ _ fun _ ↦ rfl
   simp_rw [hg]
   rw [←sum_mul, sum_comm]
   simp_rw [←mul_sum, hg']
@@ -95,7 +95,7 @@ variable {f g : α → ℝ} {n : ℕ}
 
 --TODO: Include `f : α → ℂ`
 lemma L1norm_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ∗ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] := by
-  have : ∀ x, 0 ≤ ∑ y, f y * g (x - y) := λ x ↦ sum_nonneg λ y _ ↦ mul_nonneg (hf _) (hg _)
+  have : ∀ x, 0 ≤ ∑ y, f y * g (x - y) := fun x ↦ sum_nonneg fun y _ ↦ mul_nonneg (hf _) (hg _)
   simp only [L1norm_eq_sum, ←sum_conv, conv_eq_sum_sub', norm_of_nonneg (this _),
     norm_of_nonneg (hf _), norm_of_nonneg (hg _)]
 

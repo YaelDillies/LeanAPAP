@@ -13,9 +13,9 @@ variable [AddCommMonoid α] [AddCommMonoid β] {n : ℕ}
 
 def nsmulHom : ℕ →*₀ AddMonoid.End α where
   toFun z :=
-    { toFun := λ a ↦ z • a
+    { toFun := fun a ↦ z • a
       map_zero' := nsmul_zero _
-      map_add' := λ x y ↦ nsmul_add _ _ _ }
+      map_add' := fun x y ↦ nsmul_add _ _ _ }
   map_zero' := by ext; rw [AddMonoidHom.coe_mk]; simp
   map_one' := by ext; rw [AddMonoidHom.coe_mk]; simp
   map_mul' x y := by ext a; exact mul_nsmul' _ _ _
@@ -29,9 +29,9 @@ variable [CommMonoid α] [CommMonoid β] {n : ℕ}
 
 def powHom : ℕ →* Monoid.End α where
   toFun z :=
-    { toFun := λ a ↦ a ^ z
+    { toFun := fun a ↦ a ^ z
       map_one' := one_pow _
-      map_mul' := λ x y ↦ mul_pow _ _ _ }
+      map_mul' := fun x y ↦ mul_pow _ _ _ }
   map_one' := by ext; rw [MonoidHom.coe_mk]; simp
   map_mul' x y := by ext a; exact pow_mul' _ _ _
 

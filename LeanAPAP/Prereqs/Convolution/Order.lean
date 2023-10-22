@@ -11,10 +11,10 @@ section OrderedCommSemiring
 variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
 
 lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
-  λ _a ↦ sum_nonneg λ _x _ ↦ mul_nonneg (hf _) (hg _)
+  fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) (hg _)
 
 lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
-  λ _a ↦ sum_nonneg λ _x _ ↦ mul_nonneg (hf _) $ star_nonneg.2 $ hg _
+  fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) $ star_nonneg.2 $ hg _
 
 end OrderedCommSemiring
 
@@ -26,7 +26,7 @@ variable [StrictOrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
   refine' (support_conv_subset _ _).antisymm _
   rintro _ ⟨a, b, ha, hb, rfl⟩
   rw [mem_support, conv_apply_add]
-  exact ne_of_gt $ sum_pos' (λ c _ ↦ mul_nonneg (hf _) $ hg _) ⟨0, mem_univ _,
+  exact ne_of_gt $ sum_pos' (fun c _ ↦ mul_nonneg (hf _) $ hg _) ⟨0, mem_univ _,
     mul_pos ((hf _).lt_of_ne' $ by simpa using ha) $ (hg _).lt_of_ne' $ by simpa using hb⟩
 
 @[simp]
@@ -39,7 +39,7 @@ lemma conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by
   obtain ⟨hg, b, hb⟩ := hg
   refine' ⟨conv_nonneg hf hg, a + b, _⟩
   rw [conv_apply_add]
-  exact sum_pos' (λ c _ ↦ mul_nonneg (hf _) $ hg _) ⟨0, by simpa using mul_pos ha hb⟩
+  exact sum_pos' (fun c _ ↦ mul_nonneg (hf _) $ hg _) ⟨0, by simpa using mul_pos ha hb⟩
 
 lemma dconv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by
   rw [←conv_conjneg]; exact conv_pos hf (conjneg_pos.2 hg)
@@ -50,7 +50,7 @@ section OrderedCommSemiring
 variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β} {n : ℕ}
 
 @[simp] lemma iterConv_nonneg (hf : 0 ≤ f) : ∀ {n}, 0 ≤ f ∗^ n
-  | 0 => λ _ ↦ by dsimp; split_ifs <;> norm_num
+  | 0 => fun _ ↦ by dsimp; split_ifs <;> norm_num
   | n + 1 => conv_nonneg hf (iterConv_nonneg hf)
 
 end OrderedCommSemiring

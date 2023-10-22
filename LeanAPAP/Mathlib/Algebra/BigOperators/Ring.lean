@@ -24,7 +24,7 @@ lemma prod_univ_sum' [DecidableEq α] [Fintype α] [CommSemiring β] {δ : α �
 
 lemma sum_prod_piFinset [DecidableEq ι] [Fintype ι] [CommSemiring β] (s : Finset α)
     (g : ι → α → β) :
-    ∑ f in Fintype.piFinset λ _ : ι ↦ s, ∏ i, g i (f i) = ∏ i, ∑ x in s, g i x := by
+    ∑ f in Fintype.piFinset fun _ : ι ↦ s, ∏ i, g i (f i) = ∏ i, ∑ x in s, g i x := by
   classical rw [←@Finset.prod_univ_sum' ι]
 
 section CommMonoid
@@ -39,8 +39,8 @@ section CommSemiring
 variable [CommSemiring β]
 
 lemma sum_pow' (s : Finset α) (f : α → β) (n : ℕ) :
-    (∑ a in s, f a) ^ n = ∑ p in Fintype.piFinset λ _i : Fin n ↦ s, ∏ i, f (p i) := by
-  classical convert @prod_univ_sum' (Fin n) _ _ _ _ _ _ (λ _i ↦ s) λ _i d ↦ f d; simp
+    (∑ a in s, f a) ^ n = ∑ p in Fintype.piFinset fun _i : Fin n ↦ s, ∏ i, f (p i) := by
+  classical convert @prod_univ_sum' (Fin n) _ _ _ _ _ _ (fun _i ↦ s) fun _i d ↦ f d; simp
 
 end CommSemiring
 
@@ -67,7 +67,7 @@ protected lemma sum_div (hf : ∀ i ∈ s, n ∣ f i) : (∑ i in s, f i) / n = 
   obtain rfl | hn := n.eq_zero_or_pos
   · simp
   rw [Nat.div_eq_iff_eq_mul_left hn (dvd_sum hf), sum_mul]
-  refine' sum_congr rfl λ s hs ↦ _
+  refine' sum_congr rfl fun s hs ↦ _
   rw [Nat.div_mul_cancel (hf _ hs)]
 
 end Nat

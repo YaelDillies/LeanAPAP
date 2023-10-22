@@ -108,7 +108,7 @@ lemma expect_congr (f g : ι → α) (p : ι → Prop) [DecidablePred p] (h : �
   rw [expect, expect, sum_congr rfl]; simpa using h
 
 lemma expect_congr' (f g : ι → α) (p : ι → Prop) [DecidablePred p] (h : ∀ x, p x → f x = g x) :
-    𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i := expect_congr _ _ _ λ x _ ↦ h x
+    𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i := expect_congr _ _ _ fun x _ ↦ h x
 
 lemma expect_bij (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
     (i_inj : ∀ a₁ a₂ ha₁ ha₂, i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
@@ -119,7 +119,7 @@ lemma expect_bij (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a 
 lemma expect_nbij (i : ι → β) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
     (i_inj : ∀ a₁ a₂, a₁ ∈ s → a₂ ∈ s → i a₁ = i a₂ → a₁ = a₂)
     (i_surj : ∀ b ∈ t, ∃ a ∈ s, b = i a) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
-  expect_bij (λ a _ ↦ i a) hi h i_inj $ by simpa using i_surj
+  expect_bij (fun a _ ↦ i a) hi h i_inj $ by simpa using i_surj
 
 lemma expect_bij' (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
     (j : ∀ a ∈ t, ι) (hj : ∀ a ha, j a ha ∈ s) (left_inv : ∀ a ha, j (i a ha) (hi a ha) = a)
@@ -134,7 +134,7 @@ lemma expect_bij' (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a
 lemma expect_nbij' (i : ι → β) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a)) (j : β → ι)
     (hj : ∀ a ∈ t, j a ∈ s) (left_inv : ∀ a ∈ s, j (i a) = a) (right_inv : ∀ a ∈ t, i (j a) = a) :
     𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
-  expect_bij' (λ a _ ↦ i a) hi h (λ b _ ↦ j b) hj left_inv right_inv
+  expect_bij' (fun a _ ↦ i a) hi h (fun b _ ↦ j b) hj left_inv right_inv
 
 lemma expect_product' (f : ι → β → α) : 𝔼 x ∈ s ×ˢ t, f x.1 x.2 = 𝔼 x ∈ s, 𝔼 y ∈ t, f x y := by
   simp only [expect, expect, card_product, sum_product', ←sum_div, div_div, mul_comm s.card,

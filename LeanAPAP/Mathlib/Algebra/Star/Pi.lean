@@ -11,4 +11,4 @@ instance Function.instStarRing {ι α : Type*} [CommSemiring α] [StarRing α] :
 
 @[simp]
 lemma Pi.conj_apply {ι : Type*} {α : ι → Type*} [∀ i, CommSemiring (α i)] [∀ i, StarRing (α i)]
-    (f : ∀ i, α i) (i : ι) : @starRingEnd (∀ i, α i) _ (@Pi.instStarRing ι α _ _) f i = conj (f i) := rfl
+    (f : ∀ i, α i) (i : ι) : conj f i = conj (f i) := rfl

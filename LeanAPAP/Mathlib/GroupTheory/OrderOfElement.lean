@@ -28,13 +28,13 @@ lemma pow_mod_card (a : α) (n : ℕ) : a ^ (n % card α) = a ^ n :=
     simp_rw [←pow_add, Nat.mod_add_div, pow_add, pow_mul, pow_card_eq_one, one_pow, mul_one]
 
 @[to_additive]
-lemma Nat.Coprime.pow_bijective (hn : n.Coprime (card α)) : Bijective λ a : α ↦ a ^ n := by
+lemma Nat.Coprime.pow_bijective (hn : n.Coprime (card α)) : Bijective fun a : α ↦ a ^ n := by
   refine' (bijective_iff_injective_and_card _).2 ⟨_, rfl⟩
   cases subsingleton_or_nontrivial α
   · exact injective_of_subsingleton _
   obtain ⟨m, hm⟩ := Nat.exists_mul_emod_eq_one_of_coprime hn Fintype.one_lt_card
-  refine' LeftInverse.injective λ a ↦ _
-  · exact λ a ↦ a ^ m
+  refine' LeftInverse.injective fun a ↦ _
+  · exact fun a ↦ a ^ m
   rw [←pow_mul, ←pow_mod_card, hm, pow_one]
 
 end Group

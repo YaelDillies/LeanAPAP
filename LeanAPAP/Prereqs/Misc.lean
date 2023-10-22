@@ -65,22 +65,22 @@ namespace Finset
 
 variable {α : Type*} [DecidableEq α] {k : ℕ}
 
-def wideDiag (k : ℕ) (s : Finset α) : Finset (Fin k → α) := s.image λ i _ ↦ i
+def wideDiag (k : ℕ) (s : Finset α) : Finset (Fin k → α) := s.image fun i _ ↦ i
 
 lemma mem_wideDiag {s : Finset α} {k : ℕ} {x : Fin k → α} :
-    x ∈ s.wideDiag k ↔ ∃ i ∈ s, (λ _ ↦ i) = x := mem_image
+    x ∈ s.wideDiag k ↔ ∃ i ∈ s, (fun _ ↦ i) = x := mem_image
 
 def fintypeWideDiag (α : Type*) [DecidableEq α] [Fintype α] (k : ℕ) : Finset (Fin k → α) :=
   univ.wideDiag k
 
 lemma mem_fintypeWideDiag [Fintype α] {k : ℕ} {x : Fin k → α} :
-    x ∈ fintypeWideDiag α k ↔ ∃ i, (λ _ ↦ i) = x :=
+    x ∈ fintypeWideDiag α k ↔ ∃ i, (fun _ ↦ i) = x :=
   mem_wideDiag.trans (by simp)
 
 @[simp] lemma card_wideDiag (hk : k ≠ 0) (s : Finset α) : (s.wideDiag k).card = s.card := by
   cases k
   · cases hk rfl
   rw [Finset.wideDiag, card_image_of_injective]
-  exact λ i j h ↦ congr_fun h 0
+  exact fun i j h ↦ congr_fun h 0
 
 end Finset

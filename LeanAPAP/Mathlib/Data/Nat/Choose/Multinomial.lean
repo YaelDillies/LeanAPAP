@@ -13,7 +13,7 @@ lemma multinomial_cons (ha : a ∉ s) :
     multinomial, mul_assoc, mul_left_comm _ (f a)!,
     Nat.div_mul_cancel (prod_factorial_dvd_factorial_sum _ _), ←mul_assoc, Nat.choose_symm_add,
     Nat.add_choose_mul_factorial_mul_factorial, Finset.sum_cons]
-  exact prod_pos λ i _ ↦ by positivity
+  exact prod_pos fun i _ ↦ by positivity
 
 -- TODO: Fix implicitness to `nat.multinomial_insert`
 lemma multinomial_insert' [DecidableEq α] (ha : a ∉ s) :

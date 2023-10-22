@@ -15,7 +15,7 @@ instance : StarOrderedRing ℝ≥0 where
     rw [←NNReal.coe_le_coe, StarOrderedRing.le_iff]
     rintro ⟨p, hp, h⟩
     refine' ⟨⟨p, (AddSubmonoid.closure_le.2
-      (range_subset_iff.2 λ x ↦ _) hp : p ∈ AddSubmonoid.nonneg ℝ)⟩, _, NNReal.coe_injective h⟩
+      (range_subset_iff.2 fun x ↦ _) hp : p ∈ AddSubmonoid.nonneg ℝ)⟩, _, NNReal.coe_injective h⟩
     · simp [mul_self_nonneg]
     · exact AddSubmonoid.subset_closure
         ⟨NNReal.sqrt _, by dsimp; rw [star_trivial, ←sqrt_mul, sqrt_mul_self]⟩
@@ -25,7 +25,7 @@ namespace Finset
 lemma cauchy_schwarz_sqrt {α : Type*} (s : Finset α) (f g : α → ℝ) :
     ∑ i in s, f i * g i ≤ (∑ i in s, f i ^ 2).sqrt * (∑ i in s, g i ^ 2).sqrt :=
   (Real.le_sqrt_of_sq_le $ sum_mul_sq_le_sq_mul_sq _ _ _).trans_eq $
-    Real.sqrt_mul (sum_nonneg λ _ _ ↦ sq_nonneg _) _
+    Real.sqrt_mul (sum_nonneg fun _ _ ↦ sq_nonneg _) _
 
 end Finset
 

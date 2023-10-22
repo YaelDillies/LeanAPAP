@@ -72,7 +72,7 @@ lemma zmodAux_injective (hn : n ≠ 0) : Injective (zmodAux n) := by
   simp [zmodAux, ZMod.lift_injective, CharP.int_cast_eq_zero_iff _ n, e_eq_one, div_eq_iff hn,
     mul_comm _ (n : ℝ), -forall_exists_index]
   norm_cast
-  exact λ _ ↦ id
+  exact fun _ ↦ id
 
 /-- Indexing of the complex characters of `ZMod n`. `AddChar.zmod n x` is the character sending `y`
 to `e ^ (2 * π * i * x * y / n)`. -/
@@ -100,7 +100,7 @@ lemma zmod_injective (hn : n ≠ 0) : Injective (zmod n) := by
 
 def zmodHom (n : ℕ) : AddChar (ZMod n) (AddChar (ZMod n) circle) :=
   AddChar.toMonoidHom'.symm
-    { toFun := λ x ↦ AddChar.toMonoidHom' (zmod n $ toAdd x)
+    { toFun := fun x ↦ AddChar.toMonoidHom' (zmod n $ toAdd x)
       map_one' := FunLike.ext _ _ $ by
         rw [Multiplicative.forall, ZMod.int_cast_surjective.forall]
         rintro m
@@ -113,20 +113,20 @@ def zmodHom (n : ℕ) : AddChar (ZMod n) (AddChar (ZMod n) circle) :=
 
 def mkZModAux {ι : Type} [DecidableEq ι] (n : ι → ℕ) (u : ∀ i, ZMod (n i)) :
     AddChar (⨁ i, ZMod (n i)) circle :=
-  AddChar.directSum λ i ↦ zmod (n i) (u i)
+  AddChar.directSum fun i ↦ zmod (n i) (u i)
 
 lemma mkZModAux_injective {ι : Type} [DecidableEq ι] {n : ι → ℕ} (hn : ∀ i, n i ≠ 0) :
     Injective (mkZModAux n) :=
-  AddChar.directSum_injective.comp λ f g h ↦ by simpa [Function.funext_iff, hn] using h
+  AddChar.directSum_injective.comp fun f g h ↦ by simpa [Function.funext_iff, hn] using h
 
 /-- The circle-valued characters of a finite abelian group are the same as its complex-valued
 characters. -/
 def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
   toFun ψ := circle.subtype.comp $ toMonoidHom' ψ
   invFun ψ := toMonoidHom'.symm
-    { toFun := λ a ↦ (⟨ψ (toAdd a), mem_circle_iff_abs.2 $ ψ.norm_apply _⟩ : circle)
+    { toFun := fun a ↦ (⟨ψ (toAdd a), mem_circle_iff_abs.2 $ ψ.norm_apply _⟩ : circle)
       map_one' := by simp
-      map_mul' := λ a b ↦ by ext : 1; simp }
+      map_mul' := fun a b ↦ by ext : 1; simp }
   left_inv ψ := by ext : 1; simp; rfl
   right_inv ψ := by ext : 1; simp; rfl
   map_add' ψ χ := rfl
@@ -135,8 +135,8 @@ def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
   obtain ⟨ι, _, n, hn, ⟨e⟩⟩ := AddCommGroup.equiv_directSum_zmod_of_finite α
   skip
   classical
-  have hn' : ∀ i, n i ≠ 0 := λ i ↦ by have := hn i; positivity
-  let f : α → AddChar α ℂ := λ a ↦
+  have hn' : ∀ i, n i ≠ 0 := fun i ↦ by have := hn i; positivity
+  let f : α → AddChar α ℂ := fun a ↦
     circle.subtype.comp ((mkZModAux n $ e $ Additive.ofMul a).compAddMonoidHom e)
   have hf : Injective f :=
     circleEquivComplex.injective.comp
@@ -174,12 +174,12 @@ variable {α}
 lemma complexBasis_apply (ψ : AddChar α ℂ) : complexBasis α ψ = ψ := by rw [coe_complexBasis]
 
 lemma exists_apply_ne_zero : (∃ ψ : AddChar α ℂ, ψ a ≠ 1) ↔ a ≠ 0 := by
-  refine' ⟨_, λ ha ↦ _⟩
+  refine' ⟨_, fun ha ↦ _⟩
   · rintro ⟨ψ, hψ⟩ rfl
     exact hψ ψ.map_zero_one
   classical
   by_contra' h
-  let f : α → ℂ := λ b ↦ if a = b then 1 else 0
+  let f : α → ℂ := fun b ↦ if a = b then 1 else 0
   have h₀ := congr_fun ((complexBasis α).sum_repr f) 0
   have h₁ := congr_fun ((complexBasis α).sum_repr f) a
   simp only [complexBasis_apply, Fintype.sum_apply, Pi.smul_apply, h, smul_eq_mul, mul_one,
@@ -190,8 +190,8 @@ lemma forall_apply_eq_zero : (∀ ψ : AddChar α ℂ, ψ a = 1) ↔ a = 0 := by
   simpa using exists_apply_ne_zero.not
 
 lemma doubleDualEmb_injective : Injective (doubleDualEmb : α → AddChar (AddChar α ℂ) ℂ) :=
-  doubleDualEmb.ker_eq_bot_iff.1 $ eq_bot_iff.2 λ a ha ↦
-    forall_apply_eq_zero.1 λ ψ ↦ by simpa using FunLike.congr_fun ha (Additive.ofMul ψ)
+  doubleDualEmb.ker_eq_bot_iff.1 $ eq_bot_iff.2 fun a ha ↦
+    forall_apply_eq_zero.1 fun ψ ↦ by simpa using FunLike.congr_fun ha (Additive.ofMul ψ)
 
 lemma doubleDualEmb_bijective : Bijective (doubleDualEmb : α → AddChar (AddChar α ℂ) ℂ) := by
   cases nonempty_fintype α

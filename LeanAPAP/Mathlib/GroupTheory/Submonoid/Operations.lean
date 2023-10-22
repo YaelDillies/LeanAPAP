@@ -21,15 +21,15 @@ namespace Nat
   refine' (eq_top_iff' _).2 (Nat.rec _ _)
   · exact zero_mem _
   · simp_rw [Nat.succ_eq_add_one]
-    exact λ n hn ↦ AddSubmonoid.add_mem _ hn (subset_closure $ Set.mem_singleton _)
+    exact fun n hn ↦ AddSubmonoid.add_mem _ hn (subset_closure $ Set.mem_singleton _)
 
 end Nat
 
 namespace Rat
 
 @[simp] lemma addSubmonoid_closure_range_pow {n : ℕ} (hn₀ : n ≠ 0) (hn : Even n) :
-    closure (range λ x : ℚ ↦ x ^ n) = nonneg _ := by
-  refine' le_antisymm (closure_le.2 $ range_subset_iff.2 hn.pow_nonneg) λ x hx ↦ _
+    closure (range fun x : ℚ ↦ x ^ n) = nonneg _ := by
+  refine' le_antisymm (closure_le.2 $ range_subset_iff.2 hn.pow_nonneg) fun x hx ↦ _
   suffices x = (x.num.natAbs * x.den ^ (n - 1)) • (x.den : ℚ)⁻¹ ^ n by
     rw [this]
     exact nsmul_mem (subset_closure $ mem_range_self _) _
@@ -42,7 +42,7 @@ namespace Rat
   exact pos_iff_ne_zero.2 hn₀
 
 @[simp]
-lemma addSubmonoid_closure_range_mul_self : closure (range λ x : ℚ ↦ x * x) = nonneg _ := by
+lemma addSubmonoid_closure_range_mul_self : closure (range fun x : ℚ ↦ x * x) = nonneg _ := by
   simpa only [sq] using addSubmonoid_closure_range_pow two_ne_zero even_two
 
 end Rat

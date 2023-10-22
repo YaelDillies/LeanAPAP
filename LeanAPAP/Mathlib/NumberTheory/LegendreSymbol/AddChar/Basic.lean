@@ -35,7 +35,7 @@ variable [AddMonoid G] [AddMonoid H] [CommMonoid R] {ψ : AddChar G R}
 
 instance : AddCommMonoid (AddChar G R) := Additive.addCommMonoid
 
-instance instFunLike : FunLike (AddChar G R) G λ _ ↦ R where
+instance instFunLike : FunLike (AddChar G R) G fun _ ↦ R where
   coe := (⇑)
   coe_injective' ψ χ h := by obtain ⟨⟨_, _⟩, _⟩ := ψ; congr
 
@@ -121,13 +121,13 @@ def compAddMonoidHom (ψ : AddChar H R) (f : G →+ H) : AddChar G R :=
 lemma coe_compAddMonoidHom (ψ : AddChar H R) (f : G →+ H) : ⇑(ψ.compAddMonoidHom f) = ψ ∘ f := rfl
 
 lemma compAddMonoidHom_injective_left (f : G →+ H) (hf : Surjective f) :
-    Injective λ ψ : AddChar H R ↦ ψ.compAddMonoidHom f := by
+    Injective fun ψ : AddChar H R ↦ ψ.compAddMonoidHom f := by
   rintro ψ χ h
   rw [FunLike.ext'_iff] at h ⊢
   exact hf.injective_comp_right h
 
 lemma compAddMonoidHom_injective_right (ψ : AddChar H R) (hψ : Injective ψ) :
-    Injective λ f : G →+ H ↦ ψ.compAddMonoidHom f := by
+    Injective fun f : G →+ H ↦ ψ.compAddMonoidHom f := by
   rintro f g h
   rw [FunLike.ext'_iff] at h ⊢
   exact hψ.comp_left h
@@ -160,7 +160,7 @@ variable [Finite G] [NormedField R]
   (ψ.isOfFinOrder $ exists_pow_eq_one _).norm_eq_one
 
 @[simp] lemma coe_ne_zero (ψ : AddChar G R) : (ψ : G → R) ≠ 0 :=
-  Function.ne_iff.2 ⟨0, λ h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_one ψ⟩
+  Function.ne_iff.2 ⟨0, fun h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_one ψ⟩
 
 end NormedField
 
@@ -183,7 +183,7 @@ lemma sum_eq_ite (ψ : AddChar G R) : ∑ a, ψ a = if ψ = 0 then ↑(card G) e
   obtain ⟨x, hx⟩ := ne_one_iff.1 h
   refine' eq_zero_of_mul_eq_self_left hx _
   rw [Finset.mul_sum]
-  exact Fintype.sum_equiv (Equiv.addLeft x) _ _ λ y ↦ (map_add_mul _ _ _).symm
+  exact Fintype.sum_equiv (Equiv.addLeft x) _ _ fun y ↦ (map_add_mul _ _ _).symm
 
 lemma sum_eq_zero_iff_ne_zero : ∑ x, ψ x = 0 ↔ ψ ≠ 0 := by
   rw [sum_eq_ite, Ne.ite_eq_right_iff]
@@ -255,7 +255,7 @@ variable (G R)
 
 protected lemma linearIndependent [Finite G] : LinearIndependent R ((⇑) : AddChar G R → G → R) := by
   cases nonempty_fintype G
-  exact linearIndependent_of_ne_zero_of_l2inner_eq_zero AddChar.coe_ne_zero λ ψ₁ ψ₂ ↦
+  exact linearIndependent_of_ne_zero_of_l2inner_eq_zero AddChar.coe_ne_zero fun ψ₁ ψ₂ ↦
     l2inner_eq_zero_iff_ne.2
 
 noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
@@ -275,7 +275,7 @@ variable {ι : Type*} {π : ι → Type*} [DecidableEq ι] [∀ i, AddCommGroup 
 /-- Direct sum of additive characters. -/
 protected def directSum (ψ : ∀ i, AddChar (π i) R) : AddChar (⨁ i, π i) R :=
   AddChar.toAddMonoidHom.symm
-    (DirectSum.toAddMonoid λ i ↦ toAddMonoidHom (ψ i) : (⨁ i, π i) →+ Additive R)
+    (DirectSum.toAddMonoid fun i ↦ toAddMonoidHom (ψ i) : (⨁ i, π i) →+ Additive R)
 
 lemma directSum_injective :
     Injective (AddChar.directSum : (∀ i, AddChar (π i) R) → AddChar (⨁ i, π i) R) := by
