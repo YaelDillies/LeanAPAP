@@ -1,5 +1,7 @@
 import Mathlib.Data.Finset.Card
 
+attribute [pp_dot] Finset.card
+
 namespace Finset
 variable {α R : Type*} [AddGroupWithOne R] [DecidableEq α] {s t : Finset α}
 

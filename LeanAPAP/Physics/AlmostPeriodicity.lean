@@ -52,8 +52,8 @@ open Finset
 open scoped BigOperators Pointwise
 
 lemma big_shifts_step1 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
-    ∑ x in L + S.wideDiag k, ∑ l in L, ∑ s in S.wideDiag k, if l + s = x then 1 else 0 =
-      L.card * S.card := by
+    ∑ x in L + S.wideDiag k, ∑ l in L, ∑ s in S.wideDiag k, (if l + s = x then 1 else 0)
+      = L.card * S.card := by
   simp only [@sum_comm _ _ _ _ (L + _), sum_ite_eq]
   rw [sum_const_nat]
   intro l hl
