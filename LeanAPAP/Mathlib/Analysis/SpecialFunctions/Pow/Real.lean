@@ -5,6 +5,8 @@ local macro_rules | `($x ^ $y) => `(HPow.hPow $x $y)
 namespace Real
 variable {x y z : ℝ}
 
+lemma exp_pow (x : ℝ) (n : ℕ) : exp x ^ n = exp (n • x) := by simp [mul_comm, exp_mul]
+
 @[simp]
 lemma rpow_rpow_inv (hx : 0 ≤ x) (hy : y ≠ 0) : (x ^ y) ^ (y⁻¹ : ℝ) = x := by
   rw [←rpow_mul hx, mul_inv_cancel hy, rpow_one]

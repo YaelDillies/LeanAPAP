@@ -46,7 +46,7 @@ lemma α_pos (hf : f ≠ 0) : 0 < α f := by unfold α <;> positivity
 lemma α_le_one (f : G → ℂ) : α f ≤ 1 := by
   refine' div_le_one_of_le (div_le_of_nonneg_of_le_mul _ _ _) _
   any_goals positivity
-  rw [L1norm_eq_sum, L2norm_sq_eq_sum]
+  rw [L1norm_eq_sum, l2norm_sq_eq_sum]
   exact sq_sum_le_card_mul_sum_sq
 
 lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x ≠ 0 → 1 ≤ ν x)
@@ -97,7 +97,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       _ ≤ (∑ x, ‖f x‖ ^ 2) * ∑ x, (sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2 :=
         (sum_mul_sq_le_sq_mul_sq _ _ _)
       _ ≤ ‖f‖_[2] ^ 2 * ∑ x, ν x * (‖∑ γ in Δ, c γ * conj (γ x)‖ ^ 2) ^ m := by
-        simp_rw [L2norm_sq_eq_sum, mul_pow, sq_sqrt (NNReal.coe_nonneg _), pow_right_comm]
+        simp_rw [l2norm_sq_eq_sum, mul_pow, sq_sqrt (NNReal.coe_nonneg _), pow_right_comm]
   rw [mul_rotate', mul_left_comm, mul_pow, mul_pow, ←pow_mul', ←pow_mul', ←div_le_iff',
     mul_div_assoc, mul_div_assoc] at this
   any_goals positivity
@@ -129,11 +129,10 @@ lemma spec_hoelder (hη : 0 ≤ η) (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0)
     div_le_iff hG, energy_nsmul, -nsmul_eq_mul, ←nsmul_eq_mul'] using
     general_hoelder hη 1 (λ (_ : G) _ ↦ le_rfl) hΔ hm
 
-/- ./././Mathport/Syntax/Translate/Basic.lean:635:2: warning: expanding binder collection (Δ «expr ⊆ » large_spec[large_spec] f η) -/
 /-- **Chang's lemma**. -/
 lemma chang (hf : f ≠ 0) (hη : 0 < η) :
-    ∃ (Δ : _) (_ : Δ ⊆ largeSpec f η),
-      Δ.card ≤ thomasConst * ⌈exp 1 * ⌈curlog (α f)⌉₊ / η ^ 2⌉₊ ∧ largeSpec f η ⊆ Δ.addSpan := by
+    ∃ Δ, Δ ⊆ largeSpec f η ∧
+      Δ.card ≤ changConst * ⌈exp 1 * ⌈curlog (α f)⌉₊ / η ^ 2⌉₊ ∧ largeSpec f η ⊆ Δ.addSpan := by
   refine' diss_addSpan λ Δ hΔη hΔ ↦ _
   obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ Δ.card
   · simp [hΔ']
