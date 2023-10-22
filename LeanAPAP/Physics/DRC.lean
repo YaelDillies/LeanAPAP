@@ -72,7 +72,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
   have hp₀ : p ≠ 0 := by positivity
   have := lpNorm_conv_pos hp₀ hB hA
   set M : ℝ :=
-    2 ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p * sqrt B₁.card * sqrt B₂.card / A.card ^ p
+    2 ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p * (sqrt B₁.card * sqrt B₂.card) / A.card ^ p
       with hM_def
   have hM : 0 < M := by rw [hM_def]; positivity
   replace hf : 0 < ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x
@@ -109,7 +109,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
       simpa [hg_def, hM_def, mul_pow, pow_mul', show (2 : ℝ) ^ 2 = 4 by norm_num,
         mul_div_right_comm] using h
       positivity
-    refine' ⟨lt_of_mul_lt_mul_left hs.trans_eq' _ $ hg s.le, this.trans $ mul_le_of_le_one_right _ $
+    refine' ⟨lt_of_mul_lt_mul_left (hs.trans_eq' _) (hg s).le, this.trans $ mul_le_of_le_one_right _ $
       div_le_one_of_le _ _, this.trans $ mul_le_of_le_one_left _ $ div_le_one_of_le _ _⟩
     · simp_rw [←card_smul_mu, smul_dconv, dconv_smul, l2inner_smul_left, star_trivial, hg_def,
       nsmul_eq_mul, mul_assoc]

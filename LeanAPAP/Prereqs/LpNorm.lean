@@ -48,10 +48,10 @@ lemma lpNorm_rpow_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (f : ∀ i, α i) :
 lemma lpNorm_pow_eq_sum {p : ℕ} (hp : p ≠ 0) (f : ∀ i, α i) : ‖f‖_[p] ^ p = ∑ i, ‖f i‖ ^ p := by
   simpa using lpNorm_rpow_eq_sum (Nat.cast_ne_zero.2 hp) f
 
-lemma L2norm_sq_eq_sum (f : ∀ i, α i) : ‖f‖_[2] ^ 2 = ∑ i, ‖f i‖ ^ 2 := by
+lemma l2norm_sq_eq_sum (f : ∀ i, α i) : ‖f‖_[2] ^ 2 = ∑ i, ‖f i‖ ^ 2 := by
   simpa using lpNorm_pow_eq_sum two_ne_zero _
 
-lemma L2norm_eq_sum (f : ∀ i, α i) : ‖f‖_[2] = sqrt (∑ i, ‖f i‖ ^ 2) := by
+lemma l2norm_eq_sum (f : ∀ i, α i) : ‖f‖_[2] = sqrt (∑ i, ‖f i‖ ^ 2) := by
   simpa [sqrt_eq_rpow] using lpNorm_eq_sum two_ne_zero _
 
 lemma L1norm_eq_sum (f : ∀ i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp [lpNorm_eq_sum']
@@ -430,7 +430,7 @@ lemma inner_eq_l2inner (f g : PiLp 2 λ _i : ι ↦ 𝕜) :
     inner f g = ⟪WithLp.equiv 2 _ f, WithLp.equiv 2 _ g⟫_[𝕜] := rfl
 
 @[simp] lemma l2inner_self (f : ι → 𝕜) : ⟪f, f⟫_[𝕜] = ‖f‖_[2] ^ 2 := by
-  simp_rw [←algebraMap.coe_pow, L2norm_sq_eq_sum, l2inner_eq_sum, algebraMap.coe_sum,
+  simp_rw [←algebraMap.coe_pow, l2norm_sq_eq_sum, l2inner_eq_sum, algebraMap.coe_sum,
     IsROrC.conj_mul, IsROrC.normSq_eq_def']
 
 lemma l2inner_self_of_norm_eq_one (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫_[𝕜] = Fintype.card ι := by
@@ -508,7 +508,7 @@ lemma wlpNorm_conjneg [IsROrC β] (f : α → β) : ‖conjneg f‖_[p] = ‖f�
 end wlpNorm
 
 /-- **Cauchy-Schwarz inequality** -/
-lemma l2inner_le_L2norm_mul_L2norm (f g : ι → ℝ) : ⟪f, g⟫_[ℝ] ≤ ‖f‖_[2] * ‖g‖_[2] :=
+lemma l2inner_le_l2norm_mul_l2norm (f g : ι → ℝ) : ⟪f, g⟫_[ℝ] ≤ ‖f‖_[2] * ‖g‖_[2] :=
   real_inner_le_norm ((WithLp.equiv 2 _).symm f) _
 
 namespace Mathlib.Meta.Positivity
@@ -708,11 +708,11 @@ lemma lpNorm_pow_indicate {p : ℕ} (hp : p ≠ 0) (s : Finset α) :
     ‖𝟭_[β] s‖_[p] ^ (p : ℝ) = s.card := by
   simpa using lpNorm_rpow_indicate (Nat.cast_ne_zero.2 hp) s
 
-lemma L2norm_sq_indicate (s : Finset α) : ‖𝟭_[β] s‖_[2] ^ 2 = s.card := by
+lemma l2norm_sq_indicate (s : Finset α) : ‖𝟭_[β] s‖_[2] ^ 2 = s.card := by
   simpa using lpNorm_pow_indicate two_ne_zero s
 
-lemma L2norm_indicate (s : Finset α) : ‖𝟭_[β] s‖_[2] = Real.sqrt s.card := by
-  rw [eq_comm, sqrt_eq_iff_sq_eq, L2norm_sq_indicate] <;> sorry -- positivity
+lemma l2norm_indicate (s : Finset α) : ‖𝟭_[β] s‖_[2] = Real.sqrt s.card := by
+  rw [eq_comm, sqrt_eq_iff_sq_eq, l2norm_sq_indicate] <;> sorry -- positivity
 
 @[simp] lemma L1norm_indicate (s : Finset α) : ‖𝟭_[β] s‖_[1] = s.card := by
   simpa using lpNorm_pow_indicate one_ne_zero s

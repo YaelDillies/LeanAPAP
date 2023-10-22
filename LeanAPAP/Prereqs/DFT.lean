@@ -47,12 +47,12 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
     add_neg_eq_zero, ite_mul, MulZeroClass.zero_mul, Fintype.sum_ite_eq]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
-lemma L2norm_dft_sq (f : α → ℂ) : ‖dft f‖_[2] ^ 2 = card α * ‖f‖_[2] ^ 2 :=
+lemma l2norm_dft_sq (f : α → ℂ) : ‖dft f‖_[2] ^ 2 = card α * ‖f‖_[2] ^ 2 :=
   Complex.ofReal_injective $ by push_cast; simpa only [l2inner_self] using l2inner_dft f f
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
-@[simp] lemma L2norm_dft (f : α → ℂ) : ‖dft f‖_[2] = Real.sqrt (card α) * ‖f‖_[2] := by
-  simpa using congr_arg Real.sqrt (L2norm_dft_sq f)
+@[simp] lemma l2norm_dft (f : α → ℂ) : ‖dft f‖_[2] = Real.sqrt (card α) * ‖f‖_[2] := by
+  simpa using congr_arg Real.sqrt (l2norm_dft_sq f)
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion (f : α → ℂ) (a : α) : ∑ ψ : AddChar α ℂ, dft f ψ * ψ a = card α * f a := by
@@ -133,6 +133,9 @@ lemma dft_dconv (f g : α → ℂ) : dft (f ○ g) = dft f * conj (dft g) := fun
 @[simp] lemma dft_iterConv (f : α → ℂ) : ∀ n, dft (f ∗^ n) = dft f ^ n
   | 0 => dft_trivChar
   | n + 1 => by simp [iterConv_succ, pow_succ, dft_iterConv]
+
+@[simp] lemma dft_iterConv_apply (f : α → ℂ) (n : ℕ) (ψ : AddChar α ℂ) :
+    dft (f ∗^ n) ψ = dft f ψ ^ n := congr_fun (dft_iterConv _ _) _
 
 lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℂ) :
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by

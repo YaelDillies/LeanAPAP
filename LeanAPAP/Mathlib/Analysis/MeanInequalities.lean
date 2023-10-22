@@ -17,8 +17,8 @@ variable {ι : Type*} {f g : ι → ℝ}
 /-- Square root version of the **Cauchy-Schwarz inequality**. -/
 lemma sum_sqrt_mul_sqrt_le (s : Finset ι) (hf : ∀ i, 0 ≤ f i) (hg : ∀ i, 0 ≤ g i) :
     ∑ i in s, sqrt (f i) * sqrt (g i) ≤ sqrt (∑ i in s, f i) * sqrt (∑ i in s, g i) := by
-  simpa [←@sum_attach _ _ s, l2inner_eq_sum, L2norm_eq_sum, hf _, hg _] using
-    l2inner_le_L2norm_mul_L2norm (λ i : s ↦ sqrt $ f i) λ i : s ↦ sqrt $ g i
+  simpa [←@sum_attach _ _ s, l2inner_eq_sum, l2norm_eq_sum, hf _, hg _] using
+    l2inner_le_l2norm_mul_l2norm (λ i : s ↦ sqrt $ f i) λ i : s ↦ sqrt $ g i
 
 variable [Fintype ι]
 
