@@ -3,6 +3,12 @@ on:
     branches:
       - master
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build_project:
     runs-on: ubuntu-latest
@@ -11,6 +17,22 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
       - name: Checkout project
         uses: actions/checkout@v2
         with:
@@ -28,8 +50,30 @@ jobs:
       - name: Build documentation
         run: ~/.elan/bin/lake -Kenv=dev build LeanAPAP:docs
 
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+
+      - name: Install blueprint apt deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz libgraphviz-dev pdf2svg dvisvgm texlive-full
+
+      - name: Install blueprint deps
+        run: |
+          cd blueprint && pip install -r requirements.txt
+
+      - name: Build blueprint
+        run: |
+          cd blueprint && inv all
+
       - name: Copy documentation
-        run: cp -R build/doc docs/
+        run: |
+          cp -R build/doc docs/
+          mkdir -p docs/_site
+          mv blueprint/web docs/_site/blueprint
 
       - name: Remove .gitignore for gh-pages
         run: rm docs/.gitignore
@@ -45,9 +89,11 @@ jobs:
         working-directory: docs
         run: JEKYLL_ENV=production bundle exec jekyll build
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@3.7.1
+      - name: Upload doc & blueprint artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          SINGLE_COMMIT: true
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: docs/_site
+          path: docs/_site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
