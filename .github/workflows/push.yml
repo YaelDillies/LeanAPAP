@@ -73,15 +73,13 @@ jobs:
         run: |
           cd blueprint && pip install -r requirements.txt
 
-      - name: Build blueprint
+      - name: Build blueprint and copy to `docs/blueprint`
         run: |
-          cd blueprint && inv all
+          inv all
 
-      - name: Copy documentation
+      - name: Copy documentation to `docs/docs`
         run: |
-          cp -R build/doc docs/
-          mkdir -p docs/_site
-          mv blueprint/web docs/_site/blueprint
+          mv build/doc docs/docs
 
       - name: Remove .gitignore for gh-pages
         run: rm docs/.gitignore
