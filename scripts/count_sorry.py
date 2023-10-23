@@ -12,7 +12,7 @@ def pretty_file(file: str):
     url = f"https://github.com/YaelDillies/LeanAPAP/blob/master/{file}"
     return f"[{name}]({url})"
 
-files = [file for tree in os.walk("src") for file in glob(os.path.join(tree[0], '*.lean'))]
+files = [file for tree in os.walk("LeanAPAP") for file in glob(os.path.join(tree[0], '*.lean'))]
 sorries = {}
 
 for file in files:

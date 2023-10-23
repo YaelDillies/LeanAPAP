@@ -78,6 +78,10 @@ jobs:
       - name: Remove .gitignore for gh-pages
         run: rm docs/.gitignore
 
+      - name: Count sorries
+        run: |
+          python scripts/count_sorry.py
+
       - name: Bundle dependencies
         uses: ruby/setup-ruby@v1
         with:
