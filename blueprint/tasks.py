@@ -58,11 +58,3 @@ def serve(ctx, random_port=False):
     httpd = socketserver.TCPServer(("", port), Handler)
     httpd.serve_forever()
     os.chdir(cwd)
-
-# @task(bp, web)
-# def all(ctx):
-#     """
-#     Run all tasks: `bp`, and `web`
-#     """
-
-#     pass
