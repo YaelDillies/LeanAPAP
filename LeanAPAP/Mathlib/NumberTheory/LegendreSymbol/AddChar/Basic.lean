@@ -13,10 +13,10 @@ Rename
 * `map_add_mul` → `map_add_eq_mul`
 * `map_zero_one` → `map_zero_eq_one`
 * `map_nsmul_pow` → `map_nsmul_eq_pow`
-* `coe_to_fun_apply` → whatever is better, maybe change to `ψ.to_monoid_hom a = ψ (of_mul a)`.
+* `coe_toFun_apply` → whatever is better, maybe change to `ψ.toMonoidNom a = ψ (of_mul a)`.
 
-Kill the evil instance `add_char.monoid_hom_class`. It creates a diamond for
-`fun_like (add_char G R) _ _`.
+Kill the evil instance `AddChar.MonoidHomClass`. It creates a diamond for
+`FunLike (AddChar G R) _ _`.
 -/
 
 --TODO: This instance is evil
@@ -39,7 +39,7 @@ instance instFunLike : FunLike (AddChar G R) G fun _ ↦ R where
   coe := (⇑)
   coe_injective' ψ χ h := by obtain ⟨⟨_, _⟩, _⟩ := ψ; congr
 
--- TODO: Replace `add_char.to_monoid_hom`
+-- TODO: Replace `AddChar.toMonoidHom`
 /-- Interpret an additive character as a monoid homomorphism. -/
 def toMonoidHom' : AddChar G R ≃ (Multiplicative G →* R) := Equiv.refl _
 
