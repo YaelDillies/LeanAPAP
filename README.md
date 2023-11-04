@@ -24,12 +24,6 @@ constant `c > 0`. This is an amazing improvement over previous bounds, which wer
 The formal system which we are using as a target system is Lean's dependent type theory. Lean is a
 project being developed at AWS and Microsoft Research by Leonardo de Moura and his team.
 
-At this stage, mathlib4 contains all the background material that we need. However, not all
-quality-of-life improvements that we know from Lean 3 have made it to Lean 4 (yet) and Lean 4
-suffers from its own problems that currently make it unsuitable for new formalisation of
-research-level mathematics. As a consequence, we are sticking to Lean 3 until the project is
-complete. Then we will port it to Lean 4 in order to upstream our basic results.
-
 ## Content of this project
 
 This project currently contains about 3k lines of Lean code about the discrete (difference)
