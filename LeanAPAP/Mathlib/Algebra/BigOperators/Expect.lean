@@ -5,6 +5,27 @@ import Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Pi.Algebra
 
+/-!
+# Average over a finset
+
+This file defines `Finset.expect`, the average (aka expectation) of a function over a finset.
+
+## Notation
+
+* `𝔼 i ∈ s, f i` is notation for `Finset.expect s f`. It is the expectation of `f i` where `i`
+  ranges over the finite set `s` (either a `Finset` or a `Set` with a `Fintype` instance).
+* `𝔼 x, f x` is notation for `Finset.expect Finset.univ f`. It is the expectation of `f i` where `i`
+  ranges over the finite domain of `f`.
+* `𝔼 i ∈ s with p i, f i` is notation for `Finset.expect (Finset.filter p s) f`. This is referred to
+  as `expectWith` in lemma names.
+* `𝔼 (i ∈ s) (j ∈ t), f i j` is notation for `Finset.expect (s ×ˢ t) (fun ⟨i, j⟩ ↦ f i j)`.
+
+## Naming
+
+We provide
+
+-/
+
 
 open Function
 open Fintype (card)
@@ -15,6 +36,7 @@ variable {ι β α 𝕝 : Type*}
 namespace Finset
 variable [Semifield α] [Semifield 𝕝] {s : Finset ι} {t : Finset β} {f : ι → α} {g : β → α}
 
+/-- Average of a function over a finset. If the finset is empty, this is equal to zero. -/
 def expect (s : Finset ι) (f : ι → α) : α := s.sum f / s.card
 
 end Finset
@@ -23,14 +45,14 @@ namespace BigOps
 open Std.ExtendedBinder Lean Meta
 
 /--
-- `𝔼 x, f x` is notation for `Finset.expect Finset.univ f`. It is the expect of `f x`,
-  where `x` ranges over the finite domain of `f`.
-- `𝔼 x ∈ s, f x` is notation for `Finset.expect s f`. It is the expect of `f x`,
-  where `x` ranges over the finite set `s` (either a `Finset` or a `Set` with a `Fintype` instance).
-- `𝔼 x ∈ s with p x, f x` is notation for `Finset.expect (Finset.filter p s) f`.
-- `𝔼 (x ∈ s) (y ∈ t), f x y` is notation for `Finset.expect (s ×ˢ t) (fun ⟨x, y⟩ ↦ f x y)`.
+* `𝔼 i ∈ s, f i` is notation for `Finset.expect s f`. It is the expectation of `f i` where `i`
+  ranges over the finite set `s` (either a `Finset` or a `Set` with a `Fintype` instance).
+* `𝔼 x, f x` is notation for `Finset.expect Finset.univ f`. It is the expectation of `f i` where `i`
+  ranges over the finite domain of `f`.
+* `𝔼 i ∈ s with p i, f i` is notation for `Finset.expect (Finset.filter p s) f`.
+* `𝔼 (i ∈ s) (j ∈ t), f i j` is notation for `Finset.expect (s ×ˢ t) (fun ⟨i, j⟩ ↦ f i j)`.
 
-These support destructuring, for example `𝔼 ⟨x, y⟩ ∈ s ×ˢ t, f x y`.
+These support destructuring, for example `𝔼 ⟨i, j⟩ ∈ s ×ˢ t, f i j`.
 
 Notation: `"𝔼" bigOpBinders* ("with" term)? "," term` -/
 scoped syntax (name := bigexpect) "𝔼 " bigOpBinders ("with " term)? ", " term:67 : term
@@ -103,16 +125,12 @@ lemma expect_div (s : Finset ι) (f : ι → α) (a : α) : (𝔼 i ∈ s, f i) 
 lemma expect_univ [Fintype ι] : 𝔼 x, f x = (∑ x, f x) / Fintype.card ι := by
   rw [expect, card_univ]
 
-lemma expect_congr (f g : ι → α) (p : ι → Prop) [DecidablePred p] (h : ∀ x ∈ s, p x → f x = g x) :
-    𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i := by
-  rw [expect, expect, sum_congr rfl]; simpa using h
+lemma expect_congr (f g : ι → α) (h : ∀ x ∈ s, f x = g x) : 𝔼 i ∈ s, f i = 𝔼 i ∈ s, g i := by
+   rw [expect, expect, sum_congr rfl h]
 
-lemma expect_congr' (f g : ι → α) (p : ι → Prop) [DecidablePred p] (h : ∀ x, p x → f x = g x) :
-    𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i := expect_congr _ _ _ fun x _ ↦ h x
-
-lemma expect_congr'' (f g : ι → α) (h : ∀ x ∈ s, f x = g x) :
-    𝔼 i ∈ s, f i = 𝔼 i ∈ s, g i := by
-   rw [expect, expect, sum_congr rfl]; simpa using h
+lemma expectWith_congr (f g : ι → α) (p : ι → Prop) [DecidablePred p]
+    (h : ∀ x ∈ s, p x → f x = g x) : 𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i :=
+  expect_congr _ _ $ by simpa using h
 
 lemma expect_bij (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
     (i_inj : ∀ a₁ a₂ ha₁ ha₂, i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
