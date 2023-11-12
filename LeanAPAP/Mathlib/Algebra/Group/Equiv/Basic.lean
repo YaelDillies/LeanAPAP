@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Hom.Equiv.Basic
+import Mathlib.Algebra.Group.Equiv.Basic
 
 open Function
 

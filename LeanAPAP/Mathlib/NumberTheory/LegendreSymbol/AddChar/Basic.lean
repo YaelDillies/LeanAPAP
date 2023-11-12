@@ -101,7 +101,7 @@ lemma nsmul_apply (n : ℕ) (ψ : AddChar G R) (a : G) : (ψ ^ n) a = ψ a ^ n :
 variable {ι : Type*}
 
 @[simp, norm_cast]
-lemma coe_sum (s : Finset ι) (ψ : ι → AddChar G R) : ⇑(∑ i in s, ψ i) = ∏ i in s, ⇑ψ i := by
+lemma coe_sum (s : Finset ι) (ψ : ι → AddChar G R) : ∑ i in s, ψ i = ∏ i in s, ⇑(ψ i) := by
   induction s using Finset.cons_induction <;> simp [*]
 
 lemma sum_apply (s : Finset ι) (ψ : ι → AddChar G R) (a : G) :

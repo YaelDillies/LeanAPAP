@@ -8,13 +8,13 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Basic
+import LeanAPAP.Mathlib.Algebra.Group.Equiv.Basic
+import LeanAPAP.Mathlib.Algebra.Group.Hom.Defs
+import LeanAPAP.Mathlib.Algebra.Group.Hom.Instances
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Hom
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 import LeanAPAP.Mathlib.Algebra.Group.TypeTags
-import LeanAPAP.Mathlib.Algebra.Hom.Equiv.Basic
-import LeanAPAP.Mathlib.Algebra.Hom.Group
-import LeanAPAP.Mathlib.Algebra.Hom.GroupInstances
 import LeanAPAP.Mathlib.Algebra.Module.Basic
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Canonical

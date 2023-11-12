@@ -59,7 +59,7 @@ def processBigOpBinder (processed : (Array (Term × Term)))
     | `(bigOpBinder| $x:term) =>
       match x with
       | `(($a + $b = $n)) => -- Maybe this is too cute.
-        return processed |>.push (← `(⟨$a, $b⟩), ← `(Finset.Nat.antidiagonal $n))
+        return processed |>.push (← `(⟨$a, $b⟩), ← `(Finset.HasAntidiagonal.antidiagonal $n))
       | _ => return processed |>.push (x, ← ``(Finset.univ))
     | `(bigOpBinder| $x : $t) => return processed |>.push (x, ← ``((Finset.univ : Finset $t)))
     | `(bigOpBinder| $x ∈ $s) => return processed |>.push (x, ← `(finset% $s))

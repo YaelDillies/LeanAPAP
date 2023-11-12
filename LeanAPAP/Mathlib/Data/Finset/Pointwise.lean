@@ -3,7 +3,6 @@ import LeanAPAP.Mathlib.Data.Fintype.Pi
 import Mathlib.GroupTheory.GroupAction.Pi
 
 open Finset
-
 open scoped Pointwise
 
 namespace Finset

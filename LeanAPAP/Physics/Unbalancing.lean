@@ -152,8 +152,6 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
     · exact rpow_nonneg (sum_nonneg fun i _ ↦ by sorry) -- positivity
     · positivity
     · exact sum_nonneg fun i _ ↦ by sorry -- positivity
-    · sorry -- positivity
-    · sorry -- positivity
   set p' := 24 / ε * log (3 / ε) * p
   have hp' : 0 < p' := p'_pos hp hε₀ hε₁
   have : 1 - 8⁻¹ * ε ≤ (∑ i in T, ↑(ν i)) ^ p'⁻¹ := by

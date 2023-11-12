@@ -57,7 +57,7 @@ lemma l2norm_eq_sum (f : ∀ i, α i) : ‖f‖_[2] = sqrt (∑ i, ‖f i‖ ^ 2
 lemma L1norm_eq_sum (f : ∀ i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp [lpNorm_eq_sum']
 
 lemma L0norm_eq_card (f : ∀ i, α i) : ‖f‖_[0] = {i | f i ≠ 0}.toFinite.toFinset.card :=
-  PiLp.norm_eq_card _
+  (PiLp.norm_eq_card _).trans $ by simp
 
 lemma Linftynorm_eq_csupr (f : ∀ i, α i) : ‖f‖_[∞] = ⨆ i, ‖f i‖ := PiLp.norm_eq_ciSup _
 

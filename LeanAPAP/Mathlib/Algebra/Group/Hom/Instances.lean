@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Hom.GroupInstances
+import Mathlib.Algebra.Group.Hom.Instances
 import Mathlib.Data.Pi.Algebra
 
 variable {α β : Type*}

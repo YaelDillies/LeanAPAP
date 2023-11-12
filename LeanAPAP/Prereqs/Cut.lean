@@ -39,7 +39,7 @@ lemma mem_cut (s : Finset ι) (n : ℕ) (f : ι → ℕ) :
     exact hf _
 
 lemma cut_equiv_antidiag (n : ℕ) :
-    Equiv.finsetCongr (Equiv.boolArrowEquivProd _) (cut univ n) = Nat.antidiagonal n := by
+    Equiv.finsetCongr (Equiv.boolArrowEquivProd _) (cut univ n) = antidiagonal n := by
   ext ⟨x₁, x₂⟩
   simp_rw [Equiv.finsetCongr_apply, mem_map, Equiv.toEmbedding, Function.Embedding.coeFn_mk, ←
     Equiv.eq_symm_apply]
@@ -63,13 +63,13 @@ lemma cut_univ_fin_eq_antidiagonalTuple (n k : ℕ) : cut univ n = Nat.antidiago
   eq_empty_of_forall_not_mem fun x ↦ by simp [mem_cut, @eq_comm _ 0]
 
 lemma cut_insert [DecidableEq (ι → ℕ)] (n : ℕ) (a : ι) (s : Finset ι) (h : a ∉ s) :
-    cut (insert a s) n = (Nat.antidiagonal n).biUnion fun p : ℕ × ℕ ↦ (cut s p.snd).map
+    cut (insert a s) n = (antidiagonal n).biUnion fun p : ℕ × ℕ ↦ (cut s p.snd).map
       (addLeftEmbedding fun t ↦ if t = a then p.fst else 0) := by
   ext f
   rw [mem_cut, mem_biUnion, sum_insert h]
   constructor
   · rintro ⟨rfl, h₁⟩
-    simp only [exists_prop, Function.Embedding.coeFn_mk, mem_map, Nat.mem_antidiagonal, Prod.exists]
+    simp only [exists_prop, Function.Embedding.coeFn_mk, mem_map, mem_antidiagonal, Prod.exists]
     refine' ⟨f a, s.sum f, rfl, fun i ↦ if i = a then 0 else f i, _, _⟩
     · rw [mem_cut]
       refine' ⟨_, _⟩
@@ -85,7 +85,7 @@ lemma cut_insert [DecidableEq (ι → ℕ)] (n : ℕ) (a : ι) (s : Finset ι) (
       obtain rfl | h := eq_or_ne x a
       · simp
       · simp [if_neg h]
-  · simp only [mem_insert, Function.Embedding.coeFn_mk, mem_map, Nat.mem_antidiagonal, Prod.exists,
+  · simp only [mem_insert, Function.Embedding.coeFn_mk, mem_map, mem_antidiagonal, Prod.exists,
       exists_prop, mem_cut, not_or]
     rintro ⟨p, q, rfl, g, ⟨rfl, hg₂⟩, rfl⟩
     refine' ⟨_, _⟩
@@ -94,7 +94,7 @@ lemma cut_insert [DecidableEq (ι → ℕ)] (n : ℕ) (a : ι) (s : Finset ι) (
       simp [if_neg h₁, hg₂ _ h₂]
 
 lemma cut_insert_disjoint_bUnion (n : ℕ) (a : ι) (s : Finset ι) (h : a ∉ s) :
-    (Nat.antidiagonal n : Set (ℕ × ℕ)).PairwiseDisjoint fun p : ℕ × ℕ ↦
+    (antidiagonal n : Set (ℕ × ℕ)).PairwiseDisjoint fun p : ℕ × ℕ ↦
       (cut s p.snd).map (addLeftEmbedding fun t ↦ if t = a then p.fst else 0) := by
   simp only [Set.PairwiseDisjoint, Function.onFun_apply, Finset.disjoint_iff_ne, mem_map,
     Function.Embedding.coeFn_mk, Ne.def, forall_exists_index, Set.Pairwise, mem_coe, mem_cut,

@@ -31,7 +31,7 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
     Pi.add_apply, eq_self_iff_true, if_true, Nat.cast_mul, prod_insert has, eq_self_iff_true,
     if_true, sum_add_distrib, sum_ite_eq', has, if_false, add_zero,
       addLeftEmbedding_eq_addRightEmbedding, addRightEmbedding_apply]
-  suffices : ∀ p : ℕ × ℕ, p ∈ Nat.antidiagonal n →
+  suffices : ∀ p : ℕ × ℕ, p ∈ antidiagonal n →
     ∑ f in cut s p.snd, ((f a + p.fst + s.sum f).choose (f a + p.fst) : β) *
       multinomial s (f + fun t ↦ ite (t = a) p.fst 0) *
         (x a ^ (f a + p.fst) * ∏ t : α in s, x t ^ (f t + ite (t = a) p.fst 0)) =
@@ -46,7 +46,7 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
   rw [mem_cut] at hf
   rw [hf.2 _ has, zero_add, hf.1]
   congr 2
-  · rw [Nat.mem_antidiagonal.1 hp]
+  · rw [mem_antidiagonal.1 hp]
   · rw [multinomial_congr]
     intro t ht
     rw [Pi.add_apply, if_neg, add_zero]

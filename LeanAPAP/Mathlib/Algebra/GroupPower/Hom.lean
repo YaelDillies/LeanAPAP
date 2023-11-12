@@ -1,5 +1,5 @@
-import LeanAPAP.Mathlib.Algebra.Hom.Group
-import LeanAPAP.Mathlib.Algebra.Hom.GroupInstances
+import LeanAPAP.Mathlib.Algebra.Group.Hom.Defs
+import LeanAPAP.Mathlib.Algebra.Group.Hom.Instances
 import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 
 open Finset Function
