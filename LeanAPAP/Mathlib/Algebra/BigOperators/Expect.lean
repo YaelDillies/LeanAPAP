@@ -110,6 +110,10 @@ lemma expect_congr (f g : ι → α) (p : ι → Prop) [DecidablePred p] (h : �
 lemma expect_congr' (f g : ι → α) (p : ι → Prop) [DecidablePred p] (h : ∀ x, p x → f x = g x) :
     𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i := expect_congr _ _ _ fun x _ ↦ h x
 
+lemma expect_congr'' (f g : ι → α) (h : ∀ x ∈ s, f x = g x) :
+    𝔼 i ∈ s, f i = 𝔼 i ∈ s, g i := by
+   rw [expect, expect, sum_congr rfl]; simpa using h
+
 lemma expect_bij (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
     (i_inj : ∀ a₁ a₂ ha₁ ha₂, i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
     (i_surj : ∀ b ∈ t, ∃ a ha, b = i a ha) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
