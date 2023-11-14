@@ -17,7 +17,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - name: Free Disk Space (Ubuntu)
+      - name: Free disk space
         uses: jlumbroso/free-disk-space@main
         with:
           # this might remove tools that are actually needed,
@@ -47,8 +47,8 @@ jobs:
       - name: Build project
         run: ~/.elan/bin/lake -Kenv=dev build LeanAPAP
 
-      - uses: actions/cache@v3
-        name: Mathlib doc Cache
+      - name: Cache mathlib docs
+        uses: actions/cache@v3
         with:
           path: build/doc/Mathlib
           key: DocGen4-${{ hashFiles('lake-manifest.json') }}
@@ -64,12 +64,12 @@ jobs:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
 
-      - name: Install blueprint apt deps
+      - name: Install blueprint apt dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y graphviz libgraphviz-dev pdf2svg dvisvgm texlive-full
 
-      - name: Install blueprint deps
+      - name: Install blueprint dependencies
         run: |
           cd blueprint && pip install -r requirements.txt
 
@@ -80,13 +80,6 @@ jobs:
       - name: Copy documentation to `docs/docs`
         run: |
           mv build/doc docs/docs
-
-      - name: Remove .gitignore for gh-pages
-        run: rm docs/.gitignore
-
-      - name: Count sorries
-        run: |
-          python scripts/count_sorry.py
 
       - name: Bundle dependencies
         uses: ruby/setup-ruby@v1
@@ -99,7 +92,7 @@ jobs:
         working-directory: docs
         run: JEKYLL_ENV=production bundle exec jekyll build
 
-      - name: Upload doc & blueprint artifact
+      - name: Upload docs & blueprint artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: docs/_site
