@@ -1,3 +1,5 @@
+# TODO: This script currently mishandles the $directory argument
+
 #!/usr/bin/env bash
 # Usage: mk_all.sh [subdirectory]
 #
@@ -6,8 +8,8 @@
 #   ./scripts/mk_all.sh data/real
 #   ./scripts/mk_all.sh ../archive
 #
-# Makes a mathlib/src/$directory/all.lean importing all files inside $directory.
-# If $directory is omitted, creates `mathlib/src/all.lean`.
+# Makes a $directory/../$directory.lean file importing all files inside $directory.
+# If $directory is omitted, creates `LeanAPAP.lean`.
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"/../LeanAPAP
 if [[ $# = 1 ]]; then
