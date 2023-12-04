@@ -4,11 +4,10 @@ import LeanAPAP.Mathlib.Analysis.Normed.Group.Basic
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
-import LeanAPAP.Mathlib.Data.Real.Basic
+import LeanAPAP.Mathlib.Data.Real.Archimedean
 import LeanAPAP.Mathlib.Data.Real.ENNReal
 import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Finset
-import LeanAPAP.Mathlib.Tactic.Binop
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Prereqs.Indicator
 
@@ -162,7 +161,7 @@ end NormedAddCommGroup
 section Real
 variable {p : ℝ≥0} {f g : ι → ℝ}
 
-@[simp] lemma lpNorm_one (hp : p ≠ 0) : ‖(1 : ι → ℝ)‖_[p] = Fintype.card ι ^ (p⁻¹ : ℝ) := by
+@[simp] lemma lpNorm_one (hp : p ≠ 0) : ‖(1 : ι → ℝ)‖_[p] = (Fintype.card ι : ℝ) ^ (p⁻¹ : ℝ) := by
   simp [lpNorm_eq_sum hp, card_univ]
 
 lemma lpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p] ≤ ‖g‖_[p] := by
@@ -250,9 +249,8 @@ section one_le
 lemma wlpNorm_add_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : ∀ i, α i) :
     ‖f + g‖_[p, w] ≤ ‖f‖_[p, w] + ‖g‖_[p, w] := by
   unfold wlpNorm
-  refine'
-    (lpNorm_add_le (by exact_mod_cast hp) _ _).trans'
-      (lpNorm_mono (fun i ↦ by dsimp; sorry) fun i ↦ _) -- positivity
+  refine' (lpNorm_add_le (by exact_mod_cast hp) _ _).trans'
+    (lpNorm_mono (fun i ↦ by dsimp; sorry) fun i ↦ _) -- positivity
   dsimp
   rw [←smul_add]
   exact smul_le_smul_of_nonneg (norm_add_le _ _) (zero_le _)
@@ -321,7 +319,7 @@ variable {α : Type*} [NormedAddCommGroup α] {p : ℝ≥0}
 
 @[simp]
 lemma lpNorm_const (hp : p ≠ 0) (a : α) :
-    ‖const ι a‖_[p] = ↑(Fintype.card ι) ^ (p⁻¹ : ℝ) * ‖a‖ := by
+    ‖const ι a‖_[p] = (Fintype.card ι : ℝ) ^ (p⁻¹ : ℝ) * ‖a‖ := by
   simp only [lpNorm_eq_sum hp, card_univ, mul_rpow, norm_nonneg, rpow_nonneg,
     NNReal.coe_ne_zero.2 hp, rpow_rpow_inv, const_apply, sum_const, nsmul_eq_mul, Nat.cast_nonneg,
     Ne.def, not_false_iff]
@@ -333,7 +331,7 @@ variable {p : ℝ≥0} {w : ι → ℝ≥0} {f g : ι → ℝ}
 
 @[simp]
 lemma wlpNorm_one (hp : p ≠ 0) (w : ι → ℝ≥0) :
-    ‖(1 : ι → ℝ)‖_[p, w] = (∑ i, ↑(w i)) ^ (p⁻¹ : ℝ) := by
+    ‖(1 : ι → ℝ)‖_[p, w] = (∑ i, w i : ℝ) ^ (p⁻¹ : ℝ) := by
   simp [wlpNorm_eq_sum hp, NNReal.smul_def]
 
 lemma wlpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p, w] ≤ ‖g‖_[p, w] :=
@@ -431,7 +429,7 @@ lemma l2inner_eq_inner (f g : ι → 𝕜) :
 lemma inner_eq_l2inner (f g : PiLp 2 fun _i : ι ↦ 𝕜) :
     inner f g = ⟪WithLp.equiv 2 _ f, WithLp.equiv 2 _ g⟫_[𝕜] := rfl
 
-@[simp] lemma l2inner_self (f : ι → 𝕜) : ⟪f, f⟫_[𝕜] = ‖f‖_[2] ^ 2 := by
+@[simp] lemma l2inner_self (f : ι → 𝕜) : ⟪f, f⟫_[𝕜] = (‖f‖_[2] : 𝕜) ^ 2 := by
   simp_rw [←algebraMap.coe_pow, l2norm_sq_eq_sum, l2inner_eq_sum, algebraMap.coe_sum,
     IsROrC.conj_mul, IsROrC.normSq_eq_def']
 
@@ -622,7 +620,7 @@ lemma L1norm_mul_of_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f * g‖_[1] = ⟪
     refine' (norm_of_nonneg $ _).symm; exacts [hf _, hg _]
 
 lemma lpNorm_rpow (hp : p ≠ 0) (hq : q ≠ 0) (hf : 0 ≤ f) :
-    ‖f ^ (q : ℝ)‖_[p] = ‖f‖_[p * q] ^ (q : ℝ) := by
+    ‖HPow.hPow f (q : ℝ)‖_[p] = ‖f‖_[p * q] ^ (q : ℝ) := by
   refine' rpow_left_injOn (NNReal.coe_ne_zero.2 hp) lpNorm_nonneg (by dsimp; sorry) _ -- positivity
   dsimp
   rw [←rpow_mul lpNorm_nonneg, ←mul_comm, ←ENNReal.coe_mul, ←NNReal.coe_mul,
@@ -700,8 +698,8 @@ section indicate
 variable {α β : Type*} [IsROrC β] [Fintype α] [DecidableEq α] {s : Finset α} {p : ℝ≥0}
 
 lemma lpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖_[p] ^ (p : ℝ) = s.card := by
-  have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) = ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := fun x ↦
-    by split_ifs <;> simp
+  have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) =
+    ite (x ∈ s) ((1 : ℝ) ^ (p : ℝ) : ℝ) ((0 : ℝ) ^ (p : ℝ)) := fun x ↦ by split_ifs <;> simp
   simp [lpNorm_rpow_eq_sum, hp, indicate_apply, apply_ite Norm.norm, -sum_const, card_eq_sum_ones,
     sum_boole, this, zero_rpow, filter_mem_eq_inter]
 

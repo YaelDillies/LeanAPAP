@@ -1,6 +1,5 @@
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Logic.Basic
 import LeanAPAP.Mathlib.NumberTheory.LegendreSymbol.AddChar.Duality
 import LeanAPAP.Prereqs.Convolution.Basic
 
@@ -41,7 +40,9 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma l2inner_dft (f g : α → ℂ) : ⟪dft f, dft g⟫_[ℂ] = card α * ⟪f, g⟫_[ℂ] := by
-  classical simp_rw [dft, l2inner_eq_sum, map_sum, map_mul, starRingEnd_self_apply, sum_mul,
+  classical
+  unfold dft
+  simp_rw [l2inner_eq_sum, map_sum, map_mul, starRingEnd_self_apply, sum_mul,
     mul_sum, @sum_comm _ _ (AddChar _ _), mul_mul_mul_comm _ (conj $ f _), ←sum_mul, ←
     AddChar.inv_apply_eq_conj, ←map_neg_eq_inv, ←map_add_mul, AddChar.sum_apply_eq_ite,
     add_neg_eq_zero, ite_mul, MulZeroClass.zero_mul, Fintype.sum_ite_eq]

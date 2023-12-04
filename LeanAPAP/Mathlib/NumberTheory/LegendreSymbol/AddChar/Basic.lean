@@ -14,13 +14,7 @@ Rename
 * `map_zero_one` → `map_zero_eq_one`
 * `map_nsmul_pow` → `map_nsmul_eq_pow`
 * `coe_toFun_apply` → whatever is better, maybe change to `ψ.toMonoidNom a = ψ (of_mul a)`.
-
-Kill the evil instance `AddChar.MonoidHomClass`. It creates a diamond for
-`FunLike (AddChar G R) _ _`.
 -/
-
---TODO: This instance is evil
-attribute [-instance] AddChar.monoidHomClass
 
 open Finset hiding card
 open Fintype (card)
@@ -35,25 +29,36 @@ variable [AddMonoid G] [AddMonoid H] [CommMonoid R] {ψ : AddChar G R}
 
 instance : AddCommMonoid (AddChar G R) := Additive.addCommMonoid
 
-instance instFunLike : FunLike (AddChar G R) G fun _ ↦ R where
+-- Replace ad-hoc `FunLike` instance
+example : FunLike (AddChar G R) G fun _ ↦ R where
   coe := (⇑)
   coe_injective' ψ χ h := by obtain ⟨⟨_, _⟩, _⟩ := ψ; congr
+
+attribute [simp, norm_cast] mul_apply one_apply
 
 -- TODO: Replace `AddChar.toMonoidHom`
 /-- Interpret an additive character as a monoid homomorphism. -/
 def toMonoidHom' : AddChar G R ≃ (Multiplicative G →* R) := Equiv.refl _
 
 @[simp, norm_cast]
-lemma coe_toMonoid_hom (ψ : AddChar G R) : ⇑(toMonoidHom' ψ) = ψ ∘ Multiplicative.toAdd := rfl
+lemma coe_toMonoidHom' (ψ : AddChar G R) : ⇑(toMonoidHom' ψ) = ψ ∘ Multiplicative.toAdd := rfl
 
-@[simp, norm_cast] lemma coe_toMonoid_hom_symm (ψ : Multiplicative G →* R) :
+@[simp, norm_cast] lemma coe_toMonoidHom'_symm (ψ : Multiplicative G →* R) :
     ⇑(toMonoidHom'.symm ψ) = ψ ∘ Multiplicative.ofAdd := rfl
 
-@[simp] lemma toMonoid_hom_apply (ψ : AddChar G R) (a : Multiplicative G) :
+@[simp] lemma toMonoidHom'_apply (ψ : AddChar G R) (a : Multiplicative G) :
     toMonoidHom' ψ a = ψ (Multiplicative.toAdd a) := rfl
 
-@[simp] lemma toMonoid_hom_symm_apply (ψ : Multiplicative G →* R) (a : G) :
+@[simp] lemma toMonoidHom'_symm_apply (ψ : Multiplicative G →* R) (a : G) :
     toMonoidHom'.symm ψ a = ψ (Multiplicative.ofAdd a) := rfl
+
+@[simp] lemma toMonoidHom'_zero : toMonoidHom' (0 : AddChar G R) = 1 := rfl
+@[simp] lemma toMonoidHom'_symm_one : toMonoidHom'.symm (1 : Multiplicative G →* R) = 0 := rfl
+
+@[simp] lemma toMonoidHom'_add (ψ φ : AddChar G R) :
+    toMonoidHom' (ψ + φ) = toMonoidHom' ψ * toMonoidHom' φ := rfl
+@[simp] lemma toMonoidHom'_symm_mul (ψ φ : Multiplicative G →* R) :
+  toMonoidHom'.symm (ψ * φ) = toMonoidHom'.symm ψ + toMonoidHom'.symm φ := rfl
 
 /-- Interpret an additive character as a monoid homomorphism. -/
 def toAddMonoidHom : AddChar G R ≃ (G →+ Additive R) := MonoidHom.toAdditive
@@ -115,10 +120,11 @@ def compAddMonoidHom (ψ : AddChar H R) (f : G →+ H) : AddChar G R :=
   toMonoidHom'.symm $ ψ.toMonoidHom'.comp $ AddMonoidHom.toMultiplicative f
 
 @[simp] lemma compAddMonoidHom_apply (ψ : AddChar H R) (f : G →+ H) (a : G) :
-    ψ.compAddMonoidHom f a = ψ (f a) := rfl
+    (ψ.compAddMonoidHom f) a = ψ (f a) := rfl
 
 @[simp, norm_cast]
-lemma coe_compAddMonoidHom (ψ : AddChar H R) (f : G →+ H) : ⇑(ψ.compAddMonoidHom f) = ψ ∘ f := rfl
+lemma coe_compAddMonoidHom (ψ : AddChar H R) (f : G →+ H) :
+    (ψ.compAddMonoidHom f) = ψ ∘ f := rfl
 
 lemma compAddMonoidHom_injective_left (f : G →+ H) (hf : Surjective f) :
     Injective fun ψ : AddChar H R ↦ ψ.compAddMonoidHom f := by
@@ -157,7 +163,7 @@ section NormedField
 variable [Finite G] [NormedField R]
 
 @[simp] lemma norm_apply (ψ : AddChar G R) (x : G) : ‖ψ x‖ = 1 :=
-  (ψ.isOfFinOrder $ exists_pow_eq_one _).norm_eq_one
+  (ψ.isOfFinOrder $ isOfFinOrder_of_finite _).norm_eq_one
 
 @[simp] lemma coe_ne_zero (ψ : AddChar G R) : (ψ : G → R) ≠ 0 :=
   Function.ne_iff.2 ⟨0, fun h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_one ψ⟩

@@ -11,10 +11,10 @@ import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Equiv.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Hom.Defs
 import LeanAPAP.Mathlib.Algebra.Group.Hom.Instances
-import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Hom
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
+import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.Module.Basic
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Canonical
@@ -58,7 +58,7 @@ import LeanAPAP.Mathlib.Data.Nat.Order.Basic
 import LeanAPAP.Mathlib.Data.Nat.Parity
 import LeanAPAP.Mathlib.Data.Pi.Algebra
 import LeanAPAP.Mathlib.Data.Rat.Order
-import LeanAPAP.Mathlib.Data.Real.Basic
+import LeanAPAP.Mathlib.Data.Real.Archimedean
 import LeanAPAP.Mathlib.Data.Real.ENNReal
 import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Data.Real.Sqrt
@@ -70,14 +70,12 @@ import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
 import LeanAPAP.Mathlib.LinearAlgebra.FiniteDimensional
 import LeanAPAP.Mathlib.LinearAlgebra.Ray
-import LeanAPAP.Mathlib.Logic.Basic
 import LeanAPAP.Mathlib.NumberTheory.LegendreSymbol.AddChar.Basic
 import LeanAPAP.Mathlib.NumberTheory.LegendreSymbol.AddChar.Duality
 import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Finset
 import LeanAPAP.Mathlib.Order.Disjoint
 import LeanAPAP.Mathlib.Order.Heyting.Basic
 import LeanAPAP.Mathlib.Order.Partition.Finpartition
-import LeanAPAP.Mathlib.Tactic.Binop
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC

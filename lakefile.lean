@@ -2,7 +2,7 @@ import Lake
 open Lake DSL
 
 package LeanAPAP where
-  moreServerArgs := #[
+  moreGlobalServerArgs := #[
     "-DautoImplicit=false",
     "-DrelaxedAutoImplicit=false"
   ]

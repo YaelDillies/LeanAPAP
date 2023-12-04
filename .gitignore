@@ -5,6 +5,7 @@
 /build
 /leanpkg.path
 /lake-packages
+/.lake
 
 decls.pickle
 decls.yaml

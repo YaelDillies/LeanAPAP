@@ -8,7 +8,8 @@ namespace Finset
 lemma filter_mem_univ (s : Finset α) : univ.filter (· ∈ s) = s := by simp [filter_mem_eq_inter]
 
 -- @[simp] --TODO: Unsimp `finset.univ_unique`
-lemma singleton_eq_univ [Subsingleton α] (a : α) : ({a} : Finset α) = univ := by ext; simp
+lemma singleton_eq_univ [Subsingleton α] (a : α) : ({a} : Finset α) = univ := by
+  ext b; simp [Subsingleton.elim a b]
 
 end Finset
 

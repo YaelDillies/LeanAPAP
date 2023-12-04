@@ -26,7 +26,8 @@ end StrictOrderedSemiring
 section LinearOrderedSemiring
 variable [LinearOrderedSemiring α] {a b : α} {n : ℕ}
 
-lemma pow_eq_one_iff_of_nonneg (ha : 0 ≤ a) (hn : n ≠ 0) : a ^ n = 1 ↔ a = 1 := by
+-- TODO: Golf `pow_eq_one_iff_of_nonneg`
+example (ha : 0 ≤ a) (hn : n ≠ 0) : a ^ n = 1 ↔ a = 1 := by
   simp only [le_antisymm_iff, pow_le_one_iff_of_nonneg ha hn, one_le_pow_iff_of_nonneg ha hn]
 
 lemma pow_le_pow_iff_left (ha : 0 ≤ a) (hb : 0 ≤ b) (hn : n ≠ 0) : a ^ n ≤ b ^ n ↔ a ≤ b :=

@@ -124,9 +124,9 @@ lemma nsmul_cut [DecidableEq (ι → ℕ)] (s : Finset ι) (m : ℕ) {n : ℕ} (
   refine' ⟨fun i hi ↦ _, fun i ↦ _⟩
   · rw [hfsup _ hi, Nat.zero_div]
   dsimp
-  by_cases i ∈ s
-  · exact Nat.mul_div_cancel' (hfdvd _ h)
-  · rw [hfsup _ h, Nat.zero_div, MulZeroClass.mul_zero]
+  by_cases hi : i ∈ s
+  · exact Nat.mul_div_cancel' (hfdvd _ hi)
+  · rw [hfsup _ hi, Nat.zero_div, MulZeroClass.mul_zero]
 
 lemma map_nsmul_cut (s : Finset ι) (m : ℕ) {n : ℕ} (hn : n ≠ 0) :
     (cut s m).map ⟨(n • ·) , fun f g h ↦ funext fun i ↦ mul_right_injective₀ hn (congr_fun h i)⟩

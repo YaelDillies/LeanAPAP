@@ -59,6 +59,7 @@ lemma e_eq_one : e r = 1 ↔ ∃ n : ℤ, r = n := by
   simp [e_apply, exp_eq_one, mul_comm (2 * π), pi_ne_zero]
 
 lemma e_inj : e r = e s ↔ r ≡ s [PMOD 1] := by
-  simp [AddCommGroup.ModEq, ←e_eq_one, div_eq_one, map_sub_eq_div, eq_comm]
+  simp [AddCommGroup.ModEq, ←e_eq_one, div_eq_one, map_sub_eq_div, eq_comm (b := 1),
+    eq_comm (a := e r)]
 
 end Circle

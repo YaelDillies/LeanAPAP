@@ -32,9 +32,6 @@ variable [DivisionRing α] {a b c p : α}
 
 end AddCommGroup
 
---TODO: This instance is evil
-attribute [-instance] AddChar.monoidHomClass
-
 noncomputable section
 
 open circle Circle Finset Function Multiplicative
@@ -67,6 +64,7 @@ private def zmodAux (n : ℕ) : AddChar (ZMod n) circle :=
 -- probably an evil lemma
 -- @[simp] lemma zmodAux_apply (n : ℕ) (x : ZMod n) : zmodAux n x = e (x / n) :=
 -- by simp [zmodAux]
+
 lemma zmodAux_injective (hn : n ≠ 0) : Injective (zmodAux n) := by
   replace hn : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hn
   simp [zmodAux, ZMod.lift_injective, CharP.int_cast_eq_zero_iff _ n, e_eq_one, div_eq_iff hn,
@@ -79,12 +77,25 @@ to `e ^ (2 * π * i * x * y / n)`. -/
 def zmod (n : ℕ) (x : ZMod n) : AddChar (ZMod n) circle :=
   (zmodAux n).compAddMonoidHom $ AddMonoidHom.mulLeft x
 
-@[simp] lemma zmod_apply (n : ℕ) (x y : ℤ) : zmod n x y = e (x * y / n) := by
+@[simp] lemma zmod_apply (n : ℕ) (x y : ℤ) :
+    (zmod n x) (y : ZMod n) = e (x * y / n) := by
   simp [zmod, ←Int.cast_mul x y, -Int.cast_mul]
+
+@[simp] lemma zmod_zero (n : ℕ) : zmod n 0 = 1 := by
+  refine FunLike.ext _ _ ?_
+  rw [ZMod.int_cast_surjective.forall]
+  rintro y
+  simpa using zmod_apply n 0 y
+
+@[simp] lemma zmod_add (n : ℕ) : ∀ x y : ZMod n, zmod n (x + y) = zmod n x * zmod n y := by
+  simp only [FunLike.ext_iff, ZMod.int_cast_surjective.forall, ←Int.cast_add, AddChar.mul_apply,
+    zmod_apply]
+  simp [add_mul, add_div]
 
 -- probably an evil lemma
 -- @[simp] lemma zmod_apply (n : ℕ) (x y : ZMod n) : zmod n x y = e (x * y / n) :=
 -- by simp [addChar.zmod, ZMod.coe_mul]
+
 lemma zmod_injective (hn : n ≠ 0) : Injective (zmod n) := by
   simp_rw [Injective, ZMod.int_cast_surjective.forall]
   rintro x y h
@@ -94,22 +105,14 @@ lemma zmod_injective (hn : n ≠ 0) : Injective (zmod n) := by
     CharP.intCast_eq_intCast (ZMod n) n] using (zmod_apply _ _ _).symm.trans $
     (FunLike.congr_fun h ((1 : ℤ) : ZMod n)).trans $ zmod_apply _ _ _
 
-
 @[simp] lemma zmod_inj (hn : n ≠ 0) {x y : ZMod n} : zmod n x = zmod n y ↔ x = y :=
   (zmod_injective hn).eq_iff
 
 def zmodHom (n : ℕ) : AddChar (ZMod n) (AddChar (ZMod n) circle) :=
-  AddChar.toMonoidHom'.symm
-    { toFun := fun x ↦ AddChar.toMonoidHom' (zmod n $ toAdd x)
-      map_one' := FunLike.ext _ _ $ by
-        rw [Multiplicative.forall, ZMod.int_cast_surjective.forall]
-        rintro m
-        simp [zmod]
-      map_mul' := by
-        simp only [Multiplicative.forall, ZMod.int_cast_surjective.forall, FunLike.ext_iff]
-        rintro x y z
-        simp only [toAdd_mul, toAdd_ofAdd, toMonoid_hom_apply, MonoidHom.mul_apply, zmod_apply,
-          ←map_add_mul, ←add_div, ←add_mul, ←Int.cast_add, e_inj] }
+  toMonoidHom'.symm
+    { toFun := fun x ↦ toMonoidHom'.symm (zmod n $ toAdd x)
+      map_one' := by simp; rfl
+      map_mul' := by simp; rintro x y; rfl }
 
 def mkZModAux {ι : Type} [DecidableEq ι] (n : ι → ℕ) (u : ∀ i, ZMod (n i)) :
     AddChar (⨁ i, ZMod (n i)) circle :=
@@ -178,7 +181,7 @@ lemma exists_apply_ne_zero : (∃ ψ : AddChar α ℂ, ψ a ≠ 1) ↔ a ≠ 0 :
   · rintro ⟨ψ, hψ⟩ rfl
     exact hψ ψ.map_zero_one
   classical
-  by_contra' h
+  by_contra! h
   let f : α → ℂ := fun b ↦ if a = b then 1 else 0
   have h₀ := congr_fun ((complexBasis α).sum_repr f) 0
   have h₁ := congr_fun ((complexBasis α).sum_repr f) a

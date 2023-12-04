@@ -7,7 +7,6 @@ import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Canonical
 import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
-import LeanAPAP.Mathlib.Tactic.Binop -- to fix the elaboration of `r ^ n` for `r : ℝ`, `n : ℕ`
 import LeanAPAP.Prereqs.Multinomial
 
 open Finset Fintype Nat Real

@@ -213,7 +213,7 @@ lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ 
         := add_le_add_right (mul_le_mul_left' (Nat.one_le_iff_ne_zero.2 hp) _) _
   calc
     _ ≤ ‖f + 1‖_[(⟨_, (p'_pos this hε₀ hε₁).le⟩ : ℝ≥0), ν] :=
-      unbalancing' (2 * p + 3) this ((even_two_mul _).add_odd $ by norm_num) hε₀ hε₁ hf hν hν₁ $
+      unbalancing' (2 * p + 3) this ((even_two_mul _).add_odd $ by decide) hε₀ hε₁ hf hν hν₁ $
         hε.trans $
           wlpNorm_mono_right
             (Nat.cast_le.2 $ le_add_of_le_left $ le_mul_of_one_le_left' one_le_two) _ _
