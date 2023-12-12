@@ -10,29 +10,24 @@ permissions:
   id-token: write
 
 jobs:
+  style_lint:
+    name: Lint style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for long lines
+        if: always()
+        run: |
+          ! (find LeanAPAP -name "*.lean" -type f -exec grep -E -H -n '^.{101,}$' {} \; | grep -v -E 'https?://')
+
+      - name: Don't 'import Mathlib', use precise imports
+        if: always()
+        run: |
+          ! (find LeanAPAP -name "*.lean" -type f -print0 | xargs -0 grep -E -n '^import Mathlib$')
+
   build_project:
     runs-on: ubuntu-latest
     name: Build project
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
     steps:
-      # - name: Free disk space
-      #   uses: jlumbroso/free-disk-space@main
-      #   with:
-      #     # this might remove tools that are actually needed,
-      #     # if set to "true" but frees about 6 GB
-      #     tool-cache: false
-
-      #     # all of these default to true, but feel free to set to
-      #     # "false" if necessary for your workflow
-      #     android: true
-      #     dotnet: true
-      #     haskell: true
-      #     large-packages: true
-      #     docker-images: true
-      #     swap-storage: true
-
       - name: Checkout project
         uses: actions/checkout@v2
         with:
@@ -42,18 +37,14 @@ jobs:
         run: |
           grep -r --files-without-match 'import LeanAPAP' LeanAPAP | sort > 1.txt
           grep -r --files-with-match 'sorry' LeanAPAP | sort > 2.txt
-          mkdir -p docs/_includes
-          comm -23 1.txt 2.txt | sed -e 's/^\(.*\)$/- [`\1`](https:\/\/github.com\/YaelDillies\/LeanAPAP\/blob\/main\/\1)/' > docs/_includes/files_to_upstream.md
+          comm -23 1.txt 2.txt | sed -e 's/^\(.*\)$/- [`\1`](https:\/\/github.com\/YaelDillies\/LeanAPAP\/blob\/master\/\1)/' > docs/_includes/files_to_upstream.md
           rm 1.txt 2.txt
-
-      - name: Count sorries
-        run: python scripts/count_sorry.py
 
       - name: Install elan
         run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
 
       - name: Get cache
-        run: ~/.elan/bin/lake -Kenv=dev exe cache get
+        run: ~/.elan/bin/lake -Kenv=dev exe cache get || true
 
       - name: Build project
         run: ~/.elan/bin/lake -Kenv=dev build LeanAPAP
@@ -61,36 +52,39 @@ jobs:
       - name: Cache mathlib docs
         uses: actions/cache@v3
         with:
-          path: build/doc/Mathlib
-          key: DocGen4-${{ hashFiles('lake-manifest.json') }}
+          path: |
+            .lake/build/doc/Init
+            .lake/build/doc/Lake
+            .lake/build/doc/Lean
+            .lake/build/doc/Std
+            .lake/build/doc/Mathlib
+            .lake/build/doc/declarations
+          key: MathlibDoc-${{ hashFiles('lake-manifest.json') }}
           restore-keys: |
-            DocGen4-
+            MathlibDoc-
 
       - name: Build documentation
         run: ~/.elan/bin/lake -Kenv=dev build LeanAPAP:docs
 
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          cache: 'pip' # caching pip dependencies
-
-      - name: Install blueprint apt dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y graphviz libgraphviz-dev pdf2svg dvisvgm texlive-full
-
-      - name: Install blueprint dependencies
-        run: |
-          cd blueprint && pip install -r requirements.txt
-
       - name: Build blueprint and copy to `docs/blueprint`
-        run: |
-          inv all
+        uses: xu-cheng/texlive-action@v2
+        with:
+          scheme: full
+          run: |
+            apk update
+            apk add --update make py3-pip git
+            apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
+            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git config --global --add safe.directory `pwd`
+            python3 -m pip install --upgrade pip requests wheel
+            python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
+            pip install -r blueprint/requirements.txt
+            python3 -m pip install invoke
+            inv all
 
       - name: Copy documentation to `docs/docs`
         run: |
-          mv build/doc docs/docs
+          mv .lake/build/doc docs/docs
 
       - name: Bundle dependencies
         uses: ruby/setup-ruby@v1
@@ -111,3 +105,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+
+      - name: Make sure the cache works
+        run: |
+          mv docs/docs .lake/build/doc
