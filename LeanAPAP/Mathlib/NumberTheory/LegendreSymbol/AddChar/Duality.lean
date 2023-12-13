@@ -1,4 +1,5 @@
 import LeanAPAP.Mathlib.Algebra.Group.TypeTags
+import LeanAPAP.Mathlib.Algebra.ModEq
 import LeanAPAP.Mathlib.Analysis.Complex.Circle
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
@@ -14,29 +15,11 @@ We first prove it for `ZMod n` and then extend to all finite abelian groups usin
 Structure Theorem.
 -/
 
-namespace AddCommGroup
-variable {α : Type*}
-
-section AddCommGroupWithOne
-variable [AddCommGroupWithOne α] [CharZero α] {a b : ℤ} {n : ℕ}
-
-@[simp, norm_cast] lemma intCast_modEq_intCast' : a ≡ b [PMOD (n : α)] ↔ a ≡ b [PMOD (n : ℤ)] := by
-  simpa using int_cast_modEq_int_cast (α := α) (z := n)
-
-end AddCommGroupWithOne
-
-variable [DivisionRing α] {a b c p : α}
-
-@[simp] lemma div_modEq_div (hc : c ≠ 0) : a / c ≡ b / c [PMOD p] ↔ a ≡ b [PMOD (p * c)] := by
-  simp [ModEq, ←sub_div, div_eq_iff hc, mul_assoc]
-
-end AddCommGroup
-
 noncomputable section
 
 open circle Circle Finset Function Multiplicative
 open Fintype (card)
-open scoped BigOperators DirectSum
+open scoped BigOps DirectSum
 
 variable {α : Type*} [AddCommGroup α] {n : ℕ} {a b : α}
 
@@ -231,6 +214,10 @@ lemma sum_apply_eq_ite [Fintype α] [DecidableEq α] (a : α) :
     ∑ ψ : AddChar α ℂ, ψ a = if a = 0 then (Fintype.card α : ℂ) else 0 := by
   simpa using sum_eq_ite (doubleDualEmb a : AddChar (AddChar α ℂ) ℂ)
 
+lemma expect_apply_eq_ite [Fintype α] [DecidableEq α] (a : α) :
+    𝔼 ψ : AddChar α ℂ, ψ a = if a = 0 then 1 else 0 := by
+  simpa using expect_eq_ite (doubleDualEmb a : AddChar (AddChar α ℂ) ℂ)
+
 lemma sum_apply_eq_zero_iff_ne_zero [Finite α] : ∑ ψ : AddChar α ℂ, ψ a = 0 ↔ a ≠ 0 := by
   classical
   cases nonempty_fintype α
@@ -239,5 +226,13 @@ lemma sum_apply_eq_zero_iff_ne_zero [Finite α] : ∑ ψ : AddChar α ℂ, ψ a 
 
 lemma sum_apply_ne_zero_iff_eq_zero [Finite α] : ∑ ψ : AddChar α ℂ, ψ a ≠ 0 ↔ a = 0 :=
   sum_apply_eq_zero_iff_ne_zero.not_left
+
+lemma expect_apply_eq_zero_iff_ne_zero [Finite α] : 𝔼 ψ : AddChar α ℂ, ψ a = 0 ↔ a ≠ 0 := by
+  classical
+  cases nonempty_fintype α
+  rw [expect_apply_eq_ite, one_ne_zero.ite_eq_right_iff]
+
+lemma expect_apply_ne_zero_iff_eq_zero [Finite α] : 𝔼 ψ : AddChar α ℂ, ψ a ≠ 0 ↔ a = 0 :=
+  expect_apply_eq_zero_iff_ne_zero.not_left
 
 end AddChar

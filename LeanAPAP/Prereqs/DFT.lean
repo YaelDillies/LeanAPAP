@@ -14,7 +14,7 @@ attribute [-ext] Complex.ext
 
 open AddChar Finset Function
 open Fintype (card)
-open scoped BigOperators ComplexConjugate ComplexOrder
+open scoped BigOps ComplexConjugate ComplexOrder
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 
@@ -56,15 +56,18 @@ lemma l2norm_dft_sq (f : α → ℂ) : ‖dft f‖_[2] ^ 2 = card α * ‖f‖_[
   simpa using congr_arg Real.sqrt (l2norm_dft_sq f)
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
-lemma dft_inversion (f : α → ℂ) (a : α) : ∑ ψ : AddChar α ℂ, dft f ψ * ψ a = card α * f a := by
-  classical simp_rw [dft, l2inner_eq_sum, sum_mul, @sum_comm _ α, mul_right_comm _ (f _), ←sum_mul,
-    ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div, AddChar.sum_apply_eq_ite,
-    sub_eq_zero, ite_mul, MulZeroClass.zero_mul, Fintype.sum_ite_eq]
+lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a := by
+  classical simp_rw [dft, l2inner_eq_sum, sum_mul, expect_sum_comm, mul_right_comm _ (f _),
+    ← expect_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div, AddChar.expect_apply_eq_ite, sub_eq_zero, boole_mul, Fintype.sum_ite_eq]
+
+/-- **Fourier inversion** for the discrete Fourier transform. -/
+lemma dft_inversion' (f : α → ℂ) (a : α) : ∑ ψ : AddChar α ℂ, dft f ψ * ψ a = card α * f a := by
+  rw [mul_comm, ← div_eq_iff, ← dft_inversion f, expect, card_univ, AddChar.card_eq]; simp
 
 lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
     dft (dft f) (doubleDualEmb a) = card α * f (-a) := by
-  simp only [←dft_inversion, mul_comm (conj _), dft_apply, l2inner_eq_sum, map_neg_eq_inv,
-    AddChar.inv_apply_eq_conj, doubleDualEmb_apply]
+  simp only [←dft_inversion f (-a), mul_comm (conj _), dft_apply, l2inner_eq_sum, map_neg_eq_inv,
+    AddChar.inv_apply_eq_conj, doubleDualEmb_apply, ← Fintype.card_mul_expect, AddChar.card_eq]
 
 lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
   funext fun a ↦ by
@@ -72,9 +75,7 @@ lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.s
       doubleDualEmb_doubleDualEquiv_symm_apply]
 
 lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) := fun f g h ↦
-  funext fun a ↦
-    mul_right_injective₀ (Nat.cast_ne_zero.2 Fintype.card_ne_zero) $
-      (dft_inversion _ _).symm.trans $ by rw [h, dft_inversion]
+  funext fun a ↦ (dft_inversion _ _).symm.trans $ by rw [h, dft_inversion]
 
 lemma dft_inv (ψ : AddChar α ℂ) (hf : IsSelfAdjoint f) : dft f ψ⁻¹ = conj (dft f ψ) := by
   simp_rw [dft_apply, l2inner_eq_sum, map_sum, AddChar.inv_apply', map_mul,
@@ -147,8 +148,8 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
   swap
   sorry -- positivity
   obtain ⟨n, rfl⟩ := hn.two_dvd
-  simp_rw [lpNorm_pow_eq_sum hn₀, mul_sum, ←mul_pow, ←nsmul_eq_mul, ←norm_nsmul, nsmul_eq_mul, ←
-    dft_inversion, dft_conv, dft_dconv, Pi.mul_apply]
+  simp_rw [lpNorm_pow_eq_sum hn₀, mul_sum, ←mul_pow, ←nsmul_eq_mul, ←norm_nsmul, nsmul_eq_mul,
+    ← dft_inversion', dft_conv, dft_dconv, Pi.mul_apply]
   rw [←Real.norm_of_nonneg (sum_nonneg fun i _ ↦ ?_), ←Complex.norm_real]
   rw [Complex.ofReal_sum (univ : Finset α)]
   any_goals positivity

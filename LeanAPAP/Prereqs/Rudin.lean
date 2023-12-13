@@ -1,5 +1,6 @@
 import LeanAPAP.Mathlib.Algebra.Support
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
+import LeanAPAP.Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Mathlib.Data.Complex.Exponential
 import LeanAPAP.Prereqs.Dissociation
@@ -9,7 +10,16 @@ import LeanAPAP.Prereqs.DFT
 # Rudin's inequality
 -/
 
-open Finset Function Real
+attribute [-simp] Complex.norm_eq_abs
+
+namespace Complex
+
+
+end Complex
+
+open Finset hiding card
+open Fintype (card)
+open Function Real
 open Complex (I re im)
 open scoped BigOps Nat NNReal ENNReal
 
@@ -17,8 +27,39 @@ variable {α : Type*} [Fintype α] [AddCommGroup α] {p : ℕ}
 
 /-- **Rudin's inequality**, exponential form. -/
 lemma rudin_exp_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support $ dft f) :
-    𝔼 a, exp |(f a).re| ≤ exp (‖f‖_[2] ^ 2 / 2) :=
+    𝔼 a, exp (card α * f a).re ≤ exp (‖f‖_[2] ^ 2 / 2) := by
+  have (z : ℂ) : exp (re z) ≤ cosh ‖z‖ + re (z / ‖z‖) * sinh ‖z‖ :=
+    calc
+      _ = _ := by obtain rfl | hz := eq_or_ne z 0 <;> simp [norm_pos_iff.2, *]
+      _ ≤ _ := exp_le_cosh_add_mul_sinh (by simpa [abs_div] using z.abs_re_div_abs_le_one) _
+  choose c hc hcf using fun ψ ↦ Complex.exists_norm_mul_eq_self (dft f ψ)
+  have hc₀ (ψ) : c ψ ≠ 0 := fun h ↦ by simpa [h] using hc ψ
+  have (a) :
+    exp (card α * f a).re ≤ ∏ ψ, (cosh ‖dft f ψ‖ + (c ψ * ψ a).re * sinh ‖dft f ψ‖) :=
+    calc
+      _ = ∏ ψ, exp (dft f ψ * ψ a).re := by
+          rw [← exp_sum, ← dft_inversion', Complex.re_sum]
+      _ ≤ _ := prod_le_prod (fun _ _ ↦ by positivity) fun _ _ ↦ this _
+      _ = ∏ ψ, (cosh ‖dft f ψ‖ +
+            (c ψ * (dft f ψ * ψ a) / (c ψ * ↑‖dft f ψ‖)).re * sinh ‖dft f ψ‖) := by
+          simp_rw [norm_mul, AddChar.norm_apply, mul_one, mul_div_mul_left _ _ (hc₀ _)]
+      _ = _ := by
+          congr with ψ
+          obtain hψ | hψ := eq_or_ne (dft f ψ) 0
+          · simp [hψ]
+          · simp only [hcf, mul_left_comm (c _), mul_div_cancel_left _ hψ]
+  calc
+    _ ≤ 𝔼 a, ∏ ψ, (cosh ‖dft f ψ‖ + (c ψ * ψ a).re * sinh ‖dft f ψ‖) :=
+         expect_le_expect fun _ _ ↦ this _
+    _ = _ := ?_
   sorry
+
+
+  -- calc
+  --   _ = exp (𝔼 a, 𝔼 ψ, dft f ψ * ψ a).re
+  -- rw [← dft_inversion']
+  -- calc
+  --   _ = exp (∑ )
 
 private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support $ dft f) :
     ‖re ∘ f‖_[p] ≤ exp 2⁻¹ * sqrt p * ‖f‖_[2] := by

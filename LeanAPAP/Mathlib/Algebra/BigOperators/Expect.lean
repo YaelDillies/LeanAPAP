@@ -132,16 +132,19 @@ lemma expectWith_congr (f g : ι → α) (p : ι → Prop) [DecidablePred p]
     (h : ∀ x ∈ s, p x → f x = g x) : 𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i :=
   expect_congr _ _ $ by simpa using h
 
+-- TODO: Backport arguments changes to `card_congr` and `prod_bij`
 lemma expect_bij (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
-    (i_inj : ∀ a₁ a₂ ha₁ ha₂, i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
-    (i_surj : ∀ b ∈ t, ∃ a ha, b = i a ha) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
-  rw [expect, expect, card_congr i hi i_inj, sum_bij i hi h i_inj i_surj]
+    (i_inj : ∀ a₁ ha₁ a₂ ha₂, i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
+    (i_surj : ∀ b ∈ t, ∃ a ha, i a ha = b) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
+  rw [expect, expect, card_congr i hi (fun _ _ _ _ ↦ i_inj _ _ _ _),
+    sum_bij i hi h (fun _ _ _ _ ↦ i_inj _ _ _ _) (by simpa [eq_comm] using i_surj)]
   simpa [eq_comm] using i_surj
 
+-- TODO: Backport arguments changes to `prod_nbij`
 lemma expect_nbij (i : ι → β) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
-    (i_inj : ∀ a₁ a₂, a₁ ∈ s → a₂ ∈ s → i a₁ = i a₂ → a₁ = a₂)
-    (i_surj : ∀ b ∈ t, ∃ a ∈ s, b = i a) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
-  expect_bij (fun a _ ↦ i a) hi h i_inj $ by simpa using i_surj
+    (i_inj : (s : Set ι).InjOn i) (i_surj : (s : Set ι).SurjOn i t) :
+    𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
+  expect_bij (fun a _ ↦ i a) hi h i_inj $ by simpa [Set.SurjOn, Set.subset_def] using i_surj
 
 lemma expect_bij' (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
     (j : ∀ a ∈ t, ι) (hj : ∀ a ha, j a ha ∈ s) (left_inv : ∀ a ha, j (i a ha) (hi a ha) = a)
@@ -256,6 +259,28 @@ end LinearOrderedSemifield
 end Finset
 
 open Finset
+
+namespace Fintype
+variable {κ : Type*} [Fintype ι] [Fintype κ] [Semifield α]
+
+/-- `Fintype.expect_bijective` is a variant of `Finset.expect_bij` that accepts
+`Function.Bijective`.
+
+See `Function.Bijective.expect_comp` for a version without `h`. -/
+lemma expect_bijective (e : ι → κ) (he : Bijective e) (f : ι → α) (g : κ → α)
+    (h : ∀ x, f x = g (e x)) : 𝔼 i, f i = 𝔼 i, g i :=
+  expect_nbij (fun _ ↦ e _) (fun _ _ ↦ mem_univ _) (fun x _ ↦ h x) (he.injective.injOn _) $ by
+    simpa using he.surjective.surjOn _
+
+/-- `Fintype.expect_equiv` is a specialization of `Finset.expect_bij` that automatically fills in
+most arguments.
+
+See `Equiv.expect_comp` for a version without `h`. -/
+lemma expect_equiv (e : ι ≃ κ) (f : ι → α) (g : κ → α) (h : ∀ x, f x = g (e x)) :
+    𝔼 i, f i = 𝔼 i, g i :=
+  expect_bijective _ e.bijective f g h
+
+end Fintype
 
 namespace IsROrC
 variable [IsROrC α] [Fintype ι] (f : ι → ℝ) (a : ι)

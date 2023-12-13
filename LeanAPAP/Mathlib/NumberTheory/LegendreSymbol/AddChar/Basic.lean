@@ -19,7 +19,7 @@ Rename
 open Finset hiding card
 open Fintype (card)
 open Function
-open scoped BigOperators ComplexConjugate DirectSum
+open scoped BigOps ComplexConjugate DirectSum
 
 variable {G H R : Type*}
 
@@ -181,6 +181,7 @@ protected lemma l2inner_self [Fintype G] (ψ : AddChar G R) :
 
 end IsROrC
 
+section CommSemiring
 variable [Fintype G] [CommSemiring R] [IsDomain R] [CharZero R] {ψ : AddChar G R}
 
 lemma sum_eq_ite (ψ : AddChar G R) : ∑ a, ψ a = if ψ = 0 then ↑(card G) else 0 := by
@@ -198,6 +199,25 @@ lemma sum_eq_zero_iff_ne_zero : ∑ x, ψ x = 0 ↔ ψ ≠ 0 := by
 lemma sum_ne_zero_iff_eq_zero : ∑ x, ψ x ≠ 0 ↔ ψ = 0 :=
   sum_eq_zero_iff_ne_zero.not_left
 
+end CommSemiring
+
+section Semifield
+variable [Fintype G] [Semifield R] [IsDomain R] [CharZero R] {ψ : AddChar G R}
+
+lemma expect_eq_ite (ψ : AddChar G R) : 𝔼 a, ψ a = if ψ = 0 then 1 else 0 := by
+  split_ifs with h
+  · simp [h, card_univ, univ_nonempty]
+  obtain ⟨x, hx⟩ := ne_one_iff.1 h
+  refine' eq_zero_of_mul_eq_self_left hx _
+  rw [Finset.mul_expect]
+  exact Fintype.expect_equiv (Equiv.addLeft x) _ _ fun y ↦ (map_add_mul _ _ _).symm
+
+lemma expect_eq_zero_iff_ne_zero : 𝔼 x, ψ x = 0 ↔ ψ ≠ 0 := by
+  rw [expect_eq_ite, one_ne_zero.ite_eq_right_iff]
+
+lemma expect_ne_zero_iff_eq_zero : 𝔼 x, ψ x ≠ 0 ↔ ψ = 0 := expect_eq_zero_iff_ne_zero.not_left
+
+end Semifield
 end AddGroup
 
 section AddCommGroup
