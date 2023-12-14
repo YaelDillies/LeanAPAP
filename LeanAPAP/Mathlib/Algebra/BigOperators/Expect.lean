@@ -4,6 +4,7 @@ import Mathlib.Data.IsROrC.Basic
 import Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Pi.Algebra
+import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Average over a finset
@@ -180,10 +181,13 @@ lemma card_smul_expect (s : Finset ι) (f : ι → α) : s.card • 𝔼 i ∈ s
 @[simp] lemma card_mul_expect (s : Finset ι) (f : ι → α) :
     s.card * 𝔼 i ∈ s, f i = ∑ i ∈ s, f i := by rw [←nsmul_eq_mul, card_smul_expect]
 
-@[simp] nonrec lemma Fintype.card_smul_expect [Fintype ι] (f : ι → α) :
+@[simp] nonrec lemma _root_.Fintype.sum_div_card [Fintype ι] (f : ι → α) :
+    (∑ i, f i) / Fintype.card ι = 𝔼 i, f i := rfl
+
+@[simp] nonrec lemma _root_.Fintype.card_smul_expect [Fintype ι] (f : ι → α) :
     Fintype.card ι • 𝔼 i, f i = ∑ i, f i := card_smul_expect _ _
 
-@[simp] nonrec lemma Fintype.card_mul_expect [Fintype ι] (f : ι → α) :
+@[simp] nonrec lemma _root_.Fintype.card_mul_expect [Fintype ι] (f : ι → α) :
     ↑(Fintype.card ι) * 𝔼 i, f i = ∑ i, f i :=
   card_mul_expect _ _
 
@@ -255,6 +259,12 @@ lemma le_expect (hs : s.Nonempty) (f : ι → α) (a : α) (h : ∀ x ∈ s, a �
   (le_div_iff' $ Nat.cast_pos.2 hs.card_pos).2 $ by
     rw [←nsmul_eq_mul]; exact card_nsmul_le_sum _ _ _ h
 
+lemma expect_nonneg (hf : ∀ i ∈ s, 0 ≤ f i) : 0 ≤ 𝔼 i ∈ s, f i :=
+  div_nonneg (sum_nonneg hf) $ by positivity
+
+lemma expect_pos (hf : ∀ i ∈ s, 0 < f i) (hs : s.Nonempty) : 0 < 𝔼 i ∈ s, f i :=
+  div_pos (sum_pos hf hs) $ by positivity
+
 end LinearOrderedSemifield
 end Finset
 
@@ -292,3 +302,52 @@ lemma coe_balance : (↑(balance f a) : α) = balance ((↑) ∘ f) a := map_bal
   funext $ coe_balance _
 
 end IsROrC
+
+open Finset
+
+namespace Mathlib.Meta.Positivity
+open Qq Lean Meta
+
+-- TODO: This doesn't handle universe-polymorphic input
+@[positivity Finset.expect _ _]
+def evalExpect : PositivityExt where eval {u β2} zβ pβ e := do
+  let .app (.app (.app (.app (.app (.const _ [_, v]) (α : Q(Type v))) (β : Q(Type u)))
+    (_a : Q(Semifield $β))) (s : Q(Finset $α))) (b : Q($α → $β)) ← withReducible (whnf e)
+      | throwError "not `Finset.expect`"
+  haveI' : $β =Q $β2 := ⟨⟩
+  haveI' : $e =Q Finset.expect $s $b := ⟨⟩
+  let (lhs, _, (rhs : Q($β))) ← lambdaMetaTelescope b
+  let rb ← core zβ pβ rhs
+
+  let so : Option Q(Finset.Nonempty $s) ← do -- TODO: if I make a typo it doesn't complain?
+    try {
+      let _fi ← synthInstanceQ (q(Fintype $α) : Q(Type v))
+      let _no ← synthInstanceQ (q(Nonempty $α) : Q(Prop))
+      match s with
+      | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $α)))
+      | _ => pure none }
+    catch _e => do
+      let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
+      pure (some (.fvar fv))
+  match rb, so with
+  | .nonnegative pb, _ => do
+    let pα' ← synthInstanceQ (q(LinearOrderedSemifield $β) : Q(Type u))
+    assertInstancesCommute
+    let pr : Q(∀ (i : $α), 0 ≤ $b i) ← mkLambdaFVars lhs pb
+    pure (.nonnegative q(@expect_nonneg.{u, v} $α $β $pα' $s $b (fun i _h => $pr i)))
+  | .positive pb, .some (fi : Q(Finset.Nonempty $s)) => do
+    let pα' ← synthInstanceQ (q(LinearOrderedSemifield $β) : Q(Type u))
+    assertInstancesCommute
+    let pr : Q(∀ (i : $α), 0 < $b i) ← mkLambdaFVars lhs pb
+    pure (.positive q(@expect_pos.{u, v} $α $β $pα' $s $b (fun i _h => $pr i) $fi))
+  | _, _ => pure .none
+
+example (n : ℕ) (a : ℕ → ℝ) : 0 ≤ 𝔼 j ∈ range n, a j^2 := by positivity
+example (a : ULift.{2} ℕ → ℝ) (s : Finset (ULift.{2} ℕ)) : 0 ≤ 𝔼 j ∈ s, a j^2 := by positivity
+example (n : ℕ) (a : ℕ → ℝ) : 0 ≤ 𝔼 j : Fin 8, 𝔼 i ∈ range n, (a j^2 + i ^ 2) := by positivity
+example (n : ℕ) (a : ℕ → ℝ) : 0 < 𝔼 j : Fin (n + 1), (a j^2 + 1) := by positivity
+example (a : ℕ → ℝ) : 0 < 𝔼 j ∈ ({1} : Finset ℕ), (a j^2 + 1) := by
+  have : Finset.Nonempty {1} := singleton_nonempty 1
+  positivity
+
+end Mathlib.Meta.Positivity
