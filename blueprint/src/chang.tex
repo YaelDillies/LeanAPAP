@@ -6,6 +6,9 @@
 \leanok
 We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G$, there is at most one $A'\subset A$ of size $\abs{A'}=m$ such that
 \[\sum_{a\in A'}a=x.\]
+It follows that
+
+\[\mathbb{E}_x e^{\abs{\Re f(x)}} \leq 2e^{\| f\|_2^2/2}.\]
 \end{definition}
 
 
@@ -30,12 +33,12 @@ e^{\Re f(x)}
 &\leq \prod_{\gamma\in \Gamma}\left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma))\right).
 \end{align*}
 Therefore
-\[\mathbb{E}_x e^{\Re f(x)}\leq \mathbb{E}_x \left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma))\right).\]
+\[\mathbb{E}_x e^{\Re f(x)}\leq \mathbb{E}_x \prod_{\gamma\in \Gamma} \left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma))\right).\]
 Using $\Re z=(z+\overline{z})/2$ the product here can be expanded as the sum of
 \[\prod_{\gamma\in \Gamma_2}\frac{c_\gamma}{2}\prod_{\gamma\in \Gamma_3}\frac{\overline{c_\gamma}}{2}\left(\prod_{\gamma\in \Gamma_1}\cosh(\lvert \widehat{f}(\gamma)\rvert)\right)\left(\prod_{\gamma\in \Gamma_2\cup\Gamma_3}\sinh(\lvert \widehat{f}(\gamma)\rvert)\right)\left(\sum_{\gamma\in \Gamma_2}\gamma-\sum_{\lambda\in \Gamma_3}\lambda\right)(x)\]
 as $\Gamma_1\sqcup \Gamma_2\sqcup \Gamma_3=\Gamma$ ranges over all partitions of $\Gamma$ into three disjoint parts. Using the definition of dissociativity we see that
 \[\sum_{\gamma\in \Gamma_2}\gamma-\sum_{\lambda\in \Gamma_3}\lambda\neq 0\]
-unless $\Gamma_2=\Gamma_2=\emptyset$. In particular summing this term over all $x\in G$ gives $0$. Therefore the only term that survives averaging over $x$ is when $\Gamma_1=\Gamma$, and so
+unless $\Gamma_2=\Gamma_3=\emptyset$. In particular summing this term over all $x\in G$ gives $0$. Therefore the only term that survives averaging over $x$ is when $\Gamma_1=\Gamma$, and so
 \[\mathbb{E}_x e^{\Re f(x)}\leq \prod_{\gamma\in \Gamma} \cosh (\lvert \widehat{f}(\gamma)\rvert).\]
 The conclusion now follows using $\cosh(x) \leq e^{x^2/2}$ and $\sum_{\gamma\in \Gamma}\lvert \widehat{f}(\gamma)\rvert^2=\| f\|_2^2$. The second conclusion follows by applying it to $f(x)$ and $-f(x)$ and using
 \[e^{\abs{y}}\leq e^y+e^{-y}.\]
@@ -57,9 +60,9 @@ $$\norm{f}_p \le \norm{\Re f}_p + \norm{i \Im f}_p = \norm{\Re f}_p + \norm{\Re 
 
 If $f = 0$, the result is obvious. So assume $f \ne 0$. $\norm{f}_2 > 0$, so WLOG $\norm{f}_2 = \sqrt p$.
 
-Rudin's exponential inequality for $f$ becomes $\E \exp|\Re f| \le \exp(\frac p 2)$. Using $\frac{x^p}{p!} \le e^x$ for positive $x$, we get
+Rudin's exponential inequality for $f$ becomes $\E \exp|\Re f| \le 2\exp(\frac p 2) \le (2 * \sqrt e)^p$. Using $\frac{x^p}{p!} \le e^x$ for positive $x$, we get
 $$\frac{\norm{\Re f}_p^p}{p^p} \le \frac{\norm{\Re f}_p^p}{p!} = \E \frac{|\Re f|^p}{p!} \le \E \exp|\Re f|$$
-Rearranging, $\norm{\Re f}_p \le p\sqrt{e} = \sqrt{pe} \norm f_2$.
+Rearranging, $\norm{\Re f}_p \le 2 p\sqrt{e} = 2 \sqrt{pe} \norm f_2$.
 % TODO: Normalisation issue
 \end{proof}
 
