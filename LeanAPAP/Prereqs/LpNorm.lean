@@ -8,7 +8,6 @@ import LeanAPAP.Mathlib.Data.Real.Archimedean
 import LeanAPAP.Mathlib.Data.Real.ENNReal
 import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Finset
-import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Prereqs.Indicator
 
 /-!
@@ -26,13 +25,13 @@ section NormedAddCommGroup
 variable {α : ι → Type*} [∀ i, NormedAddCommGroup (α i)] {p q : ℝ≥0∞} {f g h : ∀ i, α i}
 
 /-- The Lp norm of a function. -/
-noncomputable def lpNorm (p : ℝ≥0∞) (f : ∀ i, α i) : ℝ :=‖(WithLp.equiv p _).symm f‖
+noncomputable def lpNorm (p : ℝ≥0∞) (f : ∀ i, α i) : ℝ := ‖(WithLp.equiv p _).symm f‖
 
 notation "‖" f "‖_[" p "]" => lpNorm p f
 
 lemma lpNorm_eq_sum' (hp : p.toReal ≠ 0) (f : ∀ i, α i) :
     ‖f‖_[p] = (∑ i, ‖f i‖ ^ p.toReal) ^ p.toReal⁻¹ := by
-  rw [←one_div];  exact PiLp.norm_eq_sum (hp.lt_of_le' ENNReal.toReal_nonneg) _
+  rw [←one_div]; exact PiLp.norm_eq_sum (hp.lt_of_le' ENNReal.toReal_nonneg) _
 
 lemma lpNorm_eq_sum'' {p : ℝ} (hp : 0 < p) (f : ∀ i, α i) :
     ‖f‖_[p.toNNReal] = (∑ i, ‖f i‖ ^ p) ^ p⁻¹ := by rw [lpNorm_eq_sum'] <;>  simp [hp.ne', hp.le]
@@ -213,9 +212,7 @@ lemma wlpNorm_eq_sum' {p : ℝ} (hp : 0 < p) (w : ι → ℝ≥0) (f : ∀ i, α
 
 lemma wlpNorm_rpow_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, w] ^ (p : ℝ) = ∑ i, w i • ‖f i‖ ^ (p : ℝ) := by
-  rw [wlpNorm_eq_sum hp, rpow_inv_rpow (sum_nonneg fun i _ ↦ ?_)]
-  · positivity
-  · sorry -- positivity
+  rw [wlpNorm_eq_sum hp, rpow_inv_rpow (sum_nonneg fun i _ ↦ ?_)] <;> positivity
 
 lemma wlpNorm_pow_eq_sum {p : ℕ} (hp : p ≠ 0) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, w] ^ p = ∑ i, w i • ‖f i‖ ^ p := by
@@ -250,7 +247,7 @@ lemma wlpNorm_add_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : ∀ i, α i) :
     ‖f + g‖_[p, w] ≤ ‖f‖_[p, w] + ‖g‖_[p, w] := by
   unfold wlpNorm
   refine' (lpNorm_add_le (by exact_mod_cast hp) _ _).trans'
-    (lpNorm_mono (fun i ↦ by dsimp; sorry) fun i ↦ _) -- positivity
+    (lpNorm_mono (fun i ↦ by dsimp; positivity) fun i ↦ _)
   dsimp
   rw [←smul_add]
   exact smul_le_smul_of_nonneg (norm_add_le _ _) (zero_le _)
@@ -335,10 +332,8 @@ lemma wlpNorm_one (hp : p ≠ 0) (w : ι → ℝ≥0) :
   simp [wlpNorm_eq_sum hp, NNReal.smul_def]
 
 lemma wlpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p, w] ≤ ‖g‖_[p, w] :=
-  lpNorm_mono (fun i ↦ by dsimp; sorry) fun i ↦ -- positivity
-    smul_le_smul_of_nonneg
-        (by rw [norm_of_nonneg (hf _), norm_of_nonneg (hf.trans hfg _)]; exact hfg _) $
-      by positivity
+  lpNorm_mono (fun i ↦ by dsimp; positivity) fun i ↦ smul_le_smul_of_nonneg
+    (by rw [norm_of_nonneg (hf _), norm_of_nonneg (hf.trans hfg _)]; exact hfg _) $ by positivity
 
 end Real
 
@@ -388,9 +383,11 @@ end CommSemiring
 section CommRing
 variable [CommRing 𝕜] [StarRing 𝕜]
 
+@[simp]
 lemma l2inner_neg_left (f g : ι → 𝕜) : ⟪-f, g⟫_[𝕜] = -⟪f, g⟫_[𝕜] := by
   simp [l2inner_eq_sum, sum_add_distrib]
 
+@[simp]
 lemma l2inner_neg_right (f g : ι → 𝕜) : ⟪f, -g⟫_[𝕜] = -⟪f, g⟫_[𝕜] := by
   simp [l2inner_eq_sum, sum_add_distrib]
 
@@ -541,46 +538,66 @@ private lemma l2inner_nonneg_of_pos_of_pos (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪
 
 end OrderedCommSemiring
 
--- TODO: Make it sound again :(
-set_option linter.unusedVariables false in
 /-- The `positivity` extension which identifies expressions of the form `‖f‖_[p]`. -/
-@[positivity ‖_‖_[_]] def evalLpNorm : PositivityExt where eval {u α} zα pα e := do
-  let .app (.app (_f :) (a : Q($α))) (b : Q($α)) ← withReducible (whnf e)
-    | throwError "not ‖_‖_[_]"
-  match ← core zα pα b with
-  | .positive pa => return .positive q(dummy_pos_of_pos $pa)
-  | .nonzero pa => return .positive q(dummy_pos_of_nzr $pa)
-  | _ => return .nonnegative q(dummy_nng)
--- TODO: Make it sound again :(
-set_option linter.unusedVariables false in
-/-- The `positivity` extension which identifies expressions of the form `‖f‖_[p, w]`. -/
-@[positivity ‖_‖_[_, _]] def evalWLpNorm : PositivityExt where eval {u α} zα pα e := do
-  let .app (.app (_f : Q($α → $α → $α)) (a : Q($α))) (b : Q($α)) ← withReducible (whnf e)
-    | throwError "not ‖_‖_[_, _]"
-  return .nonnegative q(dummy_nng)
+@[positivity ‖_‖_[_]] def evalLpNorm : PositivityExt where eval {u} α _z _p e := do
+  if let 0 := u then -- lean4#3060 means we can't combine this with the match below
+    match α, e with
+    | ~q(ℝ), ~q(@lpNorm $ι $instι $α $instnorm $p $f) =>
+      try {
+        let _pα ← synthInstanceQ (q(∀ i, PartialOrder ($α i)) : Q(Type (max u_1 u_2)))
+        assumeInstancesCommute
+        match ← core q(inferInstance) q(inferInstance) f with
+        | .positive pf => return .positive q(lpNorm_pos_of_pos $pf)
+        | .nonzero pf => return .positive q(lpNorm_pos_of_ne_zero $pf)
+        | _ => return .nonnegative q(lpNorm_nonneg)
+      } catch _ =>
+        assumeInstancesCommute
+        if let some pf ← findLocalDeclWithType? q($f ≠ 0) then
+          let pf : Q($f ≠ 0) := .fvar pf
+          return .positive q(lpNorm_pos_of_ne_zero $pf)
+        else
+          return .nonnegative q(lpNorm_nonneg)
+    | _ => throwError "not lpNorm"
+  else
+    throwError "not lpNorm"
 
--- TODO: Make it sound again :(
-set_option linter.unusedVariables false in
+/-- The `positivity` extension which identifies expressions of the form `‖f‖_[p, w]`. -/
+@[positivity ‖_‖_[_, _]] def evalWLpNorm : PositivityExt where eval {u α} _ _ e := do
+  if let 0 := u then -- lean4#3060 means we can't combine this with the match below
+    match α, e with
+    | ~q(ℝ), ~q(@wlpNorm $ι $instι $α $instnorm $p $w $f) =>
+          assumeInstancesCommute
+          return .nonnegative q(wlpNorm_nonneg)
+    | _ => throwError "not wlpNorm"
+  else
+    throwError "not wlpNorm"
+
 /-- The `positivity` extension which identifies expressions of the form `⟪f, g⟫_[𝕜]`. -/
-@[positivity ⟪_, _⟫_[_]] def evall2inner : PositivityExt where eval {u α} zα pα e := do
-  let .app (.app (_f : Q($α → $α → $α)) (a : Q($α))) (b : Q($α)) ← withReducible (whnf e)
-    | throwError "not ⟪_, _⟫_[_]"
-  let ra ← core zα pα a; let rb ← core zα pα b
-  match ra, rb with
-  | .positive pa, .positive pb => return .positive q(dummy_pos_of_pos_pos $pa $pb)
-  | .positive pa, .nonnegative pb => return .nonnegative q(dummy_nng_of_pos_nng $pa $pb)
-  | .nonnegative pa, .positive pb => return .nonnegative q(dummy_nng_of_nng_pos $pa $pb)
-  | .nonnegative pa, .nonnegative pb => return .nonnegative q(dummy_nng_of_nng_nng $pa $pb)
-  | _, _ => pure .none
+@[positivity ⟪_, _⟫_[_]] def evalL2inner : PositivityExt where eval {u 𝕜} _ _ e := do
+  match e with
+  | ~q(@l2inner $ι _ $instι $instring $inststar $f $g) =>
+      let _p𝕜 ← synthInstanceQ q(OrderedCommSemiring $𝕜)
+      let _p𝕜 ← synthInstanceQ q(StarOrderedRing $𝕜)
+      assumeInstancesCommute
+      match ← core q(inferInstance) q(inferInstance) f,
+        ← core q(inferInstance) q(inferInstance) g with
+      | .positive pf, .positive pg => return .nonnegative q(l2inner_nonneg_of_pos_of_pos $pf $pg)
+      | .positive pf, .nonnegative pg =>
+        return .nonnegative q(l2inner_nonneg_of_pos_of_nonneg $pf $pg)
+      | .nonnegative pf, .positive pg =>
+        return .nonnegative q(l2inner_nonneg_of_nonneg_of_pos $pf $pg)
+      | .nonnegative pf, .nonnegative pg => return .nonnegative q(l2inner_nonneg $pf $pg)
+      | _, _ => return .none
+  | _ => throwError "not l2inner"
 
 section Examples
 
 section NormedAddCommGroup
 variable {α : ι → Type*} [∀ i, NormedAddCommGroup (α i)] {w : ι → ℝ≥0} {f : ∀ i, α i}
 
--- example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
--- example {p : ℝ≥0∞} (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
--- example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
 example {p : ℝ≥0} : 0 ≤ ‖f‖_[p, w] := by positivity
 
 end NormedAddCommGroup
@@ -588,19 +605,19 @@ end NormedAddCommGroup
 section OrderedCommSemiring
 variable [OrderedCommSemiring 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
--- example (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
--- example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
--- example (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
--- example (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
+example (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
+example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
+example (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
+example (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
 
 end OrderedCommSemiring
 
 section Complex
 variable {w : ι → ℝ≥0} {f : ι → ℂ}
 
--- example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
--- example {p : ℝ≥0∞} (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
--- example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
 example {p : ℝ≥0} : 0 ≤ ‖f‖_[p, w] := by positivity
 
 end Complex
@@ -621,7 +638,7 @@ lemma L1norm_mul_of_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f * g‖_[1] = ⟪
 
 lemma lpNorm_rpow (hp : p ≠ 0) (hq : q ≠ 0) (hf : 0 ≤ f) :
     ‖HPow.hPow f (q : ℝ)‖_[p] = ‖f‖_[p * q] ^ (q : ℝ) := by
-  refine' rpow_left_injOn (NNReal.coe_ne_zero.2 hp) lpNorm_nonneg (by dsimp; sorry) _ -- positivity
+  refine' rpow_left_injOn (NNReal.coe_ne_zero.2 hp) lpNorm_nonneg (by dsimp; positivity) _
   dsimp
   rw [←rpow_mul lpNorm_nonneg, ←mul_comm, ←ENNReal.coe_mul, ←NNReal.coe_mul,
     lpNorm_rpow_eq_sum hp, lpNorm_rpow_eq_sum (mul_ne_zero hq hp)]
@@ -672,7 +689,7 @@ lemma lpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ +
   · norm_cast
     simp [div_eq_mul_inv, hpqr, ←mul_add, hr]
   any_goals intro a; dsimp
-  all_goals sorry -- positivity
+  all_goals positivity
 
 /-- Hölder's inequality, finitary case. -/
 lemma lpNorm_prod_le {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp : ∀ i, p i ≠ 0) (q : ℝ≥0)
@@ -704,7 +721,7 @@ lemma lpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖_[p
     sum_boole, this, zero_rpow, filter_mem_eq_inter]
 
 lemma lpNorm_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖_[p] = s.card ^ (p⁻¹ : ℝ) := by
-  refine' (eq_rpow_inv _ _ _).2 (lpNorm_rpow_indicate _ _) <;> sorry -- positivity
+  refine' (eq_rpow_inv _ _ _).2 (lpNorm_rpow_indicate _ _) <;> positivity
 
 lemma lpNorm_pow_indicate {p : ℕ} (hp : p ≠ 0) (s : Finset α) :
     ‖𝟭_[β] s‖_[p] ^ (p : ℝ) = s.card := by
@@ -714,7 +731,7 @@ lemma l2norm_sq_indicate (s : Finset α) : ‖𝟭_[β] s‖_[2] ^ 2 = s.card :=
   simpa using lpNorm_pow_indicate two_ne_zero s
 
 lemma l2norm_indicate (s : Finset α) : ‖𝟭_[β] s‖_[2] = Real.sqrt s.card := by
-  rw [eq_comm, sqrt_eq_iff_sq_eq, l2norm_sq_indicate] <;> sorry -- positivity
+  rw [eq_comm, sqrt_eq_iff_sq_eq, l2norm_sq_indicate] <;> positivity
 
 @[simp] lemma L1norm_indicate (s : Finset α) : ‖𝟭_[β] s‖_[1] = s.card := by
   simpa using lpNorm_pow_indicate one_ne_zero s
@@ -724,10 +741,9 @@ end indicate
 section mu
 variable {α β : Type*} [IsROrC β] [Fintype α] [DecidableEq α] {s : Finset α} {p : ℝ≥0}
 
-lemma lpNorm_mu (hp : 1 ≤ p) (hs : s.Nonempty) : ‖μ_[β] s‖_[p] = s.card ^ (p⁻¹ - 1 : ℝ) := by
+lemma lpNorm_mu (hp : 1 ≤ p) (hs : s.Nonempty) : ‖μ_[β] s‖_[p] = s.card ^ ((p : ℝ)⁻¹ - 1) := by
   rw [mu, lpNorm_smul (ENNReal.one_le_coe_iff.2 hp) (s.card⁻¹ : β) (𝟭_[β] s), lpNorm_indicate,
-      norm_inv, IsROrC.norm_natCast, inv_mul_eq_div, ←rpow_sub_one] <;>
-    sorry -- positivity
+      norm_inv, IsROrC.norm_natCast, inv_mul_eq_div, ←rpow_sub_one] <;> positivity
 
 lemma lpNorm_mu_le (hp : 1 ≤ p) : ‖μ_[β] s‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) := by
   obtain rfl | hs := s.eq_empty_or_nonempty

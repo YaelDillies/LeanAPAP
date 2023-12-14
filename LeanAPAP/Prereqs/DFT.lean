@@ -28,6 +28,8 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
 @[simp] lemma dft_add (f g : α → ℂ) : dft (f + g) = dft f + dft g := by
   ext; simp [l2inner_add_right, dft_apply]
 
+@[simp] lemma dft_neg (f : α → ℂ) : dft (-f) = - dft f := by ext; simp [dft_apply]
+
 @[simp] lemma dft_sub (f g : α → ℂ) : dft (f - g) = dft f - dft g := by
   ext; simp [l2inner_sub_right, dft_apply]
 
@@ -143,10 +145,8 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
   cases isEmpty_or_nonempty α
   · rw [Subsingleton.elim (f ∗ f) (f ○ f)]
-  refine' le_of_pow_le_pow _ _ hn₀.bot_lt (le_of_mul_le_mul_left _ (_ : (0 : ℝ) < card α ^ n))
-  sorry -- positivity
-  swap
-  sorry -- positivity
+  refine' le_of_pow_le_pow _ (by positivity) hn₀.bot_lt $
+    le_of_mul_le_mul_left _ (by positivity : (0 : ℝ) < card α ^ n)
   obtain ⟨n, rfl⟩ := hn.two_dvd
   simp_rw [lpNorm_pow_eq_sum hn₀, mul_sum, ←mul_pow, ←nsmul_eq_mul, ←norm_nsmul, nsmul_eq_mul,
     ← dft_inversion', dft_conv, dft_dconv, Pi.mul_apply]
@@ -172,7 +172,6 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
     arg 2
     ext
     rw [←Complex.eq_coe_norm_of_nonneg (this _ _)]
-  letI : Fintype (Fin n → AddChar α ℂ) := @Pi.fintype _ _ _ _ fun i ↦ AddChar.instFintype _ _
   simp only [@sum_comm _ _ α, mul_sum, map_prod, map_mul, IsROrC.conj_conj, ←prod_mul_distrib]
   refine' sum_congr rfl fun x _ ↦ sum_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
   ring

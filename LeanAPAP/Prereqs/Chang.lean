@@ -34,7 +34,7 @@ lemma largeSpec_anti (f : G → ℂ) : Antitone (largeSpec f) := fun η ν h ψ 
 private noncomputable def α (f : G → ℂ) := ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G
 
 lemma α_nonneg (f : G → ℂ) : 0 ≤ α f := by unfold α; positivity
-lemma α_pos (hf : f ≠ 0) : 0 < α f := by unfold α; sorry -- positivity
+lemma α_pos (hf : f ≠ 0) : 0 < α f := by unfold α; positivity
 
 lemma α_le_one (f : G → ℂ) : α f ≤ 1 := by
   refine' div_le_one_of_le (div_le_of_nonneg_of_le_mul _ _ _) _

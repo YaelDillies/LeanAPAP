@@ -1,5 +1,6 @@
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Data.Complex.ExponentialBounds
+import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
@@ -9,6 +10,7 @@ import LeanAPAP.Mathlib.Data.Complex.Exponential
 import LeanAPAP.Mathlib.Data.Nat.Order.Basic
 import LeanAPAP.Prereqs.Convolution.Basic
 import LeanAPAP.Prereqs.LpNorm
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Unbalancing
@@ -71,6 +73,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ ≤ 2 := by norm_num
       _ ≤ ‖f + 1‖_[2 * p, ν] := hf₁
       _ ≤ _ := wlpNorm_mono_right (NNReal.coe_le_coe.1 ?_) _ _
+    push_cast
     refine mul_le_mul_of_nonneg_right ?_ ?_
     calc
       2 ≤ 24 / 1 * 0.6931471803 := by norm_num
@@ -80,8 +83,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
             (log_le_log_of_le zero_lt_two $
               (div_le_div_of_le_left (by norm_num) hε₀ hε₁).trans' $ by norm_num))
           (by norm_num) ?_
-    any_goals positivity
-    sorry -- positivity
+    all_goals positivity
   have : ε ^ p ≤ 2 * ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * (f⁺) i) := by
     calc
       ε ^ p ≤ ‖f‖_[p, ν] ^ p := hp₁.strictMono_pow.monotone hε
@@ -96,8 +98,8 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       pow_sub_one_mul hp₁.pos.ne']
     simp [l2inner_eq_sum, ←sum_add_distrib, ←mul_add, ←pow_sub_one_mul hp₁.pos.ne' (f _),
       mul_sum, mul_left_comm (2 : ℝ), add_abs_eq_two_nsmul_posPart]
-  set P := univ.filter fun i ↦ 0 ≤ f i with hP
-  set T := univ.filter fun i ↦ 3 / 4 * ε ≤ f i with hT
+  set P := univ.filter fun i ↦ 0 ≤ f i
+  set T := univ.filter fun i ↦ 3 / 4 * ε ≤ f i
   have hTP : T ⊆ P := monotone_filter_right _ fun i ↦ le_trans $ by positivity
   have : 2⁻¹ * ε ^ p ≤ ∑ i in P, ↑(ν i) * (f ^ p) i := by
     rw [inv_mul_le_iff (zero_lt_two' ℝ), sum_filter]
@@ -149,9 +151,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
     simp only [wlpNorm_eq_sum hp'.ne', sqrt_eq_rpow, Nonneg.coe_one, rpow_two,
       abs_nonneg, NNReal.smul_def, rpow_mul, Pi.pow_apply, abs_pow, norm_eq_abs, mul_pow,
       rpow_nat_cast, smul_eq_mul, pow_mul, one_div, NNReal.coe_two]
-    · exact rpow_nonneg (sum_nonneg fun i _ ↦ by sorry) -- positivity
-    · positivity
-    · exact sum_nonneg fun i _ ↦ by sorry -- positivity
+    all_goals positivity
   set p' := 24 / ε * log (3 / ε) * p
   have hp' : 0 < p' := p'_pos hp hε₀ hε₁
   have : 1 - 8⁻¹ * ε ≤ (∑ i in T, ↑(ν i)) ^ p'⁻¹ := by

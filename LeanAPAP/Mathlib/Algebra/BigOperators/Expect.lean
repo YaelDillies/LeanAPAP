@@ -308,39 +308,34 @@ open Finset
 namespace Mathlib.Meta.Positivity
 open Qq Lean Meta
 
--- TODO: This doesn't handle universe-polymorphic input
 @[positivity Finset.expect _ _]
-def evalExpect : PositivityExt where eval {u β2} zβ pβ e := do
-  let .app (.app (.app (.app (.app (.const _ [_, v]) (α : Q(Type v))) (β : Q(Type u)))
-    (_a : Q(Semifield $β))) (s : Q(Finset $α))) (b : Q($α → $β)) ← withReducible (whnf e)
-      | throwError "not `Finset.expect`"
-  haveI' : $β =Q $β2 := ⟨⟩
-  haveI' : $e =Q Finset.expect $s $b := ⟨⟩
-  let (lhs, _, (rhs : Q($β))) ← lambdaMetaTelescope b
-  let rb ← core zβ pβ rhs
-
-  let so : Option Q(Finset.Nonempty $s) ← do -- TODO: if I make a typo it doesn't complain?
-    try {
-      let _fi ← synthInstanceQ (q(Fintype $α) : Q(Type v))
-      let _no ← synthInstanceQ (q(Nonempty $α) : Q(Prop))
-      match s with
-      | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $α)))
-      | _ => pure none }
-    catch _e => do
-      let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
-      pure (some (.fvar fv))
-  match rb, so with
-  | .nonnegative pb, _ => do
-    let pα' ← synthInstanceQ (q(LinearOrderedSemifield $β) : Q(Type u))
-    assertInstancesCommute
-    let pr : Q(∀ (i : $α), 0 ≤ $b i) ← mkLambdaFVars lhs pb
-    pure (.nonnegative q(@expect_nonneg.{u, v} $α $β $pα' $s $b (fun i _h => $pr i)))
-  | .positive pb, .some (fi : Q(Finset.Nonempty $s)) => do
-    let pα' ← synthInstanceQ (q(LinearOrderedSemifield $β) : Q(Type u))
-    assertInstancesCommute
-    let pr : Q(∀ (i : $α), 0 < $b i) ← mkLambdaFVars lhs pb
-    pure (.positive q(@expect_pos.{u, v} $α $β $pα' $s $b (fun i _h => $pr i) $fi))
-  | _, _ => pure .none
+def evalFinsetExpect : PositivityExt where eval {u α} zα pα e := do
+  match e with
+  | ~q(@Finset.expect $ι _ $instα $s $f) =>
+    let (lhs, _, (rhs : Q($α))) ← lambdaMetaTelescope f
+    let so : Option Q(Finset.Nonempty $s) ← do -- TODO: It doesn't complain if we make a typo?
+      try {
+        let _fi ← synthInstanceQ q(Fintype $ι)
+        let _no ← synthInstanceQ q(Nonempty $ι)
+        match s with
+        | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $ι)))
+        | _ => pure none
+      } catch _ => do
+        let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
+        pure (some (.fvar fv))
+    match ← core zα pα rhs, so with
+    | .nonnegative pb, _ => do
+      let instα' ← synthInstanceQ q(LinearOrderedSemifield $α)
+      assertInstancesCommute
+      let pr : Q(∀ i, 0 ≤ $f i) ← mkLambdaFVars lhs pb
+      pure (.nonnegative q(@expect_nonneg $ι $α $instα' $s $f fun i _ ↦ $pr i))
+    | .positive pb, .some (fi : Q(Finset.Nonempty $s)) => do
+      let instα' ← synthInstanceQ q(LinearOrderedSemifield $α)
+      assertInstancesCommute
+      let pr : Q(∀ i, 0 < $f i) ← mkLambdaFVars lhs pb
+      pure (.positive q(@expect_pos $ι $α $instα' $s $f (fun i _ ↦ $pr i) $fi))
+    | _, _ => pure .none
+  | _ => throwError "not Finset.expect"
 
 example (n : ℕ) (a : ℕ → ℝ) : 0 ≤ 𝔼 j ∈ range n, a j^2 := by positivity
 example (a : ULift.{2} ℕ → ℝ) (s : Finset (ULift.{2} ℕ)) : 0 ≤ 𝔼 j ∈ s, a j^2 := by positivity

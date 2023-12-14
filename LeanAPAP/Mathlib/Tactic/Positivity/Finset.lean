@@ -6,31 +6,37 @@ namespace Mathlib.Meta.Positivity
 open Qq Lean Meta
 
 @[positivity Finset.card _]
-def evalFinsetCard : PositivityExt where eval _ _ e := do
-  let ⟨v, _l, _r⟩ ← inferTypeQ' <| (Expr.getAppArgs (← withReducible (whnf e))).get! 1
-  let .app (.app _f (α : Q(Type v))) (s : Q(Finset $α)) ← withReducible (whnf e) | throwError "not `Finset.card`"
-
-  let so : Option Q(Finset.Nonempty $s) ← do -- TODO: if I make a typo it doesn't complain?
-    try {
-      let _fi ← synthInstanceQ (q(Fintype $α) : Q(Type v))
-      let _no ← synthInstanceQ (q(Nonempty $α) : Q(Prop))
-      match s with
-      | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $α)))
-      | _ => pure none }
-    catch _e => do
-      let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
-      pure (some (.fvar fv))
-  match so with
-  | .some (fi : Q(Finset.Nonempty $s)) => do
-    return .positive (q(@Finset.Nonempty.card_pos.{v} $α $s $fi) : Q(0 < Finset.card $s))
-  | _ => pure .none
+def evalFinsetCard : PositivityExt where eval {u α} _ _ e := do
+  if let 0 := u then -- lean4#3060 means we can't combine this with the match below
+    match α, e with
+    | ~q(ℕ), ~q(@Finset.card $β $s) =>
+      let so : Option Q(Finset.Nonempty $s) ← do -- TODO: if I make a typo it doesn't complain?
+        try {
+          let _fi ← synthInstanceQ q(Fintype $β)
+          let _no ← synthInstanceQ q(Nonempty $β)
+          match s with
+          | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $β)))
+          | _ => pure none }
+        catch _e => do
+          let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
+          pure (some (.fvar fv))
+      assumeInstancesCommute
+      match so with
+      | .some (fi : Q(Finset.Nonempty $s)) => return .positive q(Finset.Nonempty.card_pos $fi)
+      | _ => return .none
+    | _, _ => throwError "not Finset.card"
+  else throwError "not Finset.card"
 
 @[positivity Fintype.card _]
-def evalFintypeCard : PositivityExt where eval _ _ e := do
-  let .app (.app (.const _ [u]) (α : Q(Type u))) (fi : Q(Fintype $α)) ← withReducible (whnf e)
-    | throwError "not `Fintype.card`"
-  let no ← synthInstanceQ (q(Nonempty $α) : Q(Prop))
-  pure (.positive (q(@Fintype.card_pos.{u} $α $fi $no) : Q(0 < Fintype.card $α)))
+def evalFintypeCard : PositivityExt where eval {u α} _ _ e := do
+  if let 0 := u then -- lean4#3060 means we can't combine this with the match below
+    match α, e with
+    | ~q(ℕ), ~q(@Fintype.card $β $instβ) =>
+      let instβno ← synthInstanceQ (q(Nonempty $β) : Q(Prop))
+      assumeInstancesCommute
+      return .positive q(@Fintype.card_pos $β $instβ $instβno)
+    | _, _ => throwError "not Fintype.card"
+  else throwError "not Fintype.card"
 
 example {α : Type*} {s : Finset α} (hs : s.Nonempty) : 0 < s.card := by positivity
 example {α : Type*} [Fintype α] [Nonempty α] : 0 < (univ : Finset α).card := by positivity

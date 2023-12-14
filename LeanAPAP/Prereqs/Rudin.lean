@@ -27,7 +27,7 @@ variable {α : Type*} [Fintype α] [AddCommGroup α] {p : ℕ}
 
 /-- **Rudin's inequality**, exponential form. -/
 lemma rudin_exp_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support $ dft f) :
-    𝔼 a, exp (card α * f a).re ≤ exp (‖f‖_[2] ^ 2 / 2) := by
+    𝔼 a, exp (card α * f a).re ≤ exp (card α * ‖f‖_[2] ^ 2 / 2) := by
   have (z : ℂ) : exp (re z) ≤ cosh ‖z‖ + re (z / ‖z‖) * sinh ‖z‖ :=
     calc
       _ = _ := by obtain rfl | hz := eq_or_ne z 0 <;> simp [norm_pos_iff.2, *]
@@ -54,12 +54,16 @@ lemma rudin_exp_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ supp
     _ = _ := ?_
   sorry
 
-
-  -- calc
-  --   _ = exp (𝔼 a, 𝔼 ψ, dft f ψ * ψ a).re
-  -- rw [← dft_inversion']
-  -- calc
-  --   _ = exp (∑ )
+/-- **Rudin's inequality**, exponential form with absolute values. -/
+lemma rudin_exp_abs_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support $ dft f) :
+    𝔼 a, exp |(card α * f a).re| ≤ 2 * exp (card α * ‖f‖_[2] ^ 2 / 2) := by
+  calc
+    _ ≤ 𝔼 a, (exp (card α * f a).re + exp (-(card α * f a).re)) :=
+        expect_le_expect fun _ _ ↦ exp_abs_le _
+    _ = 𝔼 a, exp (card α * f a).re + 𝔼 a, exp (card α * (-f) a).re := by simp [expect_add_distrib]
+    _ ≤ exp (card α * ‖f‖_[2] ^ 2 / 2) + exp (card α * ‖-f‖_[2] ^ 2 / 2) :=
+        add_le_add (rudin_exp_ineq hp f hf) (rudin_exp_ineq hp (-f) $ by simpa using hf)
+    _ = _ := by simp [two_mul]
 
 private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support $ dft f) :
     ‖re ∘ f‖_[p] ≤ exp 2⁻¹ * sqrt p * ‖f‖_[2] := by
@@ -68,20 +72,16 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
     · simp
     specialize H hp ((sqrt p / ‖f‖_[2]) • f) ?_
     · rwa [dft_smul, support_smul']
-      sorry -- positivity
+      positivity
     simp_rw [Function.comp_def, Pi.smul_apply, Complex.smul_re, ←Pi.smul_def] at H
     rw [lpNorm_smul, lpNorm_smul, norm_div, norm_of_nonneg, norm_of_nonneg, div_mul_cancel,
       div_mul_comm, mul_le_mul_right, div_le_iff] at H
     exact H rfl
-    · sorry -- positivity
-    · positivity
-    · sorry -- positivity
-    · sorry -- positivity
-    · positivity
+    any_goals positivity
     · norm_cast
       exact one_le_two.trans hp
     · norm_num
-  have h := rudin_exp_ineq hp f hf
+  have h := rudin_exp_abs_ineq hp f hf
   rw [hfp, sq_sqrt] at h
   -- We currently can't fill the next `sorry`
   have : Fintype.card α * p ! ≤ p ^ p := sorry -- false because wrong normalisation
@@ -89,9 +89,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
   simp_rw [←expect_div, expect, ←norm_eq_abs, card_univ, div_div, ←Nat.cast_mul] at h
   rw [←lpNorm_pow_eq_sum, div_le_iff, div_eq_inv_mul, exp_mul, rpow_nat_cast] at h
   replace h := h.trans $ mul_le_mul_of_nonneg_left (Nat.cast_le.2 this) $ by positivity
-  rw [Nat.cast_pow, ←mul_pow, pow_le_pow_iff_left] at h
-  rwa [hfp, mul_assoc, ←sq, sq_sqrt]
-  all_goals sorry -- positivity
+  all_goals sorry
 
 -- This actually uses `Complex.ext`
 

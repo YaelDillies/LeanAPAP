@@ -103,11 +103,7 @@ lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
       1 / 2 * (k * ε * ‖f‖_[2 * m]) ^ (2 * m) * A.card ^ k) :
     (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
   rw [←Nat.cast_pow, ←Fintype.card_piFinsetConst] at h
-  have := my_other_markov ?_ (by norm_num) ?_ h
-  rotate_left
-  · sorry -- positivity
-  · intro a ha
-    sorry -- positivity
+  have := my_other_markov (by positivity) (by norm_num) (fun _ _ ↦ by positivity) h
   norm_num1 at this
   rw [Fintype.card_piFinsetConst, mul_comm, mul_one_div, Nat.cast_pow] at this
   refine' this.trans_eq _
@@ -116,7 +112,6 @@ lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
   refine' (@strictMonoOn_pow ℝ _ _ _).le_iff_le _ _
   any_goals rw [Set.mem_Ici]
   any_goals positivity
-  all_goals sorry -- positivity
 
 lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
     ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
@@ -141,16 +136,9 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
         ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
   -- lots of the equalities about m can be automated but it's *way* slower
   have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
-  have hm' : 1 < 2 * m := by
-    refine' (Nat.mul_le_mul_left 2 hm).trans_lt' _
-    norm_num1
-  have hm'' : (1 : ℝ≥0∞) ≤ 2 * m := by
-    rw [←hmeq, Nat.one_le_cast]
-    exact hm'.le
-  refine' mul_le_mul_of_nonneg_left _ (by sorry) -- positivity
-  refine' sum_le_sum fun a ha ↦ _
-  refine' sum_le_sum fun i hi ↦ _
-  refine' pow_le_pow_of_le_left (by sorry) _ _ -- positivity
+  have hm' : 1 < 2 * m := (Nat.mul_le_mul_left 2 hm).trans_lt' $ by norm_num1
+  have hm'' : (1 : ℝ≥0∞) ≤ 2 * m := by rw [←hmeq, Nat.one_le_cast]; exact hm'.le
+  gcongr
   refine' (lpNorm_sub_le hm'' _ _).trans _
   rw [lpNorm_translate, two_mul ‖f‖_[2 * m], add_le_add_iff_left]
   have hmeq' : ((2 * m : ℝ≥0) : ℝ≥0∞) = 2 * m := by
@@ -162,7 +150,7 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
   refine' (lpNorm_conv_le this.le _ _).trans _
   rw [L1norm_mu hA, mul_one]
 
-lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hA : A.Nonempty) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :
+lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m)  (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :
     (8 * m : ℝ) ^ m * k ^ (m - 1) * A.card ^ k * k * (2 * ‖f‖_[2 * m]) ^ (2 * m) ≤
       1 / 2 * ((k * ε) ^ (2 * m) * ∑ i : G, ‖f i‖ ^ (2 * m)) * ↑A.card ^ k := by
   have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
@@ -173,10 +161,9 @@ lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hA : A.Nonempty) (hk : (64 : �
   rw [mul_pow (2 : ℝ), ←hmeq, ←lpNorm_pow_eq_sum hm' f, ←mul_assoc, ←mul_assoc,
     mul_right_comm _ (A.card ^ k : ℝ), mul_right_comm _ (A.card ^ k : ℝ),
     mul_right_comm _ (A.card ^ k : ℝ)]
-  -- positivity
-  refine' mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right _ $ by sorry) (by positivity)
-  rw [mul_assoc (_ ^ m : ℝ), ←pow_succ', Nat.sub_add_cancel hm, pow_mul, pow_mul, ←mul_pow, ←
-    mul_pow]
+  gcongr ?_ * _ * _
+  rw [mul_assoc (_ ^ m : ℝ), ←pow_succ', Nat.sub_add_cancel hm, pow_mul, pow_mul, ← mul_pow,
+    ← mul_pow]
   have : (1 / 2 : ℝ) ^ m ≤ 1 / 2 := by
     have :=
       pow_le_pow_of_le_one (show (0 : ℝ) ≤ 1 / 2 by norm_num) (show (1 / 2 : ℝ) ≤ 1 by norm_num) hm
@@ -233,7 +220,7 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
     lemma28_part_two hm hA
   refine' this.trans _
   simp only [sum_const, Fintype.card_piFinsetConst, nsmul_eq_mul, Nat.cast_pow]
-  refine' (lemma28_end hε hm hA hk).trans_eq' _
+  refine' (lemma28_end hε hm hk).trans_eq' _
   simp only [mul_assoc]
   sorry
 

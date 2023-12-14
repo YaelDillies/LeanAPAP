@@ -22,6 +22,11 @@ lemma one_sub_le_exp_neg (x : ℝ) : 1 - x ≤ exp (-x) :=
 lemma one_sub_lt_exp_neg (hx : x ≠ 0) : 1 - x < exp (-x) :=
   (sub_eq_neg_add _ _).trans_lt $ add_one_lt_exp $ neg_ne_zero.2 hx
 
+lemma exp_nonneg (x : ℝ) : 0 ≤ exp x := x.exp_pos.le
+
+lemma exp_abs_le (x : ℝ) : exp |x| ≤ exp x + exp (-x) := by
+  cases le_total x 0 <;> simp [abs_of_nonpos, abs_of_nonneg, exp_nonneg, *]
+
 lemma pow_div_factorial_le_exp (hx : 0 ≤ x) (n : ℕ) : x ^ n / n ! ≤ exp x :=
   calc
     x ^ n / n ! ≤ ∑ k in range (n + 1), x ^ k / k !
@@ -31,12 +36,19 @@ lemma pow_div_factorial_le_exp (hx : 0 ≤ x) (n : ℕ) : x ^ n / n ! ≤ exp x 
 end Real
 
 namespace Mathlib.Meta.Positivity
-open Lean.Meta Qq
+open Lean Meta Qq
 
 /-- Extension for the `positivity` tactic: `Real.cosh` is always positive. -/
 @[positivity Real.cosh _]
-def evalCosh : PositivityExt where eval _ _ e := do
-  let (.app _ (a : Q(ℝ))) ← withReducible (whnf e) | throwError "not Real.cosh"
-  pure (.positive (q(Real.cosh_pos $a) : Lean.Expr))
+def evalCosh : PositivityExt where eval {u α} _ _ e := do
+  if let 0 := u then -- lean4#3060 means we can't combine this with the match below
+    match α, e with
+    | ~q(ℝ), ~q(Real.cosh $a) =>
+      assumeInstancesCommute
+      return .positive q(Real.cosh_pos $a)
+    | _, _ => throwError "not Real.cosh"
+  else throwError "not Real.cosh"
+
+example (x : ℝ) : 0 < x.cosh := by positivity
 
 end Mathlib.Meta.Positivity

@@ -15,10 +15,10 @@ import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Hom
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 import LeanAPAP.Mathlib.Algebra.Group.TypeTags
+import LeanAPAP.Mathlib.Algebra.ModEq
 import LeanAPAP.Mathlib.Algebra.Module.Basic
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Canonical
-import LeanAPAP.Mathlib.Algebra.Order.SMul
 import LeanAPAP.Mathlib.Algebra.Star.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Algebra.Star.Pi
@@ -26,6 +26,7 @@ import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
 import LeanAPAP.Mathlib.Algebra.Support
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Analysis.Complex.Circle
+import LeanAPAP.Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
@@ -35,6 +36,9 @@ import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Mathlib.Data.Complex.Exponential
 import LeanAPAP.Mathlib.Data.Finset.Basic
@@ -77,6 +81,7 @@ import LeanAPAP.Mathlib.Order.Disjoint
 import LeanAPAP.Mathlib.Order.Heyting.Basic
 import LeanAPAP.Mathlib.Order.Partition.Finpartition
 import LeanAPAP.Mathlib.Tactic.Positivity
+import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing

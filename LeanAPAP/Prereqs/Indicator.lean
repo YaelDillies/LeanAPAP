@@ -114,6 +114,8 @@ variable [OrderedSemiring β] {s : Finset α}
   simp [indicate_apply, Pi.lt_def, Function.funext_iff, lt_iff_le_and_ne, @eq_comm β 0,
     Finset.Nonempty]
 
+protected alias ⟨_, Finset.Nonempty.indicate_pos⟩ := indicate_pos
+
 end OrderedSemiring
 
 /-! ### Normalised indicator -/
@@ -211,13 +213,47 @@ variable [LinearOrderedSemifield β] {s : Finset α}
 @[simp] lemma mu_nonneg : 0 ≤ μ_[β] s := fun a ↦ by rw [mu_apply]; split_ifs <;> norm_num
 @[simp] lemma mu_pos : 0 < μ_[β] s ↔ s.Nonempty := mu_nonneg.gt_iff_ne.trans mu_ne_zero
 
+protected alias ⟨_, Finset.Nonempty.mu_pos⟩ := mu_pos
+
 end LinearOrderedSemifield
 
 namespace Mathlib.Meta.Positivity
 open Lean Meta Qq Function
 
-private alias ⟨_, indicate_pos_of_nonempty⟩ := indicate_pos
-private alias ⟨_, mu_pos_of_nonempty⟩ := mu_pos
+-- private abbrev TypeFunction (α β : Type*) := α → β
+
+-- private alias ⟨_, mu_pos_of_nonempty⟩ := mu_pos
+-- #check indicate
+-- /-- Extension for the `positivity` tactic: an indicator is nonnegative, and positive if its support
+-- is nonempty. -/
+-- @[positivity indicate _]
+-- def evalIndicate : PositivityExt where eval {u π} zπ pπ e := do
+--   let u1 ← mkFreshLevelMVar
+--   let u2 ← mkFreshLevelMVar
+--   let _ : u =QL max u1 u2 := ⟨⟩
+--   match π, e with
+--   | ~q(TypeFunction.{u2, u1} $α $β), ~q(@indicate _ _ $instα $instβ $s) =>
+--     let so : Option Q(Finset.Nonempty $s) ← do -- TODO: It doesn't complain if we make a typo?
+--       try {
+--         let _fi ← synthInstanceQ q(Fintype $α)
+--         let _no ← synthInstanceQ q(Nonempty $α)
+--         match s with
+--         | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $α)))
+--         | _ => pure none
+--       } catch _ => do
+--         let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
+--         pure (some (.fvar fv))
+--     assumeInstancesCommute
+--     match so with
+--     | .some (fi : Q(Finset.Nonempty $s)) =>
+--       try {
+--         let instβnontriv ← synthInstanceQ q(Nontrivial $β)
+--         assumeInstancesCommute
+--         return .positive q(Finset.Nonempty.indicate_pos $fi)
+--       } catch _ => return .nonnegative q(indicate_nonneg.{u, u_1})
+
+--     | none => return .nonnegative q(indicate_nonneg.{u, u_1})
+--   | _ => throwError "not Finset.indicate"
 
 -- TODO: Fix
 
