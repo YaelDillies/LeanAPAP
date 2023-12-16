@@ -3,6 +3,8 @@ import Mathlib.Data.Fintype.Card
 import Mathlib.Data.IsROrC.Basic
 import Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
+import LeanAPAP.Mathlib.Algebra.BigOperators.Order
+import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Data.Pi.Algebra
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 
@@ -20,27 +22,28 @@ This file defines `Finset.expect`, the average (aka expectation) of a function o
 * `𝔼 i ∈ s with p i, f i` is notation for `Finset.expect (Finset.filter p s) f`. This is referred to
   as `expectWith` in lemma names.
 * `𝔼 (i ∈ s) (j ∈ t), f i j` is notation for `Finset.expect (s ×ˢ t) (fun ⟨i, j⟩ ↦ f i j)`.
-
-## Naming
-
-We provide
-
 -/
+
+section
+variable {α β : Type*}
+
+/-- Note that the `IsScalarTower α β β` typeclass argument is usually satisfied by `Algebra α β`.
+-/
+@[to_additive]
+lemma smul_div_assoc [DivInvMonoid β] [SMul α β] [IsScalarTower α β β] (r : α) (x y : β) :
+    r • x / y = r • (x / y) := by simp [div_eq_mul_inv, smul_mul_assoc]
+
+end
 
 
 open Function
 open Fintype (card)
 open scoped NNReal
 
-variable {ι β α 𝕝 : Type*}
-
-namespace Finset
-variable [Semifield α] [Semifield 𝕝] {s : Finset ι} {t : Finset β} {f : ι → α} {g : β → α}
+variable {ι κ β α 𝕝 : Type*}
 
 /-- Average of a function over a finset. If the finset is empty, this is equal to zero. -/
-def expect (s : Finset ι) (f : ι → α) : α := s.sum f / s.card
-
-end Finset
+def Finset.expect [Semifield α] (s : Finset ι) (f : ι → α) : α := s.sum f / s.card
 
 namespace BigOps
 open Std.ExtendedBinder Lean Meta
@@ -96,7 +99,7 @@ open scoped BigOps
 
 namespace Finset
 section Semifield
-variable [Semifield α] [Semifield 𝕝] {s : Finset ι} {t : Finset β} {f : ι → α} {g : β → α}
+variable [Semifield α] [Semifield 𝕝] {s : Finset ι} {f g : ι → α} {m : β → α}
 
 @[simp] lemma expect_empty (f : ι → α) : expect ∅ f = 0 := by simp [expect]
 @[simp] lemma expect_singleton (f : ι → α) (a : ι) : expect {a} f = f a := by simp [expect]
@@ -126,15 +129,19 @@ lemma expect_div (s : Finset ι) (f : ι → α) (a : α) : (𝔼 i ∈ s, f i) 
 lemma expect_univ [Fintype ι] : 𝔼 x, f x = (∑ x, f x) / Fintype.card ι := by
   rw [expect, card_univ]
 
-lemma expect_congr (f g : ι → α) (h : ∀ x ∈ s, f x = g x) : 𝔼 i ∈ s, f i = 𝔼 i ∈ s, g i := by
-   rw [expect, expect, sum_congr rfl h]
+@[congr]
+lemma expect_congr {t : Finset ι} (hst : s = t) (h : ∀ x ∈ t, f x = g x) :
+    𝔼 i ∈ s, f i = 𝔼 i ∈ t, g i := by rw [expect, expect, sum_congr hst h, hst]
 
-lemma expectWith_congr (f g : ι → α) (p : ι → Prop) [DecidablePred p]
-    (h : ∀ x ∈ s, p x → f x = g x) : 𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i :=
-  expect_congr _ _ $ by simpa using h
+lemma expectWith_congr (p : ι → Prop) [DecidablePred p] (h : ∀ x ∈ s, p x → f x = g x) :
+    𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i :=
+  expect_congr rfl $ by simpa using h
+
+section bij
+variable {t : Finset κ} {g : κ → α}
 
 -- TODO: Backport arguments changes to `card_congr` and `prod_bij`
-lemma expect_bij (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
+lemma expect_bij (i : ∀ a ∈ s, κ) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
     (i_inj : ∀ a₁ ha₁ a₂ ha₂, i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
     (i_surj : ∀ b ∈ t, ∃ a ha, i a ha = b) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
   rw [expect, expect, card_congr i hi (fun _ _ _ _ ↦ i_inj _ _ _ _),
@@ -142,12 +149,12 @@ lemma expect_bij (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a 
   simpa [eq_comm] using i_surj
 
 -- TODO: Backport arguments changes to `prod_nbij`
-lemma expect_nbij (i : ι → β) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
+lemma expect_nbij (i : ι → κ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
     (i_inj : (s : Set ι).InjOn i) (i_surj : (s : Set ι).SurjOn i t) :
     𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
   expect_bij (fun a _ ↦ i a) hi h i_inj $ by simpa [Set.SurjOn, Set.subset_def] using i_surj
 
-lemma expect_bij' (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
+lemma expect_bij' (i : ∀ a ∈ s, κ) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
     (j : ∀ a ∈ t, ι) (hj : ∀ a ha, j a ha ∈ s) (left_inv : ∀ a ha, j (i a ha) (hi a ha) = a)
     (right_inv : ∀ a ha, i (j a ha) (hj a ha) = a) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
   rw [expect, expect, sum_bij' i hi h j hj left_inv right_inv, card_congr i hi]
@@ -157,16 +164,18 @@ lemma expect_bij' (i : ∀ a ∈ s, β) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a
   intro b hb
   exact ⟨j b hb, hj _ _, right_inv _ _⟩
 
-lemma expect_nbij' (i : ι → β) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a)) (j : β → ι)
+lemma expect_nbij' (i : ι → κ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a)) (j : κ → ι)
     (hj : ∀ a ∈ t, j a ∈ s) (left_inv : ∀ a ∈ s, j (i a) = a) (right_inv : ∀ a ∈ t, i (j a) = a) :
     𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
   expect_bij' (fun a _ ↦ i a) hi h (fun b _ ↦ j b) hj left_inv right_inv
 
-lemma expect_product' (f : ι → β → α) : 𝔼 x ∈ s ×ˢ t, f x.1 x.2 = 𝔼 x ∈ s, 𝔼 y ∈ t, f x y := by
+lemma expect_product' (f : ι → κ → α) : 𝔼 x ∈ s ×ˢ t, f x.1 x.2 = 𝔼 x ∈ s, 𝔼 y ∈ t, f x y := by
   simp only [expect, expect, card_product, sum_product', ←sum_div, div_div, mul_comm s.card,
     Nat.cast_mul]
 
-lemma map_expect {F : Type*} [RingHomClass F α 𝕝] (g : F) (f : ι → α) (s : Finset ι) :
+end bij
+
+lemma _root_.map_expect {F : Type*} [RingHomClass F α 𝕝] (g : F) (f : ι → α) (s : Finset ι) :
     g (𝔼 x ∈ s, f x) = 𝔼 x ∈ s, g (f x) := by simp only [expect, map_div₀, map_natCast, map_sum]
 
 variable [CharZero α]
@@ -206,6 +215,10 @@ lemma expect_indicate_eq' [Fintype ι] [Nonempty ι] [DecidableEq ι] (f : ι �
     𝔼 i, ite (i = x) (Fintype.card ι : α) 0 * f i = f x := by
   simp_rw [@eq_comm _ _ x, expect_indicate_eq]
 
+lemma smul_expect {G : Type*} [DistribSMul G α] [IsScalarTower G α α] (a : G)
+    (s : Finset ι) (f : ι → α) : a • 𝔼 i ∈ s, f i = 𝔼 i ∈ s, a • f i := by
+  simp only [expect, ← smul_div_assoc, smul_sum]
+
 end Semifield
 
 section Field
@@ -214,6 +227,10 @@ variable [Field α] [Field 𝕝] {s : Finset ι}
 lemma expect_sub_distrib (s : Finset ι) (f g : ι → α) :
     𝔼 i ∈ s, (f i - g i) = 𝔼 i ∈ s, f i - 𝔼 i ∈ s, g i := by
   rw [expect, expect, expect, sum_sub_distrib, sub_div]
+
+@[simp]
+lemma expect_neg_distrib (s : Finset ι) (f : ι → α) : 𝔼 i ∈ s, -f i = -𝔼 i ∈ s, f i := by
+  simp [expect, neg_div]
 
 variable [Fintype ι]
 
@@ -265,13 +282,51 @@ lemma expect_nonneg (hf : ∀ i ∈ s, 0 ≤ f i) : 0 ≤ 𝔼 i ∈ s, f i :=
 lemma expect_pos (hf : ∀ i ∈ s, 0 < f i) (hs : s.Nonempty) : 0 < 𝔼 i ∈ s, f i :=
   div_pos (sum_pos hf hs) $ by positivity
 
+lemma expect_eq_zero_iff_of_nonneg (hs : s.Nonempty) (hf : ∀ i ∈ s, 0 ≤ f i) :
+    𝔼 i ∈ s, f i = 0 ↔ ∀ i ∈ s, f i = 0 := by
+  simp [expect, sum_eq_zero_iff_of_nonneg hf, hs.ne_empty]
+
+lemma expect_eq_zero_iff_of_nonpos (hs : s.Nonempty) (hf : ∀ i ∈ s, f i ≤ 0) :
+    𝔼 i ∈ s, f i = 0 ↔ ∀ i ∈ s, f i = 0 := by
+  simp [expect, sum_eq_zero_iff_of_nonpos hf, hs.ne_empty]
+
+-- TODO: Contribute back better docstring to `le_prod_of_submultiplicative`
+/-- If `m` is a subadditive function (`m (x * y) ≤ f x * f y`, `f 1 = 1`), and `f i`,
+`i ∈ s`, is a finite family of elements, then `f (𝔼 i in s, g i) ≤ 𝔼 i in s, f (g i)`. -/
+lemma le_expect_of_subadditive [LinearOrderedSemifield κ] (m : α → κ) (h_zero : m 0 = 0)
+    (h_add : ∀ a b, m (a + b) ≤ m a + m b) (h_div : ∀ a (n : ℕ), m (a / n) = m a / n)
+    (s : Finset ι) (f : ι → α) : m (𝔼 i ∈ s, f i) ≤ 𝔼 i ∈ s, m (f i) := by
+  simp only [expect, h_div]
+  exact div_le_div_of_nonneg_right (le_sum_of_subadditive _ h_zero h_add _ _) $ by positivity
+
 end LinearOrderedSemifield
+
+section LinearOrderedField
+variable [LinearOrderedField α] {s : Finset ι} {f g : ι → α}
+
+lemma abs_expect_le_expect_abs (s : Finset ι) (f : ι → α) :
+    |𝔼 i ∈ s, f i| ≤ 𝔼 i ∈ s, |f i| :=
+  le_expect_of_subadditive _ abs_zero abs_add (by simp [abs_div]) _ _
+
+end LinearOrderedField
 end Finset
+
+namespace algebraMap
+variable {R A : Type*} [Semifield R] [Semifield A] [Algebra R A]
+
+@[simp, norm_cast]
+lemma coe_expect (s : Finset ι) (a : ι → R) : 𝔼 i ∈ s, a i = 𝔼 i ∈ s, (a i : A) :=
+  map_expect (algebraMap R A) a s
+
+end algebraMap
 
 open Finset
 
 namespace Fintype
-variable {κ : Type*} [Fintype ι] [Fintype κ] [Semifield α]
+variable {κ : Type*} [Fintype ι] [Fintype κ]
+
+section Semifield
+variable [Semifield α]
 
 /-- `Fintype.expect_bijective` is a variant of `Finset.expect_bij` that accepts
 `Function.Bijective`.
@@ -290,6 +345,21 @@ lemma expect_equiv (e : ι ≃ κ) (f : ι → α) (g : κ → α) (h : ∀ x, f
     𝔼 i, f i = 𝔼 i, g i :=
   expect_bijective _ e.bijective f g h
 
+@[simp] lemma expect_const [Nonempty ι] [CharZero α] (a : α) : 𝔼 _i : ι, a = a :=
+  Finset.expect_const univ_nonempty _
+
+end Semifield
+
+section LinearOrderedSemifield
+variable [LinearOrderedSemifield α] [Nonempty ι] {f : ι → α}
+
+lemma expect_eq_zero_iff_of_nonneg (hf : 0 ≤ f) : 𝔼 i, f i = 0 ↔ f = 0 := by
+  simp [expect, sum_eq_zero_iff_of_nonneg hf, univ_nonempty.ne_empty]
+
+lemma expect_eq_zero_iff_of_nonpos (hf : f ≤ 0) : 𝔼 i, f i = 0 ↔ f = 0 := by
+  simp [expect, sum_eq_zero_iff_of_nonpos hf, univ_nonempty.ne_empty]
+
+end LinearOrderedSemifield
 end Fintype
 
 namespace IsROrC
@@ -314,13 +384,13 @@ def evalFinsetExpect : PositivityExt where eval {u α} zα pα e := do
   | ~q(@Finset.expect $ι _ $instα $s $f) =>
     let (lhs, _, (rhs : Q($α))) ← lambdaMetaTelescope f
     let so : Option Q(Finset.Nonempty $s) ← do -- TODO: It doesn't complain if we make a typo?
-      try {
+      try
         let _fi ← synthInstanceQ q(Fintype $ι)
         let _no ← synthInstanceQ q(Nonempty $ι)
         match s with
         | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $ι)))
         | _ => pure none
-      } catch _ => do
+      catch _ => do
         let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
         pure (some (.fvar fv))
     match ← core zα pα rhs, so with

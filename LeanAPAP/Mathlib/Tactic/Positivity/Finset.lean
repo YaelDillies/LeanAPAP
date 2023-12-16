@@ -10,14 +10,14 @@ def evalFinsetCard : PositivityExt where eval {u α} _ _ e := do
   if let 0 := u then -- lean4#3060 means we can't combine this with the match below
     match α, e with
     | ~q(ℕ), ~q(@Finset.card $β $s) =>
-      let so : Option Q(Finset.Nonempty $s) ← do -- TODO: if I make a typo it doesn't complain?
-        try {
+      let so : Option Q(Finset.Nonempty $s) ← do -- TODO: It doesn't complain if we make a typo?
+        try
           let _fi ← synthInstanceQ q(Fintype $β)
           let _no ← synthInstanceQ q(Nonempty $β)
           match s with
           | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $β)))
-          | _ => pure none }
-        catch _e => do
+          | _ => pure none
+        catch _ => do
           let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
           pure (some (.fvar fv))
       assumeInstancesCommute

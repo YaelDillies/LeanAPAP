@@ -58,6 +58,16 @@ lemma sum_mul_sum {ι₁ : Type*} {ι₂ : Type*} [Fintype ι₁] [Fintype ι₂
 
 end Fintype
 
+namespace Fintype
+variable {α β : Type*} [CommSemiring β] [DecidableEq α] [Fintype α]
+open Finset
+open scoped BigOperators
+
+lemma prod_add (f g : α → β) : ∏ a, (f a + g a) = ∑ t, (∏ a in t, f a) * ∏ a in tᶜ, g a := by
+  simpa [compl_eq_univ_sdiff] using Finset.prod_add f g univ
+
+end Fintype
+
 open Finset
 
 namespace Nat

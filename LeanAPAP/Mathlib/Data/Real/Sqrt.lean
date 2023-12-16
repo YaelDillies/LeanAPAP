@@ -24,8 +24,7 @@ namespace Finset
 
 lemma cauchy_schwarz_sqrt {α : Type*} (s : Finset α) (f g : α → ℝ) :
     ∑ i in s, f i * g i ≤ (∑ i in s, f i ^ 2).sqrt * (∑ i in s, g i ^ 2).sqrt :=
-  (Real.le_sqrt_of_sq_le $ sum_mul_sq_le_sq_mul_sq _ _ _).trans_eq $
-    Real.sqrt_mul (sum_nonneg fun _ _ ↦ sq_nonneg _) _
+  (Real.le_sqrt_of_sq_le $ sum_mul_sq_le_sq_mul_sq _ _ _).trans_eq $ Real.sqrt_mul (by positivity) _
 
 end Finset
 

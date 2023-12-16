@@ -1,4 +1,4 @@
-import Mathlib.Order.BooleanAlgebra
+import Mathlib.Order.Heyting.Basic
 
 section
 variable {α : Type*} [GeneralizedHeytingAlgebra α] {a b : α}
