@@ -101,9 +101,20 @@ namespace Finset
 section Semifield
 variable [Semifield α] [Semifield 𝕝] {s : Finset ι} {f g : ι → α} {m : β → α}
 
+lemma expect_univ [Fintype ι] : 𝔼 x, f x = (∑ x, f x) / Fintype.card ι := by
+  rw [expect, card_univ]
+
 @[simp] lemma expect_empty (f : ι → α) : expect ∅ f = 0 := by simp [expect]
-@[simp] lemma expect_singleton (f : ι → α) (a : ι) : expect {a} f = f a := by simp [expect]
-@[simp] lemma expect_const_zero (s : Finset ι) : 𝔼 _x ∈ s, (0 : α) = 0 := by simp [expect]
+@[simp] lemma expect_singleton (f : ι → α) (i : ι) : expect {i} f = f i := by simp [expect]
+@[simp] lemma expect_const_zero (s : Finset ι) : 𝔼 _i ∈ s, (0 : α) = 0 := by simp [expect]
+
+@[congr]
+lemma expect_congr {t : Finset ι} (hst : s = t) (h : ∀ x ∈ t, f x = g x) :
+    𝔼 i ∈ s, f i = 𝔼 i ∈ t, g i := by rw [expect, expect, sum_congr hst h, hst]
+
+lemma expectWith_congr (p : ι → Prop) [DecidablePred p] (h : ∀ x ∈ s, p x → f x = g x) :
+    𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i :=
+  expect_congr rfl $ by simpa using h
 
 lemma expect_sum_comm (s : Finset ι) (t : Finset β) (f : ι → β → α) :
     𝔼 x ∈ s, ∑ y ∈ t, f x y = ∑ y ∈ t, 𝔼 x ∈ s, f x y := by rw [expect, sum_comm, sum_div]; rfl
@@ -113,9 +124,21 @@ lemma expect_comm (s : Finset ι) (t : Finset β) (f : ι → β → α) :
   rw [expect, expect, ←expect_sum_comm, ←expect_sum_comm, expect, expect, div_div, mul_comm,
     div_div, sum_comm]
 
+lemma expect_eq_zero (h : ∀ i ∈ s, f i = 0) : 𝔼 i ∈ s, f i = 0 :=
+  (expect_congr rfl h).trans s.expect_const_zero
+
+-- TODO: Golf `exists_ne_zero_of_sum_ne_zero`
+lemma exists_ne_zero_of_expect_ne_zero (h : 𝔼 i ∈ s, f i ≠ 0) : ∃ i ∈ s, f i ≠ 0 := by
+  contrapose! h; exact expect_eq_zero h
+
 lemma expect_add_distrib (s : Finset ι) (f g : ι → α) :
     𝔼 i ∈ s, (f i + g i) = 𝔼 i ∈ s, f i + 𝔼 i ∈ s, g i := by
   simp [expect, sum_add_distrib, add_div]
+
+lemma expect_add_expect_comm (f₁ f₂ g₁ g₂ : ι → α) :
+    𝔼 i ∈ s, (f₁ i + f₂ i) + 𝔼 i ∈ s, (g₁ i + g₂ i) =
+      𝔼 i ∈ s, (f₁ i + g₁ i) + 𝔼 i ∈ s, (f₂ i + g₂ i) := by
+  simp_rw [expect_add_distrib, add_add_add_comm]
 
 lemma expect_mul (s : Finset ι) (f : ι → α) (a : α) : (𝔼 i ∈ s, f i) * a = 𝔼 i ∈ s, f i * a := by
   rw [expect, div_mul_eq_mul_div, sum_mul]; rfl
@@ -126,16 +149,40 @@ lemma mul_expect (s : Finset ι) (f : ι → α) (a : α) : a * 𝔼 i ∈ s, f 
 lemma expect_div (s : Finset ι) (f : ι → α) (a : α) : (𝔼 i ∈ s, f i) / a = 𝔼 i ∈ s, f i / a := by
   simp_rw [div_eq_mul_inv, expect_mul]
 
-lemma expect_univ [Fintype ι] : 𝔼 x, f x = (∑ x, f x) / Fintype.card ι := by
-  rw [expect, card_univ]
+-- TODO: Change `sum_mul_sum` to match?
+lemma expect_mul_expect (s : Finset ι) (t : Finset κ) (f : ι → α) (g : κ → α) :
+    (𝔼 i ∈ s, f i) * 𝔼 j ∈ t, g j = 𝔼 i ∈ s, 𝔼 j ∈ t, f i * g j := by
+  simp_rw [expect_mul, mul_expect]
 
-@[congr]
-lemma expect_congr {t : Finset ι} (hst : s = t) (h : ∀ x ∈ t, f x = g x) :
-    𝔼 i ∈ s, f i = 𝔼 i ∈ t, g i := by rw [expect, expect, sum_congr hst h, hst]
+lemma expect_eq_single_of_mem (i : ι) (hi : i ∈ s) (h : ∀ j ∈ s, j ≠ i → f j = 0) :
+    𝔼 i ∈ s, f i = f i / s.card := by rw [expect, sum_eq_single_of_mem _ hi h]
 
-lemma expectWith_congr (p : ι → Prop) [DecidablePred p] (h : ∀ x ∈ s, p x → f x = g x) :
-    𝔼 i ∈ s with p i, f i = 𝔼 i ∈ s with p i, g i :=
-  expect_congr rfl $ by simpa using h
+/-- See also `Finset.expect_boole`. -/
+lemma expect_ite_zero (s : Finset ι) (p : ι → Prop) [DecidablePred p]
+    (h : ∀ i ∈ s, ∀ j ∈ s, p i → p j → i = j) (a : α) :
+    𝔼 i ∈ s, ite (p i) a 0 = ite (∃ i ∈ s, p i) (a / s.card) 0 := by
+  split_ifs <;> simp [expect, sum_ite_zero' _ _ h, *]
+
+section DecidableEq
+variable [DecidableEq ι]
+
+@[simp] lemma expect_dite_eq (i : ι) (f : ∀ j, i = j → α) :
+    𝔼 j ∈ s, (if h : i = j then f j h else 0) = if i ∈ s then f i rfl / s.card else 0 := by
+  split_ifs <;> simp [expect, *]
+
+@[simp] lemma expect_dite_eq' (i : ι) (f : ∀ j, j = i → α) :
+    𝔼 j ∈ s, (if h : j = i then f j h else 0) = if i ∈ s then f i rfl / s.card else 0 := by
+  split_ifs <;> simp [expect, *]
+
+@[simp] lemma expect_ite_eq (i : ι) (f : ι → α) :
+    𝔼 j ∈ s, (if i = j then f j else 0) = if i ∈ s then f i / s.card else 0 := by
+  split_ifs <;> simp [expect, *]
+
+@[simp] lemma expect_ite_eq' (i : ι) (f : ι → α) :
+    𝔼 j ∈ s, (if j = i then f j else 0) = if i ∈ s then f i / s.card else 0 := by
+  split_ifs <;> simp [expect, *]
+
+end DecidableEq
 
 section bij
 variable {t : Finset κ} {g : κ → α}
@@ -169,6 +216,13 @@ lemma expect_nbij' (i : ι → κ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ 
     𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
   expect_bij' (fun a _ ↦ i a) hi h (fun b _ ↦ j b) hj left_inv right_inv
 
+-- TODO: Replace `Finset.Equiv.sum_comp_finset`?
+/-- `Finset.expect_equiv` is a specialization of `Finset.expect_bij` that automatically fills in
+most arguments. -/
+lemma expect_equiv (e : ι ≃ κ) (hst : ∀ i, i ∈ s ↔ e i ∈ t) (hfg : ∀ i ∈ s, f i = g (e i)) :
+    𝔼 i ∈ s, f i = 𝔼 i ∈ t, g i :=
+  expect_nbij e (fun i ↦ (hst _).1) hfg (e.injective.injOn _) fun i hi ↦ ⟨e.symm i, by simpa [hst]⟩
+
 lemma expect_product' (f : ι → κ → α) : 𝔼 x ∈ s ×ˢ t, f x.1 x.2 = 𝔼 x ∈ s, 𝔼 y ∈ t, f x y := by
   simp only [expect, expect, card_product, sum_product', ←sum_div, div_div, mul_comm s.card,
     Nat.cast_mul]
@@ -200,14 +254,13 @@ lemma card_smul_expect (s : Finset ι) (f : ι → α) : s.card • 𝔼 i ∈ s
     ↑(Fintype.card ι) * 𝔼 i, f i = ∑ i, f i :=
   card_mul_expect _ _
 
-@[simp]
-lemma expect_const (hs : s.Nonempty) (b : α) : 𝔼 _i ∈ s, b = b := by
+@[simp] lemma expect_const (hs : s.Nonempty) (a : α) : 𝔼 _i ∈ s, a = a := by
   rw [expect, sum_const, nsmul_eq_mul, mul_div_cancel_left]
   exact Nat.cast_ne_zero.2 hs.card_pos.ne'
 
 lemma expect_indicate_eq [Fintype ι] [Nonempty ι] [DecidableEq ι] (f : ι → α) (x : ι) :
     𝔼 i, ite (x = i) (Fintype.card ι : α) 0 * f i = f x := by
-  simp_rw [expect_univ, ite_mul, MulZeroClass.zero_mul, sum_ite_eq, if_pos (mem_univ _)]
+  simp_rw [expect_univ, ite_mul, zero_mul, sum_ite_eq, if_pos (mem_univ _)]
   rw [mul_div_cancel_left]
   simp [Fintype.card_ne_zero]
 
@@ -347,6 +400,28 @@ lemma expect_equiv (e : ι ≃ κ) (f : ι → α) (g : κ → α) (h : ∀ x, f
 
 @[simp] lemma expect_const [Nonempty ι] [CharZero α] (a : α) : 𝔼 _i : ι, a = a :=
   Finset.expect_const univ_nonempty _
+
+@[simp] lemma expect_one [Nonempty ι] [CharZero α] : 𝔼 _i : ι, (1 : α) = 1 := expect_const _
+
+lemma expect_ite_zero (p : ι → Prop) [DecidablePred p] (h : ∀ i j, p i → p j → i = j) (a : α) :
+    𝔼 i, ite (p i) a 0 = ite (∃ i, p i) (a / Fintype.card ι) 0 := by
+  simp [univ.expect_ite_zero p (by simpa using h), card_univ]
+
+variable [DecidableEq ι]
+
+@[simp] lemma expect_dite_eq (i : ι) (f : ∀ j, i = j → α) :
+    𝔼 j, (if h : i = j then f j h else 0) = f i rfl / card ι := by simp [card_univ]
+
+@[simp] lemma expect_dite_eq' (i : ι) (f : ∀ j, j = i → α) :
+    𝔼 j, (if h : j = i then f j h else 0) = f i rfl / card ι := by simp [card_univ]
+
+@[simp]
+lemma expect_ite_eq (i : ι) (f : ι → α) : 𝔼 j, (if i = j then f j else 0) = f i / card ι := by
+  simp [card_univ]
+
+@[simp]
+lemma expect_ite_eq' (i : ι) (f : ι → α) : 𝔼 j, (if j = i then f j else 0) = f i / card ι := by
+  simp [card_univ]
 
 end Semifield
 

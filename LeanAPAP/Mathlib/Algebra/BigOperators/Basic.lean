@@ -224,9 +224,10 @@ lemma prod_nbij' (i : α → γ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s,
     ∏ x in s, f x = ∏ x in t, g x :=
   prod_bij' (fun a _ ↦ i a) hi h (fun b _ ↦ j b) hj left_inv right_inv
 
+-- TODO: Replace `prod_ite_one`
 @[to_additive]
 lemma prod_ite_one' (s : Finset α) (p : α → Prop) [DecidablePred p]
-    (h : ∀ i, i ∈ s → ∀ j, j ∈ s → p i → p j → i = j) (a : β) :
+    (h : ∀ i ∈ s, ∀ j ∈ s, p i → p j → i = j) (a : β) :
     ∏ i in s, ite (p i) a 1 = ite (∃ i ∈ s, p i) a 1 :=
   prod_ite_one (fun i hi j hj ↦ by
     simpa only [Function.onFun_apply, Prop.disjoint_iff, not_imp_not, and_imp] using h i hi j hj) _
@@ -295,8 +296,7 @@ lemma prod_dite_eq' (a : α) (b : ∀ x, x = a → β) :
 lemma prod_ite_eq (a : α) (b : α → β) : (∏ x, if a = x then b x else 1) = b a := by simp
 
 @[to_additive (attr := simp)]
-lemma prod_ite_eq' [DecidableEq α] (a : α) (b : α → β) : (∏ x, if x = a then b x else 1) = b a := by
-  simp
+lemma prod_ite_eq' (a : α) (b : α → β) : (∏ x, if x = a then b x else 1) = b a := by simp
 
 end CommMonoid
 
