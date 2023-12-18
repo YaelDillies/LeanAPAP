@@ -321,6 +321,12 @@ variable [LinearOrderedSemifield α] {s : Finset ι} {f g : ι → α}
 lemma expect_le_expect (hfg : ∀ i ∈ s, f i ≤ g i) : 𝔼 i ∈ s, f i ≤ 𝔼 i ∈ s, g i :=
   div_le_div_of_le (by positivity) $ sum_le_sum hfg
 
+/-- This is a variant (beta-reduced) version of the standard lemma `Finset.prod_le_prod'`,
+convenient for the `gcongr` tactic. -/
+@[gcongr]
+lemma _root_.GCongr.expect_le_expect (h : ∀ i ∈ s, f i ≤ g i) : s.expect f ≤ s.expect g :=
+  Finset.expect_le_expect h
+
 lemma expect_le (hs : s.Nonempty) (f : ι → α) (a : α) (h : ∀ x ∈ s, f x ≤ a) : 𝔼 i ∈ s, f i ≤ a :=
   (div_le_iff' $ Nat.cast_pos.2 hs.card_pos).2 $ by
     rw [←nsmul_eq_mul]; exact sum_le_card_nsmul _ _ _ h

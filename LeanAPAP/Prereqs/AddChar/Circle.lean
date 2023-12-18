@@ -1,6 +1,6 @@
 import Mathlib.Analysis.Complex.Circle
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import LeanAPAP.Mathlib.NumberTheory.LegendreSymbol.AddChar.Basic
+import LeanAPAP.Prereqs.AddChar.Basic
 
 /-!
 ## TODO

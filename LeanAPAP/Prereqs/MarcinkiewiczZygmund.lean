@@ -3,6 +3,7 @@ import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 import Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
+import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Canonical
 import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
@@ -30,7 +31,7 @@ private lemma step_one (hA : A.Nonempty) (f : G → ℝ) (a : Fin n → G)
       rw [abs_div, div_pow, Nat.abs_cast]
     _ ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ (m + 1) :=
       (div_le_div_of_le (by positivity)
-        (pow_le_pow_of_le_left (by positivity) (abv_sum_le_sum_abv _ _) _))
+        (pow_le_pow_left (by positivity) (abv_sum_le_sum_abv _ _) _))
     _ = (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ m / (A^^n).card := by
       rw [div_div, ←_root_.pow_succ']
     _ ≤ _ := by simpa using div_le_div_of_le (by positivity)
@@ -143,8 +144,8 @@ private lemma step_seven {f : G → ℝ} {a b : Fin n → G} :
     m ^ m * (∑ i : Fin n, (f (a i) - f (b i)) ^ 2 : ℝ) ^ m ≤
       m ^ m * 2 ^ m * (∑ i : Fin n, (f (a i) ^ 2 + f (b i) ^ 2)) ^ m := by
   rw [←mul_pow, ←mul_pow, ←mul_pow]
-  refine' pow_le_pow_of_le_left _ _ _
-  · exact mul_nonneg (Nat.cast_nonneg _) (sum_nonneg fun i _ ↦ by positivity)
+  refine' pow_le_pow_left _ _ _
+  · positivity
   rw [mul_assoc]
   refine' mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg _)
   rw [mul_sum]
@@ -160,7 +161,7 @@ private lemma step_eight {f : G → ℝ} {a b : Fin n → G} :
   rw [pow_add, ←mul_assoc _ _ (2 ^ _), mul_assoc _ (2 ^ (m - 1))]
   refine' mul_le_mul_of_nonneg_left _ (by positivity)
   rw [sum_add_distrib]
-  refine' add_pow_le _ _ m <;> exact sum_nonneg fun i _ ↦ by positivity
+  refine' add_pow_le _ _ m <;> positivity
 
 private lemma end_step {f : G → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
     (∑ a in A^^n, ∑ b in A^^n, ∑ k : Fin n → ℕ in cut univ m,

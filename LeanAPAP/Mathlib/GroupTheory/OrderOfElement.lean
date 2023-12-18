@@ -1,5 +1,4 @@
 import Mathlib.GroupTheory.OrderOfElement
-import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 
 /-!
 ### TODO

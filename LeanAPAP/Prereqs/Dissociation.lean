@@ -1,10 +1,14 @@
-import Mathlib.Algebra.IndicatorFunction
+import Mathlib.Algebra.Function.Indicator
+import Mathlib.Algebra.Module.Basic
+import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Set.Pointwise.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Finset.Powerset
 import LeanAPAP.Mathlib.Data.Fintype.Basic
+import LeanAPAP.Mathlib.Data.Set.Function
 import LeanAPAP.Mathlib.Order.Heyting.Basic
 
 /-!
@@ -16,53 +20,50 @@ open scoped BigOperators Pointwise
 variable {α β : Type*} [CommGroup α] [CommGroup β]
 
 section dissociation
-variable {s : Set α} {K : ℕ} {a : α}
+variable {s : Set α} {t u : Finset α} {K : ℕ} {a : α}
 open Set
 
 @[to_additive]
-def MulDissociated (s : Set α) : Prop :=
-  ∀ a, {A' : Finset α | ↑A' ⊆ s ∧ ∏ x in A', x = a}.Subsingleton
+def MulDissociated (s : Set α) : Prop := {t : Finset α | ↑t ⊆ s}.InjOn (∏ x in ·, x)
+
+@[to_additive] lemma mulDissociated_iff_sum_eq_subsingleton :
+    MulDissociated s ↔ ∀ a, {t : Finset α | ↑t ⊆ s ∧ ∏ x in t, x = a}.Subsingleton :=
+  ⟨fun hs _ _t ht _u hu ↦ hs ht.1 hu.1 $ ht.2.trans hu.2.symm,
+    fun hs _t ht _u hu htu ↦ hs _ ⟨ht, htu⟩ ⟨hu, rfl⟩⟩
+
+@[to_additive] lemma MulDissociated.subset {t : Set α} (hst : s ⊆ t) (ht : MulDissociated t) :
+    MulDissociated s := ht.mono fun _ ↦ hst.trans'
 
 @[to_additive (attr := simp)]
 lemma mulDissociated_empty : MulDissociated (∅ : Set α) := by
-  simp [MulDissociated, Set.Subsingleton, subset_empty_iff]
+  simp [MulDissociated, subset_empty_iff]
 
 @[to_additive (attr := simp)]
 lemma mulDissociated_singleton : MulDissociated ({a} : Set α) ↔ a ≠ 1 := by
-  simp [MulDissociated, Set.Subsingleton, eq_comm, (Finset.singleton_ne_empty _).symm, forall_and,
-    -subset_singleton_iff, Finset.coe_subset_singleton]
+  simp [MulDissociated, setOf_or, (Finset.singleton_ne_empty _).symm, -subset_singleton_iff,
+    Finset.coe_subset_singleton]
 
 @[to_additive (attr := simp)]
 lemma not_mulDissociated :
-    ¬ MulDissociated s ↔ ∃ a, {A' : Finset α | ↑A' ⊆ s ∧ ∏ x in A', x = a}.Nontrivial := by
-  simp [MulDissociated]
+    ¬ MulDissociated s ↔
+      ∃ t : Finset α, ↑t ⊆ s ∧ ∃ u : Finset α, ↑u ⊆ s ∧ t ≠ u ∧ ∏ x in t, x = ∏ x in u, x := by
+  simp [MulDissociated, InjOn]; aesop
 
 @[to_additive]
 lemma not_mulDissociated_iff_exists_disjoint :
     ¬ MulDissociated s ↔
       ∃ B C : Finset α, ↑B ⊆ s ∧ ↑C ⊆ s ∧ Disjoint B C ∧ B ≠ C ∧ ∏ a in B, a = ∏ a in C, a := by
   classical
-  refine' not_mulDissociated.trans ⟨_, _⟩
-  · rintro ⟨a, B, hB, C, hC, hBC⟩
-    refine' ⟨B \ C, C \ B, _, _, disjoint_sdiff_sdiff, sdiff_ne_sdiff.2 hBC,
-      Finset.prod_sdiff_eq_prod_sdiff.2 $ by rw [hB.2, hC.2]⟩
-      <;> push_cast <;> refine (diff_subset _ _).trans ?_
-    exacts [hB.1, hC.1]
-  · rintro ⟨B, C, hB, hC, -, hBCne, hBCsum⟩
-    refine' ⟨∏ a in B, a, B, _, C, _, hBCne⟩ <;> simp [*]
+  refine not_mulDissociated.trans
+    ⟨?_, fun ⟨B, C, hB, hC, _, hBCne, hBCsum⟩ ↦ ⟨B, hB, C, hC, hBCne, hBCsum⟩⟩
+  rintro ⟨B, hB, C, hC, hBC, h⟩
+  refine ⟨B \ C, C \ B, ?_, ?_, disjoint_sdiff_sdiff, sdiff_ne_sdiff.2 hBC,
+    Finset.prod_sdiff_eq_prod_sdiff.2 h⟩ <;> push_cast <;> exact (diff_subset _ _).trans ‹_›
 
 @[to_additive (attr := simp)] lemma MulEquiv.mulDissociated_preimage (e : β ≃* α) :
-    MulDissociated (e ⁻¹' s) ↔ MulDissociated s :=
-  e.forall_congr $ e.finsetCongr.forall_congr $ by
-    simp only [mem_setOf_eq, and_imp, toEquiv_eq_coe, Equiv.finsetCongr_apply, coe_toEquiv,
-      Finset.coe_map, Equiv.coe_toEmbedding, image_subset_iff, Finset.prod_map]
-    refine' imp_congr_right fun _ ↦ _
-    rw [←map_prod e, EmbeddingLike.apply_eq_iff_eq]
-    refine' imp_congr_right fun _ ↦ e.finsetCongr.forall_congr _
-    simp only [toEquiv_eq_coe, Equiv.finsetCongr_apply, Finset.coe_map,
-      Equiv.coe_toEmbedding, coe_toEquiv, image_subset_iff, Finset.prod_map, Finset.map_inj]
-    refine' imp_congr_right fun _ ↦ _
-    rw [←map_prod e, EmbeddingLike.apply_eq_iff_eq]
+    MulDissociated (e ⁻¹' s) ↔ MulDissociated s := by
+  simp [MulDissociated, InjOn, ← e.finsetCongr.forall_congr_left, ← e.apply_eq_iff_eq,
+    (Finset.map_injective _).eq_iff]
 
 @[to_additive (attr := simp)] lemma mulDissociated_inv : MulDissociated s⁻¹ ↔ MulDissociated s :=
   (MulEquiv.inv α).mulDissociated_preimage

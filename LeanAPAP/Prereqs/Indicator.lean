@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Pointwise
 import Mathlib.Data.Real.NNReal
-import LeanAPAP.Mathlib.Algebra.BigOperators.Expect
+import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
 import LeanAPAP.Mathlib.Data.Fintype.Lattice
 import LeanAPAP.Prereqs.Translate
@@ -234,23 +234,23 @@ open Lean Meta Qq Function
 --   match π, e with
 --   | ~q(TypeFunction.{u2, u1} $α $β), ~q(@indicate _ _ $instα $instβ $s) =>
 --     let so : Option Q(Finset.Nonempty $s) ← do -- TODO: It doesn't complain if we make a typo?
---       try {
+--       try
 --         let _fi ← synthInstanceQ q(Fintype $α)
 --         let _no ← synthInstanceQ q(Nonempty $α)
 --         match s with
 --         | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $α)))
 --         | _ => pure none
---       } catch _ => do
+--       catch _ => do
 --         let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
 --         pure (some (.fvar fv))
 --     assumeInstancesCommute
 --     match so with
 --     | .some (fi : Q(Finset.Nonempty $s)) =>
---       try {
+--       try
 --         let instβnontriv ← synthInstanceQ q(Nontrivial $β)
 --         assumeInstancesCommute
 --         return .positive q(Finset.Nonempty.indicate_pos $fi)
---       } catch _ => return .nonnegative q(indicate_nonneg.{u, u_1})
+--       catch _ => return .nonnegative q(indicate_nonneg.{u, u_1})
 
 --     | none => return .nonnegative q(indicate_nonneg.{u, u_1})
 --   | _ => throwError "not Finset.indicate"

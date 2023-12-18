@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Support
+import Mathlib.Algebra.Function.Support
 import LeanAPAP.Mathlib.Algebra.Module.Basic
 
 namespace Function

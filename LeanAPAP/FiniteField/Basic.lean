@@ -1,6 +1,6 @@
 import LeanAPAP.Physics.Unbalancing
-import LeanAPAP.Prereqs.Convolution.Norm
-import LeanAPAP.Prereqs.DFT
+import LeanAPAP.Prereqs.Discrete.Convolution.Norm
+import LeanAPAP.Prereqs.Discrete.DFT.Compact
 import LeanAPAP.Prereqs.Misc
 
 /-!
@@ -30,14 +30,14 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
     _ ≤ _ := div_le_div_of_le (card G).cast_nonneg hAC
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
     _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[↑(1 - (p : ℝ≥0)⁻¹ : ℝ≥0)⁻¹] :=
-      (abs_l2inner_le_lpNorm_mul_lpNorm ⟨by exact_mod_cast hp, ?_⟩ _ _)
+      (abs_l2Inner_le_lpNorm_mul_lpNorm ⟨by exact_mod_cast hp, ?_⟩ _ _)
     _ ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-(p : ℝ)⁻¹) * γ ^ (-(p : ℝ)⁻¹)) :=
         mul_le_mul (lpNorm_conv_le_lpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
           (by positivity) (by positivity)
     _ = ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈γ.curlog⌉₊), const _ (card G)⁻¹] *
           γ ^ (-(p : ℝ)⁻¹) := ?_
     _ ≤ _ := mul_le_mul_of_nonneg_left ?_ $ by positivity
-  · rw [←balance_conv, balance, l2inner_sub_left, l2inner_const_left, expect_conv, sum_mu ℝ hA,
+  · rw [←balance_conv, balance, l2Inner_sub_left, l2Inner_const_left, expect_conv, sum_mu ℝ hA,
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ←mul_inv_cancel, ←mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left] <;> positivity
   · rw [NNReal.coe_inv, NNReal.coe_sub hp'.le]
@@ -83,7 +83,7 @@ lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.card / card 
     refine' ⟨⊤, univ, _⟩
     rw [AffineSubspace.direction_top]
     simp only [AffineSubspace.top_coe, coe_univ, eq_self_iff_true, finrank_top, tsub_self,
-      Nat.cast_zero, indicate_empty, MulZeroClass.zero_mul, lpNorm_zero, true_and_iff,
+      Nat.cast_zero, indicate_empty, zero_mul, lpNorm_zero, true_and_iff,
       Finset.card_empty, zero_div] at hαA ⊢
     exact ⟨by positivity, mul_nonpos_of_nonneg_of_nonpos (by positivity) hαA⟩
   have hγ₁ : γ ≤ 1 := hγC.trans (div_le_one_of_le (Nat.cast_le.2 C.card_le_univ) $ by positivity)

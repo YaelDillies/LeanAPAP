@@ -41,16 +41,18 @@ lemma dens_cons (h : a ∉ s) : (s.cons a h).dens = dens s + (Fintype.card α : 
   simp [dens, add_div]
 
 section CharZero
-variable [CharZero 𝕜] [Nonempty α]
+variable [CharZero 𝕜]
 
-@[simp] lemma dens_univ : dens[𝕜] (univ : Finset α) = 1 := by simp [dens, card_univ]
+@[simp] lemma dens_eq_zero : dens[𝕜] s = 0 ↔ s = ∅ := by
+  simp (config := { contextual := true }) [dens, Fintype.card_eq_zero_iff, eq_empty_of_isEmpty]
 
-@[simp] lemma dens_eq_zero : dens[𝕜] s = 0 ↔ s = ∅ := by simp [dens]
-
-lemma dens_ne_zero : dens[𝕜] s ≠ 0 ↔ s.Nonempty :=
-  dens_eq_zero.not.trans nonempty_iff_ne_empty.symm
+lemma dens_ne_zero : dens[𝕜] s ≠ 0 ↔ s.Nonempty := dens_eq_zero.not.trans nonempty_iff_ne_empty.symm
 
 protected alias ⟨_, Nonempty.dens_ne_zero⟩ := dens_ne_zero
+
+variable [Nonempty α]
+
+@[simp] lemma dens_univ : dens[𝕜] (univ : Finset α) = 1 := by simp [dens, card_univ]
 
 @[simp] lemma dens_eq_one : dens[𝕜] s = 1 ↔ s = univ := by
   simp [dens, div_eq_one_iff_eq, card_eq_iff_eq_univ]
@@ -64,17 +66,72 @@ end Semifield
 section LinearOrderedSemifield
 variable [LinearOrderedSemifield 𝕜] {s t : Finset α} {a b : α}
 
+@[simp] lemma dens_nonneg : 0 ≤ dens[𝕜] s := by unfold dens; positivity
+
 lemma dens_le_dens (h : s ⊆ t) : dens[𝕜] s ≤ dens t :=
   div_le_div_of_nonneg_right (mod_cast card_mono h) $ by positivity
 
+@[mono] lemma dens_mono : Monotone (dens : Finset α → 𝕜) := fun _ _ ↦ dens_le_dens
+
+@[simp]
+lemma dens_pos [CharZero 𝕜] : 0 < dens[𝕜] s ↔ s.Nonempty := dens_nonneg.gt_iff_ne.trans dens_ne_zero
+
+protected alias ⟨_, Nonempty.dens_pos⟩ := dens_pos
+
+end LinearOrderedSemifield
+end Finset
+
+open Finset
+namespace Mathlib.Meta.Positivity
+open Qq Lean Meta
+
+@[positivity Finset.dens _]
+def evalFinsetDens : PositivityExt where eval {u 𝕜} _ _ e := do
+  match e with
+  | ~q(@Finset.dens _ $α $instα $inst𝕜 $s) =>
+    let so : Option Q(Finset.Nonempty $s) ← do -- TODO: It doesn't complain if we make a typo?
+      try
+        let _no ← synthInstanceQ q(Nonempty $α)
+        match s with
+        | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $α)))
+        | _ => pure none
+      catch _ => do
+        let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
+        pure (some (.fvar fv))
+    match so with
+    | .some (fi : Q(Finset.Nonempty $s)) =>
+      try {
+        try
+          let inst𝕜ordfield ← synthInstanceQ q(LinearOrderedSemifield $𝕜)
+          let inst𝕜char ← synthInstanceQ q(CharZero $𝕜)
+          return .positive
+            (q(@Nonempty.dens_pos $𝕜 $α $instα $inst𝕜ordfield $s $inst𝕜char $fi) : Expr)
+        catch _ =>
+          let inst𝕜char ← synthInstanceQ q(CharZero $𝕜)
+          return .nonzero (q(@Nonempty.dens_ne_zero $𝕜 $α $instα $inst𝕜 $s $inst𝕜char $fi) : Expr)
+      } catch _ =>
+        let inst𝕜ordfield ← synthInstanceQ q(LinearOrderedSemifield $𝕜)
+        assumeInstancesCommute
+        return .nonnegative q(@dens_nonneg $𝕜 $α $instα $inst𝕜ordfield $s)
+    | _ =>
+      let inst𝕜ordfield ← synthInstanceQ q(LinearOrderedSemifield $𝕜)
+      assumeInstancesCommute
+      return .nonnegative q(@dens_nonneg $𝕜 $α $instα $inst𝕜ordfield $s)
+  | _ => throwError "not Finset.dens"
+
+variable {𝕜 α : Type*} [Fintype α] {s : Finset α}
+
+example [LinearOrderedSemifield 𝕜] : 0 ≤ dens[𝕜] s := by positivity
+example [LinearOrderedSemifield 𝕜] {s : Finset α} (hs : s.Nonempty) : 0 < dens[𝕜] s := by positivity
+example [LinearOrderedSemifield 𝕜] [Nonempty α] : 0 < dens[𝕜] (univ : Finset α) := by positivity
+example [PartialOrder 𝕜] [Semifield 𝕜] [CharZero 𝕜] {s : Finset α} (hs : s.Nonempty) :
+    dens[𝕜] s ≠ 0 := by positivity
+example [PartialOrder 𝕜] [Semifield 𝕜] [CharZero 𝕜] [Nonempty α] :
+    dens[𝕜] (univ : Finset α) ≠ 0 := by positivity
+
+end Mathlib.Meta.Positivity
+
 #exit
-@[mono]
-lemma dens_mono : Monotone (@dens α) := by apply dens_le_of_subset
-
-lemma dens_pos : 0 < dens s ↔ s.Nonempty :=
-  pos_iff_ne_zero.trans <| (not_congr dens_eq_zero).trans nonempty_iff_ne_empty.symm
-
-alias ⟨_, Nonempty.dens_pos⟩ := dens_pos
 
 section InsertErase
 

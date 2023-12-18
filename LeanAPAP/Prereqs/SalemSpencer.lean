@@ -1,7 +1,7 @@
 import Mathlib.Combinatorics.Additive.SalemSpencer
 import LeanAPAP.Mathlib.Data.Nat.Parity
 import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
-import LeanAPAP.Prereqs.Convolution.Norm
+import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 
 open Finset Fintype Function
 
@@ -9,12 +9,12 @@ open scoped BigOperators Pointwise
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {s : Finset G}
 
-lemma AddSalemSpencer.l2inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
+lemma AddSalemSpencer.l2Inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
     (hs : AddSalemSpencer (s : Set G)) :
     ⟪μ s ∗ μ s, μ (s.image (2 • ·))⟫_[ℝ] = (s.card ^ 2 : ℝ)⁻¹ := by
   obtain rfl | hs' := s.eq_empty_or_nonempty
   · simp
-  simp only [l2inner_eq_sum, sum_conv_mul, ←sum_product', IsROrC.conj_to_real]
+  simp only [l2Inner_eq_sum, sum_conv_mul, ←sum_product', IsROrC.conj_to_real]
   rw [←diag_union_offDiag univ, sum_union (disjoint_diag_offDiag _), sum_diag, ←
     sum_add_sum_compl s, @sum_eq_card_nsmul _ _ _ _ _ (s.card ^ 3 : ℝ)⁻¹, nsmul_eq_mul,
     Finset.sum_eq_zero, Finset.sum_eq_zero, add_zero, add_zero, pow_succ, mul_inv,

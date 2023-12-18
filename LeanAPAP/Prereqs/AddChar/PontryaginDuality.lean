@@ -1,6 +1,6 @@
 import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.ModEq
-import LeanAPAP.Mathlib.Analysis.Complex.Circle
+import LeanAPAP.Prereqs.AddChar.Circle
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
 

@@ -1,6 +1,6 @@
 import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Tactic.Positivity
-import LeanAPAP.Prereqs.Convolution.Basic
+import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 
 open Finset Function Real
 open scoped BigOperators ComplexConjugate NNReal Pointwise

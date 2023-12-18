@@ -1,7 +1,7 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Pigeonhole
 import LeanAPAP.Mathlib.Data.Finset.Card
-import LeanAPAP.Prereqs.Convolution.Norm
+import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Misc
 
@@ -16,11 +16,10 @@ open Finset
 open scoped BigOperators
 
 lemma my_markov (hc : 0 < c) (hg : ∀ a ∈ A, 0 ≤ g a) (h : ∑ a in A, g a ≤ ε * c * A.card) :
-    (1 - ε) * A.card ≤ (A.filter fun a ↦ g a ≤ c).card := by
+    (1 - ε) * A.card ≤ (A.filter (g · ≤ c)).card := by
   classical
-  have :=
-    h.trans'
-      (sum_le_sum_of_subset_of_nonneg (filter_subset (fun a ↦ ¬g a ≤ c) A) fun i hi _ ↦ hg _ hi)
+  have := h.trans'
+    (sum_le_sum_of_subset_of_nonneg (filter_subset (¬g · ≤ c) A) fun i hi _ ↦ hg _ hi)
   have :=
     (card_nsmul_le_sum _ _ c (by simp (config := { contextual := true }) [le_of_lt])).trans this
   rw [nsmul_eq_mul, mul_right_comm] at this
@@ -32,7 +31,7 @@ lemma my_other_markov (hc : 0 ≤ c) (hε : 0 ≤ ε) (hg : ∀ a ∈ A, 0 ≤ g
     (h : ∑ a in A, g a ≤ ε * c * A.card) : (1 - ε) * A.card ≤ (A.filter fun a ↦ g a ≤ c).card := by
   rcases hc.lt_or_eq with (hc | rfl)
   · exact my_markov hc hg h
-  simp only [MulZeroClass.mul_zero, MulZeroClass.zero_mul] at h
+  simp only [MulZeroClass.mul_zero, zero_mul] at h
   classical
   rw [one_sub_mul, sub_le_comm, ←cast_card_sdiff (filter_subset _ A), ←filter_not,
     filter_false_of_mem]
@@ -109,9 +108,7 @@ lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
   refine' this.trans_eq _
   rw [l]
   congr with a : 3
-  refine' (@strictMonoOn_pow ℝ _ _ _).le_iff_le _ _
-  any_goals rw [Set.mem_Ici]
-  any_goals positivity
+  refine pow_le_pow_iff_left ?_ ?_ ?_ <;> positivity
 
 lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
     ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
@@ -148,7 +145,7 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
     exact hm'
   rw [←hmeq', conv_comm]
   refine' (lpNorm_conv_le this.le _ _).trans _
-  rw [L1norm_mu hA, mul_one]
+  rw [l1Norm_mu hA, mul_one]
 
 lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m)  (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :
     (8 * m : ℝ) ^ m * k ^ (m - 1) * A.card ^ k * k * (2 * ‖f‖_[2 * m]) ^ (2 * m) ≤
@@ -172,7 +169,7 @@ lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m)  (hk : (64 : ℝ) * m / ε ^ 2 �
   · refine' pow_nonneg _ _
     refine' sq_nonneg _
   rw [←mul_pow]
-  refine' pow_le_pow_of_le_left _ _ _
+  refine' pow_le_pow_left _ _ _
   · positivity
   rw [mul_right_comm, mul_comm _ ε, mul_pow, ←mul_assoc, sq (k : ℝ), ←mul_assoc]
   refine' mul_le_mul_of_nonneg_right _ (Nat.cast_nonneg k)
@@ -251,10 +248,10 @@ lemma just_the_triangle_inequality {t : G} {a : Fin k → G} (ha : a ∈ l k m �
     rwa [lpNorm_sub_comm, ←h₄, ←h₃]
   have : (0 : ℝ) < k := by positivity
   refine' le_of_mul_le_mul_left _ this
-  rw [←nsmul_eq_mul, ←lpNorm_nsmul' hp _ (_ - mu A ∗ f), nsmul_sub, ←
+  rw [←nsmul_eq_mul, ← lpNorm_nsmul hp _ (_ - mu A ∗ f), nsmul_sub, ←
     translate_smul_right (-t) (mu A ∗ f) k, mul_assoc, mul_left_comm, two_mul ((k : ℝ) * _), ←
     mul_assoc]
-  exact (lpNorm_sub_le_lpNorm_sub_add_lpNorm_sub hp).trans (add_le_add h₅₁ h₁)
+  exact (lpNorm_sub_le_lpNorm_sub_add_lpNorm_sub hp _ _).trans (add_le_add h₅₁ h₁)
 
 lemma big_shifts_step2 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
     (∑ x in L + S.wideDiag k, ∑ l in L, ∑ s in S.wideDiag k, ite (l + s = x) (1 : ℝ) 0) ^ 2 ≤
@@ -344,10 +341,8 @@ lemma T_bound {K : ℝ} (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64
     rw [hk, div_pow, div_div_eq_mul_div, mul_right_comm]
     congr 3
     norm_num
-  have hK : 0 < K := by refine' zero_lt_two.trans_le hK'
-  have : (0 : ℝ) < Ac ^ k := by
-    refine' pow_pos _ _
-    rwa [Nat.cast_pos]
+  have hK : 0 < K := by positivity
+  have : (0 : ℝ) < Ac ^ k := by positivity
   refine' le_of_mul_le_mul_left _ this
   have : (Ac : ℝ) ^ k ≤ K * Lc := by
     rw [div_le_iff'] at h₂
@@ -361,7 +356,7 @@ lemma T_bound {K : ℝ} (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64
   refine' (mul_le_mul_of_nonneg_left h₁ hK.le).trans _
   rw [Nat.cast_mul, ←mul_assoc, ←mul_assoc, Nat.cast_pow]
   refine' mul_le_mul_of_nonneg_right _ (Nat.cast_nonneg _)
-  refine' (mul_le_mul_of_nonneg_left (pow_le_pow_of_le_left (Nat.cast_nonneg _) h₃ k) hK.le).trans _
+  refine' (mul_le_mul_of_nonneg_left (pow_le_pow_left (Nat.cast_nonneg _) h₃ k) hK.le).trans _
   rw [mul_pow, ←mul_assoc, ←pow_succ]
   refine' mul_le_mul_of_nonneg_right _ (pow_nonneg (Nat.cast_nonneg _) _)
   rw [←Real.rpow_nat_cast]

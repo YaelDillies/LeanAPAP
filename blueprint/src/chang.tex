@@ -17,10 +17,14 @@ It follows that
 \uses{dissociated}
 \lean{rudin_exp_ineq}
 \leanok
-If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support, then $\E \exp(\Re f) \le \exp(\frac{\norm f_2^2} 2)$.
+If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support, then
+$$\E \exp(\Re f) \le \exp\left(\frac{\norm f_2^2} 2\right)$$
+It follows that
+\[\mathbb{E}_x e^{\abs{\Re f(x)}} \leq 2e^{\| f\|_2^2/2}.\]
 \end{lemma}
 \begin{proof}
 \uses{mzi_complex}
+\leanok
 Using the convexity of $t\mapsto e^{tx}$ (for all $x\geq 0$ and $t\in[-1,1]$) we have
 \[e^{tx}\leq \cosh(x)+t\sinh(x).\]
 It follows (taking $x=\lvert z\rvert$ and $t=\Re(z)/\lvert z\rvert$) that, for any $z\in \mathbb{C}$,
@@ -30,10 +34,10 @@ In particular, if $c_\gamma\in \mathbb{C}$ with $\lvert c_\gamma\rvert=1$ is suc
 e^{\Re f(x)}
 &= \exp\left( \Re \sum_{\gamma\in\Gamma}\widehat{f}(\gamma)\gamma(x)\right)\\
 &=\prod_{\gamma\in \Gamma} \exp\left( \Re \widehat{f}(\gamma)\gamma(x)\right)\\
-&\leq \prod_{\gamma\in \Gamma}\left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma))\right).
+&\leq \prod_{\gamma\in \Gamma}\left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma)\rvert)\right).
 \end{align*}
 Therefore
-\[\mathbb{E}_x e^{\Re f(x)}\leq \mathbb{E}_x \prod_{\gamma\in \Gamma} \left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma))\right).\]
+\[\mathbb{E}_x e^{\Re f(x)}\leq \mathbb{E}_x \prod_{\gamma\in \Gamma} \left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma)\rvert)\right).\]
 Using $\Re z=(z+\overline{z})/2$ the product here can be expanded as the sum of
 \[\prod_{\gamma\in \Gamma_2}\frac{c_\gamma}{2}\prod_{\gamma\in \Gamma_3}\frac{\overline{c_\gamma}}{2}\left(\prod_{\gamma\in \Gamma_1}\cosh(\lvert \widehat{f}(\gamma)\rvert)\right)\left(\prod_{\gamma\in \Gamma_2\cup\Gamma_3}\sinh(\lvert \widehat{f}(\gamma)\rvert)\right)\left(\sum_{\gamma\in \Gamma_2}\gamma-\sum_{\lambda\in \Gamma_3}\lambda\right)(x)\]
 as $\Gamma_1\sqcup \Gamma_2\sqcup \Gamma_3=\Gamma$ ranges over all partitions of $\Gamma$ into three disjoint parts. Using the definition of dissociativity we see that
@@ -50,17 +54,17 @@ The conclusion now follows using $\cosh(x) \leq e^{x^2/2}$ and $\sum_{\gamma\in 
 \uses{dissociated}
 \lean{rudin_ineq}
 \leanok
-If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support and $p \ge 2$ is an integer, then $\norm{f}_p \le 2 * \sqrt{pe} \norm f_2$.
+If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support and $p \ge 2$ is an integer, then $\norm{f}_p \le 4\sqrt{pe} \norm f_2$.
 \end{lemma}
 \begin{proof}
 \uses{rudin_exp}
 \leanok
-It is enough to show that $\norm{\Re f}_p \le \sqrt{pe} \norm f_2$ as then
-$$\norm{f}_p \le \norm{\Re f}_p + \norm{i \Im f}_p = \norm{\Re f}_p + \norm{\Re (-if)}_p \le 2 \sqrt{pe} \norm f_2$$
+It is enough to show that $\norm{\Re f}_p \le 2\sqrt{pe} \norm f_2$ as then
+$$\norm{f}_p \le \norm{\Re f}_p + \norm{i \Im f}_p = \norm{\Re f}_p + \norm{\Re (-if)}_p \le 4\sqrt{pe} \norm f_2$$
 
 If $f = 0$, the result is obvious. So assume $f \ne 0$. $\norm{f}_2 > 0$, so WLOG $\norm{f}_2 = \sqrt p$.
 
-Rudin's exponential inequality for $f$ becomes $\E \exp|\Re f| \le 2\exp(\frac p 2) \le (2 * \sqrt e)^p$. Using $\frac{x^p}{p!} \le e^x$ for positive $x$, we get
+Rudin's exponential inequality for $f$ becomes $\E \exp|\Re f| \le 2\exp(\frac p 2) = (2\sqrt e)^p$. Using $\frac{x^p}{p!} \le e^x$ for positive $x$, we get
 $$\frac{\norm{\Re f}_p^p}{p^p} \le \frac{\norm{\Re f}_p^p}{p!} = \E \frac{|\Re f|^p}{p!} \le \E \exp|\Re f|$$
 Rearranging, $\norm{\Re f}_p \le 2 p\sqrt{e} = 2 \sqrt{pe} \norm f_2$.
 % TODO: Normalisation issue

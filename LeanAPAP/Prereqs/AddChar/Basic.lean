@@ -3,8 +3,8 @@ import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
 import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
 import LeanAPAP.Mathlib.Data.IsROrC.Basic
 import LeanAPAP.Mathlib.LinearAlgebra.FiniteDimensional
-import LeanAPAP.Prereqs.Convolution.Basic
-import LeanAPAP.Prereqs.LpNorm
+import LeanAPAP.Prereqs.Discrete.Convolution.Basic
+import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 
 /-!
 ### TODO
@@ -176,8 +176,8 @@ variable [IsROrC R]
 lemma inv_apply_eq_conj [Finite G] (ψ : AddChar G R) (x : G) : (ψ x)⁻¹ = conj (ψ x) :=
   IsROrC.inv_eq_conj $ norm_apply _ _
 
-protected lemma l2inner_self [Fintype G] (ψ : AddChar G R) :
-    ⟪(ψ : G → R), ψ⟫_[R] = Fintype.card G := l2inner_self_of_norm_eq_one ψ.norm_apply
+protected lemma l2Inner_self [Fintype G] (ψ : AddChar G R) :
+    ⟪(ψ : G → R), ψ⟫_[R] = Fintype.card G := l2Inner_self_of_norm_eq_one ψ.norm_apply
 
 end IsROrC
 
@@ -263,26 +263,29 @@ end DivisionCommMonoid
 section IsROrC
 variable [IsROrC R] {ψ₁ ψ₂ : AddChar G R}
 
-lemma l2inner_eq [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
+lemma map_neg_eq_conj [Finite G] (ψ : AddChar G R) (x : G) : ψ (-x) = conj (ψ x) := by
+  rw [map_neg_eq_inv, IsROrC.inv_eq_conj $ norm_apply _ _]
+
+lemma l2Inner_eq [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
     ⟪(ψ₁ : G → R), ψ₂⟫_[R] = if ψ₁ = ψ₂ then ↑(card G) else 0 := by
   split_ifs with h
-  · rw [h, AddChar.l2inner_self]
+  · rw [h, AddChar.l2Inner_self]
   have : ψ₁⁻¹ * ψ₂ ≠ 1 := by rwa [Ne.def, inv_mul_eq_one]
-  simp_rw [l2inner_eq_sum, ←inv_apply_eq_conj]
+  simp_rw [l2Inner_eq_sum, ←inv_apply_eq_conj]
   simpa [inv_apply'] using sum_eq_zero_iff_ne_zero.2 this
 
-lemma l2inner_eq_zero_iff_ne [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫_[R] = 0 ↔ ψ₁ ≠ ψ₂ := by
-  rw [l2inner_eq, Ne.ite_eq_right_iff (Nat.cast_ne_zero.2 Fintype.card_ne_zero)]
+lemma l2Inner_eq_zero_iff_ne [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫_[R] = 0 ↔ ψ₁ ≠ ψ₂ := by
+  rw [l2Inner_eq, Ne.ite_eq_right_iff (Nat.cast_ne_zero.2 Fintype.card_ne_zero)]
 
-lemma l2inner_eq_card_iff_eq [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫_[R] = card G ↔ ψ₁ = ψ₂ := by
-  rw [l2inner_eq, Ne.ite_eq_left_iff (Nat.cast_ne_zero.2 Fintype.card_ne_zero)]
+lemma l2Inner_eq_card_iff_eq [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫_[R] = card G ↔ ψ₁ = ψ₂ := by
+  rw [l2Inner_eq, Ne.ite_eq_left_iff (Nat.cast_ne_zero.2 Fintype.card_ne_zero)]
 
 variable (G R)
 
 protected lemma linearIndependent [Finite G] : LinearIndependent R ((⇑) : AddChar G R → G → R) := by
   cases nonempty_fintype G
-  exact linearIndependent_of_ne_zero_of_l2inner_eq_zero AddChar.coe_ne_zero fun ψ₁ ψ₂ ↦
-    l2inner_eq_zero_iff_ne.2
+  exact linearIndependent_of_ne_zero_of_l2Inner_eq_zero AddChar.coe_ne_zero fun ψ₁ ψ₂ ↦
+    l2Inner_eq_zero_iff_ne.2
 
 noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
   @Fintype.ofFinite _ (AddChar.linearIndependent G R).finite'

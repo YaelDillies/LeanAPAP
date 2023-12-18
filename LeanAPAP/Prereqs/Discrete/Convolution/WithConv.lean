@@ -1,4 +1,4 @@
-import LeanAPAP.Prereqs.Convolution.Basic
+import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 
 /-!
 # The ring of functions under convolution

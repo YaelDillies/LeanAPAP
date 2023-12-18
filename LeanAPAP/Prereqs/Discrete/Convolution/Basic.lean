@@ -11,9 +11,9 @@ This file defines several versions of the discrete convolution of functions.
 
 ## Main declarations
 
-* `function.conv`: Discrete convolution of two functions
+* `conv`: Discrete convolution of two functions
 * `dconv`: Discrete difference convolution of two functions
-* `iter_conv`: Iterated convolution of a function
+* `iterConv`: Iterated convolution of a function
 
 ## Notation
 
@@ -50,7 +50,7 @@ section CommSemiring
 variable [CommSemiring β] [StarRing β] {f g : α → β}
 
 /-- Convolution -/
-def Function.conv (f g : α → β) : α → β := fun a ↦ ∑ x : α × α with x.1 + x.2 = a , f x.1 * g x.2
+def conv (f g : α → β) : α → β := fun a ↦ ∑ x : α × α with x.1 + x.2 = a , f x.1 * g x.2
 
 /-- Difference convolution -/
 def dconv (f g : α → β) : α → β := fun a ↦ ∑ x : α × α with x.1 - x.2 = a, f x.1 * conj g x.2
@@ -58,7 +58,7 @@ def dconv (f g : α → β) : α → β := fun a ↦ ∑ x : α × α with x.1 -
 /-- The trivial character. -/
 def trivChar : α → β := fun a ↦ if a = 0 then 1 else 0
 
-infixl:71 " ∗ " => Function.conv
+infixl:71 " ∗ " => conv
 infixl:71 " ○ " => dconv
 
 lemma conv_apply (f g : α → β) (a : α) :
@@ -95,6 +95,8 @@ lemma conv_comm (f g : α → β) : f ∗ g = g ∗ f :=
 
 @[simp] lemma conjneg_dconv (f g : α → β) : conjneg (f ○ g) = g ○ f := by
   simp_rw [←conv_conjneg, conjneg_conv, conjneg_conjneg, conv_comm]
+
+@[simp] lemma conjneg_trivChar : conjneg (trivChar : α → β) = trivChar := by ext; simp
 
 lemma conv_assoc (f g h : α → β) : f ∗ g ∗ h = f ∗ (g ∗ h) := by
   ext a
@@ -157,7 +159,7 @@ lemma dconv_smul [Star γ] [DistribSMul γ β] [SMulCommClass γ β β] [StarMod
     (f g : α → β) : f ○ c • g = star c • (f ○ g) := by
   ext a;
     simp only [Pi.smul_apply, smul_sum, dconv_apply, mul_smul_comm, starRingEnd_apply,
-      StarModule.star_smul]
+      star_smul]
 
 alias smul_conv_assoc := smul_conv
 alias smul_dconv_assoc := smul_dconv
