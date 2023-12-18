@@ -77,6 +77,8 @@ lemma conjneg_injective : Injective (conjneg : (α → β) → α → β) :=
 @[simp] lemma conjneg_inj : conjneg f = conjneg g ↔ f = g := conjneg_injective.eq_iff
 lemma conjneg_ne_conjneg : conjneg f ≠ conjneg g ↔ f ≠ g := conjneg_injective.ne_iff
 
+@[simp] lemma conjneg_conj (f : α → β) : conjneg (conj f) = conj (conjneg f) := rfl
+
 @[simp] lemma conjneg_zero : conjneg (0 : α → β) = 0 := by ext; simp
 @[simp] lemma conjneg_one : conjneg (1 : α → β) = 1 := by ext; simp
 @[simp] lemma conjneg_add (f g : α → β) : conjneg (f + g) = conjneg f + conjneg g := by ext; simp

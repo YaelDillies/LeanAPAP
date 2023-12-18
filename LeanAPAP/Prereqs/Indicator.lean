@@ -1,3 +1,4 @@
+import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Finset.Pointwise
 import Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Expect.Basic
@@ -96,13 +97,23 @@ end Semifield
 namespace NNReal
 open scoped NNReal
 
-@[simp, norm_cast] lemma coe_indicate' (s : Finset α) (x : α) : ↑(𝟭_[ℝ≥0] s x) = 𝟭_[ℝ] s x :=
+@[simp, norm_cast] lemma coe_indicate (s : Finset α) (x : α) : ↑(𝟭_[ℝ≥0] s x) = 𝟭_[ℝ] s x :=
   map_indicate NNReal.toRealHom _ _
 
 @[simp] lemma coe_comp_indicate (s : Finset α) : (↑) ∘ 𝟭_[ℝ≥0] s = 𝟭_[ℝ] s := by
-  ext; exact coe_indicate' _ _
+  ext; exact coe_indicate _ _
 
 end NNReal
+
+namespace Complex
+
+@[simp, norm_cast] lemma ofReal_indicate (s : Finset α) (x : α) : ↑(𝟭_[ℝ] s x) = 𝟭_[ℂ] s x :=
+  map_indicate ofReal _ _
+
+@[simp] lemma ofReal_comp_indicate (s : Finset α) : (↑) ∘ 𝟭_[ℝ] s = 𝟭_[ℂ] s := by
+  ext; exact ofReal_indicate _ _
+
+end Complex
 
 section OrderedSemiring
 variable [OrderedSemiring β] {s : Finset α}

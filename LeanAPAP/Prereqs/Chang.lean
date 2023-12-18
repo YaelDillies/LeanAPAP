@@ -15,7 +15,7 @@ import LeanAPAP.Prereqs.Misc
 # Chang's lemma
 -/
 
-open Finset Fintype Real
+open Finset Fintype Function Real
 open scoped BigOperators ComplexConjugate ComplexOrder NNReal
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] {f : G → ℂ} {η : ℝ} {ψ : AddChar G ℂ}
@@ -108,31 +108,43 @@ lemma spec_hoelder (hη : 0 ≤ η) (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0)
     div_le_iff hG, energy_nsmul, -nsmul_eq_mul, ←nsmul_eq_mul'] using
     general_hoelder hη 1 (fun (_ : G) _ ↦ le_rfl) hΔ hm
 
-noncomputable def changConst : ℝ := 8 * Real.exp 1
+noncomputable def changConst : ℝ := 32 * exp 1
 
 lemma one_lt_changConst : 1 < changConst := one_lt_mul (by norm_num) $ one_lt_exp_iff.2 one_pos
+
+lemma changConst_pos : 0 < changConst := zero_lt_one.trans one_lt_changConst
+
+namespace Mathlib.Meta.Positivity
+open Lean.Meta Qq
+
+/-- Extension for the `positivity` tactic: `changConst` is positive. -/
+@[positivity changConst] def evalChangConst : PositivityExt where eval _ _ _ := do
+  return .positive (q(changConst_pos) : Lean.Expr)
+
+example : 0 < changConst := by positivity
+
+end Mathlib.Meta.Positivity
 
 lemma AddDissociated.boringEnergy_le [DecidableEq G] {s : Finset G}
     (hs : AddDissociated (s : Set G)) (n : ℕ) :
     boringEnergy n s ≤ changConst ^ n * n ^ n * s.card ^ n := by
-  obtain rfl | hn := n.eq_zero_or_pos
+  obtain rfl | hn := eq_or_ne n 0
   · simp
-  have := rudin_ineq (le_mul_of_one_le_right zero_le_two $ Nat.one_le_iff_ne_zero.2 hn.ne')
-    (cft (𝟭_[ℂ] s)) ?_
-  sorry
-  sorry
-  -- · replace this := pow_le_pow_left ?_ this (2 * n)
-  --   rw [lpNorm_cft_indicate_pow] at this
-  --   convert this using 0
-  --   simp_rw [mul_pow, pow_mul]
-  --   rw [← exp_nsmul, sq_sqrt, sq_sqrt]
-  --   simp_rw [←mul_pow]
-  --   simp [changConst]
-  --   ring_nf
-  --   all_goals sorry -- positivity
-  -- rwa [dft_dft, ←nsmul_eq_mul, support_smul', support_comp_eq_preimage, support_indicate,
-  --   Set.preimage_comp, Set.neg_preimage, addDissociated_neg, AddEquiv.addDissociated_preimage]
-  -- sorry -- positivity
+  calc
+    _ = ‖dft (𝟭 s)‖ₙ_[↑(2 * n)] ^ (2 * n) := by rw [nlpNorm_dft_indicate_pow]
+    _ ≤ (4 * rexp 2⁻¹ * sqrt ↑(2 * n) * ‖dft (𝟭 s)‖ₙ_[2]) ^ (2 * n) := by
+        gcongr
+        refine rudin_ineq (le_mul_of_one_le_right zero_le_two $ Nat.one_le_iff_ne_zero.2 hn)
+          (dft (𝟭_[ℂ] s)) ?_
+        rwa [cft_dft, support_comp_eq_preimage, support_indicate, Set.preimage_comp,
+          Set.neg_preimage, addDissociated_neg, AddEquiv.addDissociated_preimage]
+    _ = _ := by
+        simp_rw [mul_pow, pow_mul, nl2Norm_dft_indicate]
+        rw [← exp_nsmul, sq_sqrt, sq_sqrt]
+        simp_rw [←mul_pow]
+        simp [changConst]
+        ring_nf
+        all_goals positivity
 
 /-- **Chang's lemma**. -/
 lemma chang (hf : f ≠ 0) (hη : 0 < η) :
@@ -157,7 +169,7 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
     _ ≤ (changConst * Δ.card * β) ^ β * ((η / η) ^ (2 * β) * α f * exp β) := by
         rw [div_self hη.ne', one_pow, one_mul]
     _ = _ := by ring
-  refine' le_mul_of_one_le_right (by sorry) _ -- positivity
+  refine' le_mul_of_one_le_right (by positivity) _
   rw [←inv_pos_le_iff_one_le_mul']
   exact inv_le_exp_curlog.trans $ exp_monotone $ Nat.le_ceil _
-  all_goals sorry -- positivity
+  all_goals positivity

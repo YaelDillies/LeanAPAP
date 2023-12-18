@@ -80,8 +80,19 @@ lemma nconv_comm (f g : α → β) : f ∗ₙ g = g ∗ₙ f :=
 @[simp] lemma conj_nconv (f g : α → β) : conj (f ∗ₙ g) = conj f ∗ₙ conj g :=
   funext fun a ↦ by simp only [Pi.conj_apply, nconv_apply, map_expect, map_mul]
 
+@[simp] lemma conj_ndconv (f g : α → β) : conj (f ○ₙ g) = conj f ○ₙ conj g := by
+  simp_rw [← nconv_conjneg, conj_nconv, conjneg_conj]
+
 @[simp] lemma conj_trivNChar : conj (trivNChar : α → β) = trivNChar := by
   ext; simp; split_ifs <;> simp
+
+lemma IsSelfAdjoint.nconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ∗ₙ g) :=
+  (conj_nconv _ _).trans $ congr_arg₂ _ hf hg
+
+lemma IsSelfAdjoint.ndconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ○ₙ g) :=
+  (conj_ndconv _ _).trans $ congr_arg₂ _ hf hg
+
+@[simp] lemma isSelfAdjoint_trivNChar : IsSelfAdjoint (trivChar : α → β) := conj_trivChar
 
 @[simp]lemma conjneg_nconv (f g : α → β) : conjneg (f ∗ₙ g) = conjneg f ∗ₙ conjneg g := by
   funext a

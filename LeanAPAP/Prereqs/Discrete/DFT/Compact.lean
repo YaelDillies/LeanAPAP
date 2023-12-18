@@ -62,10 +62,18 @@ lemma cft_inversion (f : α → ℂ) (a : α) : ∑ ψ, cft f ψ * ψ a = f a :=
 
 lemma dft_cft_doubleDualEmb (f : α → ℂ) (a : α) : dft (cft f) (doubleDualEmb a) = f (-a) := by
   simp only [← cft_inversion f (-a), mul_comm (conj _), dft_apply, l2Inner_eq_sum, map_neg_eq_inv,
-    AddChar.inv_apply_eq_conj, doubleDualEmb_apply, ← Fintype.card_mul_expect, AddChar.card_eq]
+    AddChar.inv_apply_eq_conj, doubleDualEmb_apply]
+
+lemma cft_dft_doubleDualEmb (f : α → ℂ) (a : α) : cft (dft f) (doubleDualEmb a) = f (-a) := by
+  simp only [← dft_inversion f (-a), mul_comm (conj _), cft_apply, nl2Inner_eq_expect,
+    map_neg_eq_inv, AddChar.inv_apply_eq_conj, doubleDualEmb_apply]
 
 lemma dft_cft (f : α → ℂ) : dft (cft f) = f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
   funext fun a ↦ by simp_rw [Function.comp_apply, map_neg, ←dft_cft_doubleDualEmb,
+      doubleDualEmb_doubleDualEquiv_symm_apply]
+
+lemma cft_dft (f : α → ℂ) : cft (dft f) = f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
+  funext fun a ↦ by simp_rw [Function.comp_apply, map_neg, ←cft_dft_doubleDualEmb,
       doubleDualEmb_doubleDualEquiv_symm_apply]
 
 lemma cft_injective : Injective (cft : (α → ℂ) → AddChar α ℂ → ℂ) := fun f g h ↦

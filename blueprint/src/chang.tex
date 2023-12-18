@@ -170,17 +170,20 @@ Expand out definitions.
 \uses{dissociated, energy}
 \lean{AddDissociated.boringEnergy_le}
 \leanok
-If $A\subseteq G$ is dissociated then $E_{2m}(A) \leq (8e m \abs{A})^m$.
+If $A\subseteq G$ is dissociated then $E_{2m}(A) \leq (32e m \abs{A})^m$.
 \end{lemma}
 \begin{proof}
 \uses{energy_alt, rudin}
-By Lemma~\ref{energy_alt}
-
-\[E_{2m}(A) = \sum_x 1_A^{(m)}(x)^2.\]
-By the definition of dissociativity, $1_A^{(m)}(x)\leq m!$ for all $x\in G$. We are done since
-\[ \sum_x 1_A^{(m)}(x) = \abs{A}^m.\]
-
-TODO(Thomas): This proof is wrong.
+\leanok
+By Lemma~\ref{energy_alt} and Lemma~\ref{rudin}
+\begin{align*}
+  E_{2m}(A)
+  & = \bbE_\gamma \abs{\hat 1_A(\gamma)}^{2m} \\
+  & = \norm{\hat 1_A}_{2m}^{2m} \\
+  & \le (4\sqrt{2em})^{2m} \norm{\hat 1_A}_2^{2m} \\
+  & = (32em)^m \norm{1_A^{(m)}}_2^{2m} \\
+  & = (32em)^m \abs{A}^m
+\end{align*}
 \end{proof}
 
 

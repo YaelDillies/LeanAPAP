@@ -86,6 +86,19 @@ lemma conv_comm (f g : α → β) : f ∗ g = g ∗ f :=
 @[simp] lemma conj_conv (f g : α → β) : conj (f ∗ g) = conj f ∗ conj g :=
   funext fun a ↦ by simp only [Pi.conj_apply, conv_apply, map_sum, map_mul]
 
+@[simp] lemma conj_dconv (f g : α → β) : conj (f ○ g) = conj f ○ conj g := by
+  simp_rw [← conv_conjneg, conj_conv, conjneg_conj]
+
+@[simp] lemma conj_trivChar : conj (trivChar : α → β) = trivChar := by ext; simp
+
+lemma IsSelfAdjoint.conv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ∗ g) :=
+  (conj_conv _ _).trans $ congr_arg₂ _ hf hg
+
+lemma IsSelfAdjoint.dconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ○ g) :=
+  (conj_dconv _ _).trans $ congr_arg₂ _ hf hg
+
+@[simp] lemma isSelfAdjoint_trivChar : IsSelfAdjoint (trivChar : α → β) := conj_trivChar
+
 @[simp]lemma conjneg_conv (f g : α → β) : conjneg (f ∗ g) = conjneg f ∗ conjneg g := by
   funext a
   simp only [conv_apply, conjneg_apply, map_sum, map_mul]
@@ -348,7 +361,7 @@ lemma coe_dconv : (↑((f ○ g) a) : 𝕜) = ((↑) ∘ f ○ (↑) ∘ g) a :=
 end IsROrC
 
 namespace Complex
-variable (f g : α → ℝ) (a : α)
+variable (f g : α → ℝ) (n : ℕ) (a : α)
 
 @[simp, norm_cast]
 lemma coe_conv : (↑((f ∗ g) a) : ℂ) = ((↑) ∘ f ∗ (↑) ∘ g) a := IsROrC.coe_conv _ _ _
@@ -407,6 +420,9 @@ lemma iterConv_mul' (f : α → β) (m n : ℕ) : f ∗^ (m * n) = f ∗^ n ∗^
 @[simp] lemma conj_iterConv (f : α → β) : ∀ n, conj (f ∗^ n) = conj f ∗^ n
   | 0 => by ext; simp
   | n + 1 => by simp [iterConv_succ, conj_iterConv]
+
+lemma IsSelfAdjoint.iterConv (hf : IsSelfAdjoint f) (n : ℕ) : IsSelfAdjoint (f ∗^ n) :=
+  (conj_iterConv _ _).trans $ congr_arg (· ∗^ n) hf
 
 @[simp]
 lemma conjneg_iterConv (f : α → β) : ∀ n, conjneg (f ∗^ n) = conjneg f ∗^ n
@@ -485,10 +501,17 @@ variable [Field β] [StarRing β] [CharZero β]
 end Field
 
 namespace NNReal
-variable {f : α → ℝ≥0}
 
 @[simp, norm_cast]
 lemma coe_iterConv (f : α → ℝ≥0) (n : ℕ) (a : α) : (↑((f ∗^ n) a) : ℝ) = ((↑) ∘ f ∗^ n) a :=
   map_iterConv NNReal.toRealHom _ _ _
 
 end NNReal
+
+namespace Complex
+
+@[simp, norm_cast]
+lemma coe_iterConv (f : α → ℝ) (n : ℕ) (a : α) : (↑((f ∗^ n) a) : ℂ) = ((↑) ∘ f ∗^ n) a :=
+  map_iterConv ofReal _ _ _
+
+end Complex
