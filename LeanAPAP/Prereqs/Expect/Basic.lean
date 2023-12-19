@@ -195,7 +195,6 @@ lemma expect_bij (i : ∀ a ∈ s, κ) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a 
     sum_bij i hi h (fun _ _ _ _ ↦ i_inj _ _ _ _) (by simpa [eq_comm] using i_surj)]
   simpa [eq_comm] using i_surj
 
--- TODO: Backport arguments changes to `prod_nbij`
 lemma expect_nbij (i : ι → κ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
     (i_inj : (s : Set ι).InjOn i) (i_surj : (s : Set ι).SurjOn i t) :
     𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
@@ -216,7 +215,6 @@ lemma expect_nbij' (i : ι → κ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ 
     𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
   expect_bij' (fun a _ ↦ i a) hi h (fun b _ ↦ j b) hj left_inv right_inv
 
--- TODO: Replace `Finset.Equiv.sum_comp_finset`?
 /-- `Finset.expect_equiv` is a specialization of `Finset.expect_bij` that automatically fills in
 most arguments. -/
 lemma expect_equiv (e : ι ≃ κ) (hst : ∀ i, i ∈ s ↔ e i ∈ t) (hfg : ∀ i ∈ s, f i = g (e i)) :

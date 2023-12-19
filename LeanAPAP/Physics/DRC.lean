@@ -35,7 +35,7 @@ private lemma lemma_0 (p : ℕ) (B₁ B₂ A : Finset G) (f : G → ℝ) :
   refine' Fintype.sum_equiv (Equiv.neg $ Fin p → G) _ _ fun s ↦ _
   rw [←smul_mul_assoc, ←smul_mul_smul, card_smul_mu_apply, card_smul_mu_apply, indicate_inter_apply,
     indicate_inter_apply, mul_mul_mul_comm, prod_mul_distrib]
-  simp [c, indicate_inf_apply, ←translate_indicate, sub_eq_add_neg, mul_assoc]
+  simp [c, indicate_inf_apply, ←translate_indicate, sub_eq_add_neg, mul_assoc, add_comm]
 
 private lemma sum_c (p : ℕ) (B A : Finset G) : ∑ s, (B ∩ c p A s).card = A.card ^ p * B.card := by
   simp only [card_eq_sum_indicate, indicate_inter_apply, c, indicate_inf_apply, mul_sum, sum_mul,
@@ -110,8 +110,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         IsROrC.conj_to_real] at hs
       have : 0 ≤ 𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s) := dconv_nonneg indicate_nonneg indicate_nonneg
       -- positivity
-      cases hs.not_le $ mul_nonneg (sum_nonneg fun x _ ↦ mul_nonneg (this _) $ by positivity) $
-        by positivity
+      cases hs.not_le $ mul_nonneg (sum_nonneg fun x _ ↦ mul_nonneg (this _) $ by positivity) $ by
+        positivity
     have : (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
       ≤ (A₁ s).card / B₁.card * ((A₂ s).card / B₂.card)
     · rw [div_mul_div_comm, le_div_iff]

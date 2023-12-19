@@ -1,7 +1,7 @@
 import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.Discrete.DFT.Compact
-import LeanAPAP.Prereqs.Misc
+import LeanAPAP.Prereqs.Curlog
 
 /-!
 # Finite field case
@@ -24,13 +24,14 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
   set p := 2 * ⌈γ.curlog⌉₊
   have hp : 1 < p :=
     Nat.succ_le_iff.1 (le_mul_of_one_le_right zero_le' $ Nat.ceil_pos.2 $ curlog_pos hγ hγ₁)
-  have hp' : (p⁻¹ : ℝ≥0) < 1 := inv_lt_one (by exact_mod_cast hp)
+  have hp' : (p⁻¹ : ℝ≥0) < 1 := inv_lt_one $ mod_cast hp
+  have hp'' : (p : ℝ≥0).IsConjExponent _ := .conjExponent $ mod_cast hp
   rw [mul_comm, ←div_div, div_le_iff (zero_lt_two' ℝ)]
   calc
     _ ≤ _ := div_le_div_of_le (card G).cast_nonneg hAC
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
-    _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[↑(1 - (p : ℝ≥0)⁻¹ : ℝ≥0)⁻¹] :=
-      (abs_l2Inner_le_lpNorm_mul_lpNorm ⟨by exact_mod_cast hp, ?_⟩ _ _)
+    _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[NNReal.conjExponent p] :=
+        abs_l2Inner_le_lpNorm_mul_lpNorm hp'' _ _
     _ ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-(p : ℝ)⁻¹) * γ ^ (-(p : ℝ)⁻¹)) :=
         mul_le_mul (lpNorm_conv_le_lpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
           (by positivity) (by positivity)
@@ -40,10 +41,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
   · rw [←balance_conv, balance, l2Inner_sub_left, l2Inner_const_left, expect_conv, sum_mu ℝ hA,
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ←mul_inv_cancel, ←mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left] <;> positivity
-  · rw [NNReal.coe_inv, NNReal.coe_sub hp'.le]
-    simp
-  · rw [lpNorm_mu (one_le_inv (tsub_pos_of_lt hp') tsub_le_self) hC, NNReal.coe_inv,
-      NNReal.coe_sub hp'.le, NNReal.coe_one, inv_inv, sub_sub_cancel_left, ←mul_rpow]
+  · rw [lpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_nat_cast, ←mul_rpow]
     rw [le_div_iff, mul_comm] at hγC
     refine' rpow_le_rpow_of_nonpos _ hγC (neg_nonpos.2 _)
     all_goals positivity
@@ -58,7 +56,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
     rw [←neg_mul, rpow_mul, one_div, rpow_inv_le_iff_of_pos]
     refine' (rpow_le_rpow_of_exponent_ge hγ hγ₁ $ neg_le_neg $
       inv_le_inv_of_le (curlog_pos hγ hγ₁) $ Nat.le_ceil _).trans $
-        (rpow_neg_inv_curlog hγ.le hγ₁).trans $ exp_one_lt_d9.le.trans $ by norm_num
+        (rpow_neg_inv_curlog_le hγ.le hγ₁).trans $ exp_one_lt_d9.le.trans $ by norm_num
     all_goals positivity
 
 variable {q n : ℕ} [Module (ZMod q) G] {A₁ A₂ : Finset G} (S : Finset G) {α : ℝ}

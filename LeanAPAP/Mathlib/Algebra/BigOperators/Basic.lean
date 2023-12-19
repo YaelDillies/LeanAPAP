@@ -212,17 +212,29 @@ lemma prod_mul_prod_comm (f g h i : α → β) :
     (∏ a in s, f a * g a) * ∏ a in s, h a * i a = (∏ a in s, f a * h a) * ∏ a in s, g a * i a := by
   simp_rw [prod_mul_distrib, mul_mul_mul_comm]
 
+-- TODO: Backport arguments changes to `card_congr` and `prod_bij`
 @[to_additive]
 lemma prod_nbij (i : α → γ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
-    (i_inj : ∀ a₁ a₂, a₁ ∈ s → a₂ ∈ s → i a₁ = i a₂ → a₁ = a₂)
-    (i_surj : ∀ b ∈ t, ∃ a ∈ s, b = i a) : ∏ x in s, f x = ∏ x in t, g x :=
-  prod_bij (fun a _ ↦ i a) hi h i_inj $ by simpa using i_surj
+    (i_inj : (s : Set α).InjOn i) (i_surj : (s : Set α).SurjOn i t) :
+    ∏ x in s, f x = ∏ x in t, g x :=
+  prod_bij (fun a _ ↦ i a) hi h (fun a b ha hb ↦ i_inj ha hb) $ by
+    simpa [Set.SurjOn, Set.subset_def, eq_comm] using i_surj
 
 @[to_additive]
 lemma prod_nbij' (i : α → γ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a)) (j : γ → α)
     (hj : ∀ a ∈ t, j a ∈ s) (left_inv : ∀ a ∈ s, j (i a) = a) (right_inv : ∀ a ∈ t, i (j a) = a) :
     ∏ x in s, f x = ∏ x in t, g x :=
   prod_bij' (fun a _ ↦ i a) hi h (fun b _ ↦ j b) hj left_inv right_inv
+
+-- TODO: Replace `Finset.Equiv.sum_comp_finset`?
+variable {ι κ α : Type*} [CommMonoid α] {s : Finset ι} {t : Finset κ} {f : ι → α} {g : κ → α} in
+/-- `Finset.prod_equiv` is a specialization of `Finset.prod_bij` that automatically fills in
+most arguments. -/
+@[to_additive "`Finset.sum_equiv` is a specialization of `Finset.sum_bij` that automatically fills
+in most arguments."]
+lemma prod_equiv (e : ι ≃ κ) (hst : ∀ i, i ∈ s ↔ e i ∈ t) (hfg : ∀ i ∈ s, f i = g (e i)) :
+    ∏ i ∈ s, f i = ∏ i ∈ t, g i :=
+  prod_nbij e (fun i ↦ (hst _).1) hfg (e.injective.injOn _) fun i hi ↦ ⟨e.symm i, by simpa [hst]⟩
 
 -- TODO: Replace `prod_ite_one`
 @[to_additive]
@@ -248,8 +260,8 @@ lemma prod_union_eq_right (hs : ∀ a ∈ s₁, a ∉ s₂ → f a = 1) :
 lemma prod_diag (s : Finset α) (f : α × α → β) : ∏ i in s.diag, f i = ∏ i in s, f (i, i) :=
   Eq.symm $
     prod_nbij (fun i ↦ (i, i)) (fun _i hi ↦ mem_diag.2 ⟨hi, rfl⟩) (fun _i _ ↦ rfl)
-      (fun _i _j _ _ h ↦ (Prod.ext_iff.1 h).1) fun i hi ↦
-      ⟨i.1, (mem_diag.1 hi).1, Prod.ext rfl (mem_diag.1 hi).2.symm⟩
+      (fun _ _ _ _ h ↦ (Prod.ext_iff.1 h).1) fun i hi ↦
+      ⟨i.1, (mem_diag.1 hi).1, Prod.ext rfl (mem_diag.1 hi).2⟩
 
 end Finset
 

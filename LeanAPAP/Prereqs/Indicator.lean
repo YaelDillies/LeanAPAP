@@ -3,6 +3,7 @@ import Mathlib.Data.Finset.Pointwise
 import Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
+import LeanAPAP.Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Data.Fintype.Lattice
 import LeanAPAP.Prereqs.Translate
 
@@ -179,7 +180,7 @@ lemma card_smul_mu [CharZero β] (s : Finset α) : s.card • μ_[β] s = 𝟭 s
   · rw [mul_one, mul_inv_cancel]
     rw [Nat.cast_ne_zero, ←pos_iff_ne_zero, Finset.card_pos]
     exact ⟨_, h⟩
-  · rw [MulZeroClass.mul_zero, MulZeroClass.mul_zero]
+  · rw [mul_zero, mul_zero]
 
 lemma card_smul_mu_apply [CharZero β] (s : Finset α) (x : α) : s.card • μ_[β] s x = 𝟭 s x :=
   congr_fun (card_smul_mu β _) _
@@ -227,6 +228,88 @@ variable [LinearOrderedSemifield β] {s : Finset α}
 protected alias ⟨_, Finset.Nonempty.mu_pos⟩ := mu_pos
 
 end LinearOrderedSemifield
+
+section Pointwise
+
+section Semiring
+variable [Semiring β]
+
+section AddGroup
+variable {G : Type*} [AddGroup G] [AddAction G α]
+
+@[simp]
+lemma indicate_vadd (g : G) (s : Finset α) (a : α) : 𝟭_[β] (g +ᵥ s) a = 𝟭 s (-g +ᵥ a) :=
+  if_congr neg_vadd_mem_iff.symm rfl rfl
+
+end AddGroup
+
+section Group
+variable {G : Type*} [Group G] [MulAction G α]
+
+@[to_additive existing, simp]
+lemma indicate_smul (g : G) (s : Finset α) (a : α) : 𝟭_[β] (g • s) a = 𝟭 s (g⁻¹ • a) :=
+  if_congr inv_smul_mem_iff.symm rfl rfl
+
+end Group
+
+section AddGroup
+variable [AddGroup α]
+
+@[simp]
+lemma indicate_neg (s : Finset α) (a : α) : 𝟭_[β] (-s) a = 𝟭 s (-a) := if_congr mem_neg' rfl rfl
+
+end AddGroup
+
+section Group
+variable [Group α]
+
+@[to_additive existing, simp]
+lemma indicate_inv (s : Finset α) (a : α) : 𝟭_[β] s⁻¹ a = 𝟭 s a⁻¹ := if_congr mem_inv' rfl rfl
+
+end Group
+end Semiring
+
+section Semifield
+variable [Semifield β]
+
+section AddGroup
+variable {G : Type*} [AddGroup G] [AddAction G α]
+
+@[simp]
+lemma mu_vadd (g : G) (s : Finset α) (a : α) : μ_[β] (g +ᵥ s) a = μ s (-g +ᵥ a) := by
+  simp [mu]; rw [Pi.smul_apply, Pi.smul_apply]; simp
+
+end AddGroup
+
+section Group
+variable {G : Type*} [Group G] [MulAction G α]
+
+@[to_additive existing, simp]
+lemma mu_smul (g : G) (s : Finset α) (a : α) : μ_[β] (g • s) a = μ s (g⁻¹ • a) := by
+  simp [mu]; rw [Pi.smul_apply, Pi.smul_apply]; simp
+
+end Group
+
+section AddGroup
+variable [AddGroup α]
+
+@[simp]
+lemma mu_neg (s : Finset α) (a : α) : μ_[β] (-s) a = μ s (-a) := by
+  simp [mu]; rw [Pi.smul_apply, Pi.smul_apply]; simp
+
+end AddGroup
+
+section Group
+variable [Group α]
+
+@[to_additive existing, simp]
+lemma mu_inv (s : Finset α) (a : α) : μ_[β] s⁻¹ a = μ s a⁻¹ := by
+  simp [mu]; rw [Pi.smul_apply, Pi.smul_apply]; simp
+
+end Group
+
+end Semifield
+end Pointwise
 
 namespace Mathlib.Meta.Positivity
 open Lean Meta Qq Function

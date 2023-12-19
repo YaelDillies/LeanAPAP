@@ -7,6 +7,7 @@ import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.IsROrC.Basic
 import LeanAPAP.Mathlib.Data.Real.Archimedean
+import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Mathlib.Data.Real.ENNReal
 import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Finset
@@ -59,12 +60,12 @@ lemma l1Norm_eq_sum (f : ∀ i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by sim
 lemma l0Norm_eq_card (f : ∀ i, α i) : ‖f‖_[0] = {i | f i ≠ 0}.toFinite.toFinset.card :=
   (PiLp.norm_eq_card _).trans $ by simp
 
-lemma linftyNorm_eq_csupr (f : ∀ i, α i) : ‖f‖_[∞] = ⨆ i, ‖f i‖ := PiLp.norm_eq_ciSup _
+lemma linftyNorm_eq_ciSup (f : ∀ i, α i) : ‖f‖_[∞] = ⨆ i, ‖f i‖ := PiLp.norm_eq_ciSup _
 
 @[simp] lemma lpNorm_zero : ‖(0 : ∀ i, α i)‖_[p] = 0 := by
   obtain p | p := p; swap
   obtain rfl | hp := @eq_zero_or_pos _ _ p
-  all_goals simp [linftyNorm_eq_csupr, l0Norm_eq_card, lpNorm_eq_sum, *, ne_of_gt]
+  all_goals simp [linftyNorm_eq_ciSup, l0Norm_eq_card, lpNorm_eq_sum, *, ne_of_gt]
 
 @[simp] lemma lpNorm_of_isEmpty [IsEmpty ι] (p : ℝ≥0∞) (f : ∀ i, α i) : ‖f‖_[p] = 0 := by
   simp [Subsingleton.elim f 0]
@@ -72,7 +73,7 @@ lemma linftyNorm_eq_csupr (f : ∀ i, α i) : ‖f‖_[∞] = ⨆ i, ‖f i‖ :
 @[simp] lemma lpNorm_norm (p : ℝ≥0∞) (f : ∀ i, α i) : ‖fun i ↦ ‖f i‖‖_[p] = ‖f‖_[p] := by
   obtain p | p := p; swap
   obtain rfl | hp := @eq_zero_or_pos _ _ p
-  all_goals simp [linftyNorm_eq_csupr, l0Norm_eq_card, lpNorm_eq_sum, *, ne_of_gt]
+  all_goals simp [linftyNorm_eq_ciSup, l0Norm_eq_card, lpNorm_eq_sum, *, ne_of_gt]
 
 @[simp] lemma lpNorm_neg (f : ∀ i, α i) : ‖-f‖_[p] = ‖f‖_[p] := by simp [←lpNorm_norm _ (-f)]
 
@@ -81,7 +82,7 @@ lemma lpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖_[p] = ‖g - f‖_[p] :=
 
 @[simp] lemma lpNorm_nonneg : 0 ≤ ‖f‖_[p] := by
   obtain p | p := p
-  · simp only [linftyNorm_eq_csupr, ENNReal.none_eq_top]
+  · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top]
     exact Real.iSup_nonneg fun i ↦ norm_nonneg _
   obtain rfl | hp := eq_or_ne p 0
   · simp only [l0Norm_eq_card, ENNReal.some_eq_coe, ENNReal.coe_zero]
@@ -92,7 +93,7 @@ lemma lpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖_[p] = ‖g - f‖_[p] :=
 @[simp] lemma lpNorm_eq_zero : ‖f‖_[p] = 0 ↔ f = 0 := by
   obtain p | p := p
   · cases isEmpty_or_nonempty ι <;>
-      simp [linftyNorm_eq_csupr, ENNReal.none_eq_top, ←sup'_univ_eq_csupr, le_antisymm_iff,
+      simp [linftyNorm_eq_ciSup, ENNReal.none_eq_top, ←sup'_univ_eq_ciSup, le_antisymm_iff,
         Function.funext_iff]
   obtain rfl | hp := eq_or_ne p 0
   · simp [l0Norm_eq_card, eq_empty_iff_forall_not_mem, Function.funext_iff]
@@ -320,7 +321,7 @@ variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0∞}
 @[simp]
 lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ a f‖_[p] = ‖f‖_[p] := by
   obtain p | p := p
-  · simp only [linftyNorm_eq_csupr, ENNReal.none_eq_top, translate_apply]
+  · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top, translate_apply]
     exact (Equiv.subRight _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
   · simp only [l0Norm_eq_card, translate_apply, Ne.def, ENNReal.some_eq_coe, ENNReal.coe_zero,
@@ -335,14 +336,14 @@ lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ 
 @[simp] lemma lpNorm_conj [IsROrC β] (f : α → β) : ‖conj f‖_[p] = ‖f‖_[p] := by
   obtain p | p := p; swap; obtain rfl | hp := eq_or_ne p 0
   all_goals
-    simp only [linftyNorm_eq_csupr, lpNorm_eq_sum, l0Norm_eq_card, ENNReal.some_eq_coe,
+    simp only [linftyNorm_eq_ciSup, lpNorm_eq_sum, l0Norm_eq_card, ENNReal.some_eq_coe,
       ENNReal.none_eq_top, ENNReal.coe_zero, Pi.conj_apply, IsROrC.norm_conj, map_ne_zero, *]
   · simp only [lpNorm_eq_sum hp, Pi.conj_apply, IsROrC.norm_conj]
 
 @[simp] lemma lpNorm_conjneg [IsROrC β] (f : α → β) : ‖conjneg f‖_[p] = ‖f‖_[p] := by
   simp only [conjneg, lpNorm_conj]
   obtain p | p := p
-  · simp only [linftyNorm_eq_csupr, ENNReal.none_eq_top, conjneg, IsROrC.norm_conj]
+  · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top, conjneg, IsROrC.norm_conj]
     exact (Equiv.neg _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
   · simp only [l0Norm_eq_card, Ne.def, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
@@ -464,7 +465,7 @@ end Mathlib.Meta.Positivity
 
 /-! ### Hölder inequality -/
 
-section lpNorm
+section Real
 variable {α : Type*} [Fintype α] {p q : ℝ≥0} {f g : α → ℝ}
 
 @[simp]
@@ -484,38 +485,53 @@ lemma lpNorm_rpow (hp : p ≠ 0) (hq : q ≠ 0) (hf : 0 ≤ f) :
 lemma l1Norm_rpow (hq : q ≠ 0) (hf : 0 ≤ f) : ‖f ^ (q : ℝ)‖_[1] = ‖f‖_[q] ^ (q : ℝ) := by
   simpa only [ENNReal.coe_one, one_mul] using lpNorm_rpow one_ne_zero hq hf
 
-lemma lpNorm_eq_l1Norm_rpow (hp : p ≠ 0) (f : α → ℝ) :
-    ‖f‖_[p] = ‖|f| ^ (p : ℝ)‖_[1] ^ (p⁻¹ : ℝ) := by
-  simp [lpNorm_eq_sum hp, l1Norm_eq_sum, abs_rpow_of_nonneg]
-
-lemma lpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → ℝ) :
-    ‖f‖_[p] ^ (q : ℝ) = ‖|f| ^ (q : ℝ)‖_[p / q] := by
-  rw [←ENNReal.coe_div hq,
-    lpNorm_rpow (div_ne_zero hp hq) hq (LatticeOrderedGroup.abs_nonneg f), lpNorm_abs, ←
-    ENNReal.coe_mul, div_mul_cancel _ hq]
-
---TODO: Generalise the following four to include `f g : α → ℂ`
 /-- **Hölder's inequality**, binary case. -/
-lemma l2Inner_le_lpNorm_mul_lpNorm (hpq : IsConjugateExponent p q) (f g : α → ℝ) :
+lemma l2Inner_le_lpNorm_mul_lpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     ⟪f, g⟫_[ℝ] ≤ ‖f‖_[p] * ‖g‖_[q] := by
   have hp := hpq.ne_zero
   have hq := hpq.symm.ne_zero
   norm_cast at hp hq
-  simpa [l2Inner_eq_sum, lpNorm_eq_sum, *] using inner_le_Lp_mul_Lq _ f g hpq
+  simpa [l2Inner_eq_sum, lpNorm_eq_sum, *] using inner_le_Lp_mul_Lq _ f g hpq.coe
 
 /-- **Hölder's inequality**, binary case. -/
-lemma abs_l2Inner_le_lpNorm_mul_lpNorm (hpq : IsConjugateExponent p q) (f g : α → ℝ) :
+lemma abs_l2Inner_le_lpNorm_mul_lpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     |⟪f, g⟫_[ℝ]| ≤ ‖f‖_[p] * ‖g‖_[q] :=
   abs_l2Inner_le_l2Inner_abs.trans $
     (l2Inner_le_lpNorm_mul_lpNorm hpq _ _).trans_eq $ by simp_rw [lpNorm_abs]
 
+end Real
+
+section Hoelder
+variable {α : Type*} [Fintype α] [IsROrC 𝕜] {p q : ℝ≥0} {f g : α → 𝕜}
+
+lemma lpNorm_eq_l1Norm_rpow (hp : p ≠ 0) (f : α → 𝕜) :
+    ‖f‖_[p] = ‖fun a ↦ ‖f a‖ ^ (p : ℝ)‖_[1] ^ (p⁻¹ : ℝ) := by
+  simp [lpNorm_eq_sum hp, l1Norm_eq_sum, abs_rpow_of_nonneg]
+
+lemma lpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → 𝕜) :
+    ‖f‖_[p] ^ (q : ℝ) = ‖(fun a ↦ ‖f a‖) ^ (q : ℝ)‖_[p / q] := by
+  rw [←ENNReal.coe_div hq, lpNorm_rpow (div_ne_zero hp hq) hq (fun _ ↦ norm_nonneg _), lpNorm_norm,
+    ← ENNReal.coe_mul, div_mul_cancel _ hq]
+
+lemma norm_l2Inner_le (f g : α → 𝕜) : ‖⟪f, g⟫_[𝕜]‖ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] :=
+  (norm_sum_le _ _).trans $ by simp [l2Inner]
+
 /-- **Hölder's inequality**, binary case. -/
-lemma lpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ + q⁻¹ = r⁻¹) (f g : α → ℝ) :
+lemma norm_l2Inner_le_lpNorm_mul_lpNorm (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
+    ‖⟪f, g⟫_[𝕜]‖ ≤ ‖f‖_[p] * ‖g‖_[q] :=
+  calc
+    _ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] := norm_l2Inner_le _ _
+    _ ≤ ‖fun a ↦ ‖f a‖‖_[p] * ‖fun a ↦ ‖g a‖‖_[q] := l2Inner_le_lpNorm_mul_lpNorm hpq _ _
+    _ = ‖f‖_[p] * ‖g‖_[q] := by simp_rw [lpNorm_norm]
+
+/-- **Hölder's inequality**, binary case. -/
+lemma lpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ + q⁻¹ = r⁻¹) (f g : α → 𝕜) :
     ‖f * g‖_[r] ≤ ‖f‖_[p] * ‖g‖_[q] := by
   have hr : r ≠ 0 := by
     rintro rfl
     simp [hp] at hpqr
-  have : |f * g| ^ (r : ℝ) = |f| ^ (r : ℝ) * |g| ^ (r : ℝ) := by ext; simp [mul_rpow, abs_mul]
+  have : (‖(f * g) ·‖ ^ (r : ℝ)) = (‖f ·‖ ^ (r : ℝ)) * (‖g ·‖ ^ (r : ℝ)) := by
+    ext; simp [mul_rpow, abs_mul]
   rw [lpNorm_eq_l1Norm_rpow, rpow_inv_le_iff_of_pos, this, l1Norm_mul_of_nonneg,
     mul_rpow lpNorm_nonneg lpNorm_nonneg, lpNorm_rpow', lpNorm_rpow', ←ENNReal.coe_div, ←
     ENNReal.coe_div]
@@ -528,9 +544,15 @@ lemma lpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ +
   any_goals intro a; dsimp
   all_goals positivity
 
+/-- **Hölder's inequality**, binary case. -/
+lemma l1Norm_mul_le (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
+    ‖f * g‖_[1] ≤ ‖f‖_[p] * ‖g‖_[q] :=
+  lpNorm_mul_le (mod_cast hpq.ne_zero) (mod_cast hpq.symm.ne_zero) _
+    (by simpa using hpq.inv_add_inv_conj) _ _
+
 /-- **Hölder's inequality**, finitary case. -/
 lemma lpNorm_prod_le {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp : ∀ i, p i ≠ 0) (q : ℝ≥0)
-    (hpq : ∑ i in s, (p i)⁻¹ = q⁻¹) (f : ι → α → ℝ) :
+    (hpq : ∑ i in s, (p i)⁻¹ = q⁻¹) (f : ι → α → 𝕜) :
     ‖∏ i in s, f i‖_[q] ≤ ∏ i in s, ‖f i‖_[p i] := by
   induction' s using Finset.cons_induction with i s hi ih generalizing q
   · cases not_nonempty_empty hs
@@ -544,7 +566,7 @@ lemma lpNorm_prod_le {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp 
       (mul_le_mul_of_nonneg_left (ih hs _ (inv_inv _).symm) lpNorm_nonneg)
   exact pos_iff_ne_zero.2 (inv_ne_zero $ hp _)
 
-end lpNorm
+end Hoelder
 
 /-! ### Indicator -/
 

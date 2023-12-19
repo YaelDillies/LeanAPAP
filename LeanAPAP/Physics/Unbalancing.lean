@@ -199,8 +199,8 @@ transform. -/
 lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (ν : G → ℝ≥0)
     (f : G → ℝ) (g h : G → ℂ) (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h)
     (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1) (hε : ε ≤ ‖f‖_[p, ν]) :
-    1 + ε / 2 ≤‖f + 1‖_[(⟨120 / ε * log (3 / ε) * p,
-      by have := log_ε_pos hε₀ hε₁; positivity⟩ : ℝ≥0), ν] := by
+    1 + ε / 2 ≤‖f + 1‖_[(⟨120 / ε * log (3 / ε) * p, by
+      have := log_ε_pos hε₀ hε₁; positivity⟩ : ℝ≥0), ν] := by
   have := log_ε_pos hε₀ hε₁
   have :=
     calc

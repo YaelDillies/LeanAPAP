@@ -27,6 +27,6 @@ lemma AddSalemSpencer.l2Inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
   · simpa using fun _ ↦ Or.inl
   · rintro a ha
     simp only [mu_apply, ha, if_true, mul_one, mem_image, exists_prop, mul_ite,
-      MulZeroClass.mul_zero]
+      mul_zero]
     rw [if_pos, card_image_of_injective, pow_three', mul_inv, mul_inv]
     exacts [hG.coprime_two_left.nsmul_bijective.injective, ⟨_, ha, two_smul _ _⟩]

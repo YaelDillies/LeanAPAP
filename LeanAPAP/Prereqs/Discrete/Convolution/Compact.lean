@@ -74,6 +74,22 @@ lemma ndconv_apply (f g : α → β) (a : α) :
 @[simp] lemma ndconv_conjneg (f g : α → β) : f ○ₙ conjneg g = f ∗ₙ g := by
   rw [←nconv_conjneg, conjneg_conjneg]
 
+@[simp] lemma translate_nconv (a : α) (f g : α → β) : τ a f ∗ₙ g = τ a (f ∗ₙ g) :=
+  funext fun b ↦ expect_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
+    (by simp [sub_add_eq_add_sub]) (by simp)
+
+@[simp] lemma translate_ndconv (a : α) (f g : α → β) : τ a f ○ₙ g = τ a (f ○ₙ g) :=
+  funext fun b ↦ expect_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
+    (by simp [sub_right_comm _ a]) (by simp)
+
+@[simp] lemma nconv_translate (a : α) (f g : α → β) : f ∗ₙ τ a g = τ a (f ∗ₙ g) :=
+  funext fun b ↦ expect_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
+    (by simp [← add_sub_assoc]) (by simp)
+
+@[simp] lemma ndconv_translate (a : α) (f g : α → β) : f ○ₙ τ a g = τ (-a) (f ○ₙ g) :=
+  funext fun b ↦ expect_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
+    (by simp [sub_sub_eq_add_sub, ← sub_add_eq_add_sub]) (by simp)
+
 lemma nconv_comm (f g : α → β) : f ∗ₙ g = g ∗ₙ f :=
   funext fun a ↦ Finset.expect_equiv (Equiv.prodComm _ _) (by simp [add_comm]) (by simp [mul_comm])
 

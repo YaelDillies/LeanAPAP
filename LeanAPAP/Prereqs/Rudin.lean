@@ -1,6 +1,6 @@
+import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import LeanAPAP.Mathlib.Algebra.Function.Support
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import LeanAPAP.Mathlib.Data.Complex.Basic
@@ -68,7 +68,7 @@ lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
   have (z : ℂ) : exp (re z) ≤ cosh ‖z‖ + re (z / ‖z‖) * sinh ‖z‖ :=
     calc
       _ = _ := by obtain rfl | hz := eq_or_ne z 0 <;> simp [norm_pos_iff.2, *]
-      _ ≤ _ := exp_le_cosh_add_mul_sinh (by simpa [abs_div] using z.abs_re_div_abs_le_one) _
+      _ ≤ _ := exp_mul_le_cosh_add_mul_sinh (by simpa [abs_div] using z.abs_re_div_abs_le_one) _
   choose c hc hcf using fun ψ ↦ Complex.exists_norm_mul_eq_self (cft f ψ)
   have hc₀ (ψ) : c ψ ≠ 0 := fun h ↦ by simpa [h] using hc ψ
   have (a) :

@@ -31,8 +31,7 @@ lemma weighted_hoelder (p : ℝ≥0) (hp₀ : p ≠ 0) (hp₁ : p ≤ 1) (f g : 
   calc
     _ = ⟪fun x ↦ f x ^ (↑(1 - p) : ℝ), fun x ↦ f x ^ (p : ℝ) * g x⟫_[ℝ] := ?_
     _ ≤ ‖fun x ↦ f x ^ (↑(1 - p) : ℝ)‖_[↑(1 - p)⁻¹] * ‖fun x ↦ f x ^ (p : ℝ) * g x‖_[↑p⁻¹] :=
-      l2Inner_le_lpNorm_mul_lpNorm (IsConjugateExponent.symm ⟨NNReal.one_lt_coe.2 $
-        one_lt_inv hp₀.bot_lt hp₁, by            simp [NNReal.coe_inv, NNReal.coe_sub hp₁.le]⟩) _ _
+      l2Inner_le_lpNorm_mul_lpNorm (.one_sub_inv_inv hp₀ hp₁) _ _
     _ = _ := ?_
   · rw [l2Inner_eq_sum]
     congr with x

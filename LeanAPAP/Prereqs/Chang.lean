@@ -5,11 +5,11 @@ import LeanAPAP.Mathlib.Data.Nat.Cast.Field
 import LeanAPAP.Mathlib.Data.Nat.Order.Basic
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Prereqs.Discrete.DFT.Compact
+import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.LargeSpec
-import LeanAPAP.Prereqs.Rudin
 import LeanAPAP.Prereqs.MeanInequalities
-import LeanAPAP.Prereqs.Misc
+import LeanAPAP.Prereqs.Rudin
 
 /-!
 # Chang's lemma

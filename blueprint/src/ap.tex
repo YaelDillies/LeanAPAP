@@ -128,7 +128,9 @@ Test.
 
 \begin{theorem}[$L_\infty$ almost periodicity]
 \label{linfty_ap}
-Let $\epsilon\in (0,1]$ and $m\geq 1$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$.
+\lean{AlmostPeriodicity.linfty_almost_periodicity}
+\leanok
+Let $\epsilon\in (0,1]$. Let $K\geq 2$ and $A,S\subseteq G$ with $\lvert A+S\rvert\leq K\lvert A\rvert$.
 Let $B,C\subseteq G$. Let $\eta=\min(1,\lvert C\rvert/\lvert B\rvert)$. There exists $T\subseteq G$ such that
 \[\lvert T\rvert \geq K^{-4096\lceil \lo{\eta}\rceil\epsilon^{-2}}\lvert S\rvert\]
 such that for any $t\in T$ we have
@@ -136,6 +138,7 @@ such that for any $t\in T$ we have
 \end{theorem}
 
 \begin{proof}
+\leanok
 \uses{lp_ap} Let $T$ be as given in \ref{lp_ap}
 with $f=1_B$ and $m=\lceil \lo{\eta}\rceil$ and $\epsilon=\epsilon/e$. (The size bound on $T$ follows since $e^2\leq 8$.) Fix $t\in T$ and let $F=\tau_t(\mu_A\ast 1_B)-\mu_A\ast 1_B$. We have, for any $x\in G$,
 \[(\tau_t(\mu_A\ast 1_B\ast \mu_C)-\mu_A\ast 1_B\ast \mu_C)(x)=F\ast \mu_C(x)=\sum_y F(y)\mu_{C}(x-y)=\sum_yF(y)\mu_{x-C}(y).\]

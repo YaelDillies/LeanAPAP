@@ -70,12 +70,26 @@ lemma dconv_apply (f g : α → β) (a : α) :
 @[simp] lemma trivChar_apply (a : α) : (trivChar a : β) = if a = 0 then 1 else 0 := rfl
 
 @[simp] lemma conv_conjneg (f g : α → β) : f ∗ conjneg g = f ○ g :=
-  funext fun a ↦ sum_bij (fun x _ ↦ (x.1, -x.2)) (fun x hx ↦ by simpa using hx) (fun x _ ↦ rfl)
-    (fun x y _ _ h ↦ by simpa [Prod.ext_iff] using h) fun x hx ↦
-      ⟨(x.1, -x.2), by simpa [sub_eq_add_neg] using hx, by simp⟩
+  funext fun a ↦ sum_equiv ((Equiv.refl _).prodCongr $ Equiv.neg _) (by simp) (by simp)
 
 @[simp] lemma dconv_conjneg (f g : α → β) : f ○ conjneg g = f ∗ g := by
   rw [←conv_conjneg, conjneg_conjneg]
+
+@[simp] lemma translate_conv (a : α) (f g : α → β) : τ a f ∗ g = τ a (f ∗ g) :=
+  funext fun b ↦ sum_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
+    (by simp [sub_add_eq_add_sub]) (by simp)
+
+@[simp] lemma translate_dconv (a : α) (f g : α → β) : τ a f ○ g = τ a (f ○ g) :=
+  funext fun b ↦ sum_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
+    (by simp [sub_right_comm _ a]) (by simp)
+
+@[simp] lemma conv_translate (a : α) (f g : α → β) : f ∗ τ a g = τ a (f ∗ g) :=
+  funext fun b ↦ sum_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
+    (by simp [← add_sub_assoc]) (by simp)
+
+@[simp] lemma dconv_translate (a : α) (f g : α → β) : f ○ τ a g = τ (-a) (f ○ g) :=
+  funext fun b ↦ sum_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
+    (by simp [sub_sub_eq_add_sub, ← sub_add_eq_add_sub]) (by simp)
 
 lemma conv_comm (f g : α → β) : f ∗ g = g ∗ f :=
   funext fun a ↦ sum_nbij' Prod.swap

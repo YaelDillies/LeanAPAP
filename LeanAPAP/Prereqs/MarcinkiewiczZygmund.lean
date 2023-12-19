@@ -204,7 +204,7 @@ lemma basic_marcinkiewicz_zygmund (f : G → ℝ) (hf : ∀ i : Fin n, ∑ a in 
   simp only [pow_mul, sq_abs]
   simp only [←pow_mul]
   rw [step_two, step_three, mul_comm, inv_pow, ←div_eq_mul_inv, div_div]
-  simp only [step_four, mul_ite, MulZeroClass.mul_zero, mul_one]
+  simp only [step_four, mul_ite, mul_zero, mul_one]
   simp only [←sum_filter, ←sum_mul]
   rw [mul_comm, mul_div_mul_left]
   swap; · positivity

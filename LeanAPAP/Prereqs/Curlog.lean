@@ -35,14 +35,14 @@ lemma inv_le_exp_curlog : x⁻¹ ≤ exp (curlog x) := by
   · positivity
 
 lemma log_one_div_le_curlog (hx : 0 ≤ x) : log (1 / x) ≤ curlog x := by
-  rcases hx.eq_or_lt with (rfl | hx)
+  obtain rfl | hx := hx.eq_or_lt
   · simp
-  exact log_le_log_of_le (by positivity) (div_le_div_of_le hx.le (one_le_exp two_pos.le))
+  · exact log_le_log_of_le (by positivity) (div_le_div_of_le hx.le (one_le_exp two_pos.le))
 
 lemma log_inv_le_curlog (hx : 0 ≤ x) : log x⁻¹ ≤ curlog x := by
   rw [←one_div]; exact log_one_div_le_curlog hx
 
-lemma rpow_neg_inv_curlog (hx : 0 ≤ x) (hx' : x ≤ 1) : x ^ (-(curlog x)⁻¹) ≤ exp 1 := by
+lemma rpow_neg_inv_curlog_le (hx : 0 ≤ x) (hx' : x ≤ 1) : x ^ (-(curlog x)⁻¹) ≤ exp 1 := by
   obtain rfl | hx := hx.eq_or_lt
   · simp
   obtain rfl | hx' := hx'.eq_or_lt
@@ -58,29 +58,3 @@ lemma rpow_neg_inv_curlog (hx : 0 ≤ x) (hx' : x ≤ 1) : x ^ (-(curlog x)⁻¹
   exact log_ne_zero_of_pos_of_ne_one hx hx'.ne
 
 end Real
-
-namespace Finset
-
-/-! ### Wide diagonal -/
-
-variable {α : Type*} [DecidableEq α] {k : ℕ}
-
-def wideDiag (k : ℕ) (s : Finset α) : Finset (Fin k → α) := s.image fun i _ ↦ i
-
-lemma mem_wideDiag {s : Finset α} {k : ℕ} {x : Fin k → α} :
-    x ∈ s.wideDiag k ↔ ∃ i ∈ s, (fun _ ↦ i) = x := mem_image
-
-def fintypeWideDiag (α : Type*) [DecidableEq α] [Fintype α] (k : ℕ) : Finset (Fin k → α) :=
-  univ.wideDiag k
-
-lemma mem_fintypeWideDiag [Fintype α] {k : ℕ} {x : Fin k → α} :
-    x ∈ fintypeWideDiag α k ↔ ∃ i, (fun _ ↦ i) = x :=
-  mem_wideDiag.trans (by simp)
-
-@[simp] lemma card_wideDiag (hk : k ≠ 0) (s : Finset α) : (s.wideDiag k).card = s.card := by
-  cases k
-  · cases hk rfl
-  rw [Finset.wideDiag, card_image_of_injective]
-  exact fun i j h ↦ congr_fun h 0
-
-end Finset

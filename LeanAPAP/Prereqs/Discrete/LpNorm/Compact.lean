@@ -55,8 +55,8 @@ lemma nl1Norm_eq_expect (f : ∀ i, α i) : ‖f‖ₙ_[1] = 𝔼 i, ‖f i‖ :
 lemma nl0Norm_eq_card (f : ∀ i, α i) : ‖f‖ₙ_[0] = {i | f i ≠ 0}.toFinite.toFinset.card := by
   simp [l0Norm_eq_card, nlpNorm]
 
-lemma nlinftyNorm_eq_csupr (f : ∀ i, α i) : ‖f‖ₙ_[∞] = ⨆ i, ‖f i‖ := by
-  simp [nlpNorm, linftyNorm_eq_csupr]
+lemma nlinftyNorm_eq_ciSup (f : ∀ i, α i) : ‖f‖ₙ_[∞] = ⨆ i, ‖f i‖ := by
+  simp [nlpNorm, linftyNorm_eq_ciSup]
 
 @[simp] lemma nlpNorm_zero : ‖(0 : ∀ i, α i)‖ₙ_[p] = 0 := by simp [nlpNorm]
 
@@ -75,7 +75,7 @@ lemma nlpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖ₙ_[p] = ‖g - f‖ₙ
 
 @[simp] lemma nlpNorm_eq_zero [Nonempty ι] : ‖f‖ₙ_[p] = 0 ↔ f = 0 := by
   obtain p | p := p
-  · simp [nlinftyNorm_eq_csupr, ENNReal.none_eq_top, ←sup'_univ_eq_csupr, le_antisymm_iff,
+  · simp [nlinftyNorm_eq_ciSup, ENNReal.none_eq_top, ←sup'_univ_eq_ciSup, le_antisymm_iff,
       Function.funext_iff]
   obtain rfl | hp := eq_or_ne p 0
   · simp [nl0Norm_eq_card, eq_empty_iff_forall_not_mem, Function.funext_iff]
@@ -441,16 +441,16 @@ lemma nlpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → ℝ) :
 
 --TODO: Generalise the following four to include `f g : α → ℂ`
 /-- **Hölder's inequality**, binary case. -/
-lemma nl2Inner_le_nlpNorm_mul_nlpNorm (hpq : IsConjugateExponent p q) (f g : α → ℝ) :
+lemma nl2Inner_le_nlpNorm_mul_nlpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     ⟪f, g⟫ₙ_[ℝ] ≤ ‖f‖ₙ_[p] * ‖g‖ₙ_[q] := by
   cases isEmpty_or_nonempty α
   · simp
   have : 0 < (card α : ℝ) := by positivity
   simpa [nl2Inner_eq_l2Inner_div_card, nlpNorm, div_mul_div_comm, ← rpow_add this,
-    hpq.inv_add_inv_conj', div_le_div_right this] using l2Inner_le_lpNorm_mul_lpNorm hpq _ _
+    hpq.coe.inv_add_inv_conj', div_le_div_right this] using l2Inner_le_lpNorm_mul_lpNorm hpq _ _
 
 /-- **Hölder's inequality**, binary case. -/
-lemma abs_nl2Inner_le_nlpNorm_mul_nlpNorm (hpq : IsConjugateExponent p q) (f g : α → ℝ) :
+lemma abs_nl2Inner_le_nlpNorm_mul_nlpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     |⟪f, g⟫ₙ_[ℝ]| ≤ ‖f‖ₙ_[p] * ‖g‖ₙ_[q] :=
   abs_nl2Inner_le_nl2Inner_abs.trans $
     (nl2Inner_le_nlpNorm_mul_nlpNorm hpq _ _).trans_eq $ by simp_rw [nlpNorm_abs]

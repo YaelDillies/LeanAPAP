@@ -18,6 +18,7 @@ import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.ModEq
 import LeanAPAP.Mathlib.Algebra.Module.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
+import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Canonical
@@ -26,7 +27,6 @@ import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Algebra.Star.Pi
 import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
 import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
@@ -90,6 +90,7 @@ import LeanAPAP.Prereqs.AddChar.Basic
 import LeanAPAP.Prereqs.AddChar.Circle
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Chang
+import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.Cut
 import LeanAPAP.Prereqs.Density
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
@@ -110,8 +111,8 @@ import LeanAPAP.Prereqs.Indicator
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.MeanInequalities
-import LeanAPAP.Prereqs.Misc
 import LeanAPAP.Prereqs.Multinomial
 import LeanAPAP.Prereqs.Rudin
 import LeanAPAP.Prereqs.SalemSpencer
 import LeanAPAP.Prereqs.Translate
+import LeanAPAP.Prereqs.WideDiag
