@@ -33,7 +33,6 @@ import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
 import LeanAPAP.Mathlib.Analysis.Normed.Group.Basic
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv

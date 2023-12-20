@@ -1,5 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Miscellaneous definitions
@@ -37,7 +37,7 @@ lemma inv_le_exp_curlog : x⁻¹ ≤ exp (curlog x) := by
 lemma log_one_div_le_curlog (hx : 0 ≤ x) : log (1 / x) ≤ curlog x := by
   obtain rfl | hx := hx.eq_or_lt
   · simp
-  · exact log_le_log_of_le (by positivity) (div_le_div_of_le hx.le (one_le_exp two_pos.le))
+  · exact log_le_log (by positivity) (div_le_div_of_le hx.le (one_le_exp two_pos.le))
 
 lemma log_inv_le_curlog (hx : 0 ≤ x) : log x⁻¹ ≤ curlog x := by
   rw [←one_div]; exact log_one_div_le_curlog hx

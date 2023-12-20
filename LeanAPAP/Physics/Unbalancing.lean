@@ -5,7 +5,6 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Data.Complex.Exponential
 import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Nat.Order.Basic
@@ -81,7 +80,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ ≤ 24 / ε * log (3 / ε) :=
         mul_le_mul (div_le_div_of_le_left (by norm_num) hε₀ hε₁)
           (log_two_gt_d9.le.trans
-            (log_le_log_of_le zero_lt_two $
+            (log_le_log zero_lt_two $
               (div_le_div_of_le_left (by norm_num) hε₀ hε₁).trans' $ by norm_num))
           (by norm_num) ?_
     all_goals positivity
@@ -147,7 +146,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
     any_goals positivity
     rotate_left
     rw [wlpNorm_eq_sum hp'.ne', NNReal.coe_mul, mul_inv, rpow_mul, NNReal.coe_nat_cast,
-      rpow_nat_inv_pow_nat]
+      rpow_inv_natCast_pow]
     simp only [wlpNorm_eq_sum hp'.ne', sqrt_eq_rpow, Nonneg.coe_one, rpow_two,
       abs_nonneg, NNReal.smul_def, rpow_mul, Pi.pow_apply, abs_pow, norm_eq_abs, mul_pow,
       rpow_nat_cast, smul_eq_mul, pow_mul, one_div, NNReal.coe_two]

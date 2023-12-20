@@ -58,7 +58,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
     exact hm.bot_lt
   replace this := pow_le_pow_left (by positivity) this m
   simp_rw [mul_pow] at this
-  rw [rpow_nat_inv_pow_nat _ hm, ←rpow_mul_nat_cast, one_sub_mul,
+  rw [rpow_inv_natCast_pow _ hm, ←rpow_mul_natCast, one_sub_mul,
     inv_mul_cancel, ←Nat.cast_pred, rpow_nat_cast, mul_assoc, mul_left_comm, ←pow_sub_one_mul,
     mul_assoc, mul_le_mul_left] at this
   any_goals positivity
@@ -103,7 +103,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
 
 lemma spec_hoelder (hη : 0 ≤ η) (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0) :
     ↑Δ.card ^ (2 * m) * (η ^ (2 * m) * α f) ≤ boringEnergy m Δ := by
-  have hG : (0 : ℝ) < card G := by sorry -- positivity
+  have hG : (0 : ℝ) < card G := by positivity
   simpa [boringEnergy, α, mul_assoc, ←Pi.one_def, ←mul_div_right_comm, ←mul_div_assoc,
     div_le_iff hG, energy_nsmul, -nsmul_eq_mul, ←nsmul_eq_mul'] using
     general_hoelder hη 1 (fun (_ : G) _ ↦ le_rfl) hΔ hm
