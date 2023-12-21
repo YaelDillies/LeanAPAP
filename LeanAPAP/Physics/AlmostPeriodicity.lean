@@ -368,7 +368,7 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
   have := just_the_triangle_inequality ha ht hk.bot_lt hm
   rwa [neg_neg, mul_div_cancel' _ (two_ne_zero' ℝ)] at this
 
-theorem linfty_almost_periodicity (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hK₂ : 2 ≤ K)
+theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hK₂ : 2 ≤ K)
     (hK : (A + S).card ≤ K * A.card) (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
     ∃ T : Finset G,
       K ^ (-4096 * ⌈curlog (min 1 (C.card / B.card))⌉ / ε ^ 2) * S.card ≤ T.card ∧

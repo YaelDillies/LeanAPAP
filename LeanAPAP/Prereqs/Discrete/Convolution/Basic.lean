@@ -1,6 +1,8 @@
+import Mathlib.Algebra.Module.Pi
 import Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Basic
+import LeanAPAP.Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Indicator
 
@@ -35,7 +37,7 @@ Multiplicativise? Probably ugly and not very useful.
 -/
 
 open Finset Fintype Function
-open scoped BigOps ComplexConjugate NNReal Pointwise
+open scoped BigOps ComplexConjugate NNReal Pointwise NNRat
 
 variable {α β γ : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 
@@ -220,6 +222,9 @@ lemma conv_eq_sum_sub (f g : α → β) (a : α) : (f ∗ g) a = ∑ t, f (a - t
   · rintro b c d e h rfl rfl
     simpa [Prod.ext_iff] using h
 
+lemma dconv_eq_sum_sub (f g : α → β) (a : α) : (f ○ g) a = ∑ t, f (a - t) * conj (g (-t)) := by
+  simp [←conv_conjneg, conv_eq_sum_sub]
+
 lemma conv_eq_sum_add (f g : α → β) (a : α) : (f ∗ g) a = ∑ t, f (a + t) * g (-t) :=
   (conv_eq_sum_sub _ _ _).trans $ Fintype.sum_equiv (Equiv.neg _) _ _ fun t ↦ by
     simp only [sub_eq_add_neg, Equiv.neg_apply, neg_neg]
@@ -230,11 +235,14 @@ lemma dconv_eq_sum_add (f g : α → β) (a : α) : (f ○ g) a = ∑ t, f (a + 
 lemma conv_eq_sum_sub' (f g : α → β) (a : α) : (f ∗ g) a = ∑ t, f t * g (a - t) := by
   rw [conv_comm, conv_eq_sum_sub]; simp_rw [mul_comm]
 
-lemma dconv_eq_sum_sub (f g : α → β) (a : α) : (f ○ g) a = ∑ t, f t * conj (g (t - a)) := by
+lemma dconv_eq_sum_sub' (f g : α → β) (a : α) : (f ○ g) a = ∑ t, f t * conj (g (t - a)) := by
   simp [←conv_conjneg, conv_eq_sum_sub']
 
 lemma conv_eq_sum_add' (f g : α → β) (a : α) : (f ∗ g) a = ∑ t, f (-t) * g (a + t) := by
   rw [conv_comm, conv_eq_sum_add]; simp_rw [mul_comm]
+
+lemma dconv_eq_sum_add' (f g : α → β) (a : α) : (f ○ g) a = ∑ t, f (-t) * conj g (-(a + t)) := by
+  simp [←conv_conjneg, conv_eq_sum_add']
 
 lemma conv_apply_add (f g : α → β) (a b : α) : (f ∗ g) (a + b) = ∑ t, f (a + t) * g (b - t) :=
   (conv_eq_sum_sub _ _ _).trans $ Fintype.sum_equiv (Equiv.subLeft b) _ _ fun t ↦ by
@@ -254,7 +262,7 @@ lemma sum_conv_mul (f g h : α → β) : ∑ a, (f ∗ g) a * h a = ∑ a, ∑ b
 
 lemma sum_dconv_mul (f g h : α → β) :
     ∑ a, (f ○ g) a * h a = ∑ a, ∑ b, f a * conj (g b) * h (a - b) := by
-  simp_rw [dconv_eq_sum_sub, sum_mul]
+  simp_rw [dconv_eq_sum_sub', sum_mul]
   rw [sum_comm]
   exact Fintype.sum_congr _ _ fun x ↦ Fintype.sum_equiv (Equiv.subLeft x) _ _ fun y ↦ by simp
 
@@ -271,7 +279,7 @@ lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, c
   ext; simp [conv_eq_sum_sub, mul_sum]
 
 @[simp] lemma dconv_const (f : α → β) (b : β) : f ○ const _ b = const _ ((∑ x, f x) * conj b) := by
-  ext; simp [dconv_eq_sum_sub, sum_mul]
+  ext; simp [dconv_eq_sum_sub', sum_mul]
 
 @[simp] lemma const_dconv (b : β) (f : α → β) : const _ b ○ f = const _ (b * ∑ x, conj (f x)) := by
   ext; simp [dconv_eq_sum_add, mul_sum]
@@ -301,6 +309,18 @@ lemma indicate_dconv_indicate_apply (s t : Finset α) (a : α) :
     apply_ite conj, map_one, map_zero, Pi.conj_apply]
   simp_rw [←mem_product, filter_mem_univ]
 
+lemma indicate_conv (s : Finset α) (f : α → β) : 𝟭 s ∗ f = ∑ a ∈ s, τ a f := by
+  ext; simp [conv_eq_sum_sub', indicate_apply]
+
+lemma conv_indicate (f : α → β) (s : Finset α) : f ∗ 𝟭 s = ∑ a ∈ s, τ a f := by
+  ext; simp [conv_eq_sum_sub, indicate_apply]
+
+lemma indicate_dconv (s : Finset α) (f : α → β) : 𝟭 s ○ f = ∑ a ∈ s, τ a (conjneg f) := by
+  ext; simp [dconv_eq_sum_sub', indicate_apply]
+
+lemma dconv_indicate (f : α → β) (s : Finset α) : f ○ 𝟭 s = ∑ a ∈ s, τ (-a) f := by
+  ext; simp [dconv_eq_sum_add, indicate_apply]
+
 end CommSemiring
 
 section CommRing
@@ -326,7 +346,7 @@ lemma sub_dconv (f g h : α → β) : (f - g) ○ h = f ○ h - g ○ h := by
 end CommRing
 
 section Semifield
-variable [Semifield β] [StarRing β]
+variable [Semifield β] [Module ℚ≥0 β] [CompAction β] [StarRing β]
 
 @[simp] lemma mu_univ_conv_mu_univ : μ_[β] (univ : Finset α) ∗ μ univ = μ univ := by
   ext; cases eq_or_ne (card α : β) 0 <;> simp [mu_apply, conv_eq_sum_add, card_univ, *]
@@ -335,16 +355,29 @@ variable [Semifield β] [StarRing β]
   ext; cases eq_or_ne (card α : β) 0 <;> simp [mu_apply, dconv_eq_sum_add, card_univ, *]
 
 lemma expect_conv (f g : α → β) : 𝔼 a, (f ∗ g) a = (∑ a, f a) * 𝔼 a, g a := by
-  simp_rw [expect, sum_conv, mul_div_assoc]
+  simp_rw [expect, sum_conv, mul_smul_comm]
 
 lemma expect_dconv (f g : α → β) : 𝔼 a, (f ○ g) a = (∑ a, f a) * 𝔼 a, conj (g a) := by
-  simp_rw [expect, sum_dconv, mul_div_assoc]
+  simp_rw [expect, sum_dconv, mul_smul_comm]
 
 lemma expect_conv' (f g : α → β) : 𝔼 a, (f ∗ g) a = (𝔼 a, f a) * ∑ a, g a := by
-  simp_rw [expect, sum_conv, mul_div_right_comm]
+  simp_rw [expect, sum_conv, smul_mul_assoc]
 
 lemma expect_dconv' (f g : α → β) : 𝔼 a, (f ○ g) a = (𝔼 a, f a) * ∑ a, conj (g a) := by
-  simp_rw [expect, sum_dconv, mul_div_right_comm]
+  simp_rw [expect, sum_dconv, smul_mul_assoc]
+
+lemma mu_conv (s : Finset α) (f : α → β) : μ s ∗ f = (s.card : β)⁻¹ • ∑ a ∈ s, τ a f := by
+  simp [mu, indicate_conv, smul_conv]
+
+lemma conv_mu (f : α → β) (s : Finset α) : f ∗ μ s = (s.card : β)⁻¹ • ∑ a ∈ s, τ a f := by
+  simp [mu, conv_indicate, conv_smul]
+
+lemma mu_dconv (s : Finset α) (f : α → β) :
+    μ s ○ f = (s.card : β)⁻¹ • ∑ a ∈ s, τ a (conjneg f) := by
+  simp [mu, indicate_dconv, smul_dconv]
+
+lemma dconv_mu (f : α → β) (s : Finset α) : f ○ μ s = (s.card : β)⁻¹ • ∑ a ∈ s, τ (-a) f := by
+  simp [mu, dconv_indicate, dconv_smul]
 
 end Semifield
 
@@ -352,10 +385,12 @@ section Field
 variable [Field β] [StarRing β] [CharZero β]
 
 @[simp] lemma balance_conv (f g : α → β) : balance (f ∗ g) = balance f ∗ balance g := by
-  simpa [balance, conv_sub, sub_conv, expect_conv] using (mul_comm_div _ _ _).symm
+  simpa [balance, conv_sub, sub_conv, expect_conv]
+    using (mul_smul_comm _ _ _).trans (smul_mul_assoc _ _ _).symm
 
 @[simp] lemma balance_dconv (f g : α → β) : balance (f ○ g) = balance f ○ balance g := by
-  simpa [balance, dconv_sub, sub_dconv, expect_dconv, map_expect] using (mul_comm_div _ _ _).symm
+  simpa [balance, dconv_sub, sub_dconv, expect_dconv, map_expect]
+    using (mul_smul_comm _ _ _).trans (smul_mul_assoc _ _ _).symm
 
 end Field
 
@@ -484,11 +519,12 @@ lemma support_iterConv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n 
   | n + 1 => (support_conv_subset _ _).trans $ Set.add_subset_add_left $ support_iterConv_subset _ _
 
 lemma indicate_iterConv_apply (s : Finset α) (n : ℕ) (a : α) :
-    (𝟭_[ℝ] s ∗^ n) a = ((piFinset fun _i ↦ s).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by
+    (𝟭_[β] s ∗^ n) a = ((piFinset fun _i ↦ s).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by
   induction' n with n ih generalizing a
   · simp [apply_ite card, eq_comm]
   simp_rw [iterConv_succ, conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite, filter_mem_univ,
-    sum_const_zero, add_zero, ←Nat.cast_sum, ←Finset.card_sigma, Nat.cast_inj]
+    sum_const_zero, add_zero, ←Nat.cast_sum, ←Finset.card_sigma]
+  congr 1
   refine' Finset.card_congr (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
   · simp only [Fin.sum_cons, eq_sub_iff_add_eq', mem_sigma, mem_filter, mem_piFinset, and_imp]
     refine' fun bf hb hf ha ↦ ⟨Fin.cases _ _, ha⟩
@@ -502,7 +538,53 @@ lemma indicate_iterConv_apply (s : Finset α) (n : ℕ) (a : α) :
       ⟨f 0, Fin.tail f, hf _, fun _ ↦ hf _, (Fin.sum_univ_succ _).symm.trans ha,
         Fin.cons_self_tail _⟩
 
+lemma indicate_iterConv_conv (s : Finset α) (n : ℕ) (f : α → β) :
+    𝟭 s ∗^ n ∗ f = ∑ a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) f := by
+  ext b
+  simp only [conv_eq_sum_sub', indicate_iterConv_apply, mem_piFinset, Finset.sum_apply,
+    translate_apply, ← nsmul_eq_mul, ← sum_const, sum_fiberwise']
+
+lemma conv_indicate_iterConv (f : α → β) (s : Finset α) (n : ℕ) :
+    f ∗ 𝟭 s ∗^ n = ∑ a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) f := by
+  ext b
+  simp only [conv_eq_sum_sub, indicate_iterConv_apply, mem_piFinset, Finset.sum_apply,
+    translate_apply, ← nsmul_eq_mul', ← sum_const, sum_fiberwise']
+
+lemma indicate_iterConv_dconv (s : Finset α) (n : ℕ) (f : α → β) :
+    𝟭 s ∗^ n ○ f = ∑ a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) (conjneg f) := by
+  rw [← conv_conjneg, indicate_iterConv_conv]
+
+lemma dconv_indicate_iterConv (f : α → β) (s : Finset α) (n : ℕ) :
+    f ○ 𝟭 s ∗^ n = ∑ a ∈ piFinset (fun _ : Fin n ↦ s), τ (-∑ i, a i) f := by
+  simp [← conv_conjneg, conjneg_iterConv, conv_indicate_iterConv, piFinset_neg']
+
 end CommSemiring
+
+section Semifield
+variable [Semifield β] [CharZero β] [Module ℚ≥0 β] [CompAction β] [StarRing β]
+
+lemma mu_iterConv_conv (s : Finset α) (n : ℕ) (f : α → β) :
+    μ s ∗^ n ∗ f = 𝔼 a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) f := by
+  simp only [mu, smul_iterConv, inv_pow, smul_conv, indicate_iterConv_conv, expect,
+    card_piFinsetConst, Nat.cast_pow]
+  rw [← nnratCast_smul_eq_nnqsmul β]
+  push_cast
+  rfl
+
+lemma conv_mu_iterConv (f : α → β) (s : Finset α) (n : ℕ) :
+    f ∗ μ s ∗^ n = 𝔼 a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) f := by
+  rw [conv_comm, mu_iterConv_conv]
+
+lemma mu_iterConv_dconv (s : Finset α) (n : ℕ) (f : α → β) :
+    μ s ∗^ n ○ f = 𝔼 a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) (conjneg f) := by
+  rw [← conv_conjneg, mu_iterConv_conv]
+
+lemma dconv_mu_iterConv (f : α → β) (s : Finset α) (n : ℕ) :
+    f ○ μ s ∗^ n = 𝔼 a ∈ piFinset (fun _ : Fin n ↦ s), τ (-∑ i, a i) f := by
+  simp_rw [← conv_conjneg, conjneg_iterConv, conjneg_mu, conv_mu_iterConv, piFinset_neg',
+    expect_neg_index, Pi.neg_apply, sum_neg_distrib]
+
+end Semifield
 
 section Field
 variable [Field β] [StarRing β] [CharZero β]

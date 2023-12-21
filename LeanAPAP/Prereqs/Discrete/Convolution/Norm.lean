@@ -21,7 +21,7 @@ lemma conv_eq_inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a f
   simp [l2Inner_eq_sum, conv_eq_sum_sub', map_sum]
 
 lemma dconv_eq_inner (f g : α → β) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[β] := by
-  simp [l2Inner_eq_sum, dconv_eq_sum_sub, map_sum]
+  simp [l2Inner_eq_sum, dconv_eq_sum_sub', map_sum]
 
 -- TODO: This proof would feel much less painful if we had `ℝ≥0`-valued Lp-norms.
 /-- A special case of **Young's convolution inequality**. -/

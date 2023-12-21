@@ -60,7 +60,8 @@ lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a :
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion' (f : α → ℂ) (a : α) : ∑ ψ : AddChar α ℂ, dft f ψ * ψ a = card α * f a := by
-  rw [mul_comm, ← div_eq_iff, ← dft_inversion f, expect, card_univ, AddChar.card_eq]; simp
+  rw [mul_comm, ← div_eq_iff, ← dft_inversion f, ← AddChar.card_eq, Fintype.sum_div_card (α := ℂ)]
+  simp
 
 lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
     dft (dft f) (doubleDualEmb a) = card α * f (-a) := by

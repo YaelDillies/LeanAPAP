@@ -9,7 +9,7 @@ import LeanAPAP.Prereqs.Translate
 
 open Finset Function
 open Fintype (card)
-open scoped BigOps Pointwise
+open scoped BigOps ComplexConjugate Pointwise NNRat
 
 /-! ### Indicator -/
 
@@ -66,6 +66,40 @@ lemma card_eq_sum_indicate [Fintype α] (s : Finset α) : s.card = ∑ x, 𝟭_[
 lemma translate_indicate [AddCommGroup α] (a : α) (s : Finset α) : τ a (𝟭_[β] s) = 𝟭 (a +ᵥ s) := by
   ext; simp [indicate_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
 
+section AddGroup
+variable {G : Type*} [AddGroup G] [AddAction G α]
+
+@[simp]
+lemma indicate_vadd (g : G) (s : Finset α) (a : α) : 𝟭_[β] (g +ᵥ s) a = 𝟭 s (-g +ᵥ a) :=
+  if_congr neg_vadd_mem_iff.symm rfl rfl
+
+end AddGroup
+
+section Group
+variable {G : Type*} [Group G] [MulAction G α]
+
+@[to_additive existing, simp]
+lemma indicate_smul (g : G) (s : Finset α) (a : α) : 𝟭_[β] (g • s) a = 𝟭 s (g⁻¹ • a) :=
+  if_congr inv_smul_mem_iff.symm rfl rfl
+
+end Group
+
+section AddGroup
+variable [AddGroup α]
+
+@[simp]
+lemma indicate_neg (s : Finset α) (a : α) : 𝟭_[β] (-s) a = 𝟭 s (-a) := if_congr mem_neg' rfl rfl
+
+end AddGroup
+
+section Group
+variable [Group α]
+
+@[to_additive existing, simp]
+lemma indicate_inv (s : Finset α) (a : α) : 𝟭_[β] s⁻¹ a = 𝟭 s a⁻¹ := if_congr mem_inv' rfl rfl
+
+end Group
+
 variable {β}
 variable [StarRing β]
 
@@ -84,12 +118,23 @@ lemma indicate_inf [Fintype α] (s : Finset ι) (t : ι → Finset α) :
     𝟭_[β] (s.inf t) = ∏ i in s, 𝟭 (t i) :=
   funext fun x ↦ by rw [Finset.prod_apply, indicate_inf_apply]
 
+variable [StarRing β]
+
+@[simp] lemma conj_indicate_apply [AddCommGroup α] (s : Finset α) (a : α) :
+    conj (𝟭_[β] s a) = 𝟭 s a := by simp [indicate_apply]
+
+@[simp] lemma conj_indicate [AddCommGroup α] (s : Finset α) : conj (𝟭_[β] s) = 𝟭 s := by
+  ext; simp
+
+@[simp] lemma conjneg_indicate [AddCommGroup α] (s : Finset α) : conjneg (𝟭_[β] s) = 𝟭 (-s) := by
+  ext; simp
+
 end CommSemiring
 
 section Semifield
-variable [Fintype ι] [DecidableEq ι] [Semifield β]
+variable [Fintype ι] [DecidableEq ι] [Semiring β] [Module ℚ≥0 β]
 
-lemma expect_indicate (s : Finset ι) : 𝔼 x, 𝟭_[β] s x = s.card / Fintype.card ι := by
+lemma expect_indicate (s : Finset ι) : 𝔼 x, 𝟭_[β] s x = s.card /ℚ Fintype.card ι := by
   simp only [expect_univ, indicate]
   rw [←sum_filter, filter_mem_eq_inter, univ_inter, sum_const, Nat.smul_one_eq_coe]
 
@@ -191,13 +236,55 @@ lemma sum_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : ∑ x, μ_[β] s x =
 lemma translate_mu [AddCommGroup α] (a : α) (s : Finset α) : τ a (μ_[β] s) = μ (a +ᵥ s) := by
   ext; simp [mu_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
 
+section AddGroup
+variable {G : Type*} [AddGroup G] [AddAction G α]
+
+@[simp] lemma mu_vadd (g : G) (s : Finset α) (a : α) : μ_[β] (g +ᵥ s) a = μ s (-g +ᵥ a) := by
+  simp [mu]
+
+end AddGroup
+
+section Group
+variable {G : Type*} [Group G] [MulAction G α]
+
+@[to_additive existing, simp]
+lemma mu_smul (g : G) (s : Finset α) (a : α) : μ_[β] (g • s) a = μ s (g⁻¹ • a) := by simp [mu]
+
+end Group
+
+section AddGroup
+variable [AddGroup α]
+
+@[simp] lemma mu_neg (s : Finset α) (a : α) : μ_[β] (-s) a = μ s (-a) := by simp [mu]
+
+end AddGroup
+
+section Group
+variable [Group α]
+
+@[to_additive existing, simp]
+lemma mu_inv (s : Finset α) (a : α) : μ_[β] s⁻¹ a = μ s a⁻¹ := by simp [mu]
+
+end Group
+
 end DivisionSemiring
 
 section Semifield
-variable (β) [Semifield β] {s : Finset α}
+variable (β) [Semifield β] [Module ℚ≥0 β] [CompAction β] {s : Finset α}
 
 lemma expect_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : 𝔼 x, μ_[β] s x = (↑(card α))⁻¹ := by
-  rw [expect, card_univ, sum_mu _ hs, one_div]
+  rw [expect, card_univ, sum_mu _ hs, NNRat.smul_one_eq_cast, NNRat.cast_inv, NNRat.cast_natCast]
+
+variable [StarRing β]
+
+@[simp] lemma conj_mu_apply [AddCommGroup α] (s : Finset α) (a : α) :
+    conj (μ_[β] s a) = μ s a := by simp [mu]; rw [Pi.smul_apply]; simp
+
+@[simp] lemma conj_mu [AddCommGroup α] (s : Finset α) : conj (μ_[β] s) = μ s := by
+  ext; simp
+
+@[simp] lemma conjneg_mu [AddCommGroup α] (s : Finset α) : conjneg (μ_[β] s) = μ (-s) := by
+  ext; simp
 
 end Semifield
 
@@ -228,88 +315,6 @@ variable [LinearOrderedSemifield β] {s : Finset α}
 protected alias ⟨_, Finset.Nonempty.mu_pos⟩ := mu_pos
 
 end LinearOrderedSemifield
-
-section Pointwise
-
-section Semiring
-variable [Semiring β]
-
-section AddGroup
-variable {G : Type*} [AddGroup G] [AddAction G α]
-
-@[simp]
-lemma indicate_vadd (g : G) (s : Finset α) (a : α) : 𝟭_[β] (g +ᵥ s) a = 𝟭 s (-g +ᵥ a) :=
-  if_congr neg_vadd_mem_iff.symm rfl rfl
-
-end AddGroup
-
-section Group
-variable {G : Type*} [Group G] [MulAction G α]
-
-@[to_additive existing, simp]
-lemma indicate_smul (g : G) (s : Finset α) (a : α) : 𝟭_[β] (g • s) a = 𝟭 s (g⁻¹ • a) :=
-  if_congr inv_smul_mem_iff.symm rfl rfl
-
-end Group
-
-section AddGroup
-variable [AddGroup α]
-
-@[simp]
-lemma indicate_neg (s : Finset α) (a : α) : 𝟭_[β] (-s) a = 𝟭 s (-a) := if_congr mem_neg' rfl rfl
-
-end AddGroup
-
-section Group
-variable [Group α]
-
-@[to_additive existing, simp]
-lemma indicate_inv (s : Finset α) (a : α) : 𝟭_[β] s⁻¹ a = 𝟭 s a⁻¹ := if_congr mem_inv' rfl rfl
-
-end Group
-end Semiring
-
-section Semifield
-variable [Semifield β]
-
-section AddGroup
-variable {G : Type*} [AddGroup G] [AddAction G α]
-
-@[simp]
-lemma mu_vadd (g : G) (s : Finset α) (a : α) : μ_[β] (g +ᵥ s) a = μ s (-g +ᵥ a) := by
-  simp [mu]; rw [Pi.smul_apply, Pi.smul_apply]; simp
-
-end AddGroup
-
-section Group
-variable {G : Type*} [Group G] [MulAction G α]
-
-@[to_additive existing, simp]
-lemma mu_smul (g : G) (s : Finset α) (a : α) : μ_[β] (g • s) a = μ s (g⁻¹ • a) := by
-  simp [mu]; rw [Pi.smul_apply, Pi.smul_apply]; simp
-
-end Group
-
-section AddGroup
-variable [AddGroup α]
-
-@[simp]
-lemma mu_neg (s : Finset α) (a : α) : μ_[β] (-s) a = μ s (-a) := by
-  simp [mu]; rw [Pi.smul_apply, Pi.smul_apply]; simp
-
-end AddGroup
-
-section Group
-variable [Group α]
-
-@[to_additive existing, simp]
-lemma mu_inv (s : Finset α) (a : α) : μ_[β] s⁻¹ a = μ s a⁻¹ := by
-  simp [mu]; rw [Pi.smul_apply, Pi.smul_apply]; simp
-
-end Group
-
-end Semifield
-end Pointwise
 
 namespace Mathlib.Meta.Positivity
 open Lean Meta Qq Function

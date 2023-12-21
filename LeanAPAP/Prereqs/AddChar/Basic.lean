@@ -19,7 +19,7 @@ Rename
 open Finset hiding card
 open Fintype (card)
 open Function
-open scoped BigOps ComplexConjugate DirectSum
+open scoped BigOps ComplexConjugate DirectSum NNRat
 
 variable {G H R : Type*}
 
@@ -202,7 +202,8 @@ lemma sum_ne_zero_iff_eq_zero : ∑ x, ψ x ≠ 0 ↔ ψ = 0 :=
 end CommSemiring
 
 section Semifield
-variable [Fintype G] [Semifield R] [IsDomain R] [CharZero R] {ψ : AddChar G R}
+variable [Fintype G] [Semifield R] [IsDomain R] [CharZero R] [SMul ℚ≥0 R] [CompAction R]
+  {ψ : AddChar G R}
 
 lemma expect_eq_ite (ψ : AddChar G R) : 𝔼 a, ψ a = if ψ = 0 then 1 else 0 := by
   split_ifs with h

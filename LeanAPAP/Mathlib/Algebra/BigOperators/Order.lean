@@ -58,6 +58,21 @@ lemma prod_eq_one_iff_of_le_one'' : (∀ i ∈ s, f i ≤ 1) → ((∏ i in s, f
 
 end Finset
 
+namespace Fintype
+variable {ι α : Type*} [OrderedCommMonoid α] [Fintype ι] {f : ι → α}
+
+-- TODO: Replace `Fintype.prod_eq_one_iff_of_one_le`
+@[to_additive]
+lemma prod_eq_one_iff_of_one_le' (hf : 1 ≤ f) : ∏ i, f i = 1 ↔ f = 1 :=
+  (Finset.prod_eq_one_iff_of_one_le' fun i _ ↦ hf i).trans $ by simp [Function.funext_iff]
+
+-- TODO: Replace `Fintype.prod_eq_one_iff_of_le_one`
+@[to_additive]
+lemma prod_eq_one_iff_of_le_one' (hf : f ≤ 1) : ∏ i, f i = 1 ↔ f = 1 :=
+  (Finset.prod_eq_one_iff_of_le_one'' fun i _ ↦ hf i).trans $ by simp [Function.funext_iff]
+
+end Fintype
+
 namespace Finset
 variable {α 𝕜 : Type*} [LinearOrderedCommRing 𝕜]
 

@@ -1,4 +1,5 @@
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
+import LeanAPAP.Prereqs.NNRat.NNReal
 
 /-!
 # Convolution in the compact normalisation
@@ -32,7 +33,7 @@ Multiplicativise? Probably ugly and not very useful.
 -/
 
 open Finset Fintype Function
-open scoped BigOps ComplexConjugate NNReal Pointwise
+open scoped BigOps ComplexConjugate NNReal Pointwise NNRat
 
 variable {α β γ : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 
@@ -44,7 +45,7 @@ In this section, we define the convolution `f ∗ₙ g` and difference convoluti
 -/
 
 section Semifield
-variable [Semifield β] [StarRing β] {f g : α → β}
+variable [Semifield β] [CharZero β] [SMul ℚ≥0 β] [CompAction β] [StarRing β] {f g : α → β}
 
 /-- Convolution -/
 def nconv (f g : α → β) : α → β := fun a ↦ 𝔼 x : α × α with x.1 + x.2 = a , f x.1 * g x.2
@@ -124,7 +125,7 @@ lemma IsSelfAdjoint.ndconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSel
 
 lemma nconv_assoc (f g h : α → β) : f ∗ₙ g ∗ₙ h = f ∗ₙ (g ∗ₙ h) := by
   ext a
-  simp only [expect, sum_mul, mul_sum, sum_div, nconv_apply, sum_sigma']
+  simp only [expect, sum_mul, mul_sum, smul_sum, nconv_apply, sum_sigma']
   refine' sum_bij' (fun x _ ↦ ⟨(x.2.1, x.2.2 + x.1.2), (x.2.2, x.1.2)⟩) _ _
     (fun x _ ↦ ⟨(x.1.1 + x.2.1, x.2.2), (x.1.1, x.2.1)⟩) _ _ _ <;>
     simp only [mem_sigma, mem_filter, mem_univ, true_and_iff, Sigma.forall, Prod.forall, and_imp,
@@ -168,22 +169,29 @@ lemma ndconv_add (f g h : α → β) : f ○ₙ (g + h) = f ○ₙ g + f ○ₙ 
 lemma add_ndconv (f g h : α → β) : (f + g) ○ₙ h = f ○ₙ h + g ○ₙ h := by
   simp_rw [←nconv_conjneg, add_nconv]
 
-lemma smul_nconv [DistribSMul γ β] [IsScalarTower γ β β] (c : γ) (f g : α → β) :
-    c • f ∗ₙ g = c • (f ∗ₙ g) := by
-  ext a; simp only [Pi.smul_apply, smul_expect, nconv_apply, smul_mul_assoc]
+lemma smul_nconv [DistribSMul γ β] [IsScalarTower γ β β] [SMulCommClass γ β β] (c : γ)
+    (f g : α → β) : c • f ∗ₙ g = c • (f ∗ₙ g) := by
+  have := SMulCommClass.symm γ β β
+  ext a
+  simp only [Pi.smul_apply, smul_expect, nconv_apply, smul_mul_assoc]
 
-lemma smul_ndconv [DistribSMul γ β] [IsScalarTower γ β β] (c : γ) (f g : α → β) :
-    c • f ○ₙ g = c • (f ○ₙ g) := by
-  ext a; simp only [Pi.smul_apply, smul_expect, ndconv_apply, smul_mul_assoc]
+lemma smul_ndconv [DistribSMul γ β] [IsScalarTower γ β β] [SMulCommClass γ β β] (c : γ)
+    (f g : α → β) : c • f ○ₙ g = c • (f ○ₙ g) := by
+  have := SMulCommClass.symm γ β β
+  ext a
+  simp only [Pi.smul_apply, smul_expect, ndconv_apply, smul_mul_assoc]
 
 lemma nconv_smul [DistribSMul γ β] [IsScalarTower γ β β] [SMulCommClass γ β β] (c : γ)
     (f g : α → β) : f ∗ₙ c • g = c • (f ∗ₙ g) := by
-  ext a; simp only [Pi.smul_apply, smul_expect, nconv_apply, mul_smul_comm]
+  have := SMulCommClass.symm γ β β
+  ext a
+  simp only [Pi.smul_apply, smul_expect, nconv_apply, mul_smul_comm]
 
 lemma ndconv_smul [Star γ] [DistribSMul γ β] [IsScalarTower γ β β] [SMulCommClass γ β β]
     [StarModule γ β] (c : γ) (f g : α → β) : f ○ₙ c • g = star c • (f ○ₙ g) := by
-  ext a; simp only [Pi.smul_apply, smul_expect, ndconv_apply, mul_smul_comm, starRingEnd_apply,
-      star_smul]
+  have := SMulCommClass.symm γ β β
+  ext a
+  simp only [Pi.smul_apply, smul_expect, ndconv_apply, mul_smul_comm, starRingEnd_apply, star_smul]
 
 alias smul_nconv_assoc := smul_nconv
 alias smul_ndconv_assoc := smul_ndconv
@@ -194,13 +202,12 @@ lemma mul_smul_nconv_comm [Monoid γ] [DistribMulAction γ β] [IsScalarTower γ
     [SMulCommClass γ β β] (c d : γ) (f g : α → β) : (c * d) • (f ∗ₙ g) = c • f ∗ₙ d • g := by
   rw [smul_nconv, nconv_smul, mul_smul]
 
-lemma map_nconv {γ} [Semifield γ] [StarRing γ] (m : β →+* γ) (f g : α → β) (a : α) :
-    m ((f ∗ₙ g) a) = (m ∘ f ∗ₙ m ∘ g) a := by
+lemma map_nconv {γ} [Semifield γ] [CharZero γ] [SMul ℚ≥0 γ] [CompAction γ] [StarRing γ]
+    (m : β →+* γ) (f g : α → β) (a : α) : m ((f ∗ₙ g) a) = (m ∘ f ∗ₙ m ∘ g) a := by
   simp_rw [nconv_apply, map_expect, map_mul, Function.comp_apply]
 
-lemma comp_nconv {γ} [Semifield γ] [StarRing γ] (m : β →+* γ) (f g : α → β) :
-    m ∘ (f ∗ₙ g) = m ∘ f ∗ₙ m ∘ g :=
-  funext $ map_nconv _ _ _
+lemma comp_nconv {γ} [Semifield γ] [CharZero γ] [SMul ℚ≥0 γ] [CompAction γ] [StarRing γ]
+    (m : β →+* γ) (f g : α → β) : m ∘ (f ∗ₙ g) = m ∘ f ∗ₙ m ∘ g := funext $ map_nconv _ _ _
 
 --TODO: Can we generalise to star ring homs?
 -- lemma map_ndconv (f g : α → ℝ≥0) (a : α) : (↑((f ○ₙ g) a) : ℝ) = ((↑) ∘ f ○ₙ (↑) ∘ g) a := by
@@ -271,7 +278,7 @@ lemma expect_ndconv (f g : α → β) : 𝔼 a, (f ○ₙ g) a = (𝔼 a, f a) *
   ext; simp [ndconv_eq_expect_add, mul_expect]
 
 @[simp] lemma nconv_trivNChar [CharZero β] (f : α → β) : f ∗ₙ trivNChar = f := by
-  ext a; simp [nconv_eq_expect_sub, card_univ]
+  ext a; simp [nconv_eq_expect_sub, card_univ, NNRat.smul_def, mul_comm]
 
 @[simp] lemma trivNChar_nconv [CharZero β] (f : α → β) : trivNChar ∗ₙ f = f := by
   rw [nconv_comm, nconv_trivNChar]
@@ -304,7 +311,7 @@ lemma support_ndconv_subset (f g : α → β) : support (f ○ₙ g) ⊆ support
 end Semifield
 
 section Field
-variable [Field β] [StarRing β]
+variable [Field β] [CharZero β] [StarRing β]
 
 @[simp] lemma nconv_neg (f g : α → β) : f ∗ₙ -g = -(f ∗ₙ g) := by ext; simp [nconv_apply]
 @[simp] lemma neg_nconv (f g : α → β) : -f ∗ₙ g = -(f ∗ₙ g) := by ext; simp [nconv_apply]
@@ -326,7 +333,7 @@ lemma sub_ndconv (f g h : α → β) : (f - g) ○ₙ h = f ○ₙ h - g ○ₙ 
 end Field
 
 section Semifield
-variable [Semifield β] [StarRing β] [CharZero β]
+variable [Semifield β] [StarRing β] [SMul ℚ≥0 β] [CharZero β] [CompAction β]
 
 @[simp] lemma indicate_univ_nconv_indicate_univ : 𝟭_[β] (univ : Finset α) ∗ₙ 𝟭 univ = 𝟭 univ := by
   ext; simp [indicate_apply, nconv_eq_expect_add, card_univ, *]
@@ -351,17 +358,17 @@ namespace IsROrC
 variable {𝕜 : Type} [IsROrC 𝕜] (f g : α → ℝ) (a : α)
 
 @[simp, norm_cast]
-lemma coe_nconv : (↑((f ∗ₙ g) a) : 𝕜) = ((↑) ∘ f ∗ₙ (↑) ∘ g) a := map_nconv (algebraMap ℝ 𝕜) _ _ _
+lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → 𝕜) a := map_nconv (algebraMap ℝ 𝕜) _ _ _
 
 @[simp, norm_cast]
-lemma coe_ndconv : (↑((f ○ₙ g) a) : 𝕜) = ((↑) ∘ f ○ₙ (↑) ∘ g) a := by sorry
+lemma coe_ndconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : α → 𝕜) a := by sorry
   -- simp [ndconv_apply, coe_expect]
 
 @[simp]
-lemma coe_comp_nconv : ((↑) : ℝ → 𝕜) ∘ (f ∗ₙ g) = (↑) ∘ f ∗ₙ (↑) ∘ g := funext $ coe_nconv _ _
+lemma coe_comp_nconv : ofReal ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → 𝕜) := funext $ coe_nconv _ _
 
 @[simp]
-lemma coe_comp_ndconv : ((↑) : ℝ → 𝕜) ∘ (f ○ₙ g) = (↑) ∘ f ○ₙ (↑) ∘ g := funext $ coe_ndconv _ _
+lemma coe_comp_ndconv : ofReal ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : α → 𝕜) := funext $ coe_ndconv _ _
 
 end IsROrC
 
@@ -369,13 +376,16 @@ namespace Complex
 variable (f g : α → ℝ) (a : α)
 
 @[simp, norm_cast]
-lemma coe_nconv : (↑((f ∗ₙ g) a) : ℂ) = ((↑) ∘ f ∗ₙ (↑) ∘ g) a := IsROrC.coe_nconv _ _ _
+lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → ℂ) a := IsROrC.coe_nconv _ _ _
 
 @[simp, norm_cast]
-lemma coe_ndconv : (↑((f ○ₙ g) a) : ℂ) = ((↑) ∘ f ○ₙ (↑) ∘ g) a := IsROrC.coe_ndconv _ _ _
+lemma coe_ndconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : α → ℂ) a := IsROrC.coe_ndconv _ _ _
 
-@[simp] lemma coe_comp_nconv : ((↑) : ℝ → ℂ) ∘ (f ∗ₙ g) = (↑) ∘ f ∗ₙ (↑) ∘ g := funext $ coe_nconv _ _
-@[simp] lemma coe_comp_ndconv : ((↑) : ℝ → ℂ) ∘ (f ○ₙ g) = (↑) ∘ f ○ₙ (↑) ∘ g := funext $ coe_ndconv _ _
+@[simp]
+lemma coe_comp_nconv : ofReal' ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → ℂ) := funext $ coe_nconv _ _
+
+@[simp]
+lemma coe_comp_ndconv : ofReal' ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : α → ℂ) := funext $ coe_ndconv _ _
 
 end Complex
 
@@ -383,10 +393,10 @@ namespace NNReal
 variable (f g : α → ℝ≥0) (a : α)
 
 @[simp, norm_cast]
-lemma coe_nconv : (↑((f ∗ₙ g) a) : ℝ) = ((↑) ∘ f ∗ₙ (↑) ∘ g) a := map_nconv NNReal.toRealHom _ _ _
+lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → ℝ) a := map_nconv NNReal.toRealHom _ _ _
 
 @[simp, norm_cast]
-lemma coe_ndconv : (↑((f ○ₙ g) a) : ℝ) = ((↑) ∘ f ○ₙ (↑) ∘ g) a := by
+lemma coe_ndconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : α → ℝ) a := by
   sorry -- simp [ndconv_apply, coe_expect]
 
 @[simp] lemma coe_comp_nconv : ((↑) : _ → ℝ) ∘ (f ∗ₙ g) = (↑) ∘ f ∗ₙ (↑) ∘ g := funext $ coe_nconv _ _
@@ -397,7 +407,7 @@ end NNReal
 /-! ### Iterated convolution -/
 
 section Semifield
-variable [Semifield β] [StarRing β] {f g : α → β} {n : ℕ}
+variable [Semifield β] [CharZero β] [SMul ℚ≥0 β] [CompAction β] [StarRing β] {f g : α → β} {n : ℕ}
 
 /-- Iterated convolution. -/
 def iterNConv (f : α → β) : ℕ → α → β
@@ -449,17 +459,17 @@ lemma iterNConv_ndconv_distrib [CharZero β] (f g : α → β) : ∀ n, (f ○�
   | 0 => by simp
   | n + 1 => by simp_rw [iterNConv_succ, smul_iterNConv _ _ n, pow_succ, mul_smul_nconv_comm]
 
-lemma comp_iterNConv {γ} [Semifield γ] [StarRing γ] (m : β →+* γ) (f : α → β) :
-    ∀ n, m ∘ (f ∗^ₙ n) = m ∘ f ∗^ₙ n
+lemma comp_iterNConv {γ} [Semifield γ] [CharZero γ] [SMul ℚ≥0 γ] [CompAction γ] [StarRing γ]
+    (m : β →+* γ) (f : α → β) : ∀ n, m ∘ (f ∗^ₙ n) = m ∘ f ∗^ₙ n
   | 0 => by ext; simp; split_ifs <;> simp
   | n + 1 => by simp [iterNConv_succ, comp_nconv, comp_iterNConv]
 
-lemma map_iterNConv {γ} [Semifield γ] [StarRing γ] (m : β →+* γ) (f : α → β) (a : α) (n : ℕ) :
-    m ((f ∗^ₙ n) a) = (m ∘ f ∗^ₙ n) a :=
+lemma map_iterNConv {γ} [Semifield γ] [CharZero γ] [SMul ℚ≥0 γ] [CompAction γ] [StarRing γ]
+    (m : β →+* γ) (f : α → β) (a : α) (n : ℕ) : m ((f ∗^ₙ n) a) = (m ∘ f ∗^ₙ n) a :=
   congr_fun (comp_iterNConv m _ _) _
 
 lemma expect_iterNConv [CharZero β] (f : α → β) : ∀ n, 𝔼 a, (f ∗^ₙ n) a = (𝔼 a, f a) ^ n
-  | 0 => by simp [filter_eq', card_univ]
+  | 0 => by simp [filter_eq', card_univ, NNRat.smul_def]
   | n + 1 => by simp only [iterNConv_succ, expect_nconv, expect_iterNConv, pow_succ]
 
 @[simp] lemma iterNConv_trivNChar [CharZero β] : ∀ n, (trivNChar : α → β) ∗^ₙ n = trivNChar

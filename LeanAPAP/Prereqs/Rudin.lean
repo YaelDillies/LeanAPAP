@@ -51,6 +51,10 @@ lemma AddDissociated.randomisation (c : AddChar α ℂ → ℝ) (d : AddChar α 
   simp only [map_mul, prod_div_distrib, prod_add, prod_const, ← expect_div, expect_sum_comm,
     div_eq_zero_iff, pow_eq_zero_iff', OfNat.ofNat_ne_zero, ne_eq, card_eq_zero, compl_eq_empty_iff,
     false_and, or_false]
+  rw [← expect_div]
+  simp only [map_mul, prod_div_distrib, prod_add, prod_const, ← expect_div, expect_sum_comm,
+    div_eq_zero_iff, pow_eq_zero_iff', OfNat.ofNat_ne_zero, ne_eq, card_eq_zero, compl_eq_empty_iff,
+    false_and, or_false]
   refine sum_eq_zero fun u _ ↦ ?_
   calc
     𝔼 a, (∏ ψ ∈ u, d ψ * ψ a) * ∏ ψ ∈ t \ u, conj (d ψ) * conj (ψ a)
@@ -124,7 +128,8 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
   have hp₀ : p ≠ 0 := by positivity
   have : (‖re ∘ f‖ₙ_[↑p] / p) ^ p ≤ (2 * exp 2⁻¹) ^ p := by
     calc
-      _ = 𝔼 a, |(f a).re| ^ p / p ^ p := by simp [div_pow, nlpNorm_pow_eq_expect hp₀, expect_div]
+      _ = 𝔼 a, |(f a).re| ^ p / p ^ p := by
+          simp [div_pow, nlpNorm_pow_eq_expect hp₀]; rw [expect_div]
       _ ≤ 𝔼 a, |(f a).re| ^ p / p ! := by gcongr; norm_cast; exact p.factorial_le_pow
       _ ≤ 𝔼 a, exp |(f a).re| := by gcongr; exact pow_div_factorial_le_exp _ (abs_nonneg _) _
       _ ≤ _ := rudin_exp_abs_ineq f hf

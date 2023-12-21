@@ -11,7 +11,7 @@ import LeanAPAP.Prereqs.Density
 open Finset hiding card
 open Function Real
 open Fintype (card)
-open scoped BigOps ComplexConjugate ENNReal NNReal
+open scoped BigOps ComplexConjugate ENNReal NNReal NNRat
 
 variable {ι 𝕜 : Type*} [Fintype ι]
 
@@ -27,7 +27,7 @@ notation "‖" f "‖ₙ_[" p "]" => nlpNorm p f
 
 lemma nlpNorm_eq_expect' (hp : p.toReal ≠ 0) (f : ∀ i, α i) :
     ‖f‖ₙ_[p] = (𝔼 i, ‖f i‖ ^ p.toReal) ^ p.toReal⁻¹ := by
-  rw [nlpNorm, lpNorm_eq_sum', ← div_rpow, Fintype.sum_div_card] <;> positivity
+  rw [nlpNorm, lpNorm_eq_sum', ← div_rpow, Fintype.sum_div_card (α := ℝ)] <;> positivity
 
 lemma nlpNorm_eq_expect'' {p : ℝ} (hp : 0 < p) (f : ∀ i, α i) :
     ‖f‖ₙ_[p.toNNReal] = (𝔼 i, ‖f i‖ ^ p) ^ p⁻¹ := by
@@ -180,15 +180,17 @@ end Real
 /-! #### Inner product -/
 
 section Semifield
-variable [Semifield 𝕜] [StarRing 𝕜] {γ : Type*} [DistribSMul γ 𝕜]
+variable [Semifield 𝕜] [CharZero 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [StarRing 𝕜] {γ : Type*}
+  [DistribSMul γ 𝕜]
 
 /-- Inner product giving rise to the L2 norm with the compact normalisation. -/
 def nl2Inner (f g : ι → 𝕜) : 𝕜 := 𝔼 i, conj (f i) * g i
 
-notation "⟪" f ", " g "⟫ₙ_[" 𝕜 "]" => @nl2Inner _ 𝕜 _ _ _ f g
+notation "⟪" f ", " g "⟫ₙ_[" 𝕜 "]" => @nl2Inner _ 𝕜 _ _ _ _ f g
 
 lemma nl2Inner_eq_expect (f g : ι → 𝕜) : ⟪f, g⟫ₙ_[𝕜] = 𝔼 i, conj (f i) * g i := rfl
-lemma nl2Inner_eq_l2Inner_div_card (f g : ι → 𝕜) : ⟪f, g⟫ₙ_[𝕜] = ⟪f, g⟫_[𝕜] / card ι := rfl
+lemma nl2Inner_eq_l2Inner_div_card (f g : ι → 𝕜) : ⟪f, g⟫ₙ_[𝕜] = ⟪f, g⟫_[𝕜] / card ι :=
+  (Fintype.sum_div_card _).symm
 
 @[simp] lemma conj_nl2Inner (f g : ι → 𝕜) : conj ⟪f, g⟫ₙ_[𝕜] = ⟪g, f⟫ₙ_[𝕜] := by
   simp [nl2Inner_eq_expect, map_expect, mul_comm]
@@ -213,24 +215,25 @@ lemma nl2Inner_add_left (f₁ f₂ g : ι → 𝕜) : ⟪f₁ + f₂, g⟫ₙ_[�
 lemma nl2Inner_add_right (f g₁ g₂ : ι → 𝕜) : ⟪f, g₁ + g₂⟫ₙ_[𝕜] = ⟪f, g₁⟫ₙ_[𝕜] + ⟪f, g₂⟫ₙ_[𝕜] := by
   simp_rw [nl2Inner, Pi.add_apply, mul_add, expect_add_distrib]
 
-lemma nl2Inner_smul_left [Star γ] [StarModule γ 𝕜] [IsScalarTower γ 𝕜 𝕜] (c : γ) (f g : ι → 𝕜) :
+lemma nl2Inner_smul_left [Star γ] [StarModule γ 𝕜] [SMulCommClass γ ℚ≥0 𝕜]
+    [IsScalarTower γ 𝕜 𝕜] (c : γ) (f g : ι → 𝕜) :
     ⟪c • f, g⟫ₙ_[𝕜] = star c • ⟪f, g⟫ₙ_[𝕜] := by
   simp only [nl2Inner, Pi.smul_apply, smul_mul_assoc, smul_expect, starRingEnd_apply,
     star_smul]
 
-lemma nl2Inner_smul_right [Star γ] [StarModule γ 𝕜] [IsScalarTower γ 𝕜 𝕜] [SMulCommClass γ 𝕜 𝕜]
-    (c : γ) (f g : ι → 𝕜) : ⟪f, c • g⟫ₙ_[𝕜] = c • ⟪f, g⟫ₙ_[𝕜] := by
+lemma nl2Inner_smul_right [Star γ] [StarModule γ 𝕜] [SMulCommClass γ ℚ≥0 𝕜] [IsScalarTower γ 𝕜 𝕜]
+    [SMulCommClass γ 𝕜 𝕜] (c : γ) (f g : ι → 𝕜) : ⟪f, c • g⟫ₙ_[𝕜] = c • ⟪f, g⟫ₙ_[𝕜] := by
   simp only [nl2Inner, Pi.smul_apply, mul_smul_comm, smul_expect, starRingEnd_apply,
     star_smul]
 
-lemma smul_nl2Inner_left [InvolutiveStar γ] [StarModule γ 𝕜] [IsScalarTower γ 𝕜 𝕜] (c : γ)
-    (f g : ι → 𝕜) : c • ⟪f, g⟫ₙ_[𝕜] = ⟪star c • f, g⟫ₙ_[𝕜] := by
+lemma smul_nl2Inner_left [InvolutiveStar γ] [StarModule γ 𝕜] [SMulCommClass γ ℚ≥0 𝕜]
+    [IsScalarTower γ 𝕜 𝕜] (c : γ) (f g : ι → 𝕜) : c • ⟪f, g⟫ₙ_[𝕜] = ⟪star c • f, g⟫ₙ_[𝕜] := by
   rw [nl2Inner_smul_left, star_star]
 
 end Semifield
 
 section Field
-variable [Field 𝕜] [StarRing 𝕜]
+variable [Field 𝕜] [CharZero 𝕜] [StarRing 𝕜]
 
 @[simp] lemma nl2Inner_neg_left (f g : ι → 𝕜) : ⟪-f, g⟫ₙ_[𝕜] = -⟪f, g⟫ₙ_[𝕜] := by simp [nl2Inner]
 @[simp] lemma nl2Inner_neg_right (f g : ι → 𝕜) : ⟪f, -g⟫ₙ_[𝕜] = -⟪f, g⟫ₙ_[𝕜] := by simp [nl2Inner]
@@ -244,7 +247,8 @@ lemma nl2Inner_sub_right (f g₁ g₂ : ι → 𝕜) : ⟪f, g₁ - g₂⟫ₙ_[
 end Field
 
 section LinearOrderedSemifield
-variable [LinearOrderedSemifield 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [CharZero 𝕜]
+  [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 lemma nl2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
   expect_nonneg fun _ _ ↦ mul_nonneg (star_nonneg.2 $ hf _) $ hg _
@@ -265,8 +269,8 @@ section IsROrC
 variable {κ : Type*} [IsROrC 𝕜] {f : ι → 𝕜}
 
 @[simp] lemma nl2Inner_self (f : ι → 𝕜) : ⟪f, f⟫ₙ_[𝕜] = (‖f‖ₙ_[2] : 𝕜) ^ 2 := by
-  simp_rw [←algebraMap.coe_pow, nl2Norm_sq_eq_expect, nl2Inner, algebraMap.coe_expect,
-    IsROrC.ofReal_pow, IsROrC.conj_mul']
+  simp_rw [←algebraMap.coe_pow, nl2Norm_sq_eq_expect, nl2Inner,
+    algebraMap.coe_expect _ (α := ℝ) (β := 𝕜), IsROrC.ofReal_pow, IsROrC.conj_mul']
 
 lemma nl2Inner_self_of_norm_eq_one [Nonempty ι] (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫ₙ_[𝕜] = 1 := by
   simp [-nl2Inner_self, nl2Inner, IsROrC.conj_mul', hf]
@@ -306,7 +310,7 @@ end IsROrC
 /-- **Cauchy-Schwarz inequality** -/
 lemma nl2Inner_le_l2Norm_mul_l2Norm (f g : ι → ℝ) : ⟪f, g⟫ₙ_[ℝ] ≤ ‖f‖ₙ_[2] * ‖g‖ₙ_[2] := by
   simp only [nlpNorm, div_mul_div_comm, ← sq, ENNReal.toReal_ofNat, ← one_div, ← sqrt_eq_rpow]
-  rw [sq_sqrt]
+  rw [sq_sqrt, nl2Inner_eq_l2Inner_div_card (𝕜 := ℝ)]
   refine div_le_div_of_nonneg_right (l2Inner_le_l2Norm_mul_l2Norm _ _) ?_
   all_goals positivity
 
@@ -320,16 +324,19 @@ private lemma nlpNorm_pos_of_pos {α : ι → Type*} [Nonempty ι] [∀ i, Norme
   nlpNorm_pos_of_ne_zero hf.ne'
 
 section LinearOrderedSemifield
-variable [LinearOrderedSemifield 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+
+private lemma nl2Inner_nonneg_of_nonneg_of_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
+  sorry
 
 private lemma nl2Inner_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
-  nl2Inner_nonneg hf.le hg
+  nl2Inner_nonneg_of_nonneg_of_nonneg hf.le hg
 
 private lemma nl2Inner_nonneg_of_nonneg_of_pos (hf : 0 ≤ f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
-  nl2Inner_nonneg hf hg.le
+  nl2Inner_nonneg_of_nonneg_of_nonneg hf hg.le
 
 private lemma nl2Inner_nonneg_of_pos_of_pos (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
-  nl2Inner_nonneg hf.le hg.le
+  nl2Inner_nonneg_of_nonneg_of_nonneg hf.le hg.le
 
 end LinearOrderedSemifield
 
@@ -361,7 +368,7 @@ end LinearOrderedSemifield
 /-- The `positivity` extension which identifies expressions of the form `⟪f, g⟫_[𝕜]`. -/
 @[positivity ⟪_, _⟫ₙ_[_]] def evalNL2Inner : PositivityExt where eval {u 𝕜} _ _ e := do
   match e with
-  | ~q(@nl2Inner $ι _ $instι $instfield $inststar $f $g) =>
+  | ~q(@nl2Inner $ι _ $instι $instfield $instmod $inststar $f $g) =>
       let _p𝕜 ← synthInstanceQ q(LinearOrderedSemifield $𝕜)
       let _p𝕜 ← synthInstanceQ q(StarOrderedRing $𝕜)
       assumeInstancesCommute
@@ -372,7 +379,8 @@ end LinearOrderedSemifield
         return .nonnegative q(nl2Inner_nonneg_of_pos_of_nonneg $pf $pg)
       | .nonnegative pf, .positive pg =>
         return .nonnegative q(nl2Inner_nonneg_of_nonneg_of_pos $pf $pg)
-      | .nonnegative pf, .nonnegative pg => return .nonnegative q(nl2Inner_nonneg $pf $pg)
+      | .nonnegative pf, .nonnegative pg =>
+        return .nonnegative q(nl2Inner_nonneg_of_nonneg_of_nonneg $pf $pg)
       | _, _ => return .none
   | _ => throwError "not nl2Inner"
 
@@ -396,7 +404,8 @@ example {p : ℝ≥0∞} [Nonempty ι] {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f�
 end Complex
 
 section LinearOrderedSemifield
-variable [LinearOrderedSemifield 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [StarOrderedRing 𝕜]
+  {f g : ι → 𝕜}
 
 example (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] := by positivity
 example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] := by positivity
