@@ -45,6 +45,7 @@ import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Finset.Card
 import LeanAPAP.Mathlib.Data.Finset.Image
 import LeanAPAP.Mathlib.Data.Finset.NatAntidiagonal
+import LeanAPAP.Mathlib.Data.Finset.Pi
 import LeanAPAP.Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Data.Finset.Powerset
 import LeanAPAP.Mathlib.Data.Fintype.Basic

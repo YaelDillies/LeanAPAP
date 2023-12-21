@@ -1,11 +1,15 @@
 import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Pi
+import LeanAPAP.Mathlib.Data.Finset.Pi
 
 open Finset
 
 namespace Fintype
 variable {α : Type*} {β γ : α → Type*} [Fintype α] [DecidableEq α] [∀ a, DecidableEq (γ a)]
+
+lemma piFinset_nonempty {s : ∀ a, Finset (β a)} (hs : ∀ a, (s a).Nonempty) :
+    (piFinset s).Nonempty := (pi_nonempty fun _ _ ↦ hs _).map
 
 @[simp]
 lemma piFinset_of_isEmpty [IsEmpty α] (s : ∀ a, Finset (β a)) : piFinset s = univ :=
@@ -29,12 +33,15 @@ lemma piFinset_image₂ (f : ∀ a, β a → γ a → δ a) (s : ∀ a, Finset (
 end Fintype
 
 namespace Fintype
-variable {α β : Type*} {δ : α → Type*}
+variable {α β : Type*} {δ : α → Type*} {s : Finset α} {n : ℕ}
 
 @[reducible]
 def piFinsetConst (s : Finset α) (n : ℕ) := piFinset fun _ : Fin n ↦ s
 
 infixl:70 "^^" => piFinsetConst
+
+protected lemma _root_.Finset.Nonempty.piFinsetConst (hs : s.Nonempty) : (s ^^ n).Nonempty :=
+  piFinset_nonempty fun _ ↦ hs
 
 @[simp] lemma card_piFinsetConst (s : Finset α) (n : ℕ) : (s ^^ n).card = s.card ^ n := by
   simp [piFinsetConst, card_piFinset]

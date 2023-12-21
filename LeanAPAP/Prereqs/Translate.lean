@@ -21,10 +21,18 @@ def translate (a : α) (f : α → β) : α → β := fun x ↦ f (x - a)
 notation "τ " => translate
 
 @[simp] lemma translate_apply (a : α) (f : α → β) (x : α) : τ a f x = f (x - a) := rfl
-@[simp] lemma translate_zero (f : α → β) : translate 0 f = f := by ext; simp
+@[simp] lemma translate_zero (f : α → β) : τ 0 f = f := by ext; simp
 
-@[simp] lemma translate_translate (a b : α) (f : α → β) : τ a (τ b f) = τ (a + b) f := by
+lemma translate_translate (a b : α) (f : α → β) : τ a (τ b f) = τ (a + b) f := by
   ext; simp [sub_sub]
+
+lemma translate_add (a b : α) (f : α → β) : τ (a + b) f = τ a (τ b f) := by ext; simp [sub_sub]
+
+lemma translate_add' (a b : α) (f : α → β) : τ (a + b) f = τ b (τ a f) := by
+  rw [add_comm, translate_add]
+
+lemma translate_comm (a b : α) (f : α → β) : τ a (τ b f) = τ b (τ a f) := by
+  rw [← translate_add, translate_add']
 
 @[simp] lemma comp_translate (a : α) (f : α → β) (g : β → γ) : g ∘ τ a f = τ a (g ∘ f) := rfl
 

@@ -317,9 +317,12 @@ lemma expect_indicate_eq' [Fintype ι] [Nonempty ι] [DecidableEq ι] (f : ι �
     𝔼 i, ite (i = x) (Fintype.card ι : α) 0 * f i = f x := by
   simp_rw [@eq_comm _ _ x, expect_indicate_eq]
 
-@[simp] nonrec lemma _root_.Fintype.sum_div_card [Fintype ι] (f : ι → α) :
-    (∑ i, f i) / Fintype.card ι = 𝔼 i, f i := by
-  rw [expect, NNRat.smul_def, card_univ, div_eq_inv_mul, NNRat.cast_inv, NNRat.cast_natCast]
+lemma expect_eq_sum_div_card (s : Finset ι) (f : ι → α) :
+    𝔼 i ∈ s, f i = (∑ i ∈ s, f i) / s.card := by
+  rw [expect, NNRat.smul_def, div_eq_inv_mul, NNRat.cast_inv, NNRat.cast_natCast]
+
+nonrec lemma _root_.Fintype.expect_eq_sum_div_card [Fintype ι] (f : ι → α) :
+    𝔼 i, f i = (∑ i, f i) / Fintype.card ι := Finset.expect_eq_sum_div_card _ _
 
 lemma expect_div (s : Finset ι) (f : ι → α) (a : α) : (𝔼 i ∈ s, f i) / a = 𝔼 i ∈ s, f i / a := by
   simp_rw [div_eq_mul_inv, expect_mul]

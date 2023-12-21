@@ -519,7 +519,7 @@ lemma support_iterConv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n 
   | n + 1 => (support_conv_subset _ _).trans $ Set.add_subset_add_left $ support_iterConv_subset _ _
 
 lemma indicate_iterConv_apply (s : Finset α) (n : ℕ) (a : α) :
-    (𝟭_[β] s ∗^ n) a = ((piFinset fun _i ↦ s).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by
+    (𝟭_[β] s ∗^ n) a = ((s ^^ n).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by
   induction' n with n ih generalizing a
   · simp [apply_ite card, eq_comm]
   simp_rw [iterConv_succ, conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite, filter_mem_univ,
@@ -539,23 +539,23 @@ lemma indicate_iterConv_apply (s : Finset α) (n : ℕ) (a : α) :
         Fin.cons_self_tail _⟩
 
 lemma indicate_iterConv_conv (s : Finset α) (n : ℕ) (f : α → β) :
-    𝟭 s ∗^ n ∗ f = ∑ a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) f := by
+    𝟭 s ∗^ n ∗ f = ∑ a ∈ s ^^ n, τ (∑ i, a i) f := by
   ext b
   simp only [conv_eq_sum_sub', indicate_iterConv_apply, mem_piFinset, Finset.sum_apply,
     translate_apply, ← nsmul_eq_mul, ← sum_const, sum_fiberwise']
 
 lemma conv_indicate_iterConv (f : α → β) (s : Finset α) (n : ℕ) :
-    f ∗ 𝟭 s ∗^ n = ∑ a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) f := by
+    f ∗ 𝟭 s ∗^ n = ∑ a ∈ s ^^ n, τ (∑ i, a i) f := by
   ext b
   simp only [conv_eq_sum_sub, indicate_iterConv_apply, mem_piFinset, Finset.sum_apply,
     translate_apply, ← nsmul_eq_mul', ← sum_const, sum_fiberwise']
 
 lemma indicate_iterConv_dconv (s : Finset α) (n : ℕ) (f : α → β) :
-    𝟭 s ∗^ n ○ f = ∑ a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) (conjneg f) := by
+    𝟭 s ∗^ n ○ f = ∑ a ∈ s ^^ n, τ (∑ i, a i) (conjneg f) := by
   rw [← conv_conjneg, indicate_iterConv_conv]
 
 lemma dconv_indicate_iterConv (f : α → β) (s : Finset α) (n : ℕ) :
-    f ○ 𝟭 s ∗^ n = ∑ a ∈ piFinset (fun _ : Fin n ↦ s), τ (-∑ i, a i) f := by
+    f ○ 𝟭 s ∗^ n = ∑ a ∈ s ^^ n, τ (-∑ i, a i) f := by
   simp [← conv_conjneg, conjneg_iterConv, conv_indicate_iterConv, piFinset_neg']
 
 end CommSemiring

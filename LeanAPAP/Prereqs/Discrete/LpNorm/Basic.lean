@@ -18,7 +18,7 @@ import LeanAPAP.Prereqs.Indicator
 -/
 
 open Finset Function Real
-open scoped BigOps ComplexConjugate ENNReal NNReal
+open scoped BigOps ComplexConjugate ENNReal NNReal NNRat
 
 variable {ι 𝕜 : Type*} [Fintype ι]
 
@@ -111,6 +111,11 @@ lemma lpNorm_add_le (hp : 1 ≤ p) (f g : ∀ i, α i) : ‖f + g‖_[p] ≤ ‖
   haveI := Fact.mk hp
   norm_add_le _ _
 
+lemma lpNorm_sum_le (hp : 1 ≤ p) {κ : Type*} (s : Finset κ) (f : κ → ∀ i, α i) :
+    ‖∑ i ∈ s, f i‖_[p] ≤ ∑ i ∈ s, ‖f i‖_[p] :=
+  haveI := Fact.mk hp
+  norm_sum_le _ _
+
 lemma lpNorm_sub_le (hp : 1 ≤ p) (f g : ∀ i, α i) : ‖f - g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
   haveI := Fact.mk hp
   norm_sub_le _ _
@@ -146,6 +151,14 @@ variable [∀ i, NormedSpace ℝ (α i)]
 lemma lpNorm_nsmul (hp : 1 ≤ p) (n : ℕ) (f : ∀ i, α i) : ‖n • f‖_[p] = n • ‖f‖_[p] :=
   haveI := Fact.mk hp
   norm_nsmul _ _
+
+lemma lpNorm_expect_le [∀ i, Module ℚ≥0 (α i)] (hp : 1 ≤ p) {κ : Type*} (s : Finset κ) (f : κ → ∀ i, α i) :
+    ‖𝔼 i ∈ s, f i‖_[p] ≤ 𝔼 i ∈ s, ‖f i‖_[p] := by
+  obtain rfl | hs := s.eq_empty_or_nonempty
+  · simp
+  refine (le_inv_smul_iff_of_pos $ by positivity).2 ?_
+  rw [← nsmul_eq_smul_cast, ← lpNorm_nsmul hp, card_smul_expect]
+  exact lpNorm_sum_le hp _ _
 
 end one_le
 end NormedAddCommGroup
@@ -353,6 +366,19 @@ lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ 
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe]
     congr 1
     exact Fintype.sum_equiv (Equiv.neg _) _ _ fun _ ↦ rfl
+
+lemma lpNorm_translate_sum_sub_le [NormedAddCommGroup β] (hp : 1 ≤ p) {ι : Type*} (s : Finset ι)
+    (a : ι → α) (f : α → β) : ‖τ (∑ i ∈ s, a i) f - f‖_[p] ≤ ∑ i ∈ s, ‖τ (a i) f - f‖_[p] := by
+  induction' s using Finset.cons_induction with i s ih hs
+  · simp
+  calc
+    _ = ‖τ (∑ j ∈ s, a j) (τ (a i) f - f) + (τ (∑ j ∈ s, a j) f - f)‖_[p] := by
+        rw [sum_cons, translate_add', translate_sub_right, sub_add_sub_cancel]
+    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖_[p] + ‖(τ (∑ j ∈ s, a j) f - f)‖_[p] :=
+        lpNorm_add_le hp _ _
+    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖_[p] + ∑ j ∈ s, ‖(τ (a j) f - f)‖_[p] :=
+        add_le_add_left hs _
+    _ = _ := by rw [lpNorm_translate, sum_cons]
 
 end lpNorm
 

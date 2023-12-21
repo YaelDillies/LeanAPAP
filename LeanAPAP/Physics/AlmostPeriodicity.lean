@@ -50,7 +50,7 @@ variable {G : Type*} [DecidableEq G] [Fintype G] [AddCommGroup G] {A S : Finset 
   {ε K : ℝ} {k m : ℕ}
 
 open Finset Real
-open scoped BigOperators Pointwise NNReal ENNReal
+open scoped BigOps Pointwise NNReal ENNReal
 
 namespace AlmostPeriodicity
 
@@ -60,10 +60,10 @@ def LProp (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : Finset G) (a : Fin k → G
 noncomputable instance : DecidablePred (LProp k m ε f A) := Classical.decPred _
 
 noncomputable def l (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : Finset G) : Finset (Fin k → G) :=
-  (Fintype.piFinset fun _ ↦ A).filter (LProp k m ε f A)
+  (A ^^ k).filter (LProp k m ε f A)
 
 lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
-    (h : ∑ a in Fintype.piFinset fun _ ↦ A,
+    (h : ∑ a in A ^^ k,
         ‖fun x : G ↦ ∑ i : Fin k, f (x - a i) - (k • (mu A ∗ f)) x‖_[2 * m] ^ (2 * m) ≤
       1 / 2 * (k * ε * ‖f‖_[2 * m]) ^ (2 * m) * A.card ^ k) :
     (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
@@ -77,9 +77,9 @@ lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
   refine pow_le_pow_iff_left ?_ ?_ ?_ <;> positivity
 
 lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
-    ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
+    ∑ a in A ^^ k, ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
       (8 * m) ^ m * k ^ (m - 1) *
-        ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ∑ i, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) := by
+        ∑ a in A ^^ k, ∑ i, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) := by
   let f' : G → ℂ := fun a ↦ f (x - a) - (mu A ∗ f) x
   refine' (complex_marcinkiewicz_zygmund f' (by linarith only [hm]) _).trans_eq' _
   · intro i
@@ -93,10 +93,10 @@ lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
 
 lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
     (8 * m : ℝ) ^ m * k ^ (m - 1) *
-        ∑ a in Fintype.piFinset fun _ : Fin k ↦ A,
+        ∑ a in A ^^ k,
           ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
       (8 * m : ℝ) ^ m * k ^ (m - 1) *
-        ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
+        ∑ a in A ^^ k, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
   -- lots of the equalities about m can be automated but it's *way* slower
   have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
   have hm' : 1 < 2 * m := (Nat.mul_le_mul_left 2 hm).trans_lt' $ by norm_num1
@@ -160,10 +160,10 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
   rw [←hmeq, mul_pow]
   simp only [lpNorm_pow_eq_sum hm']
   rw [sum_comm]
-  have : ∀ x : G, ∑ a in Fintype.piFinset fun _ : Fin k ↦ A,
+  have : ∀ x : G, ∑ a in A ^^ k,
       ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
     (8 * m) ^ m * k ^ (m - 1) *
-      ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ∑ i, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) :=
+      ∑ a in A ^^ k, ∑ i, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) :=
     lemma28_part_one hm
   refine' (sum_le_sum fun x _ ↦ this x).trans _
   rw [←mul_sum]
@@ -175,9 +175,9 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
   simp only [this]
   have :
     (8 * m : ℝ) ^ m * k ^ (m - 1) *
-        ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
+        ∑ a in A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
       (8 * m : ℝ) ^ m * k ^ (m - 1) *
-        ∑ a in Fintype.piFinset fun _ : Fin k ↦ A, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
+        ∑ a in A ^^ k, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
     lemma28_part_two hm hA
   refine' this.trans _
   simp only [sum_const, Fintype.card_piFinsetConst, nsmul_eq_mul, Nat.cast_pow]
@@ -263,7 +263,7 @@ lemma big_shifts_step2 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
 -- might be true for dumb reason when k = 0, since L would be singleton and rhs is |G|,
 -- so its just |S| ≤ |G|
 lemma big_shifts (S : Finset G) (L : Finset (Fin k → G)) (hk : k ≠ 0)
-    (hL' : L.Nonempty) (hL : L ⊆ Fintype.piFinset fun _ ↦ A) :
+    (hL' : L.Nonempty) (hL : L ⊆ A ^^ k) :
     ∃ a : Fin k → G, a ∈ L ∧
       L.card * S.card ≤ (A + S).card ^ k * (univ.filter fun t : G ↦ (a - fun _ ↦ t) ∈ L).card := by
   rcases S.eq_empty_or_nonempty with (rfl | hS)
@@ -430,5 +430,33 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
         rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left $ neg_le_neg $ inv_le_inv_of_le
           (by positivity) $ (Nat.le_ceil _).trans $ mod_cast Nat.le_mul_of_pos_left (by positivity)
     _ ≤ exp 1 := rpow_neg_inv_curlog_le (by positivity) inf_le_left
+
+theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (k : ℕ) (hk : k ≠ 0)
+    (hK₂ : 2 ≤ K) (hK : (A + S).card ≤ K * A.card) (hS : S.Nonempty)
+    (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
+    ∃ T : Finset G,
+      K ^ (-4096 * ⌈curlog (min 1 (C.card / B.card))⌉ * k ^ 2/ ε ^ 2) * S.card ≤ T.card ∧
+      ‖μ T ∗^ k ∗ (μ_[ℂ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
+  obtain ⟨T, hKT, hT⟩ := linfty_almost_periodicity (ε / k) (by positivity)
+    (div_le_one_of_le (hε₁.trans $ mod_cast Nat.one_le_iff_ne_zero.2 hk) $ by positivity) hK₂ hK
+    _ _ hB hC
+  refine ⟨T, by simpa only [div_pow, div_div_eq_mul_div] using hKT, ?_⟩
+  set F := μ_[ℂ] A ∗ 𝟭 B ∗ μ C
+  have hT' : T.Nonempty
+  · have := hS.card_pos -- TODO: positivity
+    have : 0 < _ := hKT.trans_lt' $ by positivity
+    simpa [card_pos] using this
+  calc
+    ‖μ T ∗^ k ∗ F - F‖_[∞]
+      = ‖𝔼 a ∈ T ^^ k, (τ (∑ i, a i) F - F)‖_[∞] := by
+        rw [mu_iterConv_conv, expect_sub_distrib, expect_const hT'.piFinsetConst]
+    _ ≤ 𝔼 a ∈ T ^^ k, ‖τ (∑ i, a i) F - F‖_[∞] := lpNorm_expect_le le_top _ _
+    _ ≤ 𝔼 _a ∈ T ^^ k, ε := expect_le_expect fun x hx ↦ ?_
+    _ = ε := by rw [expect_const hT'.piFinsetConst]
+  calc
+    ‖τ (∑ i, x i) F - F‖_[⊤]
+    _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := lpNorm_translate_sum_sub_le le_top _ _ _
+    _ ≤ ∑ _i, ε / k := sum_le_sum fun i _ ↦ hT _ $ Fintype.mem_piFinset.1 hx _
+    _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel']; positivity
 
 end AlmostPeriodicity

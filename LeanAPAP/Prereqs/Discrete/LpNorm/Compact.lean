@@ -27,7 +27,7 @@ notation "‖" f "‖ₙ_[" p "]" => nlpNorm p f
 
 lemma nlpNorm_eq_expect' (hp : p.toReal ≠ 0) (f : ∀ i, α i) :
     ‖f‖ₙ_[p] = (𝔼 i, ‖f i‖ ^ p.toReal) ^ p.toReal⁻¹ := by
-  rw [nlpNorm, lpNorm_eq_sum', ← div_rpow, Fintype.sum_div_card (α := ℝ)] <;> positivity
+  rw [nlpNorm, lpNorm_eq_sum', ← div_rpow, Fintype.expect_eq_sum_div_card (α := ℝ)] <;> positivity
 
 lemma nlpNorm_eq_expect'' {p : ℝ} (hp : 0 < p) (f : ∀ i, α i) :
     ‖f‖ₙ_[p.toNNReal] = (𝔼 i, ‖f i‖ ^ p) ^ p⁻¹ := by
@@ -190,7 +190,7 @@ notation "⟪" f ", " g "⟫ₙ_[" 𝕜 "]" => @nl2Inner _ 𝕜 _ _ _ _ f g
 
 lemma nl2Inner_eq_expect (f g : ι → 𝕜) : ⟪f, g⟫ₙ_[𝕜] = 𝔼 i, conj (f i) * g i := rfl
 lemma nl2Inner_eq_l2Inner_div_card (f g : ι → 𝕜) : ⟪f, g⟫ₙ_[𝕜] = ⟪f, g⟫_[𝕜] / card ι :=
-  (Fintype.sum_div_card _).symm
+  Fintype.expect_eq_sum_div_card _
 
 @[simp] lemma conj_nl2Inner (f g : ι → 𝕜) : conj ⟪f, g⟫ₙ_[𝕜] = ⟪g, f⟫ₙ_[𝕜] := by
   simp [nl2Inner_eq_expect, map_expect, mul_comm]
