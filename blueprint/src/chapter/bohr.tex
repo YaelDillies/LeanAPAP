@@ -1,7 +1,8 @@
 \chapter{Bohr sets}
 
 \begin{definition}[Bohr sets]
-For a non-empty $\Gamma\subseteq \widehat{G}$ and $\nu\in [0,2]$ we define the Bohr set $B=\mathrm{Bohr}_\nu(\Gamma)$ as 
+\label{bohr-set}
+For a non-empty $\Gamma\subseteq \widehat{G}$ and $\nu\in [0,2]$ we define the Bohr set $B=\mathrm{Bohr}_\nu(\Gamma)$ as
 \[\mathrm{Bohr}_\nu(\Gamma)=\left\{ x\in G : \abs{1-\gamma(x)}\leq \nu\textrm{ for all }\gamma\in\Gamma\right\}.\]
 We call $\Gamma$ the \emph{frequency set} of $B$ and $\nu$ the \emph{width}, and define the \emph{rank} of $B$ to be the size of $\Gamma$, denoted by $\rk(B)$. We note here that all Bohr sets are symmetric and contain $0$.
 
@@ -9,25 +10,33 @@ In fact, when we speak of a Bohr set we implicitly refer to the triple $(\Gamma,
 \end{definition}
 
 \begin{definition}[Regularity]
-A Bohr set $B$ of rank $d$ is regular if for all $\abs{\kappa}\leq 1/100d$ we have 
+\label{bohr-reg-def}
+\uses{bohr-set}
+A Bohr set $B$ of rank $d$ is regular if for all $\abs{\kappa}\leq 1/100d$ we have
 \[(1-100 d\abs{\kappa})\abs{B}\leq \abs{B_{1+\kappa}}\leq(1+ 100 d\abs{\kappa})\abs{B}.\]
 \end{definition}
 
-\begin{lemma}\label{bohr-regular}
+\begin{lemma}
+\label{bohr-regularity}
+\uses{bohr-reg-def}
 For any Bohr set $B$ there exists $\rho\in[\tfrac{1}{2},1]$ such that $B_\rho$ is regular.
 \end{lemma}
 \begin{proof}
 To do.
 \end{proof}
 
-\begin{lemma}\label{bohr-size}
+\begin{lemma}
+\label{bohr-size}
+\uses{bohr-set}
 If $\rho\in (0,1)$ and $B$ is a Bohr set of rank $d$, then $\abs{B_\rho}\geq (\rho/4)^d\abs{B}$.
 \end{lemma}
 \begin{proof}
 To do.
 \end{proof}
 
-\begin{lemma}\label{reg-conv}
+\begin{lemma}
+\label{reg-conv}
+\uses{bohr-reg-def}
 If $B$ is a regular Bohr set of rank $d$ and $\mu:G\to\bbr_{\geq 0}$ is supported on $B_\rho$, with $\rho \in (0,1)$, then
 \[ \norm{ \mu_B*\mu - \mu_B }_{1} \ll \rho d\norm{\mu}_1. \]
 \end{lemma}
@@ -35,8 +44,10 @@ If $B$ is a regular Bohr set of rank $d$ and $\mu:G\to\bbr_{\geq 0}$ is supporte
 To do.
 \end{proof}
 
-\begin{lemma}\label{bohr-majorise}
-There is a constant $c>0$ such that the following holds.  Let $B$ be a regular Bohr set of rank $d$ and $L\geq 1$ be any integer. If $\nu:G\to\bbr_{\geq 0}$ is supported on $L B_\rho$, where $\rho \leq c/Ld$, and $\norm{\nu}_1=1$, then 
+\begin{lemma}
+\label{bohr-majorise}
+\uses{bohr-reg-def}
+There is a constant $c>0$ such that the following holds.  Let $B$ be a regular Bohr set of rank $d$ and $L\geq 1$ be any integer. If $\nu:G\to\bbr_{\geq 0}$ is supported on $L B_\rho$, where $\rho \leq c/Ld$, and $\norm{\nu}_1=1$, then
 \[\mu_B \leq 2\mu_{B_{1+L\rho}}\ast \nu.\]
 \end{lemma}
 \begin{proof}
@@ -44,10 +55,12 @@ There is a constant $c>0$ such that the following holds.  Let $B$ be a regular B
 To do.
 \end{proof}
 
-\begin{lemma}\label{bourgain-trick}
+\begin{lemma}
+\label{bourgain-trick}
+\uses{bohr-reg-def}
 There is a constant $c>0$ such that the following holds. Let $B$ be a regular Bohr set of rank $d$, suppose $A\subseteq B$ has density $\alpha$, let $\epsilon>0$, and suppose $B',B''\subseteq B_\rho$ where $\rho\leq c\alpha\epsilon/d$. Then either
 \begin{enumerate}
-\item there is some translate $A'$ of $A$ such that $\abs{A'\cap B'}\geq (1-\epsilon)\alpha\abs{B'}$ and $\abs{A'\cap B''}\geq (1-\epsilon)\alpha \abs{B''}$, or 
+\item there is some translate $A'$ of $A$ such that $\abs{A'\cap B'}\geq (1-\epsilon)\alpha\abs{B'}$ and $\abs{A'\cap B''}\geq (1-\epsilon)\alpha \abs{B''}$, or
 \item $\norm{\ind{A}\ast \mu_{B'}}_\infty\geq (1+\epsilon/2)\alpha$, or
 \item $\norm{\ind{A}\ast \mu_{B''}}_\infty \geq (1+\epsilon/2)\alpha$.
 \end{enumerate}

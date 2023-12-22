@@ -1,3 +1,5 @@
+% This file makes the web version of the blueprint.
+
 \documentclass{report}
 
 \usepackage{amsmath,amsfonts,amsthm,amssymb}
@@ -10,8 +12,8 @@
 \usepackage{tikz-cd}
 \usepackage{tikz}
 
-\input{macros_common}
-\input{macros_web}
+\input{preamble/common}
+\input{preamble/web}
 
 %\home{https://github.com/YaelDillies/LeanAPAP/}
 \github{https://github.com/YaelDillies/LeanAPAP/}
@@ -21,5 +23,5 @@
 
 \begin{document}
 \maketitle
-\input{content}
+\input{chapter/main}
 \end{document}

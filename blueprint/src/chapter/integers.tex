@@ -1,6 +1,8 @@
 \chapter{The integer case}
 
-\begin{theorem}\label{th-ap-int}
+\begin{theorem}
+\label{th-ap-int}
+\uses{bohr-reg-def}
 There is a constant $c>0$ such that the following holds. Let $\epsilon>0$ and $B,B'\subseteq G$ be regular Bohr sets of rank $d$. Suppose that $A_1\subseteq B$ with density $\alpha_1$ and $A_2$ is such that there exists $x$ with $A_2\subseteq B'-x$ with density $\alpha_2$. Let $S$ be any set with $\abs{S}\leq 2\abs{B}$. There is a regular Bohr set $B''\subseteq B'$ of rank at most
 \[d+O_\epsilon(\lo{\alpha_1}^3\lo{\alpha_2})\]
 and size
@@ -13,7 +15,9 @@ such that
 To do.
 \end{proof}
 
-\begin{proposition}\label{Lp-orth}
+\begin{proposition}
+\label{Lp-orth}
+\uses{bohr-reg-def}
 There is a constant $c>0$ such that the following holds. Let $\epsilon >0$ and $p \geq 2$ be an integer. Let $B \subseteq G$ be a regular Bohr set and $A\subseteq B$ with relative density $\alpha$. Let $\nu : G \to \bbr_{\geq 0}$ be supported on $B_\rho$, where $\rho \leq c\epsilon\alpha/\rk(B)$, such that $\norm{\nu}_1=1$ and $\widehat{\nu}\geq 0$. If
     \[ \norm{(\mu_A-\mu_B) \circ (\mu_{A}-\mu_B)}_{p(\nu)} \geq \epsilon\, \mu(B)^{-1}, \]
     then there exists $p'\ll_\epsilon p$ such that
@@ -21,11 +25,13 @@ There is a constant $c>0$ such that the following holds. Let $\epsilon >0$ and $
 \end{proposition}
 \begin{proof}
 \uses{reg-conv, unbalancing}
-To do. 
+To do.
 \end{proof}
 
 
-\begin{proposition}\label{pos-def-measures}
+\begin{proposition}
+\label{pos-def-measures}
+\uses{bohr-reg-def}
 There is a constant $c>0$ such that the following holds. Let $p \geq 2$ be an even integer. Let $f : G \to \bbr$, let $B \subseteq G$ and $B', B'' \subseteq B_{c/\rk(B)}$ all be regular Bohr sets. Then
 \[ \norm{ f\circ f }_{p(\mu_{B'}\circ \mu_{B'}\ast \mu_{B''}\circ \mu_{B''})} \geq \tfrac{1}{2} \norm{f*f}_{p(\mu_B)}. \]
 \end{proposition}
@@ -34,7 +40,9 @@ There is a constant $c>0$ such that the following holds. Let $p \geq 2$ be an ev
 To do,
 \end{proof}
 
-\begin{proposition}\label{holder-lifting}
+\begin{proposition}
+\label{hoelder-lifting}
+\uses{bohr-reg-def}
 There is a constant $c>0$ such that the following holds. Let $\epsilon >0$. Let $B \subseteq G$ be a regular Bohr set and $A\subseteq B$ with relative density $\alpha$, and let $B' \subseteq B_{c\epsilon\alpha/\rk(B)}$ be a regular Bohr set and $C\subseteq B'$ with relative density $\gamma$. Either
 \begin{enumerate}
 \item $\abs{ \langle \mu_A*\mu_A, \mu_{C} \rangle - \mu(B)^{-1} } \leq \epsilon \mu(B)^{-1}$ or
@@ -46,7 +54,9 @@ There is a constant $c>0$ such that the following holds. Let $\epsilon >0$. Let 
 To do.
 \end{proof}
 
-\begin{proposition}\label{prop-it}
+\begin{proposition}
+\label{prop-it}
+\uses{bohr-reg-def}
 There is a constant $c>0$ such that the following holds. Let $\epsilon>0$ and $p,k\geq 1$ be integers such that $(k,\abs{G})=1$. Let $B,B',B''\subseteq G$ be regular Bohr sets of rank $d$ such that $B''\subseteq B'_{c/d}$ and $A\subseteq B$ with relative density $\alpha$. If
     \[ \norm{ \mu_{A}\circ \mu_{A}}_{p(\mu_{k\cdot B'}\circ\mu_{k\cdot B'}\ast \mu_{k\cdot B''}\circ \mu_{k\cdot B''})} \geq \left(1+\epsilon\right) \mu(B)^{-1},\]
     then there is a regular Bohr set $B'''\subseteq B''$ of rank at most
@@ -61,13 +71,15 @@ There is a constant $c>0$ such that the following holds. Let $\epsilon>0$ and $p
 To do.
 \end{proof}
 
-\begin{theorem}\label{flat-on-bohr}
+\begin{theorem}
+\label{flat-on-bohr}
+\uses{bohr-reg-def}
 There is a constant $c>0$ such that the following holds. Let ${\epsilon,\delta\in (0,1)}$ and $p,k\geq 1$ be integers such that $(k,\abs{G})=1$. For any $A\subseteq G$ with density $\alpha$ there is a regular Bohr set $B$ with
 \[ d=\rk(B) =O_{\epsilon}\left(\lo{\alpha}^5p^4\right) \quad\text{and}\quad \abs{B}\geq \exp\left(-O_{\epsilon,\delta}(\lo{\alpha}^6p^5\lo{\alpha/p})\right)\abs{G} \]
-and some $A'\subseteq (A-x)\cap B$ for some $x \in G$ such that 
+and some $A'\subseteq (A-x)\cap B$ for some $x \in G$ such that
 \begin{enumerate}
 \item $\abs{A'}\geq (1-\epsilon)\alpha\abs{B}$,
-\item $\abs{A'\cap B'}\geq (1-\epsilon)\alpha\abs{B'}$, where $B'=B_{\rho}$ is a regular Bohr set with ${\rho\in (\tfrac{1}{2},1)\cdot c\delta\alpha/d}$, and 
+\item $\abs{A'\cap B'}\geq (1-\epsilon)\alpha\abs{B'}$, where $B'=B_{\rho}$ is a regular Bohr set with ${\rho\in (\tfrac{1}{2},1)\cdot c\delta\alpha/d}$, and
 \item
 \[\norm{\mu_{A'}\circ \mu_{A'}}_{p(\mu_{k\cdot B''}\circ \mu_{k\cdot B''}\ast \mu_{k\cdot B'''}\circ \mu_{k\cdot B'''})} <(1+ \epsilon)\mu(B)^{-1},\]
 for any regular Bohr sets $B'' = B'_{\rho'}$ and $B'''=B''_{\rho''}$ satisfying ${\rho',\rho''\in(\frac{1}{2},1)\cdot c\delta\alpha/d}$.
@@ -75,10 +87,12 @@ for any regular Bohr sets $B'' = B'_{\rho'}$ and $B'''=B''_{\rho''}$ satisfying 
 \end{theorem}
 \begin{proof}
 \uses{prop-it, bourgain-trick, bohr-size}
-To do. 
+To do.
 \end{proof}
 
-\begin{theorem}\label{th-int-gen}
+\begin{theorem}
+\label{th-int-gen}
+\uses{bohr-reg-def}
 There is a constant $c>0$ such that the following holds. Let $\delta,\epsilon\in (0,1)$, let $p \geq 1$ and let $k$ be a positive integer such that $(k,\abs{G})=1$. There is a constant $C=C(\epsilon,\delta,k)>0$ such that the following holds.
 
 For any finite abelian group $G$ and any subset $A\subseteq G$ with $\abs{A}=\alpha \abs{G}$ there exists a regular Bohr set $B$ with
@@ -88,14 +102,15 @@ and
 and $A' \subseteq (A-x)\cap B$ for some $x\in G$ such that
 \begin{enumerate}
 \item $\abs{A'}\geq (1-\epsilon)\alpha \abs{B}$,
-\item $\abs{A'\cap B'}\geq (1-\epsilon)\alpha\abs{B'}$, where $B'=B_{\rho}$ is a regular Bohr set with $\rho\in (\tfrac{1}{2},1)\cdot c\delta\alpha/dk$, and 
+\item $\abs{A'\cap B'}\geq (1-\epsilon)\alpha\abs{B'}$, where $B'=B_{\rho}$ is a regular Bohr set with $\rho\in (\tfrac{1}{2},1)\cdot c\delta\alpha/dk$, and
 \item
 \[\norm{(\mu_{A'}-\mu_B)\ast (\mu_{A'}- \mu_B)}_{p(\mu_{k\cdot B'})} \leq \epsilon\frac{\abs{G}}{\abs{B}}.\]
 \end{enumerate}
 \end{theorem}
 \begin{proof}
 \uses{Lp-orth, flat-on-bohr, pos-def-measures}
-To do. \end{proof}
+To do.
+\end{proof}
 
 \begin{theorem}\label{main-int-count}
 If $A\subseteq \{1,\ldots,N\}$ has size $\abs{A}=\alpha N$, then $A$ contains at least
@@ -103,7 +118,7 @@ If $A\subseteq \{1,\ldots,N\}$ has size $\abs{A}=\alpha N$, then $A$ contains at
 many three-term arithmetic progressions.
 \end{theorem}
 \begin{proof}
-\uses{th-int-gen, holder-lifting}
+\uses{th-int-gen, hoelder-lifting}
 To do.
 \end{proof}
 
