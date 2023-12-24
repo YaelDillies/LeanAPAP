@@ -2,36 +2,44 @@
 
 \begin{definition}[Bohr sets]
 \label{bohr-set}
-For a non-empty $\Gamma\subseteq \widehat{G}$ and $\nu\in [0,2]$ we define the Bohr set $B=\mathrm{Bohr}_\nu(\Gamma)$ as
-\[\mathrm{Bohr}_\nu(\Gamma)=\left\{ x\in G : \abs{1-\gamma(x)}\leq \nu\textrm{ for all }\gamma\in\Gamma\right\}.\]
-We call $\Gamma$ the \emph{frequency set} of $B$ and $\nu$ the \emph{width}, and define the \emph{rank} of $B$ to be the size of $\Gamma$, denoted by $\rk(B)$. We note here that all Bohr sets are symmetric and contain $0$.
+Let $\nu: \widehat{G} \to \mathbb{R}$. The corresponding Bohr set is defined to be
+\[\mathrm{Bohr}(\rho)=\left\{ x\in G : \abs{1-\gamma(x)}\leq \nu(\gamma)\textrm{ for all }\gamma\in\Gamma\right\}.\]
+The rank of $\nu$, denoted by $\mathrm{rk}(\nu)$, is defined to be the size of the set of those $\gamma\in\widehat{G}$ such that $\nu(\gamma)<2$. 
 
-In fact, when we speak of a Bohr set we implicitly refer to the triple $(\Gamma,\nu,\mathrm{Bohr}_\nu(\Gamma))$, since the set $\mathrm{Bohr}_{\nu}(\Gamma)$ alone does not uniquely determine the frequency set nor the width. When we use subset notation, such as $B'\subseteq B$, this refers only to the set inclusion (and does not, in particular, imply any particular relation between the associated frequency sets or width functions). Furthermore, if $B=\mathrm{Bohr}_\nu(\Gamma)$ and $\rho\in(0,1]$, then we write $B_\rho$ for the same Bohr set with the width dilated by $\rho$, i.e. $\mathrm{Bohr}_{\rho\nu}(\Gamma)$, which is known as a \emph{dilate} of $B$.
+(Basic API facts: Bohr sets are symmetric and contain $0$. Also that, without loss of generality, we can assume $\nu$ takes only values in $\mathbb{R}_{\geq 0}$ - I think it might be easier to have the definition allow arbitrary real values, and then switch to non-negative only in proofs where convenient. Or could have the definition only allow non-negative valued functions in the first place.)
 \end{definition}
 
 \begin{definition}[Regularity]
 \label{bohr-reg-def}
 \uses{bohr-set}
-A Bohr set $B$ of rank $d$ is regular if for all $\abs{\kappa}\leq 1/100d$ we have
-\[(1-100 d\abs{\kappa})\abs{B}\leq \abs{B_{1+\kappa}}\leq(1+ 100 d\abs{\kappa})\abs{B}.\]
+We say $\nu:\widehat{G}\to \mathbb{R}$ is regular if, with $d=\mathrm{rk}(\nu)$, for all $\kappa\in\mathbb{R}$ with $\abs{\kappa}\leq 1/100d$ we have
+\[(1-100 d\abs{\kappa})\leq \frac{\abs{\mathrm{Bohr}((1+\kappa)\nu)}{\abs{\mathrm{Bohr}(\nu)}\leq(1+ 100 d\abs{\kappa}).\]
 \end{definition}
 
 \begin{lemma}
 \label{bohr-regularity}
 \uses{bohr-reg-def}
-For any Bohr set $B$ there exists $\rho\in[\tfrac{1}{2},1]$ such that $B_\rho$ is regular.
+For any $\nu:\widehat{G}\to \mathbb{R}$ there exists $\rho\in[\frac{1}{2},1]$ such that $\rho\cdot \nu$ is regular.
 \end{lemma}
 \begin{proof}
+\uses{bohr-size}
 To do.
 \end{proof}
 
 \begin{lemma}
 \label{bohr-size}
 \uses{bohr-set}
-If $\rho\in (0,1)$ and $B$ is a Bohr set of rank $d$, then $\abs{B_\rho}\geq (\rho/4)^d\abs{B}$.
+If $\rho\in (0,1)$ and $\nu:\widehat{G}\to \mathbb{R}$ then
+\[\abs{\mathrm{Bohr}(\rho\cdot \nu)}\geq (\rho/4)^{\mathrm{rk}(\nu)}\abs{\mathrm{Bohr}(\nu)}.\]
 \end{lemma}
 \begin{proof}
-To do.
+There are at most $\lceil 4/\rho\rceil$ many $z_i$ such that if $\lvert 1-w\rvert \leq \nu(\gamma)$ then $\lvert z_i-w\rvert\leq \rho\nu(\gamma)/2$ for some $i$. Let $\Gamma=\{ \gamma : \nu(\gamma) <2\}$ and define a function $f:\mathrm{Bohr}(\nu)\to \lceil 2/\rho\rceil^{\mathrm{rk}(\nu)}$ where for $\gamma\in \Gamma$ we assign the $\gamma$-coordinate of $f(x)$ as whichever $j$ has $\lvert z_j-\gamma(x)\rvert \leq \rho\nu(\gamma)/2$. 
+
+By the pigeonhole principle there must exist some $(j_1,\ldots,j_{d})$ such that $f^{-1}(j_1,\ldots,j_d)$ has size at least $(\lceil 2/\rho\rceil)^{-\mathrm{rk}(\nu)}\abs{\mathrm{Bohr}(\nu)}$. Call this set $B'$. It must be non-empty, so fix some $x\in B'$. We claim that $B'-x\subseteq \abs{\mathrm{Bohr}(\rho\cdot \nu)}$, which completes the proof.
+
+Suppose that $z=x+y$ with $x,y\in B'$, and fix some $\gamma\in \Gamma$. By assumption there is some $z_j\in \mathbb{C}$ such that $\lvert z_j-\gamma(x)\rvert \leq \rho \nu(\gamma)/2$ and $\lvert z_j-\gamma(y)\rvert \leq \rho \nu(\gamma)/2$. Then by the triangle inequality, 
+\[\lvert 1-\gamma(y-x)\rvert=\lvert \gamma(x)-\gamma(y)\rvert \leq \rho \nu(\gamma)\]
+and so $z=y-x\in \mathrm{Bohr}(\rho\cdot \nu)$. 
 \end{proof}
 
 \begin{lemma}
