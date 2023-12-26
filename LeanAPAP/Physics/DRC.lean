@@ -1,8 +1,5 @@
-import Mathlib.Logic.Lemmas
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Function.Support
-import LeanAPAP.Mathlib.Data.Complex.Exponential
-import LeanAPAP.Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Data.Fintype.Lattice
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset

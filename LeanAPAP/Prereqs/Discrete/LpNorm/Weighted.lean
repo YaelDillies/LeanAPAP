@@ -82,7 +82,7 @@ lemma wlpNorm_add_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : ∀ i, α i) :
     (lpNorm_mono (fun i ↦ by dsimp; positivity) fun i ↦ _)
   dsimp
   rw [←smul_add]
-  exact smul_le_smul_of_nonneg (norm_add_le _ _) (zero_le _)
+  exact smul_le_smul_of_nonneg_left (norm_add_le _ _) (zero_le _)
 
 lemma wlpNorm_sub_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : ∀ i, α i) :
     ‖f - g‖_[p, w] ≤ ‖f‖_[p, w] + ‖g‖_[p, w] := by
@@ -140,7 +140,7 @@ lemma wlpNorm_one (hp : p ≠ 0) (w : ι → ℝ≥0) :
   simp [wlpNorm_eq_sum hp, NNReal.smul_def]
 
 lemma wlpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p, w] ≤ ‖g‖_[p, w] :=
-  lpNorm_mono (fun i ↦ by dsimp; positivity) fun i ↦ smul_le_smul_of_nonneg
+  lpNorm_mono (fun i ↦ by dsimp; positivity) fun i ↦ smul_le_smul_of_nonneg_left
     (by rw [norm_of_nonneg (hf _), norm_of_nonneg (hf.trans hfg _)]; exact hfg _) $ by positivity
 
 end Real

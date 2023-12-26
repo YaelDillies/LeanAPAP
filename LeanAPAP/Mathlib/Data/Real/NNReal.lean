@@ -7,9 +7,9 @@ variable {x : ℝ≥0}
 
 instance {M : Type*} [OrderedAddCommMonoid M] [Module ℝ M] [OrderedSMul ℝ M] :
     OrderedSMul ℝ≥0 M where
-  smul_lt_smul_of_pos hab hc := (smul_lt_smul_of_pos hab (NNReal.coe_pos.2 hc) : _)
+  smul_lt_smul_of_pos hab hc := (smul_lt_smul_of_pos_left hab (NNReal.coe_pos.2 hc) : _)
   lt_of_smul_lt_smul_of_pos {a b c} hab _ :=
-    lt_of_smul_lt_smul_of_nonneg (by exact hab) (NNReal.coe_nonneg c)
+    lt_of_smul_lt_smul_of_nonneg_left (by exact hab) (NNReal.coe_nonneg c)
 
 @[simp]
 lemma mk_le_mk {x y : ℝ} {hx : 0 ≤ x} {hy : 0 ≤ y} : (⟨x, hx⟩ : ℝ≥0) ≤ ⟨y, hy⟩ ↔ x ≤ y := Iff.rfl

@@ -5,7 +5,6 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Data.Complex.Exponential
 import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Nat.Order.Basic
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic

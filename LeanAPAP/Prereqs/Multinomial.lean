@@ -1,8 +1,5 @@
-import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
-import LeanAPAP.Mathlib.Data.Finset.NatAntidiagonal
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import LeanAPAP.Mathlib.Data.Nat.Choose.Multinomial
-import LeanAPAP.Mathlib.Data.Nat.Factorial.Basic
-import LeanAPAP.Mathlib.Data.Nat.Factorial.DoubleFactorial
 import LeanAPAP.Prereqs.Cut
 
 /-!
@@ -63,12 +60,12 @@ lemma double_multinomial :
     Nat.le_div_iff_mul_le]
   swap
   · exact prod_pos fun i _ ↦ by positivity
-  refine' (Nat.mul_le_mul_right _ factorial_two_mul_le).trans _
+  refine' (Nat.mul_le_mul_right _ $ factorial_two_mul_le _).trans _
   rw [mul_pow, mul_comm, ←mul_assoc, ←mul_assoc]
   refine' Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ _)
   rw [←Finset.pow_sum, ←prod_mul_distrib]
   refine' prod_le_prod' fun i _ ↦ _
   rw [mul_comm, ←doubleFactorial_two_mul]
-  exact doubleFactorial_le_factorial
+  exact doubleFactorial_le_factorial _
 
 end Nat

@@ -9,10 +9,7 @@ import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
 import LeanAPAP.Mathlib.Algebra.Function.Support
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Equiv.Basic
-import LeanAPAP.Mathlib.Algebra.Group.Hom.Defs
-import LeanAPAP.Mathlib.Algebra.Group.Hom.Instances
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
-import LeanAPAP.Mathlib.Algebra.GroupPower.Hom
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.GroupWithZero.Units.Lemmas
@@ -22,8 +19,6 @@ import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
-import LeanAPAP.Mathlib.Algebra.Order.Ring.Canonical
-import LeanAPAP.Mathlib.Algebra.Order.Ring.Lemmas
 import LeanAPAP.Mathlib.Algebra.Star.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Algebra.Star.Pi
@@ -36,15 +31,11 @@ import LeanAPAP.Mathlib.Analysis.Normed.Group.Basic
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import LeanAPAP.Mathlib.Data.Complex.Basic
-import LeanAPAP.Mathlib.Data.Complex.Exponential
 import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Finset.Card
 import LeanAPAP.Mathlib.Data.Finset.Image
-import LeanAPAP.Mathlib.Data.Finset.NatAntidiagonal
 import LeanAPAP.Mathlib.Data.Finset.Pi
 import LeanAPAP.Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Data.Finset.Powerset
@@ -58,8 +49,6 @@ import LeanAPAP.Mathlib.Data.IsROrC.Basic
 import LeanAPAP.Mathlib.Data.Nat.Cast.Field
 import LeanAPAP.Mathlib.Data.Nat.Choose.Multinomial
 import LeanAPAP.Mathlib.Data.Nat.Factorial.Basic
-import LeanAPAP.Mathlib.Data.Nat.Factorial.BigOperators
-import LeanAPAP.Mathlib.Data.Nat.Factorial.DoubleFactorial
 import LeanAPAP.Mathlib.Data.Nat.Order.Basic
 import LeanAPAP.Mathlib.Data.Nat.Parity
 import LeanAPAP.Mathlib.Data.Pi.Algebra
@@ -75,8 +64,6 @@ import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.Defs
-import LeanAPAP.Mathlib.GroupTheory.GroupAction.Group
-import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
 import LeanAPAP.Mathlib.LinearAlgebra.FiniteDimensional

@@ -1,5 +1,4 @@
 import Mathlib.Algebra.Order.Field.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Ring.Lemmas
 
 /-!
 ### TODO

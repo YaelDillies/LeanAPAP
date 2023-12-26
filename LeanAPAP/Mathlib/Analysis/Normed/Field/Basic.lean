@@ -1,5 +1,5 @@
 import Mathlib.Analysis.Normed.Field.Basic
-import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
+import Mathlib.GroupTheory.OrderOfElement
 
 section
 

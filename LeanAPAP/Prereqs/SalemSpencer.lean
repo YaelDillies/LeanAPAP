@@ -1,6 +1,5 @@
 import Mathlib.Combinatorics.Additive.SalemSpencer
 import LeanAPAP.Mathlib.Data.Nat.Parity
-import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 
 open Finset Fintype Function
@@ -29,4 +28,5 @@ lemma AddSalemSpencer.l2Inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
     simp only [mu_apply, ha, if_true, mul_one, mem_image, exists_prop, mul_ite,
       mul_zero]
     rw [if_pos, card_image_of_injective, pow_three', mul_inv, mul_inv]
-    exacts [hG.coprime_two_left.nsmul_bijective.injective, ⟨_, ha, two_smul _ _⟩]
+    rw [← Nat.card_eq_fintype_card] at hG
+    exacts [hG.coprime_two_right.nsmul_right_bijective.injective, ⟨_, ha, two_smul _ _⟩]

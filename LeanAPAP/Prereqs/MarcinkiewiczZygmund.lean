@@ -1,11 +1,9 @@
-import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 import Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
-import LeanAPAP.Mathlib.Algebra.Order.Ring.Canonical
 import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Prereqs.Multinomial

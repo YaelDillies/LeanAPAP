@@ -1,8 +1,5 @@
-import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Data.Fin.Tuple.NatAntidiagonal
-import Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
-import LeanAPAP.Mathlib.Data.Finset.NatAntidiagonal
 
 noncomputable section
 
@@ -100,7 +97,7 @@ lemma cut_insert_disjoint_bUnion (n : ℕ) (a : ι) (s : Finset ι) (h : a ∉ s
     Function.Embedding.coeFn_mk, Ne.def, forall_exists_index, Set.Pairwise, mem_coe, mem_cut,
     and_imp]
   rintro x hx y hy h' f g hg hg' rfl _ f hf hf' e rfl
-  rw [Nat.antidiagonal_congr' hx hy] at h'
+  rw [antidiagonal_congr' hx hy] at h'
   simp only [Function.funext_iff, Pi.add_apply, addLeftEmbedding_apply] at e
   replace e := sum_congr rfl fun i (_ : i ∈ s) ↦ e i
   rw [sum_add_distrib, hf, sum_ite_eq', if_neg h, sum_add_distrib, hg, sum_ite_eq', if_neg h,

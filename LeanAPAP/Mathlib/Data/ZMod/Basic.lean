@@ -1,6 +1,5 @@
 import Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.Data.FunLike.Basic
-import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 
 open Fintype Function
 
@@ -11,16 +10,16 @@ section
 variable {x y : ZMod n}
 
 lemma coe_add : ((x + y : ZMod n) : ℤ) = (x + y) % n := by
-  rw [←ZMod.coe_int_cast, Int.cast_add, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
+  rw [← ZMod.coe_int_cast, Int.cast_add, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
 
 lemma coe_mul : ((x * y : ZMod n) : ℤ) = x * y % n := by
-  rw [←ZMod.coe_int_cast, Int.cast_mul, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
+  rw [← ZMod.coe_int_cast, Int.cast_mul, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
 
 lemma coe_sub : ((x - y : ZMod n) : ℤ) = (x - y) % n := by
-  rw [←ZMod.coe_int_cast, Int.cast_sub, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
+  rw [← ZMod.coe_int_cast, Int.cast_sub, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
 
 lemma coe_neg : ((-x : ZMod n) : ℤ) = -x % n := by
-  rw [←ZMod.coe_int_cast, Int.cast_neg, ZMod.int_cast_zmod_cast]
+  rw [← ZMod.coe_int_cast, Int.cast_neg, ZMod.int_cast_zmod_cast]
 
 end
 
@@ -52,7 +51,7 @@ variable {A : Type*} [AddCommGroup A]
 
 lemma lift_injective {f : {f : ℤ →+ A // f n = 0}} :
     Injective (lift n f) ↔ ∀ i : ℤ, f i = 0 → (i : ZMod n) = 0 := by
-  simp only [←AddMonoidHom.ker_eq_bot_iff, eq_bot_iff, SetLike.le_def, Subtype.coe_coe,
+  simp only [← AddMonoidHom.ker_eq_bot_iff, eq_bot_iff, SetLike.le_def, Subtype.coe_coe,
     ZMod.int_cast_surjective.forall, ZMod.lift_coe, AddMonoidHom.mem_ker, AddSubgroup.mem_bot]
 
 end ZMod
@@ -63,7 +62,7 @@ variable {α : Type*} [Group α] [Fintype α] {n : ℕ}
 --TODO: Fix additivisation
 lemma pow_zmod_val_inv_pow (hn : n.Coprime (card α)) (a : α) :
     (a ^ (n⁻¹ : ZMod (card α)).val) ^ n = a := by
-  rw [←pow_mul', ←pow_mod_card, ←ZMod.val_nat_cast, Nat.cast_mul, ZMod.mul_val_inv hn,
+  rw [← pow_mul', ← pow_mod_card, ← ZMod.val_nat_cast, Nat.cast_mul, ZMod.mul_val_inv hn,
     ZMod.val_one_eq_one_mod, pow_mod_card, pow_one]
 
 lemma pow_pow_zmod_val_inv (hn : n.Coprime (card α)) (a : α) :
@@ -82,7 +81,7 @@ variable {α : Type*} [AddGroup α] [Fintype α] {n : ℕ}
 @[simp]
 lemma nsmul_zmod_val_inv_nsmul (hn : n.Coprime (card α)) (a : α) :
     n • (n⁻¹ : ZMod (card α)).val • a = a := by
-  rw [←mul_nsmul', ←mod_card_nsmul, ←ZMod.val_nat_cast, Nat.cast_mul, ZMod.mul_val_inv hn,
+  rw [← mul_nsmul', ← mod_card_nsmul, ← ZMod.val_nat_cast, Nat.cast_mul, ZMod.mul_val_inv hn,
     ZMod.val_one_eq_one_mod, mod_card_nsmul, one_nsmul]
 
 @[simp]

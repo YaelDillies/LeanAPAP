@@ -1,10 +1,10 @@
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import LeanAPAP.Mathlib.Algebra.Function.Support
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import LeanAPAP.Mathlib.Data.Complex.Basic
-import LeanAPAP.Mathlib.Data.Complex.Exponential
+import LeanAPAP.Mathlib.Data.Nat.Factorial.Basic
 import LeanAPAP.Mathlib.Order.BooleanAlgebra
 import LeanAPAP.Prereqs.Discrete.DFT.Compact
 import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
@@ -13,18 +13,6 @@ import LeanAPAP.Prereqs.Dissociation
 /-!
 # Rudin's inequality
 -/
-
-namespace Nat
-
-lemma factorial_le_pow : ∀ n, n ! ≤ n ^ n
-  | 0 => le_rfl
-  | n + 1 =>
-    calc
-      _ ≤ (n + 1) * n ^ n := mul_le_mul_left' n.factorial_le_pow _
-      _ ≤ (n + 1) * (n + 1) ^ n := mul_le_mul_left' (Nat.pow_le_pow_left n.le_succ _) _
-      _ = _ := by rw [pow_succ']
-
-end Nat
 
 attribute [-simp] Complex.norm_eq_abs
 

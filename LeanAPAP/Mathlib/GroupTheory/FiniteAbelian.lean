@@ -26,10 +26,9 @@ private def myThing (ι : Type) [DecidableEq ι] (p : ι → ℕ) (n : ι → �
     induction' x using DirectSum.induction_on with i x x y hx hy
     · rw [map_zero, map_zero]
     · rw [myThingBackward, DirectSum.toAddMonoid_of]
-      sorry
-    --   split_ifs with h
-    --   · simp [h, ZMod.subsingleton_of_eq_one x 0 (by rw [h, pow_zero])]
-    --   · simp_rw [dif_neg h, myThingForward, DirectSum.toAddMonoid_of]
+      split_ifs with h
+      · simp [h, ZMod.subsingleton_of_eq_one x 0 (by rw [h, pow_zero])]
+      · simp_rw [myThingForward, DirectSum.toAddMonoid_of]
     · rw [map_add, map_add, hx, hy]
   map_add' := map_add (myThingForward p n)
 
