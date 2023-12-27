@@ -64,11 +64,7 @@ import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.Defs
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
-import LeanAPAP.Mathlib.LinearAlgebra.FiniteDimensional
 import LeanAPAP.Mathlib.LinearAlgebra.Ray
-import LeanAPAP.Mathlib.Order.BooleanAlgebra
-import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Finset
-import LeanAPAP.Mathlib.Order.Disjoint
 import LeanAPAP.Mathlib.Order.Heyting.Basic
 import LeanAPAP.Mathlib.Order.Partition.Finpartition
 import LeanAPAP.Mathlib.Tactic.Positivity

@@ -10,7 +10,6 @@ import LeanAPAP.Mathlib.Data.Real.Archimedean
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Mathlib.Data.Real.ENNReal
 import LeanAPAP.Mathlib.Data.Real.NNReal
-import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Finset
 import LeanAPAP.Prereqs.Indicator
 
 /-!

@@ -2,7 +2,6 @@ import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
 import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
 import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
 import LeanAPAP.Mathlib.Data.IsROrC.Basic
-import LeanAPAP.Mathlib.LinearAlgebra.FiniteDimensional
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 
@@ -289,7 +288,7 @@ protected lemma linearIndependent [Finite G] : LinearIndependent R ((⇑) : AddC
     l2Inner_eq_zero_iff_ne.2
 
 noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
-  @Fintype.ofFinite _ (AddChar.linearIndependent G R).finite'
+  @Fintype.ofFinite _ (AddChar.linearIndependent G R).finite
 
 @[simp] lemma card_addChar_le [Fintype G] : card (AddChar G R) ≤ card G := by
   simpa only [FiniteDimensional.finrank_fintype_fun_eq_card] using

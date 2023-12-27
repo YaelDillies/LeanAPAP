@@ -270,9 +270,9 @@ lemma big_shifts (S : Finset G) (L : Finset (Fin k → G)) (hk : k ≠ 0)
   · simpa only [card_empty, mul_zero, zero_le', and_true_iff] using hL'
   have hS' : 0 < S.card := by rwa [card_pos]
   have : (L + S.wideDiag k).card ≤ (A + S).card ^ k := by
-    refine' (card_le_of_subset (add_subset_add_right hL)).trans _
+    refine' (card_le_card (add_subset_add_right hL)).trans _
     rw [←Fintype.card_piFinsetConst]
-    refine' card_le_of_subset fun i hi ↦ _
+    refine' card_le_card fun i hi ↦ _
     simp only [mem_add, mem_wideDiag, Fintype.mem_piFinset, exists_prop, exists_and_left,
       exists_exists_and_eq_and] at hi ⊢
     obtain ⟨y, hy, a, ha, rfl⟩ := hi
