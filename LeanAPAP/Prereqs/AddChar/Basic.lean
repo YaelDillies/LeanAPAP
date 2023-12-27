@@ -293,7 +293,7 @@ noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
 
 @[simp] lemma card_addChar_le [Fintype G] : card (AddChar G R) ≤ card G := by
   simpa only [FiniteDimensional.finrank_fintype_fun_eq_card] using
-    FiniteDimensional.fintype_card_le_finrank_of_linearIndependent (AddChar.linearIndependent G R)
+    (AddChar.linearIndependent G R).fintype_card_le_finrank
 
 end IsROrC
 
