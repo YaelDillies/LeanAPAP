@@ -63,8 +63,6 @@ The Lean code is contained in the directory `src/`. The subdirectories are:
 * `FiniteField`: The proof steps specific to the finite field case
 * `Integer`: The proof steps specific to the integer case
 
-See the next section for how to browse it.
-
 ### Current progress
 
 The project is not yet finished. The following table details live which files are unfinished, and
@@ -78,7 +76,7 @@ Almost periodicity is nowadays a standard tool in additive combinatorics. The ve
 
 The discrete convolution/Lp norm/Fourier transform material belongs in mathlib and we hope to PR it there once the transition to Lean 4 has completed. Almost periodicity should similarly be upstreamed to mathlib given the numerous applications. The rest of the material might forever live in this repository.
 
-On top of the new developments, there are many basic lemmas needed for this project that are currently miss
+On top of the new developments, there are many basic lemmas needed for this project that are currently missing from mathlib.
 
 Here is the list of files that do not depend on any other LeanAPAP file, indicating they are good candidates for upstreaming to mathlib:
 

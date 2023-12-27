@@ -46,115 +46,52 @@ size of a set without three term arithmetic progressions):
 ### Code organisation
 
 The Lean code is contained in the directory `src/`. The subdirectories are:
-* `mathlib`: Material missing from existing mathlib developments
-* `prereqs`: New developments to be integrated to mathlib
-* `physics`: The physical (as opposed to Fourier space) proof steps that are shared
+* `Mathlib`: Material missing from existing mathlib developments
+* `Prereqs`: New developments to be integrated to mathlib
+* `Physics`: The physical (as opposed to Fourier space) proof steps that are shared
   between the finite field cases and integer case
-* `finite_field`: The proof steps specific to the finite field case
-* `integer`: The proof steps specific to the integer case
+* `FiniteField`: The proof steps specific to the finite field case
+* `Integer`: The proof steps specific to the integer case
 
-See the next section for how to browse it.
+## What next?
 
-### What next?
+Almost periodicity is nowadays a standard tool in additive combinatorics. The version we formalised is sufficient for many applications. In particular, it gives one of the best known bounds on Freiman's theorem. As a side goal, we might tackle Freiman's theorem.
 
-Almost periodicity is nowadays a standard tool in additive combinatorics. The version we formalised
-is sufficient for many applications. In particular, it gives one of the best known bounds on
-Freiman's theorem. If some time is left at the end of the project, we might tackle Freiman's
-theorem.
+The discrete convolution/Lp norm/Fourier transform material belongs in mathlib and we hope to PR it there once the transition to Lean 4 has completed. Almost periodicity should similarly be upstreamed to mathlib given the numerous applications. The rest of the material might forever live in this repository.
 
-The discrete convolution/Lp norm/Fourier transform material belongs in mathlib and we hope to PR it
-there once the transition to Lean 4 has completed. Almost periodicity should similarly be upstreamed
-to mathlib given the numerous applications. The rest of the material might forever live in this
-repository.
+On top of the new developments, there are many basic lemmas needed for this project that are currently missing from mathlib.
 
-## How to browse this repository
+## Build the Lean files
 
-### Blueprint
+To build the Lean files of this project, you need to have a working version of Lean.
+See [the installation instructions](https://leanprover-community.github.io/get_started.html) (under Regular install).
+Alternatively, click on the button below to open a Gitpod workspace containing the project.
 
-Below we explain how to engage with the Lean code directly.
-We also provide a [blueprint](https://YaelDillies.github.io/LeanAPAP/)
-including a [dependency graph](https://YaelDillies.github.io/LeanAPAP/blueprint/dep_graph_document.html)
-of the main ingredients in the repository.
-This blueprint is developed in sync with the Lean formalization,
-and will hence see frequent updates during the length of the project.
-More information on building the blueprint locally is given below.
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/YaelDillies/LeanAPAP)
 
-### Getting the project
+In either case, run `lake exe cache get` and then `lake build` to build the project.
 
-At the moment, the recommended way of browsing this repository,
-is by using a Lean development environment.
-Crucially, this will allow you to introspect Lean's "Goal state" during proofs,
-and easily jump to definitions or otherwise follow paths through the code.
+## Build the blueprint
 
-We are looking into ways to setup an online interactive website
-that will provide the same experience without the hassle of installing a complete
-Lean development environment.
-
-For the time being: please use the
-[installation instructions](https://leanprover-community.github.io/get_started.html#regular-install)
-to install Lean and a supporting toolchain.
-After that, download and open a copy of the repository
-by executing the following command in a terminal:
+To build the web version of the blueprint, you need a working LaTeX installation.
+Furthermore, you need some packages:
 ```
-leanproject get YaelDillies/LeanAPAP
-code LeanAPAP
-```
-For detailed instructions on how to work with Lean projects,
-see [this](https://leanprover-community.github.io/install/project.html). The script
-`scripts/get-cache.sh` in the folder `LeanAPAP` will download the `olean` files created by our
-continuous integration. This will save you some time by not having to run `leanproject build`.
-
-### Reading the project
-
-With the project opened in VScode,
-you are all set to start exploring the code.
-There are two pieces of functionality that help a lot when browsing through Lean code:
-
-* "Go to definition": If you right-click on a name of a definition or lemma (such as `dconv` or
-  `Lpnorm`), then you can choose "Go to definition" from the menu, and you will be taken to the
-  relevant location in the source files. This also works by `Ctrl`-clicking on the name.
-* "Goal view": in the event that you would like to read a *proof*, you can step through the proof
-  line-by-line, and see the internals of Lean's "brain" in the Goal window. If the Goal window is
-  not open, you can open it by clicking on one of the icons in the top right hand corner.
-
-### Building the blueprint locally
-
-To build the web version of the blueprint locally, you need a working LaTeX installation.
-Furthermore, you need some dependencies.  Under Linux, you should be able to get the prepackaged
-ones with something like:
-```
-sudo apt install graphviz libgraphviz-dev libjpeg-dev pandoc
-pip3 install invoke
-```
-
-Under Mac OS, you should be able to get these with:
-```
-brew install graphviz pandoc
-pip3 install pygraphviz invoke
-```
-([This stackoverflow answer](https://stackoverflow.com/a/70439868/) may help to fix an error
-installing `pygraphviz`.
-
-A couple of dependencies must be installed from source, for now (`leanblueprint` is not yet
-released, and the released `plastex` is out of date):
-```
-cd .. # go to a folder where you are happy to clone git repos
-git clone https://github.com/plastex/plastex
+sudo apt install graphviz libgraphviz-dev
+pip3 install invoke pandoc
+cd .. # go to folder where you are happy clone git repos
+git clone git@github.com:plastex/plastex
 pip3 install ./plastex
-git clone https://github.com/PatrickMassot/leanblueprint
+git clone git@github.com:PatrickMassot/leanblueprint
 pip3 install ./leanblueprint
+cd sphere-eversion
 ```
 
-To actually build the blueprint, `cd` to the `LeanAPAP` folder and run
+To actually build the blueprint, run
 ```
-leanproject get-mathlib-cache
-leanproject build
-inv all html
+lake exe cache get
+lake build
+inv all
 ```
-
-To view the web version of the blueprint locally, run `inv serve` and navigate to
-`http://localhost:8000/` in your favorite browser.
-
 
 ## Acknowledgements
 
