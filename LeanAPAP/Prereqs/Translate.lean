@@ -150,9 +150,10 @@ end conjneg
 
 open Fintype
 
-variable {α β G 𝕜 : Type*} [AddCommGroup G] [Fintype G]
+variable {α β G 𝕜 : Type*} [AddCommGroup G]
 
-def dilate (f : G → 𝕜) (n : ℕ) : G → 𝕜 := fun a ↦ f ((n⁻¹ : ZMod (card G)).val • a)
+noncomputable def dilate (f : G → 𝕜) (n : ℕ) : G → 𝕜 :=
+  fun a ↦ f ((n⁻¹ : ZMod (Nat.card G)).val • a)
 
 variable [Star 𝕜] {f : G → 𝕜}
 

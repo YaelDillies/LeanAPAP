@@ -1,12 +1,6 @@
 import Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 
-/-!
-## TODO
-
-* More explicit arguments to `Finset.sum_attach`
--/
-
 -- We use a custom namespace instead of `BigOperators` because we want to override the notation from
 -- mathlib
 namespace BigOps
@@ -51,7 +45,7 @@ syntax bigOpBinders := bigOpBinderCollection <|> (ppSpace bigOpBinder)
 
 /-- Collects additional binder/Finset pairs for the given `bigOpBinder`.
 Note: this is not extensible at the moment, unlike the usual `bigOpBinder` expansions. -/
-def processBigOpBinder (processed : (Array (Term × Term)))
+def processBigOpBinder (processed : Array (Term × Term))
     (binder : TSyntax ``bigOpBinder) : MacroM (Array (Term × Term)) :=
   set_option hygiene false in
   withRef binder do
@@ -205,67 +199,6 @@ end BigOps
 open scoped BigOps
 
 namespace Finset
-variable {α β γ : Type*} [CommMonoid β] {s s₁ s₂ : Finset α} {t : Finset γ} {f : α → β} {g : γ → β}
-
-@[to_additive]
-lemma prod_mul_prod_comm (f g h i : α → β) :
-    (∏ a in s, f a * g a) * ∏ a in s, h a * i a = (∏ a in s, f a * h a) * ∏ a in s, g a * i a := by
-  simp_rw [prod_mul_distrib, mul_mul_mul_comm]
-
--- TODO: Backport arguments changes to `card_congr` and `prod_bij`
-@[to_additive]
-lemma prod_nbij (i : α → γ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
-    (i_inj : (s : Set α).InjOn i) (i_surj : (s : Set α).SurjOn i t) :
-    ∏ x in s, f x = ∏ x in t, g x :=
-  prod_bij (fun a _ ↦ i a) hi h (fun a b ha hb ↦ i_inj ha hb) $ by
-    simpa [Set.SurjOn, Set.subset_def, eq_comm] using i_surj
-
-@[to_additive]
-lemma prod_nbij' (i : α → γ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a)) (j : γ → α)
-    (hj : ∀ a ∈ t, j a ∈ s) (left_inv : ∀ a ∈ s, j (i a) = a) (right_inv : ∀ a ∈ t, i (j a) = a) :
-    ∏ x in s, f x = ∏ x in t, g x :=
-  prod_bij' (fun a _ ↦ i a) hi h (fun b _ ↦ j b) hj left_inv right_inv
-
--- TODO: Replace `Finset.Equiv.sum_comp_finset`?
-variable {ι κ α : Type*} [CommMonoid α] {s : Finset ι} {t : Finset κ} {f : ι → α} {g : κ → α} in
-/-- `Finset.prod_equiv` is a specialization of `Finset.prod_bij` that automatically fills in
-most arguments. -/
-@[to_additive "`Finset.sum_equiv` is a specialization of `Finset.sum_bij` that automatically fills
-in most arguments."]
-lemma prod_equiv (e : ι ≃ κ) (hst : ∀ i, i ∈ s ↔ e i ∈ t) (hfg : ∀ i ∈ s, f i = g (e i)) :
-    ∏ i ∈ s, f i = ∏ i ∈ t, g i :=
-  prod_nbij e (fun i ↦ (hst _).1) hfg (e.injective.injOn _) fun i hi ↦ ⟨e.symm i, by simpa [hst]⟩
-
--- TODO: Replace `prod_ite_one`
-@[to_additive]
-lemma prod_ite_one' (s : Finset α) (p : α → Prop) [DecidablePred p]
-    (h : ∀ i ∈ s, ∀ j ∈ s, p i → p j → i = j) (a : β) :
-    ∏ i in s, ite (p i) a 1 = ite (∃ i ∈ s, p i) a 1 :=
-  prod_ite_one (fun i hi j hj ↦ by
-    simpa only [Function.onFun_apply, Prop.disjoint_iff, not_imp_not, and_imp] using h i hi j hj) _
-
-variable [DecidableEq α]
-
-@[to_additive]
-lemma prod_union_eq_left (hs : ∀ a ∈ s₂, a ∉ s₁ → f a = 1) :
-    ∏ a in s₁ ∪ s₂, f a = ∏ a in s₁, f a :=
-  Eq.symm $
-    prod_subset (subset_union_left _ _) fun _a ha ha' ↦ hs _ ((mem_union.1 ha).resolve_left ha') ha'
-
-@[to_additive]
-lemma prod_union_eq_right (hs : ∀ a ∈ s₁, a ∉ s₂ → f a = 1) :
-    ∏ a in s₁ ∪ s₂, f a = ∏ a in s₂, f a := by rw [union_comm, prod_union_eq_left hs]
-
-@[to_additive (attr := simp)]
-lemma prod_diag (s : Finset α) (f : α × α → β) : ∏ i in s.diag, f i = ∏ i in s, f (i, i) :=
-  Eq.symm $
-    prod_nbij (fun i ↦ (i, i)) (fun _i hi ↦ mem_diag.2 ⟨hi, rfl⟩) (fun _i _ ↦ rfl)
-      (fun _ _ _ _ h ↦ (Prod.ext_iff.1 h).1) fun i hi ↦
-      ⟨i.1, (mem_diag.1 hi).1, Prod.ext rfl (mem_diag.1 hi).2⟩
-
-end Finset
-
-namespace Finset
 variable {ι α : Type*} [DecidableEq ι] [CancelCommMonoid α] {s t : Finset ι} {f : ι → α}
 
 @[to_additive]
@@ -292,7 +225,7 @@ variable [CommMonoid β] (a : β)
 
 @[to_additive]
 lemma prod_ite_exists (p : α → Prop) [DecidablePred p] (h : ∀ i j, p i → p j → i = j) (a : β) :
-    ∏ i, ite (p i) a 1 = ite (∃ i, p i) a 1 := by simp [prod_ite_one' univ p (by simpa using h)]
+    ∏ i, ite (p i) a 1 = ite (∃ i, p i) a 1 := by simp [prod_ite_one univ p (by simpa using h)]
 
 variable [DecidableEq α]
 

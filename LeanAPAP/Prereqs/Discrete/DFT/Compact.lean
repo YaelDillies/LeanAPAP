@@ -101,12 +101,12 @@ lemma cft_conjneg (f : α → ℂ) : cft (conjneg f) = conj (cft f) := funext $ 
 @[simp] lemma cft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : cft (balance f) ψ = cft f ψ := by
   simp only [balance, Pi.sub_apply, cft_sub, cft_const _ hψ, sub_zero]
 
-lemma cft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : n.Coprime (card α)) :
+lemma cft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime n) :
     cft (dilate f n) ψ = cft f (ψ ^ n) := by
   simp_rw [cft_apply, nl2Inner_eq_expect, dilate]
-  refine' expect_nbij' ((n⁻¹ : ZMod (card α)).val • ·) _ (fun x _ ↦ _) (n • ·) _ _ _ <;>
-    simp only [pow_apply, ←map_nsmul_pow, mem_univ, nsmul_zmod_val_inv_nsmul hn,
-      zmod_val_inv_nsmul_nsmul hn, eq_self_iff_true, forall_const]
+  rw [← Nat.card_eq_fintype_card] at hn
+  refine (Fintype.expect_bijective _ hn.nsmul_right_bijective _ _  ?_).symm
+  simp only [pow_apply, ← map_nsmul_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
 
 @[simp] lemma cft_trivNChar [DecidableEq α] : cft (trivNChar : α → ℂ) = 1 := by
   ext
@@ -126,9 +126,10 @@ variable [DecidableEq α]
 lemma cft_nconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : cft (f ∗ₙ g) ψ = cft f ψ * cft g ψ := by
   simp_rw [cft, nl2Inner_eq_expect, nconv_eq_expect_sub', mul_expect, expect_mul, ←expect_product',
     univ_product_univ]
-  refine'
-    expect_nbij' (fun x ↦ (x.1 - x.2, x.2)) (by simp) (fun x _ ↦ _) (fun x ↦ (x.1 + x.2, x.2))
-      (by simp) (by simp) (by simp)
+  refine Fintype.expect_equiv ((Equiv.prodComm _ _).trans $
+    ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
+  simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
+    Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
   rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel'_right]
 
 lemma cft_ndconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :

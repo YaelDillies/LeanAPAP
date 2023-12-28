@@ -1,4 +1,3 @@
-import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 import Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
@@ -72,7 +71,7 @@ private lemma step_two_aux (A : Finset G) (f : G → ℝ) (ε : Fin n → ℝ)
     exact (h i).symm
   have h₂ : ∀ a ∈ (A^^n) ×ˢ (A^^n), swapper (swapper a) = a := fun a _ ↦ by
     ext <;> simp only <;> split_ifs <;> rfl
-  refine' sum_nbij' swapper h₁ _ swapper h₁ h₂ h₂
+  refine' sum_nbij' swapper swapper h₁ h₁ h₂ h₂ _
   · rintro ⟨a, b⟩ _
     congr with i : 1
     simp only [Pi.mul_apply, Pi.sub_apply, Function.comp_apply]

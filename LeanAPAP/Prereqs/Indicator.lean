@@ -1,9 +1,7 @@
 import Mathlib.Data.Complex.Basic
-import Mathlib.Data.Finset.Pointwise
 import Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
-import LeanAPAP.Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Data.Fintype.Lattice
 import LeanAPAP.Prereqs.Translate
 

@@ -1,6 +1,5 @@
 import Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
-import Mathlib.Data.Pi.Algebra
 
 /-!
 # Wide diagonal

@@ -88,7 +88,7 @@ lemma dft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conj f) ψ = conj (
 
 lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f) ψ = conj (dft f ψ) := by
   simp only [dft_apply, l2Inner_eq_sum, conjneg_apply, map_sum, map_mul, IsROrC.conj_conj]
-  refine' Equiv.sum_comp' (Equiv.neg α) _ _ fun i ↦ _
+  refine' Fintype.sum_equiv (Equiv.neg α) _ _ fun i ↦ _
   simp only [Equiv.neg_apply, ←inv_apply_eq_conj, ←inv_apply', inv_apply]
 
 @[simp]
@@ -97,12 +97,12 @@ lemma dft_conjneg (f : α → ℂ) : dft (conjneg f) = conj (dft f) := funext $ 
 @[simp] lemma dft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : dft (balance f) ψ = dft f ψ := by
   simp only [balance, Pi.sub_apply, dft_sub, dft_const _ hψ, sub_zero]
 
-lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : n.Coprime (card α)) :
+lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime n) :
     dft (dilate f n) ψ = dft f (ψ ^ n) := by
   simp_rw [dft_apply, l2Inner_eq_sum, dilate]
-  refine' sum_nbij' ((n⁻¹ : ZMod (card α)).val • ·) _ (fun x _ ↦ _) (n • ·) _ _ _ <;>
-    simp only [pow_apply, ←map_nsmul_pow, mem_univ, nsmul_zmod_val_inv_nsmul hn,
-      zmod_val_inv_nsmul_nsmul hn, eq_self_iff_true, forall_const]
+  rw [← Nat.card_eq_fintype_card] at hn
+  refine (Fintype.sum_bijective _ hn.nsmul_right_bijective _ _  ?_).symm
+  simp only [pow_apply, ← map_nsmul_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
 
 @[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
   ext; simp [trivChar_apply, dft_apply, l2Inner_eq_sum, ←map_sum]
@@ -118,9 +118,10 @@ variable [DecidableEq α]
 lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ = dft f ψ * dft g ψ := by
   simp_rw [dft, l2Inner_eq_sum, conv_eq_sum_sub', mul_sum, sum_mul, ←sum_product',
     univ_product_univ]
-  refine'
-    sum_nbij' (fun x ↦ (x.1 - x.2, x.2)) (by simp) (fun x _ ↦ _) (fun x ↦ (x.1 + x.2, x.2))
-      (by simp) (by simp) (by simp)
+  refine Fintype.sum_equiv ((Equiv.prodComm _ _).trans $
+    ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
+  simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
+    Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
   rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel'_right]
 
 lemma dft_dconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :

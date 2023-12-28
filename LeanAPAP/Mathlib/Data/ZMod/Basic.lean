@@ -1,5 +1,6 @@
 import Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.Data.FunLike.Basic
+import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 
 open Fintype Function
 
@@ -57,43 +58,35 @@ lemma lift_injective {f : {f : ℤ →+ A // f n = 0}} :
 end ZMod
 
 section Group
-variable {α : Type*} [Group α] [Fintype α] {n : ℕ}
+variable {α : Type*} [Group α] {n : ℕ}
 
 --TODO: Fix additivisation
-lemma pow_zmod_val_inv_pow (hn : n.Coprime (card α)) (a : α) :
-    (a ^ (n⁻¹ : ZMod (card α)).val) ^ n = a := by
-  rw [← pow_mul', ← pow_mod_card, ← ZMod.val_nat_cast, Nat.cast_mul, ZMod.mul_val_inv hn,
-    ZMod.val_one_eq_one_mod, pow_mod_card, pow_one]
+lemma pow_zmod_val_inv_pow (hn : (Nat.card α).Coprime n) (a : α) :
+    (a ^ (n⁻¹ : ZMod (Nat.card α)).val) ^ n = a := by
+  rw [← pow_mul', ← pow_mod_natCard, ← ZMod.val_nat_cast, Nat.cast_mul, ZMod.mul_val_inv hn.symm,
+    ZMod.val_one_eq_one_mod, pow_mod_natCard, pow_one]
 
-lemma pow_pow_zmod_val_inv (hn : n.Coprime (card α)) (a : α) :
-    (a ^ n) ^ (n⁻¹ : ZMod (card α)).val = a := by rw [pow_right_comm, pow_zmod_val_inv_pow hn]
-
-lemma pow_bijective (hn : n.Coprime (card α)) : Bijective ((· ^ n) : α → α) :=
-  bijective_iff_has_inverse.2
-    ⟨(· ^ (n⁻¹ : ZMod (card α)).val), pow_pow_zmod_val_inv hn, pow_zmod_val_inv_pow hn⟩
+lemma pow_pow_zmod_val_inv (hn : (Nat.card α).Coprime n) (a : α) :
+    (a ^ n) ^ (n⁻¹ : ZMod (Nat.card α)).val = a := by rw [pow_right_comm, pow_zmod_val_inv_pow hn]
 
 end Group
 
 section AddGroup
-variable {α : Type*} [AddGroup α] [Fintype α] {n : ℕ}
+variable {α : Type*} [AddGroup α] {n : ℕ}
 
 --TODO: Additivise
 @[simp]
-lemma nsmul_zmod_val_inv_nsmul (hn : n.Coprime (card α)) (a : α) :
-    n • (n⁻¹ : ZMod (card α)).val • a = a := by
-  rw [← mul_nsmul', ← mod_card_nsmul, ← ZMod.val_nat_cast, Nat.cast_mul, ZMod.mul_val_inv hn,
-    ZMod.val_one_eq_one_mod, mod_card_nsmul, one_nsmul]
+lemma nsmul_zmod_val_inv_nsmul (hn : (Nat.card α).Coprime n) (a : α) :
+    n • (n⁻¹ : ZMod (Nat.card α)).val • a = a := by
+  rw [← mul_nsmul', ← mod_natCard_nsmul, ← ZMod.val_nat_cast, Nat.cast_mul,
+    ZMod.mul_val_inv hn.symm, ZMod.val_one_eq_one_mod, mod_natCard_nsmul, one_nsmul]
 
 @[simp]
-lemma zmod_val_inv_nsmul_nsmul (hn : n.Coprime (card α)) (a : α) :
-    (n⁻¹ : ZMod (card α)).val • n • a = a := by rw [nsmul_left_comm, nsmul_zmod_val_inv_nsmul hn]
-
-lemma nsmul_bijective (hn : n.Coprime (card α)) : Bijective ((n • ·) : α → α) :=
-  bijective_iff_has_inverse.2
-    ⟨((n⁻¹ : ZMod (card α)).val • ·), zmod_val_inv_nsmul_nsmul hn, nsmul_zmod_val_inv_nsmul hn⟩
+lemma zmod_val_inv_nsmul_nsmul (hn : (Nat.card α).Coprime n) (a : α) :
+    (n⁻¹ : ZMod (Nat.card α)).val • n • a = a := by
+  rw [nsmul_left_comm, nsmul_zmod_val_inv_nsmul hn]
 
 attribute [to_additive (attr := simp) existing nsmul_zmod_val_inv_nsmul] pow_zmod_val_inv_pow
 attribute [to_additive (attr := simp) existing zmod_val_inv_nsmul_nsmul] pow_pow_zmod_val_inv
-attribute [to_additive existing] pow_bijective
 
 end AddGroup

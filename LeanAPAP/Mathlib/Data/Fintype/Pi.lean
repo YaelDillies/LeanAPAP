@@ -1,36 +1,6 @@
-import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Fintype.Pi
-import LeanAPAP.Mathlib.Data.Finset.Pi
 
 open Finset
-
-namespace Fintype
-variable {α : Type*} {β γ : α → Type*} [Fintype α] [DecidableEq α] [∀ a, DecidableEq (γ a)]
-
-lemma piFinset_nonempty {s : ∀ a, Finset (β a)} (hs : ∀ a, (s a).Nonempty) :
-    (piFinset s).Nonempty := (pi_nonempty fun _ _ ↦ hs _).map
-
-@[simp]
-lemma piFinset_of_isEmpty [IsEmpty α] (s : ∀ a, Finset (β a)) : piFinset s = univ :=
-  eq_univ_of_forall fun _ ↦ by simp
-
-lemma piFinset_image (f : ∀ a, β a → γ a) (s : ∀ a, Finset (β a)) :
-    (piFinset fun a ↦ image (f a) (s a)) =
-      image (fun (b : ∀ a, β a) a ↦ f _ (b a)) (piFinset s) := by
-  ext; simp only [mem_piFinset, mem_image, Classical.skolem, forall_and, Function.funext_iff]
-
-end Fintype
-
-namespace Fintype
-variable {α : Type*} {β γ δ : α → Type*} [Fintype α] [DecidableEq α] [∀ a, DecidableEq (δ a)]
-
-lemma piFinset_image₂ (f : ∀ a, β a → γ a → δ a) (s : ∀ a, Finset (β a)) (t : ∀ a, Finset (γ a)) :
-    (piFinset fun a ↦ image₂ (f a) (s a) (t a)) =
-      image₂ (fun (b : ∀ a, β a) (c : ∀ a, γ a) a ↦ f _ (b a) (c a)) (piFinset s) (piFinset t) := by
-  ext; simp only [mem_piFinset, mem_image₂, Classical.skolem, forall_and, Function.funext_iff]
-
-end Fintype
 
 namespace Fintype
 variable {α β : Type*} {δ : α → Type*} {s : Finset α} {n : ℕ}
@@ -41,7 +11,7 @@ def piFinsetConst (s : Finset α) (n : ℕ) := piFinset fun _ : Fin n ↦ s
 infixl:70 "^^" => piFinsetConst
 
 protected lemma _root_.Finset.Nonempty.piFinsetConst (hs : s.Nonempty) : (s ^^ n).Nonempty :=
-  piFinset_nonempty fun _ ↦ hs
+  piFinset_nonempty.2 fun _ ↦ hs
 
 @[simp] lemma card_piFinsetConst (s : Finset α) (n : ℕ) : (s ^^ n).card = s.card ^ n := by
   simp [piFinsetConst, card_piFinset]
@@ -70,10 +40,6 @@ lemma image_piFinset_const [DecidableEq β] (t : Finset β) (a : α) :
   · haveI : Nonempty α := ⟨a⟩
     simp
   · exact image_piFinset (fun _ ↦ t) a fun _ _ ↦ ht
-
-lemma filter_piFinset_of_not_mem [∀ a, DecidableEq (δ a)] (t : ∀ a, Finset (δ a)) (a : α)
-    (x : δ a) (hx : x ∉ t a) : ((piFinset t).filter fun f : ∀ a, δ a ↦ f a = x) = ∅ := by
-  simp only [filter_eq_empty_iff, mem_piFinset]; rintro f hf rfl; exact hx (hf _)
 
 -- works better for rewrites
 lemma filter_piFinset_const_of_not_mem [DecidableEq β] (t : Finset β) (a : α) (x : β)

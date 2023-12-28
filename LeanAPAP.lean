@@ -35,11 +35,8 @@ import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Finset.Card
 import LeanAPAP.Mathlib.Data.Finset.Image
-import LeanAPAP.Mathlib.Data.Finset.Pi
-import LeanAPAP.Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Data.Finset.Powerset
 import LeanAPAP.Mathlib.Data.Fintype.Basic
-import LeanAPAP.Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Mathlib.Data.Fintype.Lattice
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.FunLike.Basic
@@ -62,6 +59,7 @@ import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.Defs
+import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
 import LeanAPAP.Mathlib.LinearAlgebra.Ray
