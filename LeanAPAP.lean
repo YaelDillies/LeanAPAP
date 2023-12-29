@@ -9,9 +9,9 @@ import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
 import LeanAPAP.Mathlib.Algebra.Function.Support
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Equiv.Basic
+import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Order
-import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.GroupWithZero.Units.Lemmas
 import LeanAPAP.Mathlib.Algebra.ModEq
 import LeanAPAP.Mathlib.Algebra.Module.Basic

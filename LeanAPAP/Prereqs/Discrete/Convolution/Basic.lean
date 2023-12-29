@@ -278,7 +278,7 @@ lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, c
 lemma support_conv_subset (f g : α → β) : support (f ∗ g) ⊆ support f + support g := by
   rintro a ha
   obtain ⟨x, hx, h⟩ := exists_ne_zero_of_sum_ne_zero ha
-  exact ⟨x.1, x.2, left_ne_zero_of_mul h, right_ne_zero_of_mul h, (mem_filter.1 hx).2⟩
+  exact ⟨_, left_ne_zero_of_mul h, _, right_ne_zero_of_mul h, (mem_filter.1 hx).2⟩
 
 lemma support_dconv_subset (f g : α → β) : support (f ○ g) ⊆ support f - support g := by
   simpa [sub_eq_add_neg] using support_conv_subset f (conjneg g)
