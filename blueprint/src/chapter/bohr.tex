@@ -3,17 +3,10 @@
 \begin{definition}[Bohr sets]
 \label{bohr-set}
 Let $\nu: \widehat{G} \to \mathbb{R}$. The corresponding Bohr set is defined to be
-\[\mathrm{Bohr}(\rho)=\left\{ x\in G : \abs{1-\gamma(x)}\leq \nu(\gamma)\textrm{ for all }\gamma\in\Gamma\right\}.\]
+\[\mathrm{Bohr}(\nu)=\left\{ x\in G : \abs{1-\gamma(x)}\leq \nu(\gamma)\textrm{ for all }\gamma\in\Gamma\right\}.\]
 The rank of $\nu$, denoted by $\mathrm{rk}(\nu)$, is defined to be the size of the set of those $\gamma\in\widehat{G}$ such that $\nu(\gamma)<2$.
 
 (Basic API facts: Bohr sets are symmetric and contain $0$. Also that, without loss of generality, we can assume $\nu$ takes only values in $\mathbb{R}_{\geq 0}$ - I think it might be easier to have the definition allow arbitrary real values, and then switch to non-negative only in proofs where convenient. Or could have the definition only allow non-negative valued functions in the first place.)
-\end{definition}
-
-\begin{definition}[Regularity]
-\label{bohr-reg-def}
-\uses{bohr-set}
-We say $\nu:\widehat{G}\to \mathbb{R}$ is regular if, with $d=\mathrm{rk}(\nu)$, for all $\kappa\in\mathbb{R}$ with $\abs{\kappa}\leq 1/100d$ we have
-\[(1-100 d\abs{\kappa})\leq \frac{\abs{\mathrm{Bohr}((1+\kappa)\nu)}}{\abs{\mathrm{Bohr}(\nu)}}\leq(1+ 100 d\abs{\kappa})\]
 \end{definition}
 
 \begin{lemma}
@@ -31,6 +24,13 @@ Suppose that $z=x+y$ with $x,y\in B'$, and fix some $\gamma\in \Gamma$. By assum
 \[\lvert 1-\gamma(y-x)\rvert=\lvert \gamma(x)-\gamma(y)\rvert \leq \rho \nu(\gamma)\]
 and so $z=y-x\in \mathrm{Bohr}(\rho\cdot \nu)$.
 \end{proof}
+
+\begin{definition}[Regularity]
+\label{bohr-reg-def}
+\uses{bohr-set}
+We say $\nu:\widehat{G}\to \mathbb{R}$ is regular if, with $d=\mathrm{rk}(\nu)$, for all $\kappa\in\mathbb{R}$ with $\abs{\kappa}\leq 1/100d$ we have
+\[(1-100 d\abs{\kappa})\leq \frac{\abs{\mathrm{Bohr}((1+\kappa)\nu)}}{\abs{\mathrm{Bohr}(\nu)}}\leq(1+ 100 d\abs{\kappa})\]
+\end{definition}
 
 \begin{lemma}
 \label{bohr-regularity}
