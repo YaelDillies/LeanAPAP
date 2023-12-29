@@ -18,4 +18,4 @@ structure IsRegular (B : BohrSet G) : Prop where
 set. -/
 lemma regularity (B : BohrSet G) : ∃ ρ : ℝ, 2⁻¹ ≤ ρ ∧ ρ ≤ 1 ∧ (ρ • B).IsRegular := sorry
 
-end BohrSets
+end BohrSet
