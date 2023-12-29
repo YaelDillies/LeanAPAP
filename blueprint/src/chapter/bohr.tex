@@ -2,6 +2,8 @@
 
 \begin{definition}[Bohr sets]
 \label{bohr-set}
+\lean{BohrSet}
+\leanok
 Let $\nu: \widehat{G} \to \mathbb{R}$. The corresponding Bohr set is defined to be
 \[\mathrm{Bohr}(\nu)=\left\{ x\in G : \abs{1-\gamma(x)}\leq \nu(\gamma)\textrm{ for all }\gamma\in\Gamma\right\}.\]
 The rank of $\nu$, denoted by $\mathrm{rk}(\nu)$, is defined to be the size of the set of those $\gamma\in\widehat{G}$ such that $\nu(\gamma)<2$.
@@ -12,6 +14,8 @@ The rank of $\nu$, denoted by $\mathrm{rk}(\nu)$, is defined to be the size of t
 \begin{lemma}
 \label{bohr-size}
 \uses{bohr-set}
+\lean{BohrSet.le_card_smul}
+\leanok
 If $\rho\in (0,1)$ and $\nu:\widehat{G}\to \mathbb{R}$ then
 \[\abs{\mathrm{Bohr}(\rho\cdot \nu)}\geq (\rho/4)^{\mathrm{rk}(\nu)}\abs{\mathrm{Bohr}(\nu)}.\]
 \end{lemma}
@@ -28,6 +32,8 @@ and so $z=y-x\in \mathrm{Bohr}(\rho\cdot \nu)$.
 \begin{definition}[Regularity]
 \label{bohr-reg-def}
 \uses{bohr-set}
+\lean{BohrSet.IsRegular}
+\leanok
 We say $\nu:\widehat{G}\to \mathbb{R}$ is regular if, with $d=\mathrm{rk}(\nu)$, for all $\kappa\in\mathbb{R}$ with $\abs{\kappa}\leq 1/100d$ we have
 \[(1-100 d\abs{\kappa})\leq \frac{\abs{\mathrm{Bohr}((1+\kappa)\nu)}}{\abs{\mathrm{Bohr}(\nu)}}\leq(1+ 100 d\abs{\kappa})\]
 \end{definition}
@@ -35,6 +41,8 @@ We say $\nu:\widehat{G}\to \mathbb{R}$ is regular if, with $d=\mathrm{rk}(\nu)$,
 \begin{lemma}
 \label{bohr-regularity}
 \uses{bohr-reg-def}
+\lean{BohrSet.regularity}
+\leanok
 For any $\nu:\widehat{G}\to \mathbb{R}$ there exists $\rho\in[\frac{1}{2},1]$ such that $\rho\cdot \nu$ is regular.
 \end{lemma}
 \begin{proof}
