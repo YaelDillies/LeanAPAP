@@ -30,6 +30,7 @@ import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
 import LeanAPAP.Mathlib.Analysis.Normed.Group.Basic
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Mathlib.Data.Complex.Order
@@ -73,7 +74,10 @@ import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.AddChar.Basic
 import LeanAPAP.Prereqs.AddChar.Circle
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
+import LeanAPAP.Prereqs.Bohr.Basic
+import LeanAPAP.Prereqs.Bohr.Regular
 import LeanAPAP.Prereqs.Chang
+import LeanAPAP.Prereqs.Circle.ArcLength
 import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.Cut
 import LeanAPAP.Prereqs.Density
