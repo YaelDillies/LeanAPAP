@@ -23,7 +23,10 @@ import LeanAPAP.Mathlib.Algebra.Star.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Algebra.Star.Pi
 import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
+import LeanAPAP.Mathlib.Analysis.Calculus.Deriv.Basic
+import LeanAPAP.Mathlib.Analysis.Calculus.MeanValue
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
+import LeanAPAP.Mathlib.Analysis.Convex.Jensen
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
 import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
@@ -32,6 +35,8 @@ import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import LeanAPAP.Mathlib.Data.Complex.Abs
 import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Finset.Card

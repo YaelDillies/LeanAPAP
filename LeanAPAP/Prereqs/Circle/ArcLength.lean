@@ -1,26 +1,13 @@
 import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
+open Set
 open scoped Real
 
 namespace Complex
 variable {a x y : ℂ}
-
-lemma abs_add_mul_I (x y : ℝ) : abs (x + y * I) = (x ^ 2 + y ^ 2).sqrt := by
-  rw [← normSq_add_mul_I]; rfl
-
-lemma abs_eq_one_iff' : abs x = 1 ↔ ∃ θ ∈ Set.Ioc (-π) π, exp (θ * I) = x := by
-  rw [abs_eq_one_iff]
-  constructor
-  · rintro ⟨θ, rfl⟩
-    refine ⟨toIocMod (mul_pos two_pos Real.pi_pos) (-π) θ, ?_, ?_⟩
-    · convert toIocMod_mem_Ioc _ _ _
-      ring
-    · rw [eq_sub_of_add_eq $ toIocMod_add_toIocDiv_zsmul _ _ θ, ofReal_sub,
-      ofReal_zsmul, ofReal_mul, ofReal_ofNat, exp_mul_I_periodic.sub_zsmul_eq]
-  · rintro ⟨θ, _, rfl⟩
-    exact ⟨θ, rfl⟩
 
 /-- Chord-length is always less than arc-length. -/
 lemma norm_sub_le_arcLength (hx : ‖x‖ = 1) (hy : ‖y‖ = 1) : ‖x - y‖ ≤ arcLength x y := by
@@ -39,7 +26,7 @@ lemma norm_sub_le_arcLength (hx : ‖x‖ = 1) (hy : ‖y‖ = 1) : ‖x - y‖ 
   rw [norm_eq_abs, abs_add_mul_I, Real.sqrt_le_left (by positivity), ← _root_.abs_pow, abs_sq]
   calc
     _ = 2 * (1 - θ.cos) := by linear_combination θ.cos_sq_add_sin_sq
-    _ ≤ 2 * (1 - (1 - θ ^ 2 / 2)) := by gcongr; sorry
+    _ ≤ 2 * (1 - (1 - θ ^ 2 / 2)) := by gcongr; exact Real.cos_quadratic_lower_bound
     _ = _ := by ring
   · convert hθ
     ring
@@ -63,7 +50,8 @@ lemma mul_arcLength_le_norm (hx : ‖x‖ = 1) (hy : ‖y‖ = 1) : 2 / π * arc
   rw [mul_pow, ← _root_.abs_pow, abs_sq]
   calc
     _ = 2 * (1 - (1 - 2 / π ^ 2 * θ ^ 2)) := by ring
-    _ ≤ 2 * (1 - θ.cos) := by gcongr; sorry
+    _ ≤ 2 * (1 - θ.cos) := by
+        gcongr; exact Real.cos_quadratic_upper_bound $ abs_le.2 $ Ioc_subset_Icc_self hθ
     _  = _ := by linear_combination -θ.cos_sq_add_sin_sq
   · convert hθ
     ring

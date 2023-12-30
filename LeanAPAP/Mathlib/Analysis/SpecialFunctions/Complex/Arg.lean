@@ -1,13 +1,25 @@
 import Mathlib.Analysis.SpecialFunctions.Complex.Arg
+import LeanAPAP.Mathlib.Data.Complex.Abs
+import LeanAPAP.Mathlib.Data.Complex.Basic
 
 open scoped Real
 
 namespace Complex
-variable {a : ℂ}
-
-@[norm_cast] lemma ofReal_zsmul (n : ℤ) (r : ℝ) : ↑(n • r) = n • (r : ℂ) := by simp
+variable {a x : ℂ}
 
 @[simp] lemma abs_arg_inv (x : ℂ) : |x⁻¹.arg| = |x.arg| := by rw [arg_inv]; split_ifs <;> simp [*]
+
+lemma abs_eq_one_iff' : abs x = 1 ↔ ∃ θ ∈ Set.Ioc (-π) π, exp (θ * I) = x := by
+  rw [abs_eq_one_iff]
+  constructor
+  · rintro ⟨θ, rfl⟩
+    refine ⟨toIocMod (mul_pos two_pos Real.pi_pos) (-π) θ, ?_, ?_⟩
+    · convert toIocMod_mem_Ioc _ _ _
+      ring
+    · rw [eq_sub_of_add_eq $ toIocMod_add_toIocDiv_zsmul _ _ θ, ofReal_sub,
+      ofReal_zsmul, ofReal_mul, ofReal_ofNat, exp_mul_I_periodic.sub_zsmul_eq]
+  · rintro ⟨θ, _, rfl⟩
+    exact ⟨θ, rfl⟩
 
 /-- The arclength between two complex numbers is the absolute value of their argument. -/
 noncomputable def arcLength (x y : ℂ) : ℝ := |(x / y).arg|
