@@ -8,10 +8,10 @@ Change everything to using `x⁻¹` instead of `1 / x`.
 
 open scoped ENNReal
 
+attribute [mk_iff Real.isConjugateExponent_iff'] Real.IsConjugateExponent
+
 namespace Real.IsConjugateExponent
 variable {p q : ℝ} (h : p.IsConjugateExponent q)
-
-attribute [mk_iff] IsConjugateExponent
 
 lemma inv_add_inv_conj' : p⁻¹ + q⁻¹ = 1 := by simpa only [one_div] using h.inv_add_inv_conj
 
@@ -43,11 +43,11 @@ variable {a b p q : ℝ≥0} (h : p.IsConjExponent q)
 
 @[simp, norm_cast]
 lemma isConjugateExponent_coe : (p : ℝ).IsConjugateExponent q ↔ p.IsConjExponent q := by
-  simp [Real.IsConjugateExponent_iff, IsConjExponent_iff]; norm_cast
+  simp [Real.isConjugateExponent_iff', isConjExponent_iff]; norm_cast
 
 alias ⟨_, IsConjExponent.coe⟩ := isConjugateExponent_coe
 
-lemma isConjExponent_iff (h : 1 < p) : p.IsConjExponent q ↔ q = p / (p - 1) := by
+lemma isConjExponent_iff' (h : 1 < p) : p.IsConjExponent q ↔ q = p / (p - 1) := by
   rw [← isConjugateExponent_coe, Real.isConjugateExponent_iff (mod_cast h), ← NNReal.coe_eq,
     NNReal.coe_div, NNReal.coe_sub h.le, NNReal.coe_one]
 
@@ -70,7 +70,7 @@ lemma inv_ne_zero : p⁻¹ ≠ 0 := h.inv_pos.ne'
 lemma one_sub_inv : 1 - p⁻¹ = q⁻¹ := tsub_eq_of_eq_add_rev h.inv_add_inv_conj.symm
 
 protected lemma conjExponent (h : 1 < p) : p.IsConjExponent (conjExponent p) :=
-  (isConjExponent_iff h).2 rfl
+  (isConjExponent_iff' h).2 rfl
 
 lemma conj_eq : q = p / (p - 1) := by
   simpa only [← NNReal.coe_one, ← NNReal.coe_sub h.one_le, ← NNReal.coe_div, NNReal.coe_eq]
