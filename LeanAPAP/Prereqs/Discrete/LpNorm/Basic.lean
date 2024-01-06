@@ -289,7 +289,7 @@ section OrderedCommSemiring
 variable [OrderedCommSemiring 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 lemma l2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
-  sum_nonneg fun _ _ ↦ mul_nonneg (star_nonneg.2 $ hf _) $ hg _
+  sum_nonneg fun _ _ ↦ mul_nonneg (star_nonneg_iff.2 $ hf _) $ hg _
 
 end OrderedCommSemiring
 

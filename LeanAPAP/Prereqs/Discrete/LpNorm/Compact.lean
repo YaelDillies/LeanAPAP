@@ -92,31 +92,31 @@ section one_le
 
 lemma nlpNorm_add_le (hp : 1 ≤ p) (f g : ∀ i, α i) : ‖f + g‖ₙ_[p] ≤ ‖f‖ₙ_[p] + ‖g‖ₙ_[p] := by
   simp only [nlpNorm, ← add_div]
-  exact div_le_div_of_le_of_nonneg (lpNorm_add_le hp _ _) (by positivity)
+  exact div_le_div_of_nonneg_right (lpNorm_add_le hp _ _) (by positivity)
 
 lemma nlpNorm_sub_le (hp : 1 ≤ p) (f g : ∀ i, α i) : ‖f - g‖ₙ_[p] ≤ ‖f‖ₙ_[p] + ‖g‖ₙ_[p] := by
   simp only [nlpNorm, ← add_div]
-  exact div_le_div_of_le_of_nonneg (lpNorm_sub_le hp _ _) (by positivity)
+  exact div_le_div_of_nonneg_right (lpNorm_sub_le hp _ _) (by positivity)
 
 lemma nlpNorm_le_nlpNorm_add_nlpNorm_sub' (hp : 1 ≤ p) (f g : ∀ i, α i) :
     ‖f‖ₙ_[p] ≤ ‖g‖ₙ_[p] + ‖f - g‖ₙ_[p] := by
   simp only [nlpNorm, ← add_div]
-  exact div_le_div_of_le_of_nonneg (lpNorm_le_lpNorm_add_lpNorm_sub' hp _ _) (by positivity)
+  exact div_le_div_of_nonneg_right (lpNorm_le_lpNorm_add_lpNorm_sub' hp _ _) (by positivity)
 
 lemma nlpNorm_le_nlpNorm_add_nlpNorm_sub (hp : 1 ≤ p) (f g : ∀ i, α i) :
     ‖f‖ₙ_[p] ≤ ‖g‖ₙ_[p] + ‖g - f‖ₙ_[p] := by
   simp only [nlpNorm, ← add_div]
-  exact div_le_div_of_le_of_nonneg (lpNorm_le_lpNorm_add_lpNorm_sub hp _ _) (by positivity)
+  exact div_le_div_of_nonneg_right (lpNorm_le_lpNorm_add_lpNorm_sub hp _ _) (by positivity)
 
 lemma nlpNorm_le_add_nlpNorm_add (hp : 1 ≤ p) (f g : ∀ i, α i) :
     ‖f‖ₙ_[p] ≤ ‖f + g‖ₙ_[p] + ‖g‖ₙ_[p] := by
   simp only [nlpNorm, ← add_div]
-  exact div_le_div_of_le_of_nonneg (lpNorm_le_add_lpNorm_add hp _ _) (by positivity)
+  exact div_le_div_of_nonneg_right (lpNorm_le_add_lpNorm_add hp _ _) (by positivity)
 
 lemma nlpNorm_sub_le_nlpNorm_sub_add_nlpNorm_sub (hp : 1 ≤ p) (f g : ∀ i, α i) :
     ‖f - h‖ₙ_[p] ≤ ‖f - g‖ₙ_[p] + ‖g - h‖ₙ_[p] := by
   simp only [nlpNorm, ← add_div]
-  exact div_le_div_of_le_of_nonneg (lpNorm_sub_le_lpNorm_sub_add_lpNorm_sub hp _ _) (by positivity)
+  exact div_le_div_of_nonneg_right (lpNorm_sub_le_lpNorm_sub_add_lpNorm_sub hp _ _) (by positivity)
 
 variable [NormedField 𝕜] [∀ i, NormedSpace 𝕜 (α i)]
 
@@ -251,7 +251,7 @@ variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [
   [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 lemma nl2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
-  expect_nonneg fun _ _ ↦ mul_nonneg (star_nonneg.2 $ hf _) $ hg _
+  expect_nonneg fun _ _ ↦ mul_nonneg (star_nonneg_iff.2 $ hf _) $ hg _
 
 end LinearOrderedSemifield
 

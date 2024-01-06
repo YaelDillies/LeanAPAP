@@ -89,7 +89,7 @@ private lemma step_two (f : G → ℝ) :
     ∑ a in A^^n, ∑ b in A^^n, (∑ i, ε i * (f (a i) - f (b i))) ^ (2 * m) =
       ∑ a in A^^n, ∑ b in A^^n, (∑ i, (f (a i) - f (b i))) ^ (2 * m) :=
     fun ε hε ↦ step_two_aux A f _ hε fun z : Fin n → ℝ ↦ univ.sum z ^ (2 * m)
-  rw [Finset.sum_congr rfl this, sum_const, card_piFinsetConst, card_doubleton, nsmul_eq_mul,
+  rw [Finset.sum_congr rfl this, sum_const, card_piFinsetConst, card_pair, nsmul_eq_mul,
     Nat.cast_pow, Nat.cast_two, inv_pow, inv_mul_cancel_left₀]
   · positivity
   · norm_num

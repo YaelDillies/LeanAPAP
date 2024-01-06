@@ -1,5 +1,4 @@
 import Mathlib.Analysis.Calculus.MeanValue
-import LeanAPAP.Mathlib.Analysis.Calculus.Deriv.Basic
 
 -- TODO: Rename `Convex.monotoneOn_of_deriv_nonneg` to `monotoneOn_of_deriv_nonneg`
 -- TODO: Antitone versions, strict versions

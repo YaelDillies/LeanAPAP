@@ -14,7 +14,7 @@ lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
   fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) (hg _)
 
 lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
-  fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) $ star_nonneg.2 $ hg _
+  fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) $ star_nonneg_iff.2 $ hg _
 
 end OrderedCommSemiring
 

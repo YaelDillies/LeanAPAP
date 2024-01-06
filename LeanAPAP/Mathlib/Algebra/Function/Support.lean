@@ -1,5 +1,5 @@
 import Mathlib.Algebra.Function.Support
-import LeanAPAP.Mathlib.Algebra.Module.Basic
+import Mathlib.Algebra.Module.Basic
 
 namespace Function
 variable {α R M : Type*} {n : ℕ}

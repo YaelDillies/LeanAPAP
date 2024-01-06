@@ -14,7 +14,6 @@ import LeanAPAP.Mathlib.Algebra.GroupPower.Order
 import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.Algebra.GroupWithZero.Units.Lemmas
 import LeanAPAP.Mathlib.Algebra.ModEq
-import LeanAPAP.Mathlib.Algebra.Module.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
@@ -23,7 +22,6 @@ import LeanAPAP.Mathlib.Algebra.Star.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Algebra.Star.Pi
 import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
-import LeanAPAP.Mathlib.Analysis.Calculus.Deriv.Basic
 import LeanAPAP.Mathlib.Analysis.Calculus.MeanValue
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Analysis.Convex.Jensen

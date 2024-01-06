@@ -68,7 +68,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
   simp only [l1Norm_eq_sum, NNReal.norm_eq, Function.comp_apply] at hν₁
   obtain hf₁ | hf₁ := le_total 2 ‖f + 1‖_[2 * p, ν]
   · calc
-      1 + ε / 2 ≤ 1 + 1 / 2 := add_le_add_left (div_le_div_of_le_of_nonneg hε₁ zero_le_two) _
+      1 + ε / 2 ≤ 1 + 1 / 2 := add_le_add_left (div_le_div_of_nonneg_right hε₁ zero_le_two) _
       _ ≤ 2 := by norm_num
       _ ≤ ‖f + 1‖_[2 * p, ν] := hf₁
       _ ≤ _ := wlpNorm_mono_right (NNReal.coe_le_coe.1 ?_) _ _
