@@ -311,13 +311,13 @@ lemma support_ndconv_subset (f g : α → β) : support (f ○ₙ g) ⊆ support
 -- lemma indicate_nconv_indicate_apply (s t : Finset α) (a : α) :
 --     (𝟭_[β] s ∗ₙ 𝟭 t) a = ((s ×ˢ t).filter fun x : α × α ↦ x.1 + x.2 = a).card := by
 --   simp only [nconv_apply, indicate_apply, ←ite_and, filter_comm, boole_mul, expect_boole]
---   simp_rw [←mem_product, filter_mem_univ]
+--   simp_rw [←mem_product, filter_univ_mem]
 
 -- lemma indicate_ndconv_indicate_apply (s t : Finset α) (a : α) :
 --     (𝟭_[β] s ○ₙ 𝟭 t) a = ((s ×ˢ t).filter fun x : α × α ↦ x.1 - x.2 = a).card := by
 --   simp only [ndconv_apply, indicate_apply, ←ite_and, filter_comm, boole_mul, expect_boole,
 --     apply_ite conj, map_one, map_zero, Pi.conj_apply]
---   simp_rw [←mem_product, filter_mem_univ]
+--   simp_rw [←mem_product, filter_univ_mem]
 
 end Semifield
 
@@ -495,7 +495,7 @@ lemma support_iterNConv_subset (f : α → β) : ∀ n, support (f ∗^ₙ n) �
 --     (𝟭_[ℝ] s ∗^ₙ n) a = ((piFinset fun _i ↦ s).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by
 --   induction' n with n ih generalizing a
 --   · simp [apply_ite card, eq_comm]
---   simp_rw [iterNConv_succ, nconv_eq_expect_sub', ih, indicate_apply, boole_mul, expect_ite, filter_mem_univ,
+--   simp_rw [iterNConv_succ, nconv_eq_expect_sub', ih, indicate_apply, boole_mul, expect_ite, filter_univ_mem,
 --     expect_const_zero, add_zero, ←Nat.cast_expect, ←Finset.card_sigma, Nat.cast_inj]
 --   refine' Finset.card_congr (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
 --   · simp only [Fin.expect_cons, eq_sub_iff_add_eq', mem_sigma, mem_filter, mem_piFinset, and_imp]

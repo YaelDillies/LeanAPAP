@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Module.Pi
 import Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
-import LeanAPAP.Mathlib.Data.Fintype.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Indicator
@@ -286,13 +285,13 @@ lemma support_dconv_subset (f g : α → β) : support (f ○ g) ⊆ support f -
 lemma indicate_conv_indicate_apply (s t : Finset α) (a : α) :
     (𝟭_[β] s ∗ 𝟭 t) a = ((s ×ˢ t).filter fun x : α × α ↦ x.1 + x.2 = a).card := by
   simp only [conv_apply, indicate_apply, ←ite_and, filter_comm, boole_mul, sum_boole]
-  simp_rw [←mem_product, filter_mem_univ]
+  simp_rw [←mem_product, filter_univ_mem]
 
 lemma indicate_dconv_indicate_apply (s t : Finset α) (a : α) :
     (𝟭_[β] s ○ 𝟭 t) a = ((s ×ˢ t).filter fun x : α × α ↦ x.1 - x.2 = a).card := by
   simp only [dconv_apply, indicate_apply, ←ite_and, filter_comm, boole_mul, sum_boole,
     apply_ite conj, map_one, map_zero, Pi.conj_apply]
-  simp_rw [←mem_product, filter_mem_univ]
+  simp_rw [←mem_product, filter_univ_mem]
 
 lemma indicate_conv (s : Finset α) (f : α → β) : 𝟭 s ∗ f = ∑ a ∈ s, τ a f := by
   ext; simp [conv_eq_sum_sub', indicate_apply]
@@ -507,7 +506,7 @@ lemma indicate_iterConv_apply (s : Finset α) (n : ℕ) (a : α) :
     (𝟭_[β] s ∗^ n) a = ((s ^^ n).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by
   induction' n with n ih generalizing a
   · simp [apply_ite card, eq_comm]
-  simp_rw [iterConv_succ, conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite, filter_mem_univ,
+  simp_rw [iterConv_succ, conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite, filter_univ_mem,
     sum_const_zero, add_zero, ←Nat.cast_sum, ←Finset.card_sigma]
   congr 1
   refine' Finset.card_congr (fun f _ ↦ Fin.cons f.1 f.2) _ _ _

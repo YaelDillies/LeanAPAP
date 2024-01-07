@@ -6,7 +6,6 @@ import Mathlib.Data.Set.Pointwise.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Data.Finset.Powerset
-import LeanAPAP.Mathlib.Data.Fintype.Basic
 import LeanAPAP.Mathlib.Data.Set.Function
 import LeanAPAP.Mathlib.Order.Heyting.Basic
 

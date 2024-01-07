@@ -18,10 +18,7 @@ import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
-import LeanAPAP.Mathlib.Algebra.Star.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Order
-import LeanAPAP.Mathlib.Algebra.Star.Pi
-import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
 import LeanAPAP.Mathlib.Analysis.Calculus.MeanValue
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Analysis.Convex.Jensen
@@ -40,7 +37,6 @@ import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Finset.Card
 import LeanAPAP.Mathlib.Data.Finset.Image
 import LeanAPAP.Mathlib.Data.Finset.Powerset
-import LeanAPAP.Mathlib.Data.Fintype.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Lattice
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.FunLike.Basic

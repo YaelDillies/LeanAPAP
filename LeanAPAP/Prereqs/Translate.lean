@@ -1,8 +1,6 @@
 import Mathlib.Algebra.Order.Pi
 import Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Order
-import LeanAPAP.Mathlib.Algebra.Star.Pi
-import LeanAPAP.Mathlib.Algebra.Star.SelfAdjoint
 
 /-!
 # Precomposition operators
