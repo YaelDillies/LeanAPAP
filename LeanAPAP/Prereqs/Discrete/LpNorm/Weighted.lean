@@ -1,3 +1,4 @@
+import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 
 /-!
@@ -36,7 +37,7 @@ lemma wlpNorm_eq_sum (hp : p ≠ 0) (w : ι → ℝ≥0) (f : ∀ i, α i) :
   have : (p : ℝ) ≠ 0 := by positivity
   simp_rw [wlpNorm, lpNorm_eq_sum hp, NNReal.smul_def, norm_smul]
   simp only [NNReal.coe_rpow, norm_norm, Algebra.id.smul_eq_mul, mul_rpow, norm_nonneg,
-    rpow_nonneg_of_nonneg, hp, NNReal.coe_nonneg, norm_of_nonneg, rpow_inv_rpow _ this]
+    rpow_nonneg, hp, NNReal.coe_nonneg, norm_of_nonneg, rpow_inv_rpow _ this]
 
 lemma wlpNorm_eq_sum' {p : ℝ} (hp : 0 < p) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p.toNNReal, w] = (∑ i, w i • ‖f i‖ ^ p) ^ p⁻¹ := by

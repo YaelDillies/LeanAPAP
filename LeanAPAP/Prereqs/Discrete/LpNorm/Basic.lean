@@ -1,15 +1,10 @@
-import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
-import LeanAPAP.Mathlib.Algebra.BigOperators.Order
+import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.Normed.Group.Basic
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.IsROrC.Basic
-import LeanAPAP.Mathlib.Data.Real.Archimedean
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
-import LeanAPAP.Mathlib.Data.Real.ENNReal
-import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Indicator
 
 /-!

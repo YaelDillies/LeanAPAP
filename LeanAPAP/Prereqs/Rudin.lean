@@ -4,7 +4,6 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import LeanAPAP.Mathlib.Algebra.Function.Support
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Data.Complex.Basic
-import LeanAPAP.Mathlib.Data.Nat.Factorial.Basic
 import LeanAPAP.Prereqs.Discrete.DFT.Compact
 import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
 import LeanAPAP.Prereqs.Dissociation

@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Order.Chebyshev
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
-import LeanAPAP.Mathlib.Data.Nat.Cast.Field
 import LeanAPAP.Mathlib.Data.Nat.Order.Basic
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Prereqs.Discrete.DFT.Compact

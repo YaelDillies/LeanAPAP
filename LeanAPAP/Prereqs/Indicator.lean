@@ -1,7 +1,6 @@
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Expect.Basic
-import LeanAPAP.Mathlib.Data.Fintype.Lattice
 import LeanAPAP.Prereqs.Translate
 
 open Finset Function

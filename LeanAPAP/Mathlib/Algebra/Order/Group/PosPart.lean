@@ -1,11 +1,8 @@
 import Mathlib.Algebra.Group.Pi
-import Mathlib.Algebra.Order.LatticeGroup
+import Mathlib.Algebra.Order.Group.PosPart
 
 namespace Pi
 variable {ι : Type*} {α : ι → Type*}
-
-@[simp]
-lemma abs_apply [∀ i, Neg (α i)] [∀ i, Sup (α i)] (f : ∀ i, α i) (i : ι) : |f| i = |f i| := rfl
 
 @[simp]
 lemma posPart_apply [∀ i, Lattice (α i)] [∀ i, AddCommGroup (α i)] (f : ∀ i, α i) (i : ι) :
@@ -14,8 +11,6 @@ lemma posPart_apply [∀ i, Lattice (α i)] [∀ i, AddCommGroup (α i)] (f : �
 @[simp]
 lemma negPart_apply [∀ i, Lattice (α i)] [∀ i, AddCommGroup (α i)] (f : ∀ i, α i) (i : ι) :
     f⁻ i = (f i)⁻ := rfl
-
-lemma abs_def [∀ i, Neg (α i)] [∀ i, Sup (α i)] (f : ∀ i, α i) : |f| = fun i ↦ |f i| := rfl
 
 lemma posPart_def [∀ i, Lattice (α i)] [∀ i, AddCommGroup (α i)] (f : ∀ i, α i) :
     f⁺ = fun i ↦ (f i)⁺ := rfl
@@ -33,8 +28,6 @@ open LatticeOrderedGroup
 --TODO: Make `posPart` and `negPart` bind stronger than function application
 --TODO: Strip off the notation typeclasses
 --TODO: Fix the names
-alias neg_sup := neg_sup_eq_neg_inf_neg
-alias neg_inf := neg_inf_eq_sup_neg
 alias posPart_def := pos_part_def
 alias negPart_def := neg_part_def
 

@@ -3,7 +3,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
-import LeanAPAP.Mathlib.Algebra.Order.LatticeGroup
+import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Nat.Order.Basic

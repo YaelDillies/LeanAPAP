@@ -1,6 +1,5 @@
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Function.Support
-import LeanAPAP.Mathlib.Data.Fintype.Lattice
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm

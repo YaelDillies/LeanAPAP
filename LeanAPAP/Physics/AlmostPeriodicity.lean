@@ -28,7 +28,7 @@ lemma my_markov (hc : 0 < c) (hg : ∀ a ∈ A, 0 ≤ g a) (h : ∑ a in A, g a 
     (card_nsmul_le_sum _ _ c (by simp (config := { contextual := true }) [le_of_lt])).trans this
   rw [nsmul_eq_mul, mul_right_comm] at this
   have := le_of_mul_le_mul_right this hc
-  rw [filter_not, cast_card_sdiff (filter_subset _ _)] at this
+  rw [filter_not, cast_card_sdiff' (filter_subset _ _)] at this
   linarith only [this]
 
 lemma my_other_markov (hc : 0 ≤ c) (hε : 0 ≤ ε) (hg : ∀ a ∈ A, 0 ≤ g a)
@@ -37,7 +37,7 @@ lemma my_other_markov (hc : 0 ≤ c) (hε : 0 ≤ ε) (hg : ∀ a ∈ A, 0 ≤ g
   · exact my_markov hc hg h
   simp only [mul_zero, zero_mul] at h
   classical
-  rw [one_sub_mul, sub_le_comm, ←cast_card_sdiff (filter_subset _ A), ←filter_not,
+  rw [one_sub_mul, sub_le_comm, ← cast_card_sdiff' (filter_subset _ A), ←filter_not,
     filter_false_of_mem]
   · simp; positivity
   intro i hi
