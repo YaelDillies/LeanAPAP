@@ -1,6 +1,5 @@
 import Mathlib.Data.Int.CharZero
 import Mathlib.Data.Rat.NNRat
-import LeanAPAP.Mathlib.Algebra.GroupWithZero.Units.Lemmas
 import LeanAPAP.Mathlib.Data.Rat.NNRat
 import LeanAPAP.Mathlib.Data.Rat.Order
 import LeanAPAP.Prereqs.NNRat.Cast.Defs

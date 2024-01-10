@@ -24,7 +24,7 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
   induction' s using Finset.induction_on with a s has ih generalizing n
   · cases n <;> simp
   rw [sum_insert has, cut_insert _ _ _ has, sum_biUnion (cut_insert_disjoint_bUnion _ _ _ has)]
-  simp only [sum_map, Function.Embedding.coeFn_mk, Pi.add_apply, multinomial_insert _ _ has,
+  simp only [sum_map, Function.Embedding.coeFn_mk, Pi.add_apply, multinomial_insert has,
     Pi.add_apply, eq_self_iff_true, if_true, Nat.cast_mul, prod_insert has, eq_self_iff_true,
     if_true, sum_add_distrib, sum_ite_eq', has, if_false, add_zero,
       addLeftEmbedding_eq_addRightEmbedding, addRightEmbedding_apply]

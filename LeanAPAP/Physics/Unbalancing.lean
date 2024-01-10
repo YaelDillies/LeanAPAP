@@ -4,7 +4,6 @@ import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
-import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Nat.Order.Basic
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic

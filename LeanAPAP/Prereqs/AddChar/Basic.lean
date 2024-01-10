@@ -1,7 +1,5 @@
 import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
 import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
-import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
-import LeanAPAP.Mathlib.Data.IsROrC.Basic
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 

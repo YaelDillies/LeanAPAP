@@ -92,7 +92,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       (norm_sum_le _ _).trans $ sum_le_sum fun _ _ ↦ norm_sum_le _ _
     _ = _ := by simp [energy, norm_c, -Complex.norm_eq_abs, norm_prod]
   · push_cast
-    simp_rw [←IsROrC.conj_mul', dft_apply, l2Inner_eq_sum, map_sum, map_mul, IsROrC.conj_conj,
+    simp_rw [←IsROrC.conj_mul, dft_apply, l2Inner_eq_sum, map_sum, map_mul, IsROrC.conj_conj,
       mul_pow, sum_pow', sum_mul, mul_sum, @sum_comm _ _ G, ←AddChar.inv_apply_eq_conj, ←
       AddChar.neg_apply', prod_mul_prod_comm, ←AddChar.add_apply, ←AddChar.sum_apply,
       mul_left_comm (Algebra.cast (ν _ : ℝ) : ℂ), ←mul_sum, ←sub_eq_add_neg, sum_sub_distrib,

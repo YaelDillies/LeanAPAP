@@ -1,9 +1,7 @@
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
-import LeanAPAP.Mathlib.Analysis.Normed.Group.Basic
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
-import LeanAPAP.Mathlib.Data.IsROrC.Basic
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Prereqs.Indicator
 
@@ -131,7 +129,7 @@ lemma lpNorm_le_add_lpNorm_add (hp : 1 ≤ p) (f g : ∀ i, α i) : ‖f‖_[p] 
 lemma lpNorm_sub_le_lpNorm_sub_add_lpNorm_sub (hp : 1 ≤ p) (f g : ∀ i, α i) :
     ‖f - h‖_[p] ≤ ‖f - g‖_[p] + ‖g - h‖_[p] :=
   haveI := Fact.mk hp
-  norm_sub_le_norm_sub_add_norm_sub
+  norm_sub_le_norm_sub_add_norm_sub _ _ _
 
 variable [NormedField 𝕜] [∀ i, NormedSpace 𝕜 (α i)]
 
@@ -309,10 +307,10 @@ lemma inner_eq_l2Inner (f g : PiLp 2 fun _i : ι ↦ 𝕜) :
 
 @[simp] lemma l2Inner_self (f : ι → 𝕜) : ⟪f, f⟫_[𝕜] = (‖f‖_[2] : 𝕜) ^ 2 := by
   simp_rw [←algebraMap.coe_pow, l2Norm_sq_eq_sum, l2Inner_eq_sum, algebraMap.coe_sum,
-    IsROrC.ofReal_pow, IsROrC.conj_mul']
+    IsROrC.ofReal_pow, IsROrC.conj_mul]
 
 lemma l2Inner_self_of_norm_eq_one (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫_[𝕜] = Fintype.card ι := by
-  simp [-l2Inner_self, l2Inner_eq_sum, IsROrC.conj_mul', hf, card_univ]
+  simp [-l2Inner_self, l2Inner_eq_sum, IsROrC.conj_mul, hf, card_univ]
 
 lemma linearIndependent_of_ne_zero_of_l2Inner_eq_zero {v : κ → ι → 𝕜} (hz : ∀ k, v k ≠ 0)
     (ho : Pairwise fun k l ↦ ⟪v k, v l⟫_[𝕜] = 0) : LinearIndependent 𝕜 v := by

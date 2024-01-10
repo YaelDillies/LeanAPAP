@@ -271,10 +271,10 @@ variable {κ : Type*} [IsROrC 𝕜] {f : ι → 𝕜}
 
 @[simp] lemma nl2Inner_self (f : ι → 𝕜) : ⟪f, f⟫ₙ_[𝕜] = (‖f‖ₙ_[2] : 𝕜) ^ 2 := by
   simp_rw [←algebraMap.coe_pow, nl2Norm_sq_eq_expect, nl2Inner,
-    algebraMap.coe_expect _ (α := ℝ) (β := 𝕜), IsROrC.ofReal_pow, IsROrC.conj_mul']
+    algebraMap.coe_expect _ (α := ℝ) (β := 𝕜), IsROrC.ofReal_pow, IsROrC.conj_mul]
 
 lemma nl2Inner_self_of_norm_eq_one [Nonempty ι] (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫ₙ_[𝕜] = 1 := by
-  simp [-nl2Inner_self, nl2Inner, IsROrC.conj_mul', hf]
+  simp [-nl2Inner_self, nl2Inner, IsROrC.conj_mul, hf]
 
 lemma linearIndependent_of_ne_zero_of_nl2Inner_eq_zero {v : κ → ι → 𝕜} (hz : ∀ k, v k ≠ 0)
     (ho : Pairwise fun k l ↦ ⟪v k, v l⟫ₙ_[𝕜] = 0) : LinearIndependent 𝕜 v := by
