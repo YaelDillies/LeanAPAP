@@ -63,7 +63,7 @@ lemma double_multinomial :
   refine' (Nat.mul_le_mul_right _ $ factorial_two_mul_le _).trans _
   rw [mul_pow, mul_comm, ←mul_assoc, ←mul_assoc]
   refine' Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ _)
-  rw [←Finset.pow_sum, ←prod_mul_distrib]
+  rw [←Finset.prod_pow_eq_pow_sum, ←prod_mul_distrib]
   refine' prod_le_prod' fun i _ ↦ _
   rw [mul_comm, ←doubleFactorial_two_mul]
   exact doubleFactorial_le_factorial _

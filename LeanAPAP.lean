@@ -5,7 +5,6 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
-import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
 import LeanAPAP.Mathlib.Algebra.Function.Support
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Equiv.Basic
@@ -18,7 +17,6 @@ import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Analysis.Calculus.MeanValue
-import LeanAPAP.Mathlib.Analysis.Convex.Jensen
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
@@ -26,17 +24,17 @@ import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import LeanAPAP.Mathlib.Data.Complex.Order
+import LeanAPAP.Mathlib.Data.ENNReal.Basic
+import LeanAPAP.Mathlib.Data.ENNReal.Inv
 import LeanAPAP.Mathlib.Data.Finset.Image
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.FunLike.Basic
-import LeanAPAP.Mathlib.Data.Nat.Order.Basic
 import LeanAPAP.Mathlib.Data.Nat.Parity
 import LeanAPAP.Mathlib.Data.Pi.Algebra
 import LeanAPAP.Mathlib.Data.Rat.NNRat
 import LeanAPAP.Mathlib.Data.Rat.Order
 import LeanAPAP.Mathlib.Data.Real.Archimedean
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
-import LeanAPAP.Mathlib.Data.Real.ENNReal
 import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.Data.Set.Function

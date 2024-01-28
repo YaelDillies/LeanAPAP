@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Positivity.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 
@@ -104,6 +105,7 @@ def evalFinsetDens : PositivityExt where eval {u 𝕜} _ _ e := do
         try
           let inst𝕜ordfield ← synthInstanceQ q(LinearOrderedSemifield $𝕜)
           let inst𝕜char ← synthInstanceQ q(CharZero $𝕜)
+          assumeInstancesCommute
           return .positive
             (q(@Nonempty.dens_pos $𝕜 $α $instα $inst𝕜ordfield $s $inst𝕜char $fi) : Expr)
         catch _ =>

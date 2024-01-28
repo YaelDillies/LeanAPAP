@@ -1,13 +1,10 @@
 import Mathlib.Algebra.BigOperators.Ring
-import Mathlib.Data.Fintype.Card
 import Mathlib.Data.IsROrC.Basic
-import Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
-import LeanAPAP.Mathlib.Algebra.BigOperators.Order
-import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
+import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.Pi.Algebra
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset
-import LeanAPAP.Prereqs.NNRat.Order
+import LeanAPAP.Prereqs.NNRat.Algebra
 import LeanAPAP.Prereqs.NNRat.GroupPower.Lemmas
 
 /-!
@@ -303,6 +300,16 @@ lemma expect_mul_expect [IsScalarTower ℚ≥0 α α] [SMulCommClass ℚ≥0 α 
 
 end Semiring
 
+section CommSemiring
+variable [CommSemiring α] [Module ℚ≥0 α] [IsScalarTower ℚ≥0 α α] [SMulCommClass ℚ≥0 α α]
+
+lemma expect_pow (s : Finset ι) (f : ι → α) (n : ℕ) :
+    (𝔼 i ∈ s, f i) ^ n = 𝔼 p ∈ s ^^ n, ∏ i, f (p i) := by
+  classical
+  rw [expect, smul_pow, sum_pow', expect, Fintype.card_piFinsetConst, inv_pow, Nat.cast_pow]
+
+end CommSemiring
+
 section Semifield
 variable [Semifield α] [CharZero α] [SMul ℚ≥0 α] [CompAction α] {s : Finset ι} {f g : ι → α}
   {m : β → α}
@@ -487,6 +494,17 @@ lemma coe_balance : (↑(balance f a) : α) = balance ((↑) ∘ f) a := map_bal
 end IsROrC
 
 open Finset
+
+instance [Preorder α] [MulAction ℚ α] [PosSMulMono ℚ α] : PosSMulMono ℚ≥0 α where
+  elim a _ _b₁ _b₂ hb := (smul_le_smul_of_nonneg_left hb a.2 :)
+
+instance [Preorder α] [Semifield α] [PosMulMono α] [NNRatCast α] [MulAction ℚ α] [CompAction α] :
+    PosSMulMono ℚ≥0 α where
+  elim a ha b₁ b₂ hb := by simp_rw [NNRat.smul_def]; exact mul_le_mul_of_nonneg_left hb sorry
+
+instance [Preorder α] [Semifield α] [PosMulStrictMono α] [NNRatCast α] [MulAction ℚ α]
+    [CompAction α] : PosSMulStrictMono ℚ≥0 α where
+  elim a ha b₁ b₂ hb := by simp_rw [NNRat.smul_def]; exact mul_lt_mul_of_pos_left hb sorry
 
 namespace Mathlib.Meta.Positivity
 open Qq Lean Meta

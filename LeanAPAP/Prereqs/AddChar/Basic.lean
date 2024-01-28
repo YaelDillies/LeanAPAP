@@ -1,5 +1,4 @@
 import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
-import LeanAPAP.Mathlib.Algebra.DirectSum.Basic
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 
@@ -27,7 +26,7 @@ variable [AddMonoid G] [AddMonoid H] [CommMonoid R] {ψ : AddChar G R}
 instance : AddCommMonoid (AddChar G R) := Additive.addCommMonoid
 
 -- Replace ad-hoc `FunLike` instance
-example : FunLike (AddChar G R) G fun _ ↦ R where
+example : FunLike (AddChar G R) G R where
   coe := (⇑)
   coe_injective' ψ χ h := by obtain ⟨⟨_, _⟩, _⟩ := ψ; congr
 
@@ -72,9 +71,8 @@ lemma coe_toAddMonoidHom (ψ : AddChar G R) : ⇑(toAddMonoidHom ψ) = Additive.
 @[simp] lemma toAddMonoidHom_symm_apply (ψ : G →+ Additive R) (a : G) :
     toAddMonoidHom.symm ψ a = Additive.toMul (ψ a) := rfl
 
-lemma eq_one_iff : ψ = 0 ↔ ∀ x, ψ x = 1 := FunLike.ext_iff
-
-lemma ne_one_iff : ψ ≠ 0 ↔ ∃ x, ψ x ≠ 1 := FunLike.ne_iff
+lemma eq_one_iff : ψ = 0 ↔ ∀ x, ψ x = 1 := DFunLike.ext_iff
+lemma ne_one_iff : ψ ≠ 0 ↔ ∃ x, ψ x ≠ 1 := DFunLike.ne_iff
 
 @[simp, norm_cast] lemma coe_one : ⇑(1 : AddChar G R) = 1 := rfl
 @[simp, norm_cast] lemma coe_mul (ψ χ : AddChar G R) : ⇑(ψ * χ) = ψ * χ := rfl
@@ -84,14 +82,14 @@ lemma coe_pow (n : ℕ) (ψ : AddChar G R) : ⇑(ψ ^ n) = ψ ^ n := rfl
 
 lemma pow_apply (n : ℕ) (ψ : AddChar G R) (a : G) : (ψ ^ n) a = ψ a ^ n := rfl
 
-lemma eq_zero_iff : ψ = 0 ↔ ∀ x, ψ x = 1 := FunLike.ext_iff
-lemma ne_zero_iff : ψ ≠ 0 ↔ ∃ x, ψ x ≠ 1 := FunLike.ne_iff
+lemma eq_zero_iff : ψ = 0 ↔ ∀ x, ψ x = 1 := DFunLike.ext_iff
+lemma ne_zero_iff : ψ ≠ 0 ↔ ∃ x, ψ x ≠ 1 := DFunLike.ne_iff
 
 @[simp, norm_cast] lemma coe_zero : ⇑(0 : AddChar G R) = 1 := rfl
 
 lemma zero_apply (a : G) : (0 : AddChar G R) a = 1 := rfl
 
-@[simp, norm_cast] lemma coe_eq_zero : ⇑ψ = 1 ↔ ψ = 0 := by rw [←coe_zero]; exact FunLike.coe_fn_eq
+@[simp, norm_cast] lemma coe_eq_zero : ⇑ψ = 1 ↔ ψ = 0 := by rw [← coe_zero, DFunLike.coe_fn_eq]
 @[simp, norm_cast] lemma coe_add (ψ χ : AddChar G R) : ⇑(ψ + χ) = ψ * χ := rfl
 
 lemma add_apply (ψ χ : AddChar G R) (a : G) : (ψ + χ) a = ψ a * χ a := rfl
@@ -126,13 +124,13 @@ lemma coe_compAddMonoidHom (ψ : AddChar H R) (f : G →+ H) :
 lemma compAddMonoidHom_injective_left (f : G →+ H) (hf : Surjective f) :
     Injective fun ψ : AddChar H R ↦ ψ.compAddMonoidHom f := by
   rintro ψ χ h
-  rw [FunLike.ext'_iff] at h ⊢
+  rw [DFunLike.ext'_iff] at h ⊢
   exact hf.injective_comp_right h
 
 lemma compAddMonoidHom_injective_right (ψ : AddChar H R) (hψ : Injective ψ) :
     Injective fun f : G →+ H ↦ ψ.compAddMonoidHom f := by
   rintro f g h
-  rw [FunLike.ext'_iff] at h ⊢
+  rw [DFunLike.ext'_iff] at h ⊢
   exact hψ.comp_left h
 
 /-- The double dual embedding. -/

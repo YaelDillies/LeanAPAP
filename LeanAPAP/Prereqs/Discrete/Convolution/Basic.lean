@@ -454,6 +454,9 @@ lemma iterConv_mul' (f : α → β) (m n : ℕ) : f ∗^ (m * n) = f ∗^ n ∗^
   | 0 => by ext; simp
   | n + 1 => by simp [iterConv_succ, conj_iterConv]
 
+@[simp] lemma conj_iterConv_apply (f : α → β) (n : ℕ) (a : α) :
+    conj ((f ∗^ n) a) = (conj f ∗^ n) a := congr_fun (conj_iterConv _ _) _
+
 lemma IsSelfAdjoint.iterConv (hf : IsSelfAdjoint f) (n : ℕ) : IsSelfAdjoint (f ∗^ n) :=
   (conj_iterConv _ _).trans $ congr_arg (· ∗^ n) hf
 

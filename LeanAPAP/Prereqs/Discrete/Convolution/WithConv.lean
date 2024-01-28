@@ -40,7 +40,7 @@ def ofConv : WithConv α β ≃ (α → β) := Equiv.refl _
 @[simp] lemma toConv_apply (f : α → β) (a : α) : toConv f a = f a := rfl
 @[simp] lemma ofConv_apply (f : WithConv α β) (a : α) : ofConv f a = f a := rfl
 
-instance [Nonempty β] : Nonempty (WithConv α β) := Pi.Nonempty
+instance [Nonempty β] : Nonempty (WithConv α β) := Pi.instNonempty
 
 section CommSemiring
 variable [CommSemiring β] [StarRing β]

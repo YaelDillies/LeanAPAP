@@ -1,6 +1,7 @@
 import Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
+import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 import LeanAPAP.Prereqs.Density
@@ -134,38 +135,40 @@ end one_le
 end NormedAddCommGroup
 
 section NormedAddCommGroup
-variable {α : Type*} [NormedAddCommGroup α] {p : ℝ≥0}
+variable {α : Type*} [NormedAddCommGroup α] {p : ℝ≥0∞}
 
 @[simp]
 lemma nlpNorm_const [Nonempty ι] (hp : p ≠ 0) (a : α) : ‖const ι a‖ₙ_[p] = ‖a‖ := by
+  obtain _ | p := p
+  · simp [nlinftyNorm_eq_ciSup]
   have : (card ι : ℝ) ^ (p : ℝ)⁻¹ ≠ 0 := by positivity
-  simp [nlpNorm, hp, mul_div_cancel_left _ this]
+  simp [nlpNorm, ENNReal.coe_ne_coe.1 hp, mul_div_cancel_left _ this]
 
 end NormedAddCommGroup
 
 section IsROrC
-variable [IsROrC 𝕜] {p : ℝ≥0} {f g : ι → 𝕜}
+variable [IsROrC 𝕜] {p : ℝ≥0∞} {f g : ι → 𝕜}
 
 @[simp] lemma nlpNorm_one [Nonempty ι] (hp : p ≠ 0) : ‖(1 : ι → 𝕜)‖ₙ_[p] = 1 :=
   (nlpNorm_const hp 1).trans $ by simp
 
-lemma nlpNorm_natCast_mul {p : ℝ≥0∞} (hp : 1 ≤ p) (n : ℕ) (f : ι → 𝕜) :
+lemma nlpNorm_natCast_mul (hp : 1 ≤ p) (n : ℕ) (f : ι → 𝕜) :
     ‖(n : ι → 𝕜) * f‖ₙ_[p] = n * ‖f‖ₙ_[p] := by simpa only [nsmul_eq_mul] using nlpNorm_nsmul hp n f
 
-lemma nlpNorm_natCast_mul' {p : ℝ≥0∞} (hp : 1 ≤ p) (n : ℕ) (f : ι → 𝕜) :
+lemma nlpNorm_natCast_mul' (hp : 1 ≤ p) (n : ℕ) (f : ι → 𝕜) :
     ‖(n * f ·)‖ₙ_[p] = n * ‖f‖ₙ_[p] := nlpNorm_natCast_mul hp _ _
 
-lemma nlpNorm_mul_natCast {p : ℝ≥0∞} (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
+lemma nlpNorm_mul_natCast (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
     ‖f * (n : ι → 𝕜)‖ₙ_[p] = ‖f‖ₙ_[p] * n := by
   simpa only [mul_comm] using nlpNorm_natCast_mul hp n f
 
-lemma nlpNorm_mul_natCast' {p : ℝ≥0∞} (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
+lemma nlpNorm_mul_natCast' (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
     ‖(f · * n)‖ₙ_[p] = ‖f‖ₙ_[p] * n := nlpNorm_mul_natCast hp _ _
 
-lemma nlpNorm_div_natCast' {p : ℝ≥0∞} (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
+lemma nlpNorm_div_natCast' (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
     ‖(f · / n)‖ₙ_[p] = ‖f‖ₙ_[p] / n := by simp [nlpNorm, lpNorm_div_natCast' hp, div_right_comm]
 
-lemma nlpNorm_div_natCast {p : ℝ≥0∞} (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
+lemma nlpNorm_div_natCast (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
     ‖f / (n : ι → 𝕜)‖ₙ_[p] = ‖f‖ₙ_[p] / n := nlpNorm_div_natCast' hp _ _
 
 end IsROrC
@@ -248,7 +251,7 @@ lemma nl2Inner_sub_right (f g₁ g₂ : ι → 𝕜) : ⟪f, g₁ - g₂⟫ₙ_[
 end Field
 
 section LinearOrderedSemifield
-variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [CharZero 𝕜]
+variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [PosSMulMono ℚ≥0 𝕜] [CharZero 𝕜]
   [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 lemma nl2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
@@ -445,9 +448,8 @@ lemma nlpNorm_eq_l1Norm_rpow (hp : p ≠ 0) (f : α → ℝ) :
 
 lemma nlpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → ℝ) :
     ‖f‖ₙ_[p] ^ (q : ℝ) = ‖|f| ^ (q : ℝ)‖ₙ_[p / q] := by
-  rw [←ENNReal.coe_div hq,
-    nlpNorm_rpow (div_ne_zero hp hq) hq (LatticeOrderedGroup.abs_nonneg f), nlpNorm_abs, ←
-    ENNReal.coe_mul, div_mul_cancel _ hq]
+  rw [←ENNReal.coe_div hq, nlpNorm_rpow (div_ne_zero hp hq) hq (abs_nonneg f), nlpNorm_abs,
+    ← ENNReal.coe_mul, div_mul_cancel _ hq]
 
 --TODO: Generalise the following four to include `f g : α → ℂ`
 /-- **Hölder's inequality**, binary case. -/

@@ -1,4 +1,5 @@
 import Mathlib.Data.Rat.NNRat
+import Mathlib.Tactic.Positivity.Core
 
 attribute [simp] Int.natAbs_pos
 attribute [-simp] NNRat.natAbs_num_coe -- Tagging that lemma wasn't such a great idea

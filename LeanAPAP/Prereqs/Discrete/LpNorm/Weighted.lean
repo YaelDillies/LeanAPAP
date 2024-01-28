@@ -45,7 +45,9 @@ lemma wlpNorm_eq_sum' {p : ℝ} (hp : 0 < p) (w : ι → ℝ≥0) (f : ∀ i, α
 
 lemma wlpNorm_rpow_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, w] ^ (p : ℝ) = ∑ i, w i • ‖f i‖ ^ (p : ℝ) := by
-  rw [wlpNorm_eq_sum hp, rpow_inv_rpow] <;> positivity
+  rw [wlpNorm_eq_sum hp, rpow_inv_rpow] -- positivity
+  · exact sum_nonneg fun _ _ ↦ by positivity
+  · positivity
 
 lemma wlpNorm_pow_eq_sum {p : ℕ} (hp : p ≠ 0) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, w] ^ p = ∑ i, w i • ‖f i‖ ^ p := by
@@ -120,7 +122,7 @@ lemma wlpNorm_smul_right (hp : p ≠ 0) (c : ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, c • w] = c ^ (p⁻¹ : ℝ) * ‖f‖_[p, w] := by
   simp only [wlpNorm_eq_sum hp, NNReal.smul_def, Pi.smul_apply, Algebra.id.smul_eq_mul,
     NNReal.coe_mul, mul_assoc, ←mul_sum]
-  exact mul_rpow (by positivity) (by positivity)
+  exact mul_rpow (by positivity) (sum_nonneg fun _ _ ↦ by positivity) -- positivity
 
 variable [∀ i, NormedSpace ℝ (α i)]
 

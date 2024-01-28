@@ -14,8 +14,7 @@ variable {ι α β γ : Type*} [DecidableEq α]
 section Semiring
 variable [Semiring β] [Semiring γ] {s : Finset α}
 
-def indicate (s : Finset α) (a : α) : β :=
-  ite (a ∈ s) 1 0
+def indicate (s : Finset α) (a : α) : β := ite (a ∈ s) 1 0
 
 notation "𝟭 " => indicate
 
@@ -274,7 +273,7 @@ lemma expect_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : 𝔼 x, μ_[β] s
 variable [StarRing β]
 
 @[simp] lemma conj_mu_apply [AddCommGroup α] (s : Finset α) (a : α) :
-    conj (μ_[β] s a) = μ s a := by simp [mu]; rw [Pi.smul_apply]; simp
+    conj (μ_[β] s a) = μ s a := by simp [mu]
 
 @[simp] lemma conj_mu [AddCommGroup α] (s : Finset α) : conj (μ_[β] s) = μ s := by
   ext; simp

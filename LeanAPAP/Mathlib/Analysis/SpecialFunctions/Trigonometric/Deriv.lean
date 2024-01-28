@@ -1,24 +1,18 @@
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Convex.Jensen
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import LeanAPAP.Mathlib.Analysis.Calculus.MeanValue
-import LeanAPAP.Mathlib.Analysis.Convex.Jensen
 
 open Set
 
 namespace Real
 variable {x : ℝ}
 
-lemma hasDerivWithinAt_sin (x : ℝ) (s : Set ℝ) :  HasDerivWithinAt sin (cos x) s x := by
-  simpa using (hasDerivWithinAt_id x s).sin
-
-lemma hasDerivWithinAt_cos (x : ℝ) (s : Set ℝ) :  HasDerivWithinAt cos (-sin x) s x := by
-  simpa using (hasDerivWithinAt_id x s).cos
-
 lemma sin_le (hx : 0 ≤ x) : sin x ≤ x := by
   suffices : MonotoneOn (fun x ↦ x - sin x) (Ici 0)
   · simpa using this left_mem_Ici hx hx
   exact monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici _) (Continuous.continuousOn $ by
-    continuity) (fun x _ ↦ (hasDerivWithinAt_id ..).sub $ hasDerivWithinAt_sin ..) $ by
+    continuity) (fun x _ ↦ ((hasDerivAt_id _).sub $ hasDerivAt_sin _).hasDerivWithinAt) $ by
     simp [cos_le_one]
 
 lemma cos_quadratic_lower_bound : 1 - x ^ 2 / 2 ≤ cos x := by
@@ -27,8 +21,8 @@ lemma cos_quadratic_lower_bound : 1 - x ^ 2 / 2 ≤ cos x := by
   suffices : MonotoneOn (fun x ↦ cos x + x ^ 2 / 2) (Ici 0)
   · simpa using this left_mem_Ici hx₀ hx₀
   refine monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici _) (Continuous.continuousOn $ by
-    continuity) (fun x _ ↦ (hasDerivWithinAt_cos ..).add $ (hasDerivWithinAt_pow ..).div_const _)
-    fun x hx ↦ ?_
+    continuity) (fun x _ ↦
+    ((hasDerivAt_cos ..).add $ (hasDerivAt_pow ..).div_const _).hasDerivWithinAt) fun x hx ↦ ?_
   simp [mul_div_cancel_left]
   exact sin_le $ interior_subset hx
 
@@ -38,7 +32,9 @@ lemma two_div_pi_mul_le (hx₀ : 0 ≤ x) (hx : x ≤ π / 2) : 2 / π * x ≤ s
   suffices : ConcaveOn ℝ (Icc 0 (π / 2)) (fun x ↦ sin x - 2 / π * x)
   · refine (le_min ?_ ?_).trans $ this.min_le_of_mem_Icc ⟨hx₀, hx⟩ <;> field_simp
   refine concaveOn_of_hasDerivWithinAt2_nonpos (convex_Icc ..)
-    (Continuous.continuousOn $ by continuity) (fun x _ ↦ (hasDerivWithinAt_sin ..).sub $ (hasDerivWithinAt_id ..).const_mul (2 / π)) (fun x _ ↦ (hasDerivWithinAt_cos ..).sub_const _)
+    (Continuous.continuousOn $ by continuity)
+    (fun x _ ↦ ((hasDerivAt_sin ..).sub $ (hasDerivAt_id ..).const_mul (2 / π)).hasDerivWithinAt)
+    (fun x _ ↦ (hasDerivAt_cos ..).hasDerivWithinAt.sub_const _)
     fun x hx ↦ neg_nonpos.2 $ sin_nonneg_of_mem_Icc $ Icc_subset_Icc_right (by linarith) $
     interior_subset hx
 
@@ -63,7 +59,7 @@ lemma cos_quadratic_upper_bound (hx : |x| ≤ π) : cos x ≤ 1 - 2 / π ^ 2 * x
   have hconc : ConcaveOn ℝ (Icc (π / 2) π) (fun x ↦ 1 - 2 / π ^ 2 * x ^ 2 - cos x)
   · refine concaveOn_of_hasDerivWithinAt2_nonpos (convex_Icc ..)
       (Continuous.continuousOn $ by continuity) (fun x _ ↦ (hderiv _).hasDerivWithinAt)
-      (fun x _ ↦ (hasDerivWithinAt_sin ..).sub $ (hasDerivWithinAt_id ..).const_mul _)
+      (fun x _ ↦ ((hasDerivAt_sin ..).sub $ (hasDerivAt_id ..).const_mul _).hasDerivWithinAt)
       fun x hx ↦ ?_
     have ⟨hx, hx'⟩ := interior_subset hx
     calc

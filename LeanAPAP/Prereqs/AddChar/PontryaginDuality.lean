@@ -64,13 +64,13 @@ def zmod (n : ℕ) (x : ZMod n) : AddChar (ZMod n) circle :=
   simp [zmod, ←Int.cast_mul x y, -Int.cast_mul]
 
 @[simp] lemma zmod_zero (n : ℕ) : zmod n 0 = 1 := by
-  refine FunLike.ext _ _ ?_
+  refine DFunLike.ext _ _ ?_
   rw [ZMod.int_cast_surjective.forall]
   rintro y
   simpa using zmod_apply n 0 y
 
 @[simp] lemma zmod_add (n : ℕ) : ∀ x y : ZMod n, zmod n (x + y) = zmod n x * zmod n y := by
-  simp only [FunLike.ext_iff, ZMod.int_cast_surjective.forall, ←Int.cast_add, AddChar.mul_apply,
+  simp only [DFunLike.ext_iff, ZMod.int_cast_surjective.forall, ←Int.cast_add, AddChar.mul_apply,
     zmod_apply]
   simp [add_mul, add_div]
 
@@ -85,7 +85,7 @@ lemma zmod_injective (hn : n ≠ 0) : Injective (zmod n) := by
   simpa only [Int.cast_one, mul_one, one_mul, e_inj, AddCommGroup.div_modEq_div hn,
     AddCommGroup.intCast_modEq_intCast', AddCommGroup.modEq_iff_int_modEq,
     CharP.intCast_eq_intCast (ZMod n) n] using (zmod_apply _ _ _).symm.trans $
-    (FunLike.congr_fun h ((1 : ℤ) : ZMod n)).trans $ zmod_apply _ _ _
+    (DFunLike.congr_fun h ((1 : ℤ) : ZMod n)).trans $ zmod_apply _ _ _
 
 @[simp] lemma zmod_inj (hn : n ≠ 0) {x y : ZMod n} : zmod n x = zmod n y ↔ x = y :=
   (zmod_injective hn).eq_iff
@@ -123,11 +123,9 @@ def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
   have hn' : ∀ i, n i ≠ 0 := fun i ↦ by have := hn i; positivity
   let f : α → AddChar α ℂ := fun a ↦
     circle.subtype.comp ((mkZModAux n $ e $ Additive.ofMul a).compAddMonoidHom e)
-  have hf : Injective f :=
-    circleEquivComplex.injective.comp
-      ((compAddMonoidHom_injective_left _ e.surjective).comp $
-        (mkZModAux_injective hn').comp $
-          FunLike.coe_injective.comp $ e.injective.comp Additive.ofMul.injective)
+  have hf : Injective f := circleEquivComplex.injective.comp
+    ((compAddMonoidHom_injective_left _ e.surjective).comp $ (mkZModAux_injective hn').comp $
+      DFunLike.coe_injective.comp $ e.injective.comp Additive.ofMul.injective)
   exact (card_addChar_le _ _).antisymm (Fintype.card_le_of_injective _ hf)
 
 /-- `ZMod n` is (noncanonically) isomorphic to its group of characters. -/
@@ -176,7 +174,7 @@ lemma forall_apply_eq_zero : (∀ ψ : AddChar α ℂ, ψ a = 1) ↔ a = 0 := by
 
 lemma doubleDualEmb_injective : Injective (doubleDualEmb : α → AddChar (AddChar α ℂ) ℂ) :=
   doubleDualEmb.ker_eq_bot_iff.1 $ eq_bot_iff.2 fun a ha ↦
-    forall_apply_eq_zero.1 fun ψ ↦ by simpa using FunLike.congr_fun ha (Additive.ofMul ψ)
+    forall_apply_eq_zero.1 fun ψ ↦ by simpa using DFunLike.congr_fun ha (Additive.ofMul ψ)
 
 lemma doubleDualEmb_bijective : Bijective (doubleDualEmb : α → AddChar (AddChar α ℂ) ℂ) := by
   cases nonempty_fintype α

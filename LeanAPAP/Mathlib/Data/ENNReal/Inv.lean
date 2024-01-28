@@ -1,4 +1,4 @@
-import Mathlib.Data.Real.ENNReal
+import Mathlib.Data.ENNReal.Inv
 
 open scoped ENNReal
 

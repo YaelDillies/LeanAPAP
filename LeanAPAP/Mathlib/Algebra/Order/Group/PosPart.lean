@@ -23,28 +23,10 @@ end Pi
 section Lattice
 variable {α : Type*} [Lattice α] [AddCommGroup α] [CovariantClass α α (· + ·) (· ≤ ·)] {a : α}
 
-open LatticeOrderedGroup
+attribute [simp] posPart_eq_self posPart_eq_zero negPart_eq_neg negPart_eq_zero
 
---TODO: Make `posPart` and `negPart` bind stronger than function application
---TODO: Strip off the notation typeclasses
---TODO: Fix the names
-alias posPart_def := pos_part_def
-alias negPart_def := neg_part_def
-
-@[simp] lemma posPart_of_nonneg (ha : 0 ≤ a) : a⁺ = a := pos_of_nonneg _ ha
-@[simp] lemma posPart_of_nonpos (ha : a ≤ 0) : a⁺ = 0 := pos_of_nonpos _ ha
-@[simp] lemma negPart_of_nonneg (ha : 0 ≤ a) : a⁻ = 0 := neg_of_nonneg _ ha
-@[simp] lemma negPart_of_nonpos (ha : a ≤ 0) : a⁻ = -a := neg_of_nonpos _ ha
-
---TODO: Those lemmas already exist, but with shit names
-@[simp] lemma posPart_neg (a : α) : (-a)⁺ = a⁻ := rfl
-@[simp] lemma negPart_neg (a : α) : (-a)⁻ = a⁺ := by rw [posPart_def, negPart_def, neg_neg]
-@[simp] lemma posPart_add_negPart (a : α) : a⁺ + a⁻ = |a| := (pos_add_neg _).symm
-@[simp] lemma negPart_add_posPart (a : α) : a⁻ + a⁺ = |a| := by
-  rw [add_comm, posPart_add_negPart]
-@[simp] lemma posPart_sub_negPart (a : α) : a⁺ - a⁻ = a := pos_sub_neg _
-@[simp] lemma negPart_sub_posPart (a : α) : a⁻ - a⁺ = -a := by
-  rw [←neg_sub, posPart_sub_negPart]
+@[simp] lemma negPart_add_posPart (a : α) : a⁻ + a⁺ = |a| := by rw [add_comm, posPart_add_negPart]
+@[simp] lemma negPart_sub_posPart (a : α) : a⁻ - a⁺ = -a := by rw [←neg_sub, posPart_sub_negPart]
 
 lemma abs_add_eq_two_nsmul_posPart (a : α) : |a| + a = 2 • a⁺ := by
   rw [two_nsmul, ←add_add_sub_cancel (a⁺), posPart_add_negPart, posPart_sub_negPart]

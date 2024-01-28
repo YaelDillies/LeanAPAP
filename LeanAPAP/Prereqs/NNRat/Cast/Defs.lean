@@ -180,7 +180,7 @@ variable {M₀ : Type*} [MonoidWithZero M₀] [MonoidWithZeroHomClass F ℚ≥0 
 
 /-- If `f` and `g` agree on the naturals then they are equal `φ`. -/
 lemma ext_nnrat' (h : ∀ n : ℕ, f n = g n) : f = g :=
-  (FunLike.ext f g) fun r => by
+  (DFunLike.ext f g) fun r => by
     rw [← r.num_div_den, div_eq_mul_inv, map_mul, map_mul, h, eq_on_inv₀ f g]
     apply h
 
@@ -190,7 +190,7 @@ See note [partially-applied ext lemmas] for why `comp` is used here. -/
 @[ext]
 lemma ext_nnrat {f g : ℚ≥0 →*₀ M₀}
     (h : f.comp (Nat.castRingHom ℚ≥0 : ℕ →*₀ ℚ≥0) = g.comp (Nat.castRingHom ℚ≥0)) : f = g :=
-  ext_nnrat' <| FunLike.congr_fun h
+  ext_nnrat' <| DFunLike.congr_fun h
 
 -- /-- Positive integer values of a morphism `φ` and its value on `-1` completely determine `φ`. -/
 -- lemma ext_nnrat_on_pnat (same_on_pnat : ∀ n : ℕ, 0 < n → f n = g n) : f = g :=

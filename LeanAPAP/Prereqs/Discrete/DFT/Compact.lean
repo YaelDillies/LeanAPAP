@@ -150,6 +150,14 @@ lemma cft_ndconv (f g : α → ℂ) : cft (f ○ₙ g) = cft f * conj (cft g) :=
 @[simp] lemma cft_iterNConv_apply (f : α → ℂ) (n : ℕ) (ψ : AddChar α ℂ) :
     cft (f ∗^ₙ n) ψ = cft f ψ ^ n := congr_fun (cft_iterNConv _ _) _
 
+-- lemma l2Norm_iterNConv (f : α → ℂ) (n : ℕ) : ‖f ∗^ₙ n‖ₙ_[2] = ‖f ^ n‖_[2] := by
+--   rw [← l2Norm_cft, cft_iterNConv, ← ENNReal.coe_two, lpNorm_pow]
+--   norm_cast
+--   refine (sq_eq_sq (by positivity) $ by positivity).1 ?_
+--   rw [← ENNReal.coe_two, lpNorm_pow, ← pow_mul', ← Complex.ofReal_inj]
+--   push_cast
+--   simp_rw [pow_mul, ← Complex.mul_conj', conj_iterConv_apply, mul_pow]
+
 lemma nlpNorm_nconv_le_nlpNorm_ndconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℂ) :
     ‖f ∗ₙ f‖ₙ_[n] ≤ ‖f ○ₙ f‖ₙ_[n] := by
   cases isEmpty_or_nonempty α

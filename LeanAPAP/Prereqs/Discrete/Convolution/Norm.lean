@@ -1,5 +1,5 @@
 import LeanAPAP.Prereqs.Discrete.Convolution.Order
-import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
+import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
 
 /-!
 # Norm of a convolution
@@ -10,12 +10,21 @@ convolution inequality.
 
 open Finset Function Real
 
-open scoped BigOperators ComplexConjugate NNReal Pointwise
+open scoped BigOperators ComplexConjugate ENNReal NNReal Pointwise
 
 variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 
 section IsROrC
 variable [IsROrC β]
+
+@[simp] lemma lpNorm_trivChar (p : ℝ≥0∞) : ‖(trivChar : α → β)‖_[p] = 1 := by
+  obtain _ | p := p
+  · simp only [ENNReal.none_eq_top, linftyNorm_eq_ciSup, trivChar_apply, apply_ite, norm_one,
+      norm_zero]
+    exact IsLUB.ciSup_eq ⟨by aesop (add simp mem_upperBounds), fun x hx ↦ hx ⟨0, if_pos rfl⟩⟩
+  obtain rfl | hp := eq_or_ne p 0
+  · simp [l0Norm_eq_card]
+  · simp [lpNorm_eq_sum hp, apply_ite, hp]
 
 lemma conv_eq_inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a fun x ↦ g (-x)⟫_[β] := by
   simp [l2Inner_eq_sum, conv_eq_sum_sub', map_sum]
@@ -33,7 +42,7 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
         sum_le_sum fun x _ ↦ norm_sum_le _ _
       _ = _ := ?_
     rw [sum_comm]
-    simp_rw [norm_mul, sum_product]
+    simp_rw [norm_mul]
     exact sum_congr rfl fun x _ ↦ Fintype.sum_equiv (Equiv.subRight x) _ _ fun _ ↦ rfl
   have hp₀ := zero_lt_one.trans hp
   rw [←rpow_le_rpow_iff _ (mul_nonneg _ _) hp₀, mul_rpow]

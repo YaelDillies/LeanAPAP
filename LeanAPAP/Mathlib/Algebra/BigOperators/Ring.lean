@@ -13,34 +13,13 @@ open scoped BigOperators
 namespace Finset
 variable {ι α β : Type*}
 
--- TODO: This is a copy of `finset.prod_univ_sum` with patched universe variables
-/-- The product over `univ` of a sum can be written as a sum over the product of sets,
-`fintype.piFinset`. `finset.prod_sum` is an alternative statement when the product is not
-over `univ` -/
-lemma prod_univ_sum' [DecidableEq α] [Fintype α] [CommSemiring β] {δ : α → Type*}
-    [∀ a, DecidableEq (δ a)] {t : ∀ a, Finset (δ a)} {f : ∀ a, δ a → β} :
-    ∏ a, ∑ b in t a, f a b = ∑ p in Fintype.piFinset t, ∏ x, f x (p x) := by
-  simp only [Finset.prod_attach_univ, prod_sum, Finset.sum_univ_pi]
-
-lemma sum_prod_piFinset [DecidableEq ι] [Fintype ι] [CommSemiring β] (s : Finset α)
-    (g : ι → α → β) :
-    ∑ f in Fintype.piFinset fun _ : ι ↦ s, ∏ i, g i (f i) = ∏ i, ∑ x in s, g i x := by
-  classical rw [←@Finset.prod_univ_sum' ι]
-
-section CommMonoid
-variable [CommMonoid β]
-
-lemma pow_sum (s : Finset α) (f : α → ℕ) (m : β) : ∏ i in s, m ^ f i = m ^ ∑ i in s, f i := by
-  induction' s using Finset.cons_induction_on with a s has ih <;> simp [*, pow_add]
-
-end CommMonoid
-
 section CommSemiring
 variable [CommSemiring β]
 
-lemma sum_pow' (s : Finset α) (f : α → β) (n : ℕ) :
+-- TODO: Fix decidability in `Finset.sum_pow'`
+lemma sum_pow'' (s : Finset α) (f : α → β) (n : ℕ) :
     (∑ a in s, f a) ^ n = ∑ p in Fintype.piFinset fun _i : Fin n ↦ s, ∏ i, f (p i) := by
-  classical convert @prod_univ_sum' (Fin n) _ _ _ _ _ _ (fun _i ↦ s) fun _i d ↦ f d; simp
+  classical exact sum_pow' _ _ _
 
 end CommSemiring
 
@@ -50,11 +29,10 @@ namespace Fintype
 variable {α β : Type*} [Fintype α] [CommSemiring β]
 
 lemma sum_pow (f : α → β) (n : ℕ) : (∑ a, f a) ^ n = ∑ p : Fin n → α, ∏ i, f (p i) := by
-  simp [Finset.sum_pow']
+  simp [Finset.sum_pow'']
 
-lemma sum_mul_sum {ι₁ : Type*} {ι₂ : Type*} [Fintype ι₁] [Fintype ι₂] (f₁ : ι₁ → β)
-    (f₂ : ι₂ → β) : (∑ x₁, f₁ x₁) * ∑ x₂, f₂ x₂ = ∑ p : ι₁ × ι₂, f₁ p.1 * f₂ p.2 :=
-  Finset.sum_mul_sum _ _ _ _
+lemma sum_mul_sum {ι : Type*} {κ : Type*} [Fintype ι] [Fintype κ] (f : ι → β) (g : κ → β) :
+    (∑ i, f i) * ∑ j, g j = ∑ i, ∑ j, f i * g j := Finset.sum_mul_sum _ _ _ _
 
 end Fintype
 

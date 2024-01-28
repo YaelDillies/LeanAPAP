@@ -1,6 +1,7 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Complex.ExponentialBounds
+import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
@@ -427,7 +428,8 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
         rpow_le_rpow_of_nonpos (by positivity) inf_le_right $ neg_nonpos.2 $ by positivity
     _ ≤ (min 1 (C.card / B.card) : ℝ) ^ (-m⁻¹) :=
         rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left $ neg_le_neg $ inv_le_inv_of_le
-          (by positivity) $ (Nat.le_ceil _).trans $ mod_cast Nat.le_mul_of_pos_left (by positivity)
+          (by positivity) $ (Nat.le_ceil _).trans $
+            mod_cast Nat.le_mul_of_pos_left _ (by positivity)
     _ ≤ exp 1 := rpow_neg_inv_curlog_le (by positivity) inf_le_left
 
 theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (k : ℕ) (hk : k ≠ 0)

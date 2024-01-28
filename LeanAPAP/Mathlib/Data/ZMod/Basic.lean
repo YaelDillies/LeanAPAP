@@ -10,16 +10,16 @@ variable {m n : ℕ}
 section
 variable {x y : ZMod n}
 
-lemma coe_add : ((x + y : ZMod n) : ℤ) = (x + y) % n := by
+lemma cast_int_add : (cast (x + y : ZMod n) : ℤ) = (cast x + cast y) % n := by
   rw [← ZMod.coe_int_cast, Int.cast_add, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
 
-lemma coe_mul : ((x * y : ZMod n) : ℤ) = x * y % n := by
+lemma cast_int_mul : (cast (x * y : ZMod n) : ℤ) = cast x * cast y % n := by
   rw [← ZMod.coe_int_cast, Int.cast_mul, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
 
-lemma coe_sub : ((x - y : ZMod n) : ℤ) = (x - y) % n := by
+lemma cast_int_sub : (cast (x - y : ZMod n) : ℤ) = (cast x - cast y) % n := by
   rw [← ZMod.coe_int_cast, Int.cast_sub, ZMod.int_cast_zmod_cast, ZMod.int_cast_zmod_cast]
 
-lemma coe_neg : ((-x : ZMod n) : ℤ) = -x % n := by
+lemma cast_int_neg : (cast (-x : ZMod n) : ℤ) = -cast x % n := by
   rw [← ZMod.coe_int_cast, Int.cast_neg, ZMod.int_cast_zmod_cast]
 
 end

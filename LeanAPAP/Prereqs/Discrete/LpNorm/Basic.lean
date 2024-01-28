@@ -80,7 +80,7 @@ lemma lpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖_[p] = ‖g - f‖_[p] :=
   · simp only [l0Norm_eq_card, ENNReal.some_eq_coe, ENNReal.coe_zero]
     exact Nat.cast_nonneg _
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe]
-    positivity
+    exact rpow_nonneg (sum_nonneg fun _ _ ↦ by positivity) _ -- positivity
 
 @[simp] lemma lpNorm_eq_zero : ‖f‖_[p] = 0 ↔ f = 0 := by
   obtain p | p := p
@@ -500,8 +500,20 @@ lemma lpNorm_rpow (hp : p ≠ 0) (hq : q ≠ 0) (hf : 0 ≤ f) :
     lpNorm_rpow_eq_sum hp, lpNorm_rpow_eq_sum (mul_ne_zero hq hp)]
   simp [abs_rpow_of_nonneg (hf _), ←rpow_mul]
 
+lemma lpNorm_pow (hp : p ≠ 0) {q : ℕ} (hq : q ≠ 0) (f : α → ℂ) :
+    ‖f ^ q‖_[p] = ‖f‖_[p * q] ^ q := by
+  refine rpow_left_injOn (NNReal.coe_ne_zero.2 hp) lpNorm_nonneg (by dsimp; positivity) ?_
+  dsimp
+  rw [← rpow_natCast_mul lpNorm_nonneg, ← mul_comm, ← ENNReal.coe_nat, ← ENNReal.coe_mul,
+    ← NNReal.coe_nat_cast, ←NNReal.coe_mul, lpNorm_rpow_eq_sum hp, lpNorm_rpow_eq_sum]
+  simp [← rpow_natCast_mul]
+  positivity
+
 lemma l1Norm_rpow (hq : q ≠ 0) (hf : 0 ≤ f) : ‖f ^ (q : ℝ)‖_[1] = ‖f‖_[q] ^ (q : ℝ) := by
   simpa only [ENNReal.coe_one, one_mul] using lpNorm_rpow one_ne_zero hq hf
+
+lemma l1Norm_pow {q : ℕ} (hq : q ≠ 0) (f : α → ℂ) : ‖f ^ q‖_[1] = ‖f‖_[q] ^ q := by
+  simpa only [ENNReal.coe_one, one_mul] using lpNorm_pow one_ne_zero hq f
 
 /-- **Hölder's inequality**, binary case. -/
 lemma l2Inner_le_lpNorm_mul_lpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :

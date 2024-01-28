@@ -3,11 +3,11 @@ import Mathlib.Data.Subtype
 import Mathlib.Tactic.Coe
 
 namespace Subtype
-variable {F α : Type*} {β : α → Type*} {p : F → Prop} [FunLike F α β]
+variable {F α : Type*} {β : α → Type*} {p : F → Prop} [DFunLike F α β]
 
-instance : FunLike {f // p f} α β where
+instance : DFunLike {f // p f} α β where
   coe f := f.1
-  coe_injective' := FunLike.coe_injective.comp coe_injective
+  coe_injective' := DFunLike.coe_injective.comp coe_injective
 
 @[simp] lemma coe_coe (f : {f // p f}) : ⇑f.1 = f := rfl
 @[simp] lemma mk_coe (f : F) (hf : p f) : ⇑(⟨f, hf⟩ : {f // p f}) = f := rfl
