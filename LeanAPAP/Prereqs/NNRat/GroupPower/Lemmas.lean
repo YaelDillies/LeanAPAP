@@ -1,4 +1,3 @@
-import Mathlib.Algebra.GroupPower.Lemmas
 import Mathlib.Algebra.Order.Module.Defs
 import LeanAPAP.Prereqs.NNRat.Cast.Defs
 

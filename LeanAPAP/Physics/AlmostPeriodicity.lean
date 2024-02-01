@@ -153,7 +153,7 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
     rw [Nat.cast_pos, ←Nat.succ_le_iff]
     exact hm
   rcases A.eq_empty_or_nonempty with (rfl | hA)
-  · simp [zero_pow this]
+  · simp [zero_pow this.ne']
   refine' lemma28_markov hε hm _
   have hm' : 2 * m ≠ 0 := by linarith
   have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]

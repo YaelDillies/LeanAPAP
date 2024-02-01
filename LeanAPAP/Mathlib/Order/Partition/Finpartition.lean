@@ -17,7 +17,7 @@ def finsetImage {a : Finset α} (P : Finpartition a) (f : α → β) (hf : Injec
   supIndep := by
     rw [supIndep_iff_pairwiseDisjoint, coe_image, (hf.finset_image.injOn _).pairwiseDisjoint_image]
     simp only [Set.PairwiseDisjoint, Set.Pairwise, mem_coe, Function.onFun, Ne.def,
-      Function.comp.left_id, disjoint_image hf]
+      Function.id_comp, disjoint_image hf]
     exact P.disjoint
   supParts := by
     ext i
@@ -44,7 +44,7 @@ def modPartitions (s d : ℕ) (hd : d ≠ 0) (h : d ≤ s) : Finpartition (range
   supIndep := by
     rw [supIndep_iff_pairwiseDisjoint, coe_image, Set.InjOn.pairwiseDisjoint_image]
     · simp only [Set.PairwiseDisjoint, Function.onFun, Set.Pairwise, mem_coe, mem_range,
-        disjoint_left, Function.comp.left_id, mem_filter, not_and, and_imp]
+        disjoint_left, Function.id_comp, mem_filter, not_and, and_imp]
       rintro x hx y - hxy a - rfl -
       exact hxy
     simp only [Set.InjOn, coe_range, Set.mem_Iio]
@@ -55,7 +55,7 @@ def modPartitions (s d : ℕ) (hd : d ≠ 0) (h : d ≤ s) : Finpartition (range
     rw [mem_filter, Nat.mod_eq_of_lt hx₁] at this
     exact this.2
   supParts := by
-    rw [sup_image, Function.comp.left_id]
+    rw [sup_image, Function.id_comp]
     refine' Subset.antisymm _ _
     · rw [Finset.sup_eq_biUnion, biUnion_subset]
       simp only [filter_subset, imp_true_iff]

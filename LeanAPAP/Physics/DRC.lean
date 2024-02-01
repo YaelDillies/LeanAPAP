@@ -84,7 +84,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     refine Fintype.sum_pos $ this.gt_iff_ne.2 $ support_nonempty_iff.1 ?_
     simp only [support_comp_eq, Set.Nonempty, and_assoc, support_mul', support_dconv,
       indicate_nonneg, mu_nonneg, support_indicate, support_mu, NNReal.coe_eq_zero, iff_self_iff,
-      forall_const, Set.mem_inter_iff, ←coe_sub, mem_coe, support_pow _ hp₀, hf]
+      forall_const, Set.mem_inter_iff, ←coe_sub, mem_coe, support_pow' _ hp₀, hf]
   set A₁ := fun s ↦ B₁ ∩ c p A s
   set A₂ := fun s ↦ B₂ ∩ c p A s
   set g : (Fin p → G) → ℝ := fun s ↦ (A₁ s).card * (A₂ s).card with hg_def

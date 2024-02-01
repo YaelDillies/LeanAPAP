@@ -9,7 +9,6 @@ convolution inequality.
 -/
 
 open Finset Function Real
-
 open scoped BigOperators ComplexConjugate ENNReal NNReal Pointwise
 
 variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
