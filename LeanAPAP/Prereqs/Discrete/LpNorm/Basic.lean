@@ -1,7 +1,6 @@
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
-import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Prereqs.Indicator
 
@@ -142,7 +141,7 @@ variable [∀ i, NormedSpace ℝ (α i)]
 
 lemma lpNorm_nsmul (hp : 1 ≤ p) (n : ℕ) (f : ∀ i, α i) : ‖n • f‖_[p] = n • ‖f‖_[p] :=
   haveI := Fact.mk hp
-  norm_nsmul _ _
+  IsROrC.norm_nsmul ℝ _ _
 
 lemma lpNorm_expect_le [∀ i, Module ℚ≥0 (α i)] (hp : 1 ≤ p) {κ : Type*} (s : Finset κ) (f : κ → ∀ i, α i) :
     ‖𝔼 i ∈ s, f i‖_[p] ≤ 𝔼 i ∈ s, ‖f i‖_[p] := by

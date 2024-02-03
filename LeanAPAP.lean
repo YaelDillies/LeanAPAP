@@ -21,7 +21,6 @@ import LeanAPAP.Mathlib.Analysis.Calculus.MeanValue
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
-import LeanAPAP.Mathlib.Analysis.NormedSpace.Ray
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import LeanAPAP.Mathlib.Data.Complex.Order
@@ -47,8 +46,6 @@ import LeanAPAP.Mathlib.GroupTheory.GroupAction.Defs
 import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
-import LeanAPAP.Mathlib.LinearAlgebra.Ray
-import LeanAPAP.Mathlib.Order.Heyting.Basic
 import LeanAPAP.Mathlib.Order.Partition.Finpartition
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset

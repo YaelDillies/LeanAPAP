@@ -6,7 +6,6 @@ import Mathlib.Data.Set.Pointwise.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Data.Set.Function
-import LeanAPAP.Mathlib.Order.Heyting.Basic
 
 /-!
 # Dissociation
@@ -54,7 +53,7 @@ lemma not_mulDissociated_iff_exists_disjoint :
   refine not_mulDissociated.trans
     ⟨?_, fun ⟨B, C, hB, hC, _, hBCne, hBCsum⟩ ↦ ⟨B, hB, C, hC, hBCne, hBCsum⟩⟩
   rintro ⟨B, hB, C, hC, hBC, h⟩
-  refine ⟨B \ C, C \ B, ?_, ?_, disjoint_sdiff_sdiff, sdiff_ne_sdiff.2 hBC,
+  refine ⟨B \ C, C \ B, ?_, ?_, disjoint_sdiff_sdiff, sdiff_ne_sdiff_iff.2 hBC,
     Finset.prod_sdiff_eq_prod_sdiff.2 h⟩ <;> push_cast <;> exact (diff_subset _ _).trans ‹_›
 
 @[to_additive (attr := simp)] lemma MulEquiv.mulDissociated_preimage (e : β ≃* α) :
