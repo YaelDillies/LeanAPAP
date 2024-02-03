@@ -1,5 +1,5 @@
+import Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Prereqs.NNRat.Defs
-import LeanAPAP.Mathlib.Data.Rat.NNRat
 
 /-!
 # Casts for nonnegative rational numbers
@@ -157,7 +157,8 @@ lemma cast_div_of_ne_zero (hp : (p.den : α) ≠ 0) (hq : (q.den : α) ≠ 0) :
 end DivisionSemiring
 
 instance [DivisionRing α] [CharZero α] : CompAction α where
-  nnqsmul_eq_mul' q a := (Rat.smul_def _ _).trans $ by simp [NNRat.cast_def, Rat.cast_def]
+  nnqsmul_eq_mul' q a := (Rat.smul_def _ _).trans $ by
+    simp [NNRat.cast_def, Rat.cast_def, NNRat.num_coe]
 
 -- Porting note: statement made more explicit
 @[norm_cast] lemma cast_id (n : ℚ≥0) : NNRat.cast n = n := rfl

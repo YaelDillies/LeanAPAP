@@ -5,7 +5,6 @@ import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Set.Pointwise.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
-import LeanAPAP.Mathlib.Data.Set.Function
 
 /-!
 # Dissociation

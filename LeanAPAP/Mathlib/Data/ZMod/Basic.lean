@@ -1,6 +1,5 @@
 import Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.Data.FunLike.Basic
-import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 
 open Fintype Function
 

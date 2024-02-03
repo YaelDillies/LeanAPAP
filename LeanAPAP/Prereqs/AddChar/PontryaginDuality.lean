@@ -1,5 +1,4 @@
 import LeanAPAP.Mathlib.Algebra.Group.TypeTags
-import LeanAPAP.Mathlib.Algebra.ModEq
 import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
 import LeanAPAP.Prereqs.AddChar.Circle
 

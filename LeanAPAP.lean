@@ -10,7 +10,6 @@ import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Equiv.Basic
 import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 import LeanAPAP.Mathlib.Algebra.Group.TypeTags
-import LeanAPAP.Mathlib.Algebra.ModEq
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
@@ -32,16 +31,12 @@ import LeanAPAP.Mathlib.Data.Nat.Parity
 import LeanAPAP.Mathlib.Data.Pi.Algebra
 import LeanAPAP.Mathlib.Data.Rat.NNRat
 import LeanAPAP.Mathlib.Data.Rat.Order
-import LeanAPAP.Mathlib.Data.Real.Archimedean
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Data.Real.Sqrt
-import LeanAPAP.Mathlib.Data.Set.Function
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
-import LeanAPAP.Mathlib.GroupTheory.GroupAction.Defs
-import LeanAPAP.Mathlib.GroupTheory.OrderOfElement
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
 import LeanAPAP.Mathlib.Tactic.Positivity
