@@ -1,7 +1,6 @@
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
-import LeanAPAP.Mathlib.Algebra.Function.Support
 import LeanAPAP.Prereqs.Discrete.DFT.Compact
 import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
 import LeanAPAP.Prereqs.Dissociation
@@ -98,7 +97,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
   · obtain rfl | hf := eq_or_ne f 0
     · simp
     specialize H hp ((sqrt p / ‖f‖ₙ_[2]) • f) ?_
-    · rwa [cft_smul, support_smul']
+    · rwa [cft_smul, support_const_smul_of_ne_zero]
       positivity
     simp_rw [Function.comp_def, Pi.smul_apply, Complex.smul_re, ←Pi.smul_def] at H
     rw [nlpNorm_smul, nlpNorm_smul, norm_div, norm_of_nonneg, norm_of_nonneg, mul_left_comm,
@@ -141,6 +140,6 @@ lemma rudin_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support 
         simp
     _ ≤ 2 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] + 2 * exp 2⁻¹ * sqrt p * ‖(-I) • f‖ₙ_[2]
       := add_le_add (rudin_ineq_aux hp _ hf) $ rudin_ineq_aux hp _ $ by
-        rwa [cft_smul, support_smul']; simp
+        rwa [cft_smul, support_const_smul_of_ne_zero]; simp
     _ = 4 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] := by
         rw [nlpNorm_smul one_le_two, norm_neg, Complex.norm_I, one_mul]; ring

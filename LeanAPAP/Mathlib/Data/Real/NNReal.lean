@@ -11,9 +11,6 @@ instance {M : Type*} [OrderedAddCommMonoid M] [Module ℝ M] [OrderedSMul ℝ M]
   lt_of_smul_lt_smul_of_pos {a b c} hab _ :=
     lt_of_smul_lt_smul_of_nonneg_left (by exact hab) (NNReal.coe_nonneg c)
 
-@[simp]
-lemma mk_le_mk {x y : ℝ} {hx : 0 ≤ x} {hy : 0 ≤ y} : (⟨x, hx⟩ : ℝ≥0) ≤ ⟨y, hy⟩ ↔ x ≤ y := Iff.rfl
-
 @[simp, norm_cast]
 lemma one_le_coe : 1 ≤ (x : ℝ) ↔ 1 ≤ x := by rw [←NNReal.coe_le_coe, NNReal.coe_one]
 
