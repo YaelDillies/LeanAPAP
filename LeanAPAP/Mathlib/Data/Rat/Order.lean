@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Order
-import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.NormNum.Basic
 
 namespace Rat
 variable {q : ℚ}
