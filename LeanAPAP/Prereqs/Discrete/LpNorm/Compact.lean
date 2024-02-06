@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
-import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 import LeanAPAP.Prereqs.Density

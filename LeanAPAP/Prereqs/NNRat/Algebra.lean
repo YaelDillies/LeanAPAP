@@ -25,7 +25,8 @@ instance NNRat.instAlgebra : Algebra ℚ≥0 α where
   toRingHom := NNRat.castHom α
   commutes' := NNRat.cast_commute
 
-instance NNRat.instlinearMapClass [RingHomClass F α β] : LinearMapClass F ℚ≥0 α β where
+instance NNRat.instlinearMapClass [FunLike F α β] [RingHomClass F α β] :
+    LinearMapClass F ℚ≥0 α β where
   map_smulₛₗ f q a := by simp [NNRat.smul_def, NNRat.cast_id]; exact Or.inl q.num_div_den.symm
 
 end DivisionSemiring

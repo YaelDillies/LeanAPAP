@@ -215,7 +215,8 @@ end bij
 @[simp] lemma expect_neg_index [DecidableEq ι] [InvolutiveNeg ι] (s : Finset ι) (f : ι → α) :
     𝔼 i ∈ -s, f i = 𝔼 i ∈ s, f (-i) := expect_image $ neg_injective.injOn _
 
-lemma _root_.map_expect {F : Type*} [LinearMapClass F ℚ≥0 α β] (g : F) (f : ι → α) (s : Finset ι) :
+lemma _root_.map_expect {F : Type*} [FunLike F α β] [LinearMapClass F ℚ≥0 α β]
+    (g : F) (f : ι → α) (s : Finset ι) :
     g (𝔼 x ∈ s, f x) = 𝔼 x ∈ s, g (f x) := by simp only [expect, map_smul, map_natCast, map_sum]
 
 @[simp]
@@ -273,7 +274,7 @@ lemma balance_apply (f : ι → α) (x : ι) : balance f x = f x - 𝔼 y, f y :
 @[simp] lemma balance_idem (f : ι → α) : balance (balance f) = balance f := by
   cases isEmpty_or_nonempty ι <;> ext x <;> simp [balance, expect_sub_distrib, univ_nonempty]
 
-@[simp] lemma map_balance {F : Type*} [LinearMapClass F ℚ≥0 α β] (g : F) (f : ι → α) (a : ι) :
+@[simp] lemma map_balance {F : Type*} [FunLike F α β] [LinearMapClass F ℚ≥0 α β] (g : F) (f : ι → α) (a : ι) :
     g (balance f a) = balance (g ∘ f) a := by simp [balance, map_expect]
 
 end AddCommGroup

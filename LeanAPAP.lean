@@ -1,7 +1,5 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField.Basic
-import LeanAPAP.FiniteField.HoelderLifting
-import LeanAPAP.Integer.HoelderLifting
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
@@ -22,8 +20,6 @@ import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import LeanAPAP.Mathlib.Data.Complex.Order
-import LeanAPAP.Mathlib.Data.ENNReal.Basic
-import LeanAPAP.Mathlib.Data.ENNReal.Inv
 import LeanAPAP.Mathlib.Data.Finset.Card
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.FunLike.Basic

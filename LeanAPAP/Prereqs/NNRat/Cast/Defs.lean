@@ -168,16 +168,17 @@ end NNRat
 
 open NNRat
 
-@[simp] lemma map_nnratCast [DivisionSemiring α] [DivisionSemiring β] [RingHomClass F α β]
-    (f : F) (q : ℚ≥0) : f q = q := by simp_rw [cast_def, map_div₀, map_natCast]
+@[simp] lemma map_nnratCast [DivisionSemiring α] [DivisionSemiring β] [FunLike F α β]
+    [RingHomClass F α β] (f : F) (q : ℚ≥0) : f q = q := by simp_rw [cast_def, map_div₀, map_natCast]
 
 -- TODO: This proof will change once the diamond for `NNRatCast ℚ≥0` is fixed
 @[simp]
-lemma eq_nnratCast [DivisionSemiring α] [RingHomClass F ℚ≥0 α] (f : F) (r : ℚ≥0) : f r = r := by
-  rw [← map_nnratCast f]; congr; symm; exact num_div_den _
+lemma eq_nnratCast [DivisionSemiring α] [FunLike F ℚ≥0 α] [RingHomClass F ℚ≥0 α] (f : F) (r : ℚ≥0) :
+    f r = r := by rw [← map_nnratCast f]; congr; symm; exact num_div_den _
 
 namespace MonoidWithZeroHom
-variable {M₀ : Type*} [MonoidWithZero M₀] [MonoidWithZeroHomClass F ℚ≥0 M₀] {f g : F}
+variable {M₀ : Type*} [MonoidWithZero M₀] [FunLike F ℚ≥0 M₀] [MonoidWithZeroHomClass F ℚ≥0 M₀]
+  {f g : F}
 
 /-- If `f` and `g` agree on the naturals then they are equal `φ`. -/
 lemma ext_nnrat' (h : ∀ n : ℕ, f n = g n) : f = g :=
