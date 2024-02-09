@@ -1,5 +1,5 @@
-import Mathlib.Combinatorics.Additive.Energy
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
+import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
 import LeanAPAP.Mathlib.Data.Finset.Card
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Prereqs.Discrete.Convolution.Order
@@ -424,14 +424,36 @@ theorem BSG_aux {K : ℝ} (hK : 0 < K) (hA : (0 : ℝ) < A.card) (hB : (0 : ℝ)
   rw [mul_div_assoc', div_le_iff (by positivity)] at this
   exact this.trans_eq (by ring)
 
-theorem BSG {K : ℝ} (hK : 0 ≤ K) (hB : B.Nonempty)
-    (hAB : K⁻¹ * (A.card ^ 2 * B.card) ≤ additiveEnergy A B) :
+theorem BSG {K : ℝ} (hK : 0 ≤ K) (hB : B.Nonempty) (hAB : K⁻¹ * (A.card ^ 2 * B.card) ≤ E[A, B]) :
     ∃ A' ⊆ A, (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ A'.card ∧
-    (A' - A').card ≤ 2 ^ 10 * K ^ 5 * B.card ^ 4 / A.card ^ 3 := by
-  rcases A.eq_empty_or_nonempty with rfl | hA
+      (A' - A').card ≤ 2 ^ 10 * K ^ 5 * B.card ^ 4 / A.card ^ 3 := by
+  obtain rfl | hA := A.eq_empty_or_nonempty
   · exact ⟨∅, by simp⟩
-  rcases eq_or_lt_of_le hK with rfl | hK
+  obtain rfl | hK := eq_or_lt_of_le hK
   · exact ⟨∅, by simp⟩
   · exact BSG_aux hK (by simpa [card_pos]) (by simpa [card_pos]) hAB
+
+theorem BSG_self {K : ℝ} (hK : 0 ≤ K) (hA : A.Nonempty) (hAK : K⁻¹ * A.card ^ 3 ≤ E[A]) :
+    ∃ A' ⊆ A, (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ A'.card ∧
+      (A' - A').card ≤ 2 ^ 10 * K ^ 5 * A.card := by
+  convert BSG hK hA ?_ using 5
+  · have := hA.card_pos
+    field_simp
+    ring
+  · ring_nf
+    assumption
+
+theorem BSG_self' {K : ℝ} (hK : 0 ≤ K) (hA : A.Nonempty) (hAK : K⁻¹ * A.card ^ 3 ≤ E[A]) :
+    ∃ A' ⊆ A, (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ A'.card ∧
+      (A' - A').card ≤ 2 ^ 14 * K ^ 6 * A'.card := by
+  obtain ⟨A', hA', hAA', hAK'⟩ := BSG_self hK hA hAK
+  refine ⟨A', hA', hAA', hAK'.trans ?_⟩
+  calc
+    _ = 2 ^ 14 * K ^ 6 * ((2 ^ 4)⁻¹ * K⁻¹ * A.card) := ?_
+    _ ≤ _ := by gcongr
+  obtain rfl | hK := hK.eq_or_lt
+  · simp
+  · field_simp
+    ring
 
 end lemma2
