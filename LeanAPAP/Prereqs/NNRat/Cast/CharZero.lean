@@ -1,6 +1,6 @@
 import Mathlib.Data.Int.CharZero
 import LeanAPAP.Mathlib.Data.Rat.Order
-import LeanAPAP.Mathlib.Data.Rat.NNRat
+import LeanAPAP.Mathlib.Data.NNRat.Defs
 import LeanAPAP.Prereqs.NNRat.Cast.Defs
 
 /-!

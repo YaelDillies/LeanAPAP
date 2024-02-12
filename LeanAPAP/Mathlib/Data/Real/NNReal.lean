@@ -11,15 +11,4 @@ instance {M : Type*} [OrderedAddCommMonoid M] [Module ℝ M] [OrderedSMul ℝ M]
   lt_of_smul_lt_smul_of_pos {a b c} hab _ :=
     lt_of_smul_lt_smul_of_nonneg_left (by exact hab) (NNReal.coe_nonneg c)
 
-@[simp, norm_cast]
-lemma one_le_coe : 1 ≤ (x : ℝ) ↔ 1 ≤ x := by rw [←NNReal.coe_le_coe, NNReal.coe_one]
-
-@[simp, norm_cast]
-lemma one_lt_coe : 1 < (x : ℝ) ↔ 1 < x := by rw [←NNReal.coe_lt_coe, NNReal.coe_one]
-
-lemma coe_ne_one : (x : ℝ) ≠ 1 ↔ x ≠ 1 := x.coe_eq_one.not
-
-instance : StarRing ℝ≥0 := starRingOfComm
-instance : TrivialStar ℝ≥0 := ⟨fun _ ↦ rfl⟩
-
 end NNReal

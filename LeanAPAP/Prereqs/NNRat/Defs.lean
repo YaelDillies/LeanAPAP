@@ -1,4 +1,4 @@
-import Mathlib.Data.Rat.NNRat
+import Mathlib.Data.NNRat.Defs
 
 open scoped NNRat
 

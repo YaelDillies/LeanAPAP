@@ -1,5 +1,6 @@
 import Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Prereqs.NNRat.Defs
+import Mathlib.Data.NNRat.Lemmas
 
 /-!
 # Casts for nonnegative rational numbers

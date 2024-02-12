@@ -1,5 +1,5 @@
-import Mathlib.Data.Rat.NNRat
-import Mathlib.Tactic.Positivity
+import Mathlib.Data.NNRat.Defs
+import Mathlib.Tactic.Positivity.Core
 
 namespace Mathlib.Meta.Positivity
 open Lean Meta Qq NNRat
