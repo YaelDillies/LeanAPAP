@@ -19,11 +19,11 @@ import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
 import LeanAPAP.Mathlib.Data.Complex.Order
-import LeanAPAP.Mathlib.Data.Finset.Card
+import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.FunLike.Basic
-import LeanAPAP.Mathlib.Data.Nat.Parity
 import LeanAPAP.Mathlib.Data.Pi.Algebra
 import LeanAPAP.Mathlib.Data.Rat.NNRat
 import LeanAPAP.Mathlib.Data.Rat.Order

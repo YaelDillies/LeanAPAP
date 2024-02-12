@@ -1,5 +1,5 @@
 import Mathlib.Combinatorics.Additive.SalemSpencer
-import LeanAPAP.Mathlib.Data.Nat.Parity
+import Mathlib.Data.Nat.Parity
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 
 open Finset Fintype Function
