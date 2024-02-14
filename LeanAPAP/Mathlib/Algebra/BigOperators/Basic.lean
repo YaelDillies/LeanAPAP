@@ -1,30 +1,10 @@
 import Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Finset.Basic
 
-namespace Finset
-open Function
 open scoped BigOperators
-
-@[to_additive]
-lemma prod_eq_of_injOn {α β R : Type*} [CommMonoid R] {s : Finset α} {t : Finset β}
-    (e : α → β) {f : α → R} {g : β → R} (he : Set.InjOn e s) (h'e : Set.MapsTo e s t)
-    (h : ∀ i ∈ s, f i = g (e i)) (h' : ∀ i ∈ t, i ∉ e '' s → g i = 1) :
-    ∏ i in s, f i = ∏ j in t, g j := by
-  classical
-  exact (prod_nbij e (fun a ↦ mem_image_of_mem e) he (by simp [Set.surjOn_image]) h).trans $
-    prod_subset (image_subset_iff.2 h'e) $ by simpa using h'
-
-@[to_additive]
-lemma prod_eq_of_injective {α β R : Type*} [CommMonoid R] [Fintype α] [Fintype β]
-    (e : α → β) (hf : Injective e) {f : α → R} {g : β → R} (h : ∀ i, f i = g (e i))
-    (h' : ∀ i ∉ Set.range e, g i = 1) : ∏ i, f i = ∏ j, g j :=
-  prod_eq_of_injOn e (hf.injOn _) (by simp) (fun i _ ↦ h i) (by simpa using h')
-
-end Finset
 
 namespace Finset
 variable {ι κ α : Type*} [CommMonoid α]
-open scoped BigOperators
 
 -- TODO: Replace `Finset.prod_fiberwise`
 
@@ -45,13 +25,65 @@ end Finset
 
 namespace Finset
 variable {ι κ α : Type*} [CommMonoid α] {s : Finset ι} {t : Finset κ} {f : ι → α} {g : κ → α}
-open scoped BigOperators
 
 lemma sum_card_filter_eq [DecidableEq κ] (s : Finset ι) (t : Finset κ) (g : ι → κ) :
     ∑ j in t, (s.filter fun i ↦ g i = j).card = (s.filter fun i ↦ g i ∈ t).card := by
   simpa only [card_eq_sum_ones] using sum_sum_filter_eq _ _ _ _
 
 end Finset
+
+namespace Finset
+variable {ι α : Type*} [DecidableEq ι] [CancelCommMonoid α] {s t : Finset ι} {f : ι → α}
+
+@[to_additive]
+lemma prod_sdiff_eq_prod_sdiff :
+    ∏ i in s \ t, f i = ∏ i in t \ s, f i ↔ ∏ i in s, f i = ∏ i in t, f i :=
+  eq_comm.trans $ eq_iff_eq_of_mul_eq_mul $ by
+    rw [←prod_union disjoint_sdiff_self_left, ←prod_union disjoint_sdiff_self_left,
+      sdiff_union_self_eq_union, sdiff_union_self_eq_union, union_comm]
+
+@[to_additive]
+lemma prod_sdiff_ne_prod_sdiff :
+    ∏ i in s \ t, f i ≠ ∏ i in t \ s, f i ↔ ∏ i in s, f i ≠ ∏ i in t, f i :=
+  prod_sdiff_eq_prod_sdiff.not
+
+end Finset
+
+open Finset
+
+namespace Fintype
+variable {α β : Type*} [Fintype α]
+
+section CommMonoid
+variable [CommMonoid β] (a : β)
+
+@[to_additive]
+lemma prod_ite_exists (p : α → Prop) [DecidablePred p] (h : ∀ i j, p i → p j → i = j) (a : β) :
+    ∏ i, ite (p i) a 1 = ite (∃ i, p i) a 1 := by simp [prod_ite_one univ p (by simpa using h)]
+
+variable [DecidableEq α]
+
+@[to_additive (attr := simp)]
+lemma prod_dite_eq (a : α) (b : ∀ x, a = x → β) :
+    (∏ x, if h : a = x then b x h else 1) = b a rfl := by simp
+
+@[to_additive (attr := simp)]
+lemma prod_dite_eq' (a : α) (b : ∀ x, x = a → β) :
+    (∏ x, if h : x = a then b x h else 1) = b a rfl := by simp
+
+@[to_additive (attr := simp)]
+lemma prod_ite_eq (a : α) (b : α → β) : (∏ x, if a = x then b x else 1) = b a := by simp
+
+@[to_additive (attr := simp)]
+lemma prod_ite_eq' (a : α) (b : α → β) : (∏ x, if x = a then b x else 1) = b a := by simp
+
+end CommMonoid
+
+variable [CommMonoidWithZero β] {p : α → Prop} [DecidablePred p]
+
+lemma prod_boole : ∏ i, ite (p i) (1 : β) 0 = ite (∀ i, p i) 1 0 := by simp [Finset.prod_boole]
+
+end Fintype
 
 -- We use a custom namespace instead of `BigOperators` because we want to override the notation from
 -- mathlib
@@ -247,58 +279,3 @@ to show the domain type when the sum is over `Finset.univ`. -/
     `(∑ $(.mk i):ident ∈ $ss, $body)
 
 end BigOps
-
-open scoped BigOps
-
-namespace Finset
-variable {ι α : Type*} [DecidableEq ι] [CancelCommMonoid α] {s t : Finset ι} {f : ι → α}
-
-@[to_additive]
-lemma prod_sdiff_eq_prod_sdiff :
-    ∏ i in s \ t, f i = ∏ i in t \ s, f i ↔ ∏ i in s, f i = ∏ i in t, f i :=
-  eq_comm.trans $ eq_iff_eq_of_mul_eq_mul $ by
-    rw [←prod_union disjoint_sdiff_self_left, ←prod_union disjoint_sdiff_self_left,
-      sdiff_union_self_eq_union, sdiff_union_self_eq_union, union_comm]
-
-@[to_additive]
-lemma prod_sdiff_ne_prod_sdiff :
-    ∏ i in s \ t, f i ≠ ∏ i in t \ s, f i ↔ ∏ i in s, f i ≠ ∏ i in t, f i :=
-  prod_sdiff_eq_prod_sdiff.not
-
-end Finset
-
-open Finset
-
-namespace Fintype
-variable {α β : Type*} [Fintype α]
-
-section CommMonoid
-variable [CommMonoid β] (a : β)
-
-@[to_additive]
-lemma prod_ite_exists (p : α → Prop) [DecidablePred p] (h : ∀ i j, p i → p j → i = j) (a : β) :
-    ∏ i, ite (p i) a 1 = ite (∃ i, p i) a 1 := by simp [prod_ite_one univ p (by simpa using h)]
-
-variable [DecidableEq α]
-
-@[to_additive (attr := simp)]
-lemma prod_dite_eq (a : α) (b : ∀ x, a = x → β) :
-    (∏ x, if h : a = x then b x h else 1) = b a rfl := by simp
-
-@[to_additive (attr := simp)]
-lemma prod_dite_eq' (a : α) (b : ∀ x, x = a → β) :
-    (∏ x, if h : x = a then b x h else 1) = b a rfl := by simp
-
-@[to_additive (attr := simp)]
-lemma prod_ite_eq (a : α) (b : α → β) : (∏ x, if a = x then b x else 1) = b a := by simp
-
-@[to_additive (attr := simp)]
-lemma prod_ite_eq' (a : α) (b : α → β) : (∏ x, if x = a then b x else 1) = b a := by simp
-
-end CommMonoid
-
-variable [CommMonoidWithZero β] {p : α → Prop} [DecidablePred p]
-
-lemma prod_boole : ∏ i, ite (p i) (1 : β) 0 = ite (∀ i, p i) 1 0 := by simp [Finset.prod_boole]
-
-end Fintype
