@@ -1,15 +1,13 @@
 import Mathlib.Algebra.Parity
 import Mathlib.Algebra.GroupWithZero.Power
-import Mathlib.Data.Rat.Order
 import Mathlib.GroupTheory.Submonoid.Operations
 import LeanAPAP.Mathlib.Data.Rat.Order
-import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
 
 namespace Submonoid
 variable {M : Type*} [MulOneClass M] {S : Submonoid M}
 
 @[to_additive (attr := simp)]
-lemma mk_eq_one {a : M} {ha} : (⟨a, ha⟩ : S) = 1 ↔ a = 1 := by simp [←SetLike.coe_eq_coe]
+lemma mk_eq_one {a : M} {ha} : (⟨a, ha⟩ : S) = 1 ↔ a = 1 := by simp [← SetLike.coe_eq_coe]
 
 end Submonoid
 
@@ -35,9 +33,9 @@ namespace Rat
     exact nsmul_mem (subset_closure $ mem_range_self _) _
   rw [nsmul_eq_mul]
   push_cast
-  rw [mul_assoc, pow_sub₀, pow_one, mul_right_comm, ←mul_pow, mul_inv_cancel, one_pow, one_mul, ←
-    Int.cast_ofNat, Int.coe_natAbs, abs_of_nonneg, ←div_eq_mul_inv, num_div_den]
-  rw [mem_zeroLe] at hx
+  rw [mul_assoc, pow_sub₀, pow_one, mul_right_comm, ← mul_pow, mul_inv_cancel, one_pow, one_mul,
+    ← Int.cast_ofNat, Int.coe_natAbs, abs_of_nonneg, ← div_eq_mul_inv, num_div_den]
+  rw [mem_zeroLE] at hx -- TODO: Rename to `mem_nonneg`
   any_goals positivity
   exact pos_iff_ne_zero.2 hn₀
 
@@ -46,3 +44,4 @@ lemma addSubmonoid_closure_range_mul_self : closure (range fun x : ℚ ↦ x * x
   simpa only [sq] using addSubmonoid_closure_range_pow two_ne_zero even_two
 
 end Rat
+#minimize_imports

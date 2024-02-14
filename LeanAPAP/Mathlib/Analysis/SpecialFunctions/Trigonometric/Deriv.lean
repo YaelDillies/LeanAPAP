@@ -1,7 +1,6 @@
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Convex.Jensen
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import LeanAPAP.Mathlib.Analysis.Calculus.MeanValue
 
 open Set
 

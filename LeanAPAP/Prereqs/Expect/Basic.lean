@@ -2,7 +2,6 @@ import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Data.IsROrC.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
-import LeanAPAP.Mathlib.Data.Pi.Algebra
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Prereqs.NNRat.Algebra
 import LeanAPAP.Prereqs.NNRat.GroupPower.Lemmas
@@ -258,13 +257,13 @@ lemma balance_apply (f : ι → α) (x : ι) : balance f x = f x - 𝔼 y, f y :
 @[simp] lemma balance_zero : balance (0 : ι → α) = 0 := by simp [balance]
 
 @[simp] lemma balance_add (f g : ι → α) : balance (f + g) = balance f + balance g := by
-  simp only [balance, expect_add_distrib, const_add, add_sub_add_comm, Pi.add_apply]
+  simp only [balance, expect_add_distrib, ← const_add, add_sub_add_comm, Pi.add_apply]
 
 @[simp] lemma balance_sub (f g : ι → α) : balance (f - g) = balance f - balance g := by
   simp only [balance, expect_sub_distrib, const_sub, sub_sub_sub_comm, Pi.sub_apply]
 
 @[simp] lemma balance_neg (f : ι → α) : balance (-f) = -balance f := by
-  simp only [balance, expect_neg_distrib, const_neg', neg_sub', Pi.neg_apply]
+  simp only [balance, expect_neg_distrib, const_neg, neg_sub', Pi.neg_apply]
 
 @[simp] lemma sum_balance (f : ι → α) : ∑ x, balance f x = 0 := by
   cases isEmpty_or_nonempty ι <;> simp [balance_apply]

@@ -49,7 +49,7 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
   dsimp
   simp_rw [lpNorm_rpow_eq_sum hp₀.ne', conv_eq_sum_sub']
   have hpconj : IsConjugateExponent p (1 - (p : ℝ)⁻¹)⁻¹ :=
-    ⟨hp, by simp_rw [one_div, inv_inv, add_sub_cancel'_right]⟩
+    ⟨hp, by simp_rw [inv_inv, add_sub_cancel'_right]⟩
   have : ∀ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
       (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ)
   · intro x

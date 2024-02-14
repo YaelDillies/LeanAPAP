@@ -1,7 +1,6 @@
 import Mathlib.Data.Real.Sqrt
-import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
-import LeanAPAP.Mathlib.GroupTheory.Submonoid.Basic
+import LeanAPAP.Mathlib.Data.Real.NNReal
 
 open NNReal Set
 

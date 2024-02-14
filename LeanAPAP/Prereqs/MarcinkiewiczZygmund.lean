@@ -1,8 +1,8 @@
+import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 import Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
-import LeanAPAP.Mathlib.Analysis.MeanInequalitiesPow
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Prereqs.Multinomial
 
@@ -25,9 +25,7 @@ private lemma step_one (hA : A.Nonempty) (f : G → ℝ) (a : Fin n → G)
         exact pow_ne_zero _ $ Nat.cast_ne_zero.2 hA.card_pos.ne'
     _ = |∑ b in A^^n, ∑ i, (f (a i) - f (b i))| ^ (m + 1) / (A^^n).card ^ (m + 1) := by
       rw [abs_div, div_pow, Nat.abs_cast]
-    _ ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ (m + 1) :=
-      (div_le_div_of_le (by positivity)
-        (pow_le_pow_left (by positivity) (abv_sum_le_sum_abv _ _) _))
+    _ ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ (m + 1) := by gcongr; exact abv_sum_le_sum_abv _ _
     _ = (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ m / (A^^n).card := by
       rw [div_div, ←_root_.pow_succ']
     _ ≤ _ := by simpa using div_le_div_of_le (by positivity)
