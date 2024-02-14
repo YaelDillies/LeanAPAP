@@ -1,10 +1,7 @@
-import Mathlib.Algebra.Function.Indicator
 import Mathlib.Algebra.Module.Basic
 import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Set.Pointwise.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
-import LeanAPAP.Mathlib.Algebra.GroupPower.Basic
 
 /-!
 # Dissociation

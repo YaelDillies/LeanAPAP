@@ -1,5 +1,4 @@
 import Mathlib.Algebra.BigOperators.Basic
-import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Data.Finset.Basic
 
 namespace Finset

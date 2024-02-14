@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.Group.TypeTags
 import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
 import LeanAPAP.Prereqs.AddChar.Circle
 
@@ -7,7 +6,7 @@ import LeanAPAP.Prereqs.AddChar.Circle
 
 This file proves the Pontryagin duality in case of finite abelian groups. This states that any
 finite abelian group is canonically isomorphic to its double dual (the space of complex-valued
-characters of its space of complex_valued characters).
+characters of its space of complex-valued characters).
 
 We first prove it for `ZMod n` and then extend to all finite abelian groups using the
 Structure Theorem.
