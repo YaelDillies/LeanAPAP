@@ -3,13 +3,12 @@ import Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 
 open Finset Fintype
-
 open scoped BigOperators
 
 namespace Fintype
 variable {α β γ : Type*} [DecidableEq α] [Fintype α] [AddCommMonoid γ]
 
-lemma sum_fintype_apply (f : β → γ) (s : Finset β) (a : α) :
+lemma sum_piFinset_apply (f : β → γ) (s : Finset β) (a : α) :
     ∑ g in piFinset fun _ : α ↦ s, f (g a) = s.card ^ (card α - 1) • ∑ b in s, f b := by
   classical
   rw [sum_comp]

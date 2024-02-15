@@ -1,9 +1,7 @@
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Data.Real.Sqrt
-import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
-import LeanAPAP.Prereqs.MeanInequalities
 
 /-!
 # Dependent Random Choice

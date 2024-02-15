@@ -1,5 +1,5 @@
-import Mathlib.Combinatorics.Additive.Energy
 import Mathlib.Algebra.BigOperators.Order
+import Mathlib.Combinatorics.Additive.Energy
 import Mathlib.Data.Finset.Pointwise
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 

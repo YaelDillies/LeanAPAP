@@ -35,13 +35,11 @@ namespace Rat
   push_cast
   rw [mul_assoc, pow_sub₀, pow_one, mul_right_comm, ← mul_pow, mul_inv_cancel, one_pow, one_mul,
     ← Int.cast_ofNat, Int.coe_natAbs, abs_of_nonneg, ← div_eq_mul_inv, num_div_den]
-  rw [mem_zeroLE] at hx -- TODO: Rename to `mem_nonneg`
-  any_goals positivity
-  exact pos_iff_ne_zero.2 hn₀
+  rw [mem_nonneg] at hx
+  all_goals simp [x.den_pos.ne', Nat.one_le_iff_ne_zero, *]
 
 @[simp]
 lemma addSubmonoid_closure_range_mul_self : closure (range fun x : ℚ ↦ x * x) = nonneg _ := by
   simpa only [sq] using addSubmonoid_closure_range_pow two_ne_zero even_two
 
 end Rat
-#minimize_imports

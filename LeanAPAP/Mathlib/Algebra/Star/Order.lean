@@ -1,5 +1,4 @@
 import Mathlib.Algebra.Star.Order
-import Mathlib.GroupTheory.Submonoid.Operations
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
 
 open Set

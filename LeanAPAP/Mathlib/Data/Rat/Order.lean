@@ -5,8 +5,8 @@ import Mathlib.Tactic.NormNum.Basic
 namespace Rat
 variable {q : ℚ}
 
-alias num_nonneg := num_nonneg_iff_zero_le
-alias num_pos := num_pos_iff_pos
+@[simp] alias num_nonneg := num_nonneg_iff_zero_le
+@[simp] alias num_pos := num_pos_iff_pos
 
 end Rat
 

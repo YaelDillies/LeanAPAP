@@ -1,6 +1,5 @@
 import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
-import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Prereqs.Discrete.Convolution.Order
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]

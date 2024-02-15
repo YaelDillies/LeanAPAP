@@ -1,4 +1,5 @@
-import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
+import Mathlib.GroupTheory.FiniteAbelian
+import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Prereqs.AddChar.Circle
 
 /-!
@@ -115,7 +116,7 @@ def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
   map_add' ψ χ := rfl
 
 @[simp] lemma card_eq [Fintype α] : card (AddChar α ℂ) = card α := by
-  obtain ⟨ι, _, n, hn, ⟨e⟩⟩ := AddCommGroup.equiv_directSum_zmod_of_finite α
+  obtain ⟨ι, _, n, hn, ⟨e⟩⟩ := AddCommGroup.equiv_directSum_zmod_of_finite' α
   skip
   classical
   have hn' : ∀ i, n i ≠ 0 := fun i ↦ by have := hn i; positivity

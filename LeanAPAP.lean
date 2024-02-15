@@ -5,11 +5,11 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
+import LeanAPAP.Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
@@ -21,10 +21,8 @@ import LeanAPAP.Mathlib.Data.FunLike.Basic
 import LeanAPAP.Mathlib.Data.NNRat.Defs
 import LeanAPAP.Mathlib.Data.Rat.Order
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
-import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.Data.ZMod.Basic
-import LeanAPAP.Mathlib.GroupTheory.FiniteAbelian
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
 import LeanAPAP.Mathlib.Tactic.Positivity
@@ -59,7 +57,6 @@ import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.Indicator
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
-import LeanAPAP.Prereqs.MeanInequalities
 import LeanAPAP.Prereqs.Multinomial
 import LeanAPAP.Prereqs.NNRat.Algebra
 import LeanAPAP.Prereqs.NNRat.Cast.CharZero

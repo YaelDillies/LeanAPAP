@@ -1,12 +1,8 @@
 import Mathlib.Algebra.Order.Chebyshev
-import LeanAPAP.Mathlib.Algebra.BigOperators.Order
-import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
-import LeanAPAP.Mathlib.Data.Real.Sqrt
-import LeanAPAP.Prereqs.Discrete.DFT.Compact
+import LeanAPAP.Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.LargeSpec
-import LeanAPAP.Prereqs.MeanInequalities
 import LeanAPAP.Prereqs.Rudin
 
 /-!
@@ -43,7 +39,8 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       _ ≤ ‖∑ x, f x * ∑ γ in Δ, c γ * conj (γ x)‖ := ?_
       _ ≤ ∑ x, ‖f x * ∑ γ in Δ, c γ * conj (γ x)‖ := (norm_sum_le _ _)
       _ = ∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ := by simp_rw [norm_mul]
-      _ ≤ _ := (weighted_hoelder' m ?_ _ _ (fun _ ↦ norm_nonneg _) fun _ ↦ norm_nonneg _)
+      _ ≤ _ :=
+          inner_le_weight_mul_Lp_of_nonneg _ m ?_ _ _ (fun _ ↦ norm_nonneg _) fun _ ↦ norm_nonneg _
       _ = ‖f‖_[1] ^ (1 - (m : ℝ)⁻¹) * (∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ (m⁻¹ : ℝ) :=
         by push_cast; simp_rw [l1Norm_eq_sum, rpow_nat_cast]
   rotate_left
@@ -69,8 +66,8 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
   replace this :=
     calc
       _ ≤ (∑ x, ‖f x‖ * sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2 :=
-        pow_le_pow_left (by sorry) -- positivity
-          (this.trans $ sum_le_sum fun x _ ↦ mul_le_mul_of_nonneg_right (hfν _) $ by positivity) _
+          pow_le_pow_left (by positivity)
+            (this.trans $ sum_le_sum fun x _ ↦ mul_le_mul_of_nonneg_right (hfν _) $ by positivity) _
       _ = (∑ x, ‖f x‖ * (sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m)) ^ 2 := by
         simp_rw [mul_assoc]
       _ ≤ (∑ x, ‖f x‖ ^ 2) * ∑ x, (sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2 :=
@@ -82,12 +79,10 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
   calc
     _ ≤ _ := this
     _ = ‖(_ : ℂ)‖ := Eq.symm $ IsROrC.norm_of_nonneg $ sum_nonneg fun _ _ ↦ by positivity
-    _ = ‖∑ γ in piFinset fun i : Fin m ↦ Δ,
-          ∑ δ in piFinset fun i : Fin m ↦ Δ,
-            (∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ := ?_
-    _ ≤ ∑ γ in piFinset fun i : Fin m ↦ Δ,
-          ∑ δ in piFinset fun i : Fin m ↦ Δ,
-            ‖(∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ :=
+    _ = ‖∑ γ in Δ ^^ m, ∑ δ in Δ ^^ m,
+          (∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ := ?_
+    _ ≤ ∑ γ in Δ ^^ m, ∑ δ in Δ ^^ m,
+          ‖(∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ :=
       (norm_sum_le _ _).trans $ sum_le_sum fun _ _ ↦ norm_sum_le _ _
     _ = _ := by simp [energy, norm_c, -Complex.norm_eq_abs, norm_prod]
   · push_cast

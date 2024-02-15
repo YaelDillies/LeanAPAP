@@ -1,8 +1,6 @@
-import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import LeanAPAP.Prereqs.Discrete.DFT.Compact
-import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
 import LeanAPAP.Prereqs.Dissociation
 
 /-!

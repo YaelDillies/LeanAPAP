@@ -2,7 +2,6 @@ import Mathlib.Algebra.Module.Pi
 import Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
-import LeanAPAP.Mathlib.Data.Real.NNReal
 import LeanAPAP.Prereqs.Indicator
 
 /-!

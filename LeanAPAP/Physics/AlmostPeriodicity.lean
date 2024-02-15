@@ -2,7 +2,7 @@ import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Floor
+import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
@@ -83,7 +83,7 @@ lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
   let f' : G → ℂ := fun a ↦ f (x - a) - (mu A ∗ f) x
   refine' (complex_marcinkiewicz_zygmund f' (by linarith only [hm]) _).trans_eq' _
   · intro i
-    rw [Fintype.sum_fintype_apply, sum_sub_distrib]
+    rw [Fintype.sum_piFinset_apply, sum_sub_distrib]
     simp only [sub_eq_zero, sum_const, indicate_apply]
     rw [←Pi.smul_apply (card A), ←smul_conv, card_smul_mu, conv_eq_sum_sub']
     simp only [boole_mul, indicate_apply]

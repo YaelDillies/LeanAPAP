@@ -1,11 +1,5 @@
 import Mathlib.Data.Real.ConjugateExponents
 
-/-!
-## TODO
-
-Change everything to using `x⁻¹` instead of `1 / x`.
--/
-
 open scoped ENNReal
 
 attribute [mk_iff Real.isConjugateExponent_iff'] Real.IsConjugateExponent
