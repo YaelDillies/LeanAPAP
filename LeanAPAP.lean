@@ -17,7 +17,6 @@ import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
 import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
-import LeanAPAP.Mathlib.Data.FunLike.Basic
 import LeanAPAP.Mathlib.Data.NNRat.Defs
 import LeanAPAP.Mathlib.Data.Rat.Order
 import LeanAPAP.Mathlib.Data.Real.ConjugateExponents

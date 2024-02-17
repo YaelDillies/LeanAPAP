@@ -1,5 +1,4 @@
 import Mathlib.Data.ZMod.Basic
-import LeanAPAP.Mathlib.Data.FunLike.Basic
 
 open Fintype Function
 
@@ -22,9 +21,6 @@ lemma cast_int_neg : (cast (-x : ZMod n) : ℤ) = -cast x % n := by
   rw [← ZMod.coe_int_cast, Int.cast_neg, ZMod.int_cast_zmod_cast]
 
 end
-
-lemma subsingleton_of_eq_one : ∀ {n : ℕ} (x y : ZMod n), n = 1 → x = y
-  | _, _, _, rfl => Subsingleton.elim _ _
 
 lemma val_one'' : ∀ {n}, n ≠ 1 → (1 : ZMod n).val = 1
   | 0, _ => rfl
@@ -50,8 +46,8 @@ lemma val_inv_mul (hmn : m.Coprime n) : ((m⁻¹ : ZMod n).val * m : ZMod n) = 1
 variable {A : Type*} [AddCommGroup A]
 
 lemma lift_injective {f : {f : ℤ →+ A // f n = 0}} :
-    Injective (lift n f) ↔ ∀ i : ℤ, f i = 0 → (i : ZMod n) = 0 := by
-  simp only [← AddMonoidHom.ker_eq_bot_iff, eq_bot_iff, SetLike.le_def, Subtype.coe_coe,
+    Injective (lift n f) ↔ ∀ i : ℤ, f.1 i = 0 → (i : ZMod n) = 0 := by
+  simp only [← AddMonoidHom.ker_eq_bot_iff, eq_bot_iff, SetLike.le_def,
     ZMod.int_cast_surjective.forall, ZMod.lift_coe, AddMonoidHom.mem_ker, AddSubgroup.mem_bot]
 
 end ZMod
