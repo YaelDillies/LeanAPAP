@@ -19,7 +19,6 @@ import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.NNRat.Defs
 import LeanAPAP.Mathlib.Data.Rat.Order
-import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators

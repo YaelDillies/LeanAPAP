@@ -1,7 +1,7 @@
+import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
-import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
 import LeanAPAP.Prereqs.Indicator
 
 /-!
@@ -76,10 +76,10 @@ lemma lpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖_[p] = ‖g - f‖_[p] :=
   · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top]
     exact Real.iSup_nonneg fun i ↦ norm_nonneg _
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [l0Norm_eq_card, ENNReal.some_eq_coe, ENNReal.coe_zero]
+  · simp only [l0Norm_eq_card, lpNorm_eq_sum, ENNReal.some_eq_coe, ENNReal.coe_zero, *]
     exact Nat.cast_nonneg _
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe]
-    exact rpow_nonneg (sum_nonneg fun _ _ ↦ by positivity) _ -- positivity
+    positivity
 
 @[simp] lemma lpNorm_eq_zero : ‖f‖_[p] = 0 ↔ f = 0 := by
   obtain p | p := p

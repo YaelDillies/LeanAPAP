@@ -1,9 +1,5 @@
-import Mathlib.Algebra.Order.Group.PosPart
-import LeanAPAP.Mathlib.Algebra.BigOperators.Order
-import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
-import LeanAPAP.Mathlib.Data.Real.ConjugateExponents
-import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 import LeanAPAP.Prereqs.Density
+import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 
 /-!
 # Normalised Lp norms
@@ -458,7 +454,7 @@ lemma nl2Inner_le_nlpNorm_mul_nlpNorm (hpq : p.IsConjExponent q) (f g : α → �
   · simp
   have : 0 < (card α : ℝ) := by positivity
   simpa [nl2Inner_eq_l2Inner_div_card, nlpNorm, div_mul_div_comm, ← rpow_add this,
-    hpq.coe.inv_add_inv_conj', div_le_div_right this] using l2Inner_le_lpNorm_mul_lpNorm hpq _ _
+    hpq.coe.inv_add_inv_conj, div_le_div_right this] using l2Inner_le_lpNorm_mul_lpNorm hpq _ _
 
 /-- **Hölder's inequality**, binary case. -/
 lemma abs_nl2Inner_le_nlpNorm_mul_nlpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
