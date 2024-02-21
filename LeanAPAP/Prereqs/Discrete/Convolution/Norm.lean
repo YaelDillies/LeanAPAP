@@ -50,9 +50,8 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
   simp_rw [lpNorm_rpow_eq_sum hp₀.ne', conv_eq_sum_sub']
   have hpconj : (p : ℝ).IsConjExponent (1 - (p : ℝ)⁻¹)⁻¹ :=
     ⟨hp, by simp_rw [inv_inv, add_sub_cancel'_right]⟩
-  have : ∀ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
-      (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ)
-  · intro x
+  have (x) : ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
+      (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ) := by
     rw [←le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ←rpow_mul, sub_one_mul, mul_inv_cancel]
     any_goals positivity
     calc

@@ -74,8 +74,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     2 ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p * (sqrt B₁.card * sqrt B₂.card) / A.card ^ p
       with hM_def
   have hM : 0 < M := by rw [hM_def]; positivity
-  replace hf : 0 < ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x
-  · have : 0 ≤ μ_[ℝ] B₁ ○ μ B₂ * (𝟭 A ○ 𝟭 A) ^ p * (↑) ∘ f :=
+  replace hf : 0 < ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x := by
+    have : 0 ≤ μ_[ℝ] B₁ ○ μ B₂ * (𝟭 A ○ 𝟭 A) ^ p * (↑) ∘ f :=
       mul_nonneg (mul_nonneg (dconv_nonneg mu_nonneg mu_nonneg) $ pow_nonneg
         (dconv_nonneg indicate_nonneg indicate_nonneg) _) fun _ ↦ by simp -- positivity
     refine Fintype.sum_pos $ this.gt_iff_ne.2 $ support_nonempty_iff.1 ?_
@@ -92,10 +92,10 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
       IsROrC.inner_apply, IsROrC.conj_to_real, norm_of_nonneg (hAdconv _), mul_one, nsmul_eq_mul,
       Nat.cast_mul, ←hg_def, NNReal.smul_def, NNReal.coe_dconv, NNReal.coe_comp_mu]
         using lemma_0 p B₁ B₂ A 1
-  suffices : ∑ s, ⟪𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s), (↑) ∘ f⟫_[ℝ] * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p
+  suffices ∑ s, ⟪𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s), (↑) ∘ f⟫_[ℝ] * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p
     < ∑ s, 𝟭 (univ.filter fun s ↦ M ^ 2 ≤ g s) s * g s *
-        (2 * ∑ x, (μ B₁ ○ μ B₂) x * (𝟭_[ℝ] A ○ 𝟭 A) x ^ p * f x)
-  · obtain ⟨s, -, hs⟩ := exists_lt_of_sum_lt this
+        (2 * ∑ x, (μ B₁ ○ μ B₂) x * (𝟭_[ℝ] A ○ 𝟭 A) x ^ p * f x) by
+    obtain ⟨s, -, hs⟩ := exists_lt_of_sum_lt this
     refine ⟨_, inter_subset_left _ $ c p A s, _, inter_subset_left _ $ c p A s, ?_⟩
     simp only [indicate_apply, mem_filter, mem_univ, true_and_iff, boole_mul] at hs
     split_ifs at hs with h; swap
@@ -106,8 +106,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
       cases hs.not_le $ mul_nonneg (sum_nonneg fun x _ ↦ mul_nonneg (this _) $ by positivity) $ by
         positivity
     have : (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
-      ≤ (A₁ s).card / B₁.card * ((A₂ s).card / B₂.card)
-    · rw [div_mul_div_comm, le_div_iff]
+      ≤ (A₁ s).card / B₁.card * ((A₂ s).card / B₂.card) := by
+      rw [div_mul_div_comm, le_div_iff]
       simpa [hg_def, hM_def, mul_pow, pow_mul', show (2 : ℝ) ^ 2 = 4 by norm_num,
         mul_div_right_comm] using h
       positivity
@@ -130,8 +130,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     exact nonempty_of_sum_ne_zero $ hgB.trans_ne $ by positivity
   push_neg at h
   obtain ⟨s, hs⟩ := h
-  suffices h : (2 : ℝ) * ∑ s with g s < M ^ 2, g s < ∑ s, g s
-  · refine (le_or_lt_of_add_le_add ?_).resolve_left h.not_le
+  suffices h : (2 : ℝ) * ∑ s with g s < M ^ 2, g s < ∑ s, g s by
+    refine (le_or_lt_of_add_le_add ?_).resolve_left h.not_le
     simp_rw [←not_le, ←compl_filter, ←two_mul, ←mul_add, sum_compl_add_sum]
     rfl
   rw [←lt_div_iff' (zero_lt_two' ℝ), div_eq_inv_mul]

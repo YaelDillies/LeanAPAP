@@ -20,9 +20,9 @@ variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G] {ν : G → �
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
     (0 : ℂ) ≤ ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] := by
-  suffices :
-    ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] = ∑ z : Fin k → G, (‖∑ x, (∏ i, conj (g (x + z i))) * h x‖ : ℂ) ^ 2
-  · rw [this]
+  suffices
+    ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] = ∑ z : Fin k → G, (‖∑ x, (∏ i, conj (g (x + z i))) * h x‖ : ℂ) ^ 2 by
+    rw [this]
     positivity
   rw [hf, hν, l2Inner_eq_sum]
   simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, IsROrC.inner_apply, map_pow]
@@ -118,8 +118,8 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
         first
         | positivity
         | norm_num
-  replace hf₁ : ‖f‖_[2 * p, ν] ≤ 3
-  · calc
+  replace hf₁ : ‖f‖_[2 * p, ν] ≤ 3 := by
+    calc
       _ ≤ ‖f + 1‖_[2 * p, ν] + ‖(1 : G → ℝ)‖_[2 * p, ν] := wlpNorm_le_add_wlpNorm_add hp' _ _ _
       _ ≤ (2 + 1 : ℝ) := (add_le_add hf₁ (by rw [wlpNorm_one, hν₁, one_rpow]; positivity))
       _ = 3 := by norm_num

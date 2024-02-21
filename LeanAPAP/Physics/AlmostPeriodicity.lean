@@ -443,8 +443,8 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
     _ _ hB hC
   refine ⟨T, by simpa only [div_pow, div_div_eq_mul_div] using hKT, ?_⟩
   set F := μ_[ℂ] A ∗ 𝟭 B ∗ μ C
-  have hT' : T.Nonempty
-  · have := hS.card_pos -- TODO: positivity
+  have hT' : T.Nonempty := by
+    have := hS.card_pos -- TODO: positivity
     have : 0 < _ := hKT.trans_lt' $ by positivity
     simpa [card_pos] using this
   calc

@@ -1,4 +1,3 @@
-import Mathlib.Algebra.Group.Pi
 import Mathlib.Algebra.Order.Group.Abs
 
 namespace Pi

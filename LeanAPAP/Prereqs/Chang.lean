@@ -57,8 +57,8 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
     inv_mul_cancel, ←Nat.cast_pred, rpow_nat_cast, mul_assoc, mul_left_comm, ←pow_sub_one_mul,
     mul_assoc, mul_le_mul_left] at this
   any_goals positivity
-  replace hfν : ∀ x, ‖f x‖ ≤ ‖f x‖ * sqrt (ν x)
-  · rintro x
+  replace hfν : ∀ x, ‖f x‖ ≤ ‖f x‖ * sqrt (ν x) := by
+    rintro x
     obtain hfx | hfx := eq_or_ne (f x) 0
     · simp [hfx]
     · exact le_mul_of_one_le_right (norm_nonneg _) $ one_le_sqrt.2 $ NNReal.one_le_coe.2 $

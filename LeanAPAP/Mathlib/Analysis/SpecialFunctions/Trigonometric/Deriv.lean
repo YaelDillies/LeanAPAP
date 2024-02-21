@@ -8,8 +8,7 @@ namespace Real
 variable {x : ℝ}
 
 lemma sin_le (hx : 0 ≤ x) : sin x ≤ x := by
-  suffices : MonotoneOn (fun x ↦ x - sin x) (Ici 0)
-  · simpa using this left_mem_Ici hx hx
+  suffices MonotoneOn (fun x ↦ x - sin x) (Ici 0) by simpa using this left_mem_Ici hx hx
   exact monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici _) (Continuous.continuousOn $ by
     continuity) (fun x _ ↦ ((hasDerivAt_id _).sub $ hasDerivAt_sin _).hasDerivWithinAt) $ by
     simp [cos_le_one]
@@ -17,8 +16,7 @@ lemma sin_le (hx : 0 ≤ x) : sin x ≤ x := by
 lemma cos_quadratic_lower_bound : 1 - x ^ 2 / 2 ≤ cos x := by
   wlog hx₀ : 0 ≤ x
   · simpa using this $ neg_nonneg.2 $ le_of_not_le hx₀
-  suffices : MonotoneOn (fun x ↦ cos x + x ^ 2 / 2) (Ici 0)
-  · simpa using this left_mem_Ici hx₀ hx₀
+  suffices MonotoneOn (fun x ↦ cos x + x ^ 2 / 2) (Ici 0) by simpa using this left_mem_Ici hx₀ hx₀
   refine monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici _) (Continuous.continuousOn $ by
     continuity) (fun x _ ↦
     ((hasDerivAt_cos ..).add $ (hasDerivAt_pow ..).div_const _).hasDerivWithinAt) fun x hx ↦ ?_
@@ -28,8 +26,8 @@ lemma cos_quadratic_lower_bound : 1 - x ^ 2 / 2 ≤ cos x := by
 /-- **Jordan's inequality**. -/
 lemma two_div_pi_mul_le (hx₀ : 0 ≤ x) (hx : x ≤ π / 2) : 2 / π * x ≤ sin x := by
   rw [← sub_nonneg]
-  suffices : ConcaveOn ℝ (Icc 0 (π / 2)) (fun x ↦ sin x - 2 / π * x)
-  · refine (le_min ?_ ?_).trans $ this.min_le_of_mem_Icc ⟨hx₀, hx⟩ <;> field_simp
+  suffices ConcaveOn ℝ (Icc 0 (π / 2)) (fun x ↦ sin x - 2 / π * x) by
+    refine (le_min ?_ ?_).trans $ this.min_le_of_mem_Icc ⟨hx₀, hx⟩ <;> field_simp
   refine concaveOn_of_hasDerivWithinAt2_nonpos (convex_Icc ..)
     (Continuous.continuousOn $ by continuity)
     (fun x _ ↦ ((hasDerivAt_sin ..).sub $ (hasDerivAt_id ..).const_mul (2 / π)).hasDerivWithinAt)
@@ -46,8 +44,8 @@ lemma cos_quadratic_upper_bound (hx : |x| ≤ π) : cos x ≤ 1 - 2 / π ^ 2 * x
     (((hasDerivAt_pow ..).const_mul _).const_sub _).sub $ hasDerivAt_cos _
   simp only [Nat.cast_ofNat, Nat.succ_sub_succ_eq_sub, tsub_zero, pow_one, ← neg_sub', neg_sub,
     ← mul_assoc] at hderiv
-  have hmono : MonotoneOn (fun x ↦ 1 - 2 / π ^ 2 * x ^ 2 - cos x) (Icc 0 (π / 2))
-  · refine monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc ..) (Continuous.continuousOn $
+  have hmono : MonotoneOn (fun x ↦ 1 - 2 / π ^ 2 * x ^ 2 - cos x) (Icc 0 (π / 2)) := by
+    refine monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc ..) (Continuous.continuousOn $
       by continuity) (fun x _ ↦ (hderiv _).hasDerivWithinAt) fun x hx ↦ sub_nonneg.2 ?_
     have ⟨hx₀, hx⟩ := interior_subset hx
     calc
@@ -55,8 +53,8 @@ lemma cos_quadratic_upper_bound (hx : |x| ≤ π) : cos x ≤ 1 - 2 / π ^ 2 * x
       _ ≤ 1 * sin x := by
           gcongr; exacts [div_le_one_of_le two_le_pi (by positivity), two_div_pi_mul_le hx₀ hx]
       _ = sin x := one_mul _
-  have hconc : ConcaveOn ℝ (Icc (π / 2) π) (fun x ↦ 1 - 2 / π ^ 2 * x ^ 2 - cos x)
-  · refine concaveOn_of_hasDerivWithinAt2_nonpos (convex_Icc ..)
+  have hconc : ConcaveOn ℝ (Icc (π / 2) π) (fun x ↦ 1 - 2 / π ^ 2 * x ^ 2 - cos x) := by
+    refine concaveOn_of_hasDerivWithinAt2_nonpos (convex_Icc ..)
       (Continuous.continuousOn $ by continuity) (fun x _ ↦ (hderiv _).hasDerivWithinAt)
       (fun x _ ↦ ((hasDerivAt_sin ..).sub $ (hasDerivAt_id ..).const_mul _).hasDerivWithinAt)
       fun x hx ↦ ?_

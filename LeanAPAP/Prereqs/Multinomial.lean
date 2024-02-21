@@ -28,12 +28,12 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
     Pi.add_apply, eq_self_iff_true, if_true, Nat.cast_mul, prod_insert has, eq_self_iff_true,
     if_true, sum_add_distrib, sum_ite_eq', has, if_false, add_zero,
       addLeftEmbedding_eq_addRightEmbedding, addRightEmbedding_apply]
-  suffices : ∀ p : ℕ × ℕ, p ∈ antidiagonal n →
-    ∑ f in cut s p.snd, ((f a + p.fst + s.sum f).choose (f a + p.fst) : β) *
-      multinomial s (f + fun t ↦ ite (t = a) p.fst 0) *
-        (x a ^ (f a + p.fst) * ∏ t : α in s, x t ^ (f t + ite (t = a) p.fst 0)) =
-      ∑ f in cut s p.snd, n.choose p.fst * multinomial s f * (x a ^ p.fst * ∏ t : α in s, x t ^ f t)
-  · rw [sum_congr rfl this]
+  suffices ∀ p : ℕ × ℕ, p ∈ antidiagonal n →
+    ∑ f in cut s p.2, ((f a + p.1 + s.sum f).choose (f a + p.1) : β) *
+      multinomial s (f + fun t ↦ ite (t = a) p.1 0) *
+        (x a ^ (f a + p.1) * ∏ t : α in s, x t ^ (f t + ite (t = a) p.1 0)) =
+      ∑ f in cut s p.2, n.choose p.1 * multinomial s f * (x a ^ p.1 * ∏ t : α in s, x t ^ f t) by
+    rw [sum_congr rfl this]
     simp only [Nat.antidiagonal_eq_map, sum_map, Function.Embedding.coeFn_mk]
     rw [add_pow]
     simp only [ih, sum_mul, mul_sum]
