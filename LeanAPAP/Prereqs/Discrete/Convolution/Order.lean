@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 

@@ -1,6 +1,6 @@
 import Mathlib.Algebra.Order.Pi
+import Mathlib.Algebra.Star.Order
 import Mathlib.Data.ZMod.Basic
-import LeanAPAP.Mathlib.Algebra.Star.Order
 
 /-!
 # Precomposition operators

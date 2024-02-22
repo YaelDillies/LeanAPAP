@@ -1,13 +1,11 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
-import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
-import LeanAPAP.Mathlib.Algebra.Star.Order
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
@@ -18,7 +16,6 @@ import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.NNRat.Defs
-import LeanAPAP.Mathlib.Data.Rat.Order
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators

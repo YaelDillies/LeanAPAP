@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp

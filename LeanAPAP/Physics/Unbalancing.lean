@@ -1,5 +1,4 @@
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Data.Complex.Order

@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.BigOperators.Order
 import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
 import LeanAPAP.Prereqs.Discrete.Convolution.Order
 
