@@ -1,6 +1,5 @@
 import Mathlib.GroupTheory.FiniteAbelian
 import LeanAPAP.Mathlib.Data.ZMod.Basic
-import LeanAPAP.Mathlib.GroupTheory.Submonoid.Operations
 import LeanAPAP.Prereqs.AddChar.Circle
 
 /-!
