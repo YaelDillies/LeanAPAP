@@ -1,6 +1,6 @@
 import Mathlib.Tactic.Positivity.Basic
+import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
-import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Density of a finite set
