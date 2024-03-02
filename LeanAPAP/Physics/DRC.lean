@@ -65,9 +65,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         ≤ A₁.card / B₁.card ∧
       (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
         ≤ A₂.card / B₂.card := by
-  have := hA.card_pos
-  have := (hB.mono $ inter_subset_left _ _).card_pos
-  have := (hB.mono $ inter_subset_right _ _).card_pos
+  have := hB.mono $ inter_subset_left _ _
+  have := hB.mono $ inter_subset_right _ _
   have hp₀ : p ≠ 0 := by positivity
   have := lpNorm_conv_pos hp₀ hB hA
   set M : ℝ :=

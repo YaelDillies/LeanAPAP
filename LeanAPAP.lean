@@ -9,10 +9,7 @@ import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Arg
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
-import LeanAPAP.Mathlib.Data.Complex.Order
 import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.NNRat.Defs
@@ -20,7 +17,6 @@ import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Mathlib.Tactic.Positivity
-import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
@@ -30,7 +26,6 @@ import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular
 import LeanAPAP.Prereqs.Chang
-import LeanAPAP.Prereqs.Circle.ArcLength
 import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.Cut
 import LeanAPAP.Prereqs.Density

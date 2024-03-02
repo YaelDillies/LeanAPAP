@@ -1,8 +1,8 @@
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Data.IsROrC.Basic
+import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
-import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Prereqs.NNRat.Algebra
 import LeanAPAP.Prereqs.NNRat.GroupPower.Lemmas
 
