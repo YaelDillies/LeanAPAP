@@ -6,9 +6,6 @@
 \leanok
 We say that $A\subseteq G$ is dissociated if, for any $m\geq 1$, and any $x\in G$, there is at most one $A'\subset A$ of size $\abs{A'}=m$ such that
 \[\sum_{a\in A'}a=x.\]
-It follows that
-
-\[\mathbb{E}_x e^{\abs{\Re f(x)}} \leq 2e^{\| f\|_2^2/2}.\]
 \end{definition}
 
 
@@ -20,32 +17,32 @@ It follows that
 If the discrete Fourier transform of $f : G \longrightarrow \C$ has dissociated support, then
 $$\E \exp(\Re f) \le \exp\left(\frac{\norm f_2^2} 2\right)$$
 It follows that
-\[\mathbb{E}_x e^{\abs{\Re f(x)}} \leq 2e^{\| f\|_2^2/2}.\]
+\[\E_x e^{\abs{f(x)}} \le 2e^{\| f\|_2^2/2}.\]
 \end{lemma}
 \begin{proof}
 \uses{mzi_complex}
 \leanok
 Using the convexity of $t\mapsto e^{tx}$ (for all $x\geq 0$ and $t\in[-1,1]$) we have
-\[e^{tx}\leq \cosh(x)+t\sinh(x).\]
+\[e^{tx}\le \cosh(x)+t\sinh(x).\]
 It follows (taking $x=\lvert z\rvert$ and $t=\Re(z)/\lvert z\rvert$) that, for any $z\in \mathbb{C}$,
-\[e^{\Re z}\leq \cosh(\lvert z\rvert)+\Re(z/\lvert z\rvert)\sinh(\lvert z\rvert).\]
+\[e^{\Re z}\le \cosh(\lvert z\rvert)+\Re(z/\lvert z\rvert)\sinh(\lvert z\rvert).\]
 In particular, if $c_\gamma\in \mathbb{C}$ with $\lvert c_\gamma\rvert=1$ is such that $\widehat{f}(\gamma)=c_\gamma\lvert \widehat{f}(\gamma)\rvert$, then
 \begin{align*}
 e^{\Re f(x)}
 &= \exp\left( \Re \sum_{\gamma\in\Gamma}\widehat{f}(\gamma)\gamma(x)\right)\\
 &=\prod_{\gamma\in \Gamma} \exp\left( \Re \widehat{f}(\gamma)\gamma(x)\right)\\
-&\leq \prod_{\gamma\in \Gamma}\left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma)\rvert)\right).
+&\le \prod_{\gamma\in \Gamma}\left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma)\rvert)\right).
 \end{align*}
 Therefore
-\[\mathbb{E}_x e^{\Re f(x)}\leq \mathbb{E}_x \prod_{\gamma\in \Gamma} \left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma)\rvert)\right).\]
+\[\E_x e^{\Re f(x)}\le \E_x \prod_{\gamma\in \Gamma} \left( \cosh(\lvert \widehat{f}(\gamma)\rvert)+\Re c_\gamma \gamma(x)\sinh(\lvert \widehat{f}(\gamma)\rvert)\right).\]
 Using $\Re z=(z+\overline{z})/2$ the product here can be expanded as the sum of
 \[\prod_{\gamma\in \Gamma_2}\frac{c_\gamma}{2}\prod_{\gamma\in \Gamma_3}\frac{\overline{c_\gamma}}{2}\left(\prod_{\gamma\in \Gamma_1}\cosh(\lvert \widehat{f}(\gamma)\rvert)\right)\left(\prod_{\gamma\in \Gamma_2\cup\Gamma_3}\sinh(\lvert \widehat{f}(\gamma)\rvert)\right)\left(\sum_{\gamma\in \Gamma_2}\gamma-\sum_{\lambda\in \Gamma_3}\lambda\right)(x)\]
 as $\Gamma_1\sqcup \Gamma_2\sqcup \Gamma_3=\Gamma$ ranges over all partitions of $\Gamma$ into three disjoint parts. Using the definition of dissociativity we see that
 \[\sum_{\gamma\in \Gamma_2}\gamma-\sum_{\lambda\in \Gamma_3}\lambda\neq 0\]
 unless $\Gamma_2=\Gamma_3=\emptyset$. In particular summing this term over all $x\in G$ gives $0$. Therefore the only term that survives averaging over $x$ is when $\Gamma_1=\Gamma$, and so
-\[\mathbb{E}_x e^{\Re f(x)}\leq \prod_{\gamma\in \Gamma} \cosh (\lvert \widehat{f}(\gamma)\rvert).\]
-The conclusion now follows using $\cosh(x) \leq e^{x^2/2}$ and $\sum_{\gamma\in \Gamma}\lvert \widehat{f}(\gamma)\rvert^2=\| f\|_2^2$. The second conclusion follows by applying it to $f(x)$ and $-f(x)$ and using
-\[e^{\abs{y}}\leq e^y+e^{-y}.\]
+\[\E_x e^{\Re f(x)}\le \prod_{\gamma\in \Gamma} \cosh (\lvert \widehat{f}(\gamma)\rvert).\]
+The conclusion now follows using $\cosh(x) \le e^{x^2/2}$ and $\sum_{\gamma\in \Gamma}\lvert \widehat{f}(\gamma)\rvert^2=\| f\|_2^2$. The second conclusion follows by applying it to $f(x)$ and $-f(x)$ and using
+\[e^{\abs{y}}\le e^y+e^{-y}.\]
 \end{proof}
 
 
@@ -105,26 +102,26 @@ Let $G$ be a finite abelian group and $A\subseteq G$. Let $m\geq 1$. We define
 \lean{general_hoelder}
 \leanok
 Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\nu:G\to \bbr_{\geq 0}$ be such that whenever $\abs{f}\neq 0$ we have $\nu \geq 1$. Let $\Delta\subseteq \Delta_\eta(f)$. Then, for any $m\geq 1$.
-\[\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\leq E_{2m}(\Delta;\nu).\]
+\[\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\le E_{2m}(\Delta;\nu).\]
 \end{lemma}
 
 \begin{proof}
 \leanok
 By definition of $\Delta_\eta(f)$ we know that
-\[\eta\norm{f}_1\abs{\Delta}\leq \sum_{\gamma\in\Delta} \lvert \widehat{f}(\gamma)\rvert.\]
+\[\eta\norm{f}_1\abs{\Delta}\le \sum_{\gamma\in\Delta} \lvert \widehat{f}(\gamma)\rvert.\]
 There exists some $c_\gamma\in\bbc$ with $\lvert c_\gamma\rvert=1$ for all $\gamma$ such that
 \[\lvert \widehat{f}(\gamma)\rvert=c_\gamma\widehat{f}(\gamma)=c_\gamma \sum_{x\in G}f(x)\overline{\gamma(x)}.\]
 Interchanging the sums, therefore,
 
-\[\eta\norm{f}_1\abs{\Delta}\leq \sum_{x\in G}f(x)\sum_{\gamma\in\Delta} c_\gamma \overline{\gamma(x)}.\]
+\[\eta\norm{f}_1\abs{\Delta}\le \sum_{x\in G}f(x)\sum_{\gamma\in\Delta} c_\gamma \overline{\gamma(x)}.\]
 By H\"{o}lder's inequality the right-hand side is at most
 \[\brac{\sum_x \abs{f(x)}}^{1-1/m}\brac{\sum_x \abs{f(x)}\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^m}^{1/m}.\]
 Taking $m$th powers, therefore, we have
-\[\eta^m\abs{\Delta}^m\norm{f}_1\leq \sum_{x}\abs{f(x)}\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^m.\]
-By assumption we can bound $\abs{f(x)}\leq \abs{f(x)}\nu(x)^{1/2}$, and therefore by the Cauchy-Schwarz inequality the right-hand side is bounded above by
+\[\eta^m\abs{\Delta}^m\norm{f}_1\le \sum_{x}\abs{f(x)}\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^m.\]
+By assumption we can bound $\abs{f(x)}\le \abs{f(x)}\nu(x)^{1/2}$, and therefore by the Cauchy-Schwarz inequality the right-hand side is bounded above by
 \[\norm{f}_2\brac{\sum_x \nu(x)\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^{2m}}^{1/2}.\]
 Squaring and simplifying, we deduce that
-\[\eta^{2m}\abs{\Delta}^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\leq \sum_x \nu(x)\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^{2m}.\]
+\[\eta^{2m}\abs{\Delta}^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\le \sum_x \nu(x)\abs{\sum_{\gamma\in\Delta}c_\gamma\overline{\gamma(x)}}^{2m}.\]
 Expanding out the power, the right-hand side is equal to
 \[\sum_x \nu(x)\sum_{\gamma_1,\ldots,\gamma_{2m}}c_{\gamma_1}\cdots \overline{c_{\gamma_{2m}}} (\overline{\gamma_1}\cdots \gamma_{2m})(x).\]
 Changing the order of summation this is equal to
@@ -140,7 +137,7 @@ The result follows by the triangle inequality.
 \lean{spec_hoelder}
 \leanok
 Let $G$ be a finite abelian group and $f:G\to\bbc$. Let $\Delta\subseteq \Delta_\eta(f)$. Then, for any $m\geq 1$.
-\[N^{-1}\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\leq E_{2m}(\Delta).\]
+\[N^{-1}\eta^{2m}\frac{\norm{f}_1^2}{\norm{f}_2^2}\abs{\Delta}^{2m}\le E_{2m}(\Delta).\]
 \end{lemma}
 
 \begin{proof}
@@ -170,7 +167,7 @@ Expand out definitions.
 \uses{dissociated, energy}
 \lean{AddDissociated.boringEnergy_le}
 \leanok
-If $A\subseteq G$ is dissociated then $E_{2m}(A) \leq (32e m \abs{A})^m$.
+If $A\subseteq G$ is dissociated then $E_{2m}(A) \le (32e m \abs{A})^m$.
 \end{lemma}
 \begin{proof}
 \uses{energy_alt, rudin}
@@ -192,13 +189,13 @@ By Lemma~\ref{energy_alt} and Lemma~\ref{rudin}
 \uses{dissociated}
 \lean{finset.diss_span}
 \leanok
-If $A\subseteq G$ contains no dissociated set with $\geq K+1$ elements then there is $A'\subseteq A$ of size $\abs{A'}\leq K$ such that
+If $A\subseteq G$ contains no dissociated set with $\geq K+1$ elements then there is $A'\subseteq A$ of size $\abs{A'}\le K$ such that
 \[A\subseteq \left\{ \sum_{a\in A'}c_aa : c_a\in \{-1,0,1\} \right\}.\]
 \end{lemma}
 
 \begin{proof}
 \leanok
-Let $A'\subseteq A$ be a maximal dissociated subset (this exists and is non-empty, since trivially any singleton is dissociated). We have $\abs{A'}\leq K$ by assumption.
+Let $A'\subseteq A$ be a maximal dissociated subset (this exists and is non-empty, since trivially any singleton is dissociated). We have $\abs{A'}\le K$ by assumption.
 
 Let $S$ be the span on the right-hand side. It is obvious that $A'\subseteq S$. Suppose that $x\in A\backslash A'$. Then $A'\cup\{x\}$ is not dissociated by maximality. Therefore there exists some $y\in G$ and two distinct sets $B,C\subseteq A'\cup \{x\}$ such that
 \[\sum_{b\in B}b = y = \sum_{c\in C} c.\]
@@ -216,7 +213,7 @@ which is in the span as required.
 \lean{chang}
 \leanok
 Let $G$ be a finite abelian group and $f:G\to \bbc$. Let $\eta >0$ and $\alpha=N^{-1}\norm{f}_1^2/\norm{f}_2^2$. There exists some $\Delta\subseteq \Delta_\eta(f)$ such that
-\[\abs{\Delta}\leq \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil \]
+\[\abs{\Delta}\le \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil \]
 and
 \[\Delta_\eta(f)\subseteq \left\{ \sum_{\gamma\in\Delta}c_\gamma \gamma : c_\gamma\in \{-1,0,1\} \right\}.\]
 \end{theorem}
@@ -227,11 +224,11 @@ and
 By Lemma~\ref{diss_span} it suffices to show that $\Delta_\eta(f)$ contains no dissociated set with at least
 \[K= \lceil e\mathcal{L}(\alpha)\eta^{-2}\rceil+1\]
 many elements. Suppose not, and let $\Delta\subseteq \Delta_\eta(f)$ be a dissociated set of size $K$. Then by Lemma~\ref{diss_energy} we have, for any $m\geq 1$,
-\[E_{2m}(\Delta)\leq m!K^m.\]
+\[E_{2m}(\Delta)\le m!K^m.\]
 On the other hand, by Lemma~\ref{spec_hoelder},
 
-\[\eta^{2m}\alpha K^{2m}\leq E_{2m}(\Delta).\]
+\[\eta^{2m}\alpha K^{2m}\le E_{2m}(\Delta).\]
 Rearranging these bounds, we have
-\[K^m \leq m! \alpha^{-1}\eta^{-2m}\leq m^m\alpha^{-1}\eta^{-2m}.\]
-Therefore $K\leq \alpha^{-1/m}m\eta^{-2}$. This is a contradiction to the choice of $K$ if we choose $m=\mathcal{L}(\alpha)$, since $\alpha^{-1/m}\leq e$.
+\[K^m \le m! \alpha^{-1}\eta^{-2m}\le m^m\alpha^{-1}\eta^{-2m}.\]
+Therefore $K\le \alpha^{-1/m}m\eta^{-2}$. This is a contradiction to the choice of $K$ if we choose $m=\mathcal{L}(\alpha)$, since $\alpha^{-1/m}\le e$.
 \end{proof}
