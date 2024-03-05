@@ -32,10 +32,6 @@ lemma AddDissociated.randomisation (c : AddChar α ℂ → ℝ) (d : AddChar α 
   simp only [map_mul, prod_div_distrib, prod_add, prod_const, ← expect_div, expect_sum_comm,
     div_eq_zero_iff, pow_eq_zero_iff', OfNat.ofNat_ne_zero, ne_eq, card_eq_zero, compl_eq_empty_iff,
     false_and, or_false]
-  rw [← expect_div]
-  simp only [map_mul, prod_div_distrib, prod_add, prod_const, ← expect_div, expect_sum_comm,
-    div_eq_zero_iff, pow_eq_zero_iff', OfNat.ofNat_ne_zero, ne_eq, card_eq_zero, compl_eq_empty_iff,
-    false_and, or_false]
   refine sum_eq_zero fun u _ ↦ ?_
   calc
     𝔼 a, (∏ ψ ∈ u, d ψ * ψ a) * ∏ ψ ∈ t \ u, conj (d ψ) * conj (ψ a)

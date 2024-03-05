@@ -1,5 +1,4 @@
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
-import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
 
@@ -112,8 +111,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
       positivity
     refine ⟨(lt_of_mul_lt_mul_left (hs.trans_eq' ?_) $ hg s).le, this.trans $ mul_le_of_le_one_right
       ?_ $ div_le_one_of_le ?_ ?_, this.trans $ mul_le_of_le_one_left ?_ $ div_le_one_of_le ?_ ?_⟩
-    · simp_rw [←card_smul_mu, smul_dconv, dconv_smul, l2Inner_smul_left, star_trivial, nsmul_eq_mul,
-         mul_assoc]
+    · simp_rw [A₁, A₂, g, ←card_smul_mu, smul_dconv, dconv_smul, l2Inner_smul_left, star_trivial, nsmul_eq_mul,
+        mul_assoc]
     any_goals positivity
     all_goals exact Nat.cast_le.2 $ card_mono $ inter_subset_left _ _
   rw [←sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ←sum_mul, mul_right_comm, ←hgB, mul_left_comm,

@@ -1,5 +1,5 @@
 import Mathlib.Algebra.Order.Chebyshev
-import LeanAPAP.Mathlib.Analysis.MeanInequalities
+import Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.LargeSpec
@@ -39,8 +39,8 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       _ ≤ ‖∑ x, f x * ∑ γ in Δ, c γ * conj (γ x)‖ := ?_
       _ ≤ ∑ x, ‖f x * ∑ γ in Δ, c γ * conj (γ x)‖ := (norm_sum_le _ _)
       _ = ∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ := by simp_rw [norm_mul]
-      _ ≤ _ :=
-          inner_le_weight_mul_Lp_of_nonneg _ m ?_ _ _ (fun _ ↦ norm_nonneg _) fun _ ↦ norm_nonneg _
+      _ ≤ _ := inner_le_weight_mul_Lp_of_nonneg _ (p := m) ?_ _ _ (fun _ ↦ norm_nonneg _)
+            fun _ ↦ norm_nonneg _
       _ = ‖f‖_[1] ^ (1 - (m : ℝ)⁻¹) * (∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ (m⁻¹ : ℝ) :=
         by push_cast; simp_rw [l1Norm_eq_sum, rpow_nat_cast]
   rotate_left

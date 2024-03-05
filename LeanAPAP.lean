@@ -7,13 +7,11 @@ import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
 import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
-import LeanAPAP.Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
 import LeanAPAP.Mathlib.Data.Finset.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.NNRat.Defs
-import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Mathlib.Tactic.Positivity

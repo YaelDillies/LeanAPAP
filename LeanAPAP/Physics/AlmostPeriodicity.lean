@@ -195,7 +195,7 @@ lemma just_the_triangle_inequality {t : G} {a : Fin k → G} (ha : a ∈ l k m �
     rw [l, Finset.mem_filter, LProp] at ha'
     refine' ha'.2.trans_eq' _
     congr with i : 1
-    simp [sub_sub]
+    simp [sub_sub, f₂]
   have h₃ : f₂ = τ t f₁ := by
     ext i : 1
     rw [translate_apply]
@@ -383,7 +383,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
   norm_cast at hT
   set M : ℕ := 2 * ⌈m⌉₊
   have hM₀ : (M : ℝ≥0) ≠ 0 := by positivity
-  have hM₁ : 1 < (M : ℝ≥0) := by norm_cast; simp [← Nat.succ_le_iff]; linarith
+  have hM₁ : 1 < (M : ℝ≥0) := by norm_cast; simp [← Nat.succ_le_iff, M]; linarith
   have hM : (M : ℝ≥0).IsConjExponent _ := .conjExponent hM₁
   refine ⟨T, ?_, fun t ht ↦ ?_⟩
   · calc
@@ -402,7 +402,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
   have (x) :=
     calc
       (τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℂ) x
-        = (F ∗ μ C) x := by simp [sub_conv]
+        = (F ∗ μ C) x := by simp [sub_conv, F]
       _ = ∑ y, F y * μ C (x - y) := conv_eq_sum_sub' ..
       _ = ∑ y, F y * μ (x +ᵥ -C) y := by simp [neg_add_eq_sub]
   rw [linftyNorm_eq_ciSup]

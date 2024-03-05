@@ -34,7 +34,7 @@ lemma zmodAuxAux_apply (n : ℕ) (z : ℤ) : zmodAuxAux n z = Additive.ofMul (e 
 /-- The character sending `k : ZMod n` to `e ^ (2 * π * i * k / n)`. -/
 private def zmodAux (n : ℕ) : AddChar (ZMod n) circle :=
   AddChar.toMonoidHom'.symm $ AddMonoidHom.toMultiplicative'' $ ZMod.lift n ⟨zmodAuxAux n, by
-    obtain hn | hn := eq_or_ne (n : ℝ) 0 <;> simp [hn, zmodAuxAux]; rw [div_self hn]; simp⟩
+    obtain hn | hn := eq_or_ne (n : ℝ) 0 <;> simp [hn, zmodAuxAux]⟩
 
 --TODO: Heavily generalise. Yaël's attempts at generalising failed :(
 @[simp] lemma aux (n : ℕ) (h) :
@@ -165,7 +165,7 @@ lemma exists_apply_ne_zero : (∃ ψ : AddChar α ℂ, ψ a ≠ 1) ↔ a ≠ 0 :
   have h₀ := congr_fun ((complexBasis α).sum_repr f) 0
   have h₁ := congr_fun ((complexBasis α).sum_repr f) a
   simp only [complexBasis_apply, Fintype.sum_apply, Pi.smul_apply, h, smul_eq_mul, mul_one,
-    map_zero_one, if_pos rfl, if_neg ha] at h₀ h₁
+    map_zero_one, if_pos rfl, if_neg ha, f] at h₀ h₁
   exact one_ne_zero (h₁.symm.trans h₀)
 
 lemma forall_apply_eq_zero : (∀ ψ : AddChar α ℂ, ψ a = 1) ↔ a = 0 := by

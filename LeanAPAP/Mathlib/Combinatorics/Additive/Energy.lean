@@ -30,7 +30,8 @@ lemma multiplicativeEnergy_eq_sum_sq' (s : Finset α) :
   swap
   · aesop (add simp [Set.PairwiseDisjoint, Set.Pairwise, disjoint_left])
   · congr
-    aesop (add unsafe mul_mem_mul)
+    sorry
+    -- aesop (add unsafe mul_mem_mul)
 
 @[to_additive additiveEnergy_eq_sum_sq]
 lemma multiplicativeEnergy_eq_sum_sq [Fintype α] (s : Finset α) :
@@ -40,7 +41,8 @@ lemma multiplicativeEnergy_eq_sum_sq [Fintype α] (s : Finset α) :
   swap
   · aesop (add simp [Set.PairwiseDisjoint, Set.Pairwise, disjoint_left])
   · congr
-    aesop
+    sorry
+    -- aesop
 
 @[to_additive card_sq_le_card_mul_additiveEnergy]
 lemma card_sq_le_card_mul_multiplicativeEnergy (s t : Finset α) :

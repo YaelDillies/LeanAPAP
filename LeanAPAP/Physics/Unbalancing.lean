@@ -1,7 +1,6 @@
 import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
-import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
 
@@ -109,9 +108,9 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ = (3 / 4) ^ p * ε ^ p * ∑ i in P \ T, (ν i : ℝ) := by rw [←sum_mul, mul_comm, mul_pow]
       _ ≤ 4⁻¹ * ε ^ p * ∑ i, (ν i : ℝ) := ?_
       _ = 4⁻¹ * ε ^ p := by rw [hν₁, mul_one]
-    · simp only [mem_sdiff, mem_filter, mem_univ, true_and_iff, not_le] at hi
+    · simp only [mem_sdiff, mem_filter, mem_univ, true_and_iff, not_le, P, T] at hi
       exact mul_le_mul_of_nonneg_left (pow_le_pow_left hi.1 hi.2.le _) (by positivity)
-    · refine mul_le_mul (mul_le_mul_of_nonneg_right (le_trans (pow_le_pow_of_le_one ?_ ?_ hp) ?_) $
+    · refine mul_le_mul (mul_le_mul_of_nonneg_right (le_trans (pow_le_pow_of_le_one ?_ ?_ hp) ?_)
         ?_) (sum_le_univ_sum_of_nonneg fun i ↦ ?_) ?_ ?_ <;>
         first
         | positivity
@@ -181,7 +180,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
         rpow_le_rpow ?_ (sum_le_sum_of_subset_of_nonneg (subset_univ _) fun i _ _ ↦ ?_) ?_
     _ = _ := by
         rw [wlpNorm_eq_sum (NNReal.coe_ne_zero.1 _)]
-        simp [NNReal.smul_def, hp'.ne']
+        simp [NNReal.smul_def, hp'.ne', p']
         dsimp
         positivity
   all_goals positivity

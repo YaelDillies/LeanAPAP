@@ -201,8 +201,8 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
     ←filter_mem_eq_inter]
   refine Nat.cast_le.2 <| card_le_card ?_
   rintro ⟨a, b⟩
-  simp (config := { contextual := True }) only [not_le, mem_product, mem_inter, and_imp,
-    Prod.forall, not_lt, mem_filter, H_choice, filter_congr_decidable, and_self, true_and]
+  simp (config := { contextual := true }) only [not_le, mem_product, mem_inter, and_imp,
+    Prod.forall, not_lt, mem_filter, H_choice, filter_congr_decidable, and_self, true_and, X]
   rintro _ _ _ _ h
   -- I'd like automation to handle the rest of this
   refine h.le.trans ?_
