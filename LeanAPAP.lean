@@ -3,9 +3,6 @@ import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
-import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Group.Abs
-import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Combinatorics.Additive.Energy

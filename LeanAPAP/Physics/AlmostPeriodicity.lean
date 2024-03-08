@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund

@@ -1,6 +1,5 @@
 import Mathlib.Algebra.Order.Module.Defs
 import Mathlib.Tactic.Positivity.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Prereqs.NNRat.Algebra
 
 namespace NNRat

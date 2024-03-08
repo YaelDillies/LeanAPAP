@@ -1,6 +1,5 @@
+import Mathlib.Algebra.Order.Group.PosPart
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Group.PosPart
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
 
@@ -70,10 +69,10 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
     calc
       2 ≤ 24 / 1 * 0.6931471803 := by norm_num
       _ ≤ 24 / ε * log (3 / ε) :=
-        mul_le_mul (div_le_div_of_le_left (by norm_num) hε₀ hε₁)
+        mul_le_mul (div_le_div_of_nonneg_left (by norm_num) hε₀ hε₁)
           (log_two_gt_d9.le.trans
             (log_le_log zero_lt_two $
-              (div_le_div_of_le_left (by norm_num) hε₀ hε₁).trans' $ by norm_num))
+              (div_le_div_of_nonneg_left (by norm_num) hε₀ hε₁).trans' $ by norm_num))
           (by norm_num) ?_
     all_goals positivity
   have : ε ^ p ≤ 2 * ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * (f⁺) i) := by
@@ -159,7 +158,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       all_goals positivity
     any_goals positivity
     calc
-      _ ≤ (1 / 3 : ℝ) ^ p := pow_le_pow_left ?_ (div_le_div_of_le ?_ hε₁) _
+      _ ≤ (1 / 3 : ℝ) ^ p := pow_le_pow_left ?_ (div_le_div_of_nonneg_right hε₁ ?_) _
       _ ≤ (1 / 3) ^ 5 := pow_le_pow_of_le_one ?_ ?_ hp
       _ ≤ _ := ?_
     any_goals positivity

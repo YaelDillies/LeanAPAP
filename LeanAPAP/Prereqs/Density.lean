@@ -1,6 +1,6 @@
+import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.Positivity.Basic
 import Mathlib.Tactic.Positivity.Finset
-import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Density of a finite set
@@ -9,7 +9,7 @@ This defines the density of a `Finset` and provides induction principles for fin
 
 ## Main declarations
 
-* `Finsedens t`: `dens s : ℕ` returns the density of `s : Finset α`.
+* `Finset.dens t`: `dens s : ℕ` returns the density of `s : Finset α`.
 
 ## Notation
 
@@ -19,7 +19,7 @@ If you need to specify the field the density is valued in, `dens[𝕜] s` is not
 
 open Function Multiset Nat
 
-variable {𝕜 α β : Type*}[Fintype α]
+variable {𝕜 α β : Type*} [Fintype α]
 
 namespace Finset
 section Semifield

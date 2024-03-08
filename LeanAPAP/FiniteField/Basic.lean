@@ -28,7 +28,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
   have hp'' : (p : ℝ≥0).IsConjExponent _ := .conjExponent $ mod_cast hp
   rw [mul_comm, ← div_div, div_le_iff (zero_lt_two' ℝ)]
   calc
-    _ ≤ _ := div_le_div_of_le (card G).cast_nonneg hAC
+    _ ≤ _ := div_le_div_of_nonneg_right hAC (card G).cast_nonneg
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
     _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[NNReal.conjExponent p] :=
         abs_l2Inner_le_lpNorm_mul_lpNorm hp'' _ _
