@@ -33,11 +33,10 @@ lemma exp_eq_one : expMapCircle r = 1 ↔ ∃ n : ℤ, r = n * (2 * π) := by
   simp [Subtype.ext_iff, Complex.exp_eq_one_iff, ←mul_assoc, Complex.I_ne_zero, ←
     Complex.ofReal_inj]
 
-noncomputable def e : AddChar ℝ circle :=
-  AddChar.toMonoidHom'.symm
-    { toFun := fun r ↦ expMapCircle (2 * π * (toAdd r))
-      map_one' := by simp
-      map_mul' := by simp [mul_add, Complex.exp_add] }
+noncomputable def e : AddChar ℝ circle where
+  toFun r := expMapCircle (2 * π * r)
+  map_zero_one' := by simp
+  map_add_mul' := by simp [mul_add, Complex.exp_add]
 
 lemma e_apply (r : ℝ) : e r = expMapCircle (2 * π * r) := rfl
 

@@ -25,8 +25,9 @@ private lemma step_one (hA : A.Nonempty) (f : G → ℝ) (a : Fin n → G)
     _ ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ (m + 1) := by gcongr; exact IsAbsoluteValue.abv_sum _ _ _
     _ = (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ m / (A^^n).card := by
       rw [div_div, ←_root_.pow_succ']
-    _ ≤ _ := by simpa using div_le_div_of_le (by positivity)
-                  (Real.pow_sum_div_card_le_sum_pow (A^^n) m fun i _ ↦ by positivity)
+    _ ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))| ^ (m + 1)) / (A^^n).card := by
+      gcongr; exact pow_sum_div_card_le_sum_pow _ _ fun _ _ ↦ abs_nonneg _
+    _ = _ := by simp
 
 private lemma step_one' (hA : A.Nonempty) (f : G → ℝ) (hf : ∀ i : Fin n, ∑ a in A^^n, f (a i) = 0)
     (a : Fin n → G) :
@@ -163,13 +164,10 @@ private lemma end_step {f : G → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
             ∑ k : Fin n → ℕ in cut univ m,
               (multinomial univ fun i ↦ 2 * k i : ℝ) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) /
           A.card ^ n
-      ≤ (∑ a in A^^n, ∑ b in A^^n, m ^ m *
-          2 ^ m * (∑ i : Fin n, (f (a i) ^ 2 + f (b i) ^ 2)) ^ m : ℝ) / A.card ^ n :=
-        div_le_div_of_le (by positivity) $ sum_le_sum fun a _ ↦ sum_le_sum fun b _ ↦
-          step_six.trans step_seven
     _ ≤ (∑ a in A^^n, ∑ b in A^^n, m ^ m * 2 ^ (m + (m - 1)) *
-          ((∑ i : Fin n, f (a i) ^ 2) ^ m + (∑ i : Fin n, f (b i) ^ 2) ^ m) : ℝ) / A.card ^ n :=
-        div_le_div_of_le (by positivity) $ sum_le_sum fun a _ ↦ sum_le_sum fun b _ ↦ step_eight
+          ((∑ i : Fin n, f (a i) ^ 2) ^ m + (∑ i : Fin n, f (b i) ^ 2) ^ m) : ℝ) / A.card ^ n := by
+        gcongr
+        exact step_six.trans $ step_seven.trans step_eight
     _ = _ := by
       simp only [mul_add, sum_add_distrib, sum_const, nsmul_eq_mul, ←mul_sum]
       rw [←mul_add, ←two_mul, ←mul_assoc 2, ←mul_assoc 2, mul_right_comm 2, ←_root_.pow_succ,

@@ -33,7 +33,7 @@ lemma zmodAuxAux_apply (n : ℕ) (z : ℤ) : zmodAuxAux n z = Additive.ofMul (e 
 
 /-- The character sending `k : ZMod n` to `e ^ (2 * π * i * k / n)`. -/
 private def zmodAux (n : ℕ) : AddChar (ZMod n) circle :=
-  AddChar.toMonoidHom'.symm $ AddMonoidHom.toMultiplicative'' $ ZMod.lift n ⟨zmodAuxAux n, by
+  AddChar.toAddMonoidHomEquiv'.symm $ ZMod.lift n ⟨zmodAuxAux n, by
     obtain hn | hn := eq_or_ne (n : ℝ) 0 <;> simp [hn, zmodAuxAux]⟩
 
 --TODO: Heavily generalise. Yaël's attempts at generalising failed :(
@@ -71,7 +71,7 @@ def zmod (n : ℕ) (x : ZMod n) : AddChar (ZMod n) circle :=
 @[simp] lemma zmod_add (n : ℕ) : ∀ x y : ZMod n, zmod n (x + y) = zmod n x * zmod n y := by
   simp only [DFunLike.ext_iff, ZMod.int_cast_surjective.forall, ←Int.cast_add, AddChar.mul_apply,
     zmod_apply]
-  simp [add_mul, add_div]
+  simp [add_mul, add_div, map_add_mul]
 
 -- probably an evil lemma
 -- @[simp] lemma zmod_apply (n : ℕ) (x y : ZMod n) : zmod n x y = e (x * y / n) :=
@@ -89,11 +89,10 @@ lemma zmod_injective (hn : n ≠ 0) : Injective (zmod n) := by
 @[simp] lemma zmod_inj (hn : n ≠ 0) {x y : ZMod n} : zmod n x = zmod n y ↔ x = y :=
   (zmod_injective hn).eq_iff
 
-def zmodHom (n : ℕ) : AddChar (ZMod n) (AddChar (ZMod n) circle) :=
-  toMonoidHom'.symm
-    { toFun := fun x ↦ toMonoidHom'.symm (zmod n $ toAdd x)
-      map_one' := by simp; rfl
-      map_mul' := by simp; rintro x y; rfl }
+def zmodHom (n : ℕ) : AddChar (ZMod n) (AddChar (ZMod n) circle) where
+  toFun := zmod n
+  map_zero_one' := by simp
+  map_add_mul' := by simp
 
 def mkZModAux {ι : Type} [DecidableEq ι] (n : ι → ℕ) (u : ∀ i, ZMod (n i)) :
     AddChar (⨁ i, ZMod (n i)) circle :=
@@ -106,13 +105,13 @@ lemma mkZModAux_injective {ι : Type} [DecidableEq ι] {n : ι → ℕ} (hn : �
 /-- The circle-valued characters of a finite abelian group are the same as its complex-valued
 characters. -/
 def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
-  toFun ψ := circle.subtype.comp $ toMonoidHom' ψ
-  invFun ψ := toMonoidHom'.symm
-    { toFun := fun a ↦ (⟨ψ (toAdd a), mem_circle_iff_abs.2 $ ψ.norm_apply _⟩ : circle)
-      map_one' := by simp
-      map_mul' := fun a b ↦ by ext : 1; simp }
-  left_inv ψ := by ext : 1; simp; rfl
-  right_inv ψ := by ext : 1; simp; rfl
+  toFun ψ := toMonoidHomEquiv'.symm $ circle.subtype.comp ψ.toMonoidHom
+  invFun ψ :=
+    { toFun := fun a ↦ (⟨ψ a, mem_circle_iff_abs.2 $ ψ.norm_apply _⟩ : circle)
+      map_zero_one' := by simp
+      map_add_mul' := fun a b ↦ by ext : 1; simp [map_add_mul] }
+  left_inv ψ := by ext : 1; simp
+  right_inv ψ := by ext : 1; simp
   map_add' ψ χ := rfl
 
 @[simp] lemma card_eq [Fintype α] : card (AddChar α ℂ) = card α := by
@@ -121,7 +120,7 @@ def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
   classical
   have hn' : ∀ i, n i ≠ 0 := fun i ↦ by have := hn i; positivity
   let f : α → AddChar α ℂ := fun a ↦
-    circle.subtype.comp ((mkZModAux n $ e $ Additive.ofMul a).compAddMonoidHom e)
+    circle.subtype.compAddChar ((mkZModAux n $ e a).compAddMonoidHom e)
   have hf : Injective f := circleEquivComplex.injective.comp
     ((compAddMonoidHom_injective_left _ e.surjective).comp $ (mkZModAux_injective hn').comp $
       DFunLike.coe_injective.comp $ e.injective.comp Additive.ofMul.injective)
