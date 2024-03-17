@@ -9,7 +9,6 @@ Rename
 * `map_add_mul` → `map_add_eq_mul`
 * `map_zero_one` → `map_zero_eq_one`
 * `map_nsmul_pow` → `map_nsmul_eq_pow`
-* `coe_toFun_apply` → whatever is better, maybe change to `ψ.toMonoidNom a = ψ (of_mul a)`.
 -/
 
 open Finset hiding card

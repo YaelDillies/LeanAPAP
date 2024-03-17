@@ -55,7 +55,10 @@ namespace Fintype
 variable {α β : Type*} [Fintype α]
 
 section CommMonoid
-variable [CommMonoid β] (a : β)
+variable [CommMonoid β] {s : Finset α} {f : α → β} (a : β)
+
+@[to_additive] lemma prod_subset (h : ∀ i, f i ≠ 1 → i ∈ s) : ∏ i in s, f i = ∏ i, f i :=
+  Finset.prod_subset s.subset_univ $ by simpa [not_imp_comm (a := _ ∈ s)]
 
 @[to_additive]
 lemma prod_ite_exists (p : α → Prop) [DecidablePred p] (h : ∀ i j, p i → p j → i = j) (a : β) :
