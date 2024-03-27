@@ -172,13 +172,13 @@ lemma test_case {E A B : ℕ} {K : ℝ} (hK : 0 < K) (hE : K⁻¹ * (A ^ 2 * B) 
 lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
   (hE : K⁻¹ * (A.card ^ 2 * B.card) ≤ additiveEnergy A B)
   (hA : (0 : ℝ) < card A) (hB : (0 : ℝ) < card B) :
-    ∃ X ⊆ A, A.card / (Real.sqrt 2 * K) ≤ X.card ∧
+    ∃ s : G, ∃ X ⊆ A ∩ (s +ᵥ B), A.card / (Real.sqrt 2 * K) ≤ X.card ∧
       (1 - c) * X.card ^ 2 ≤
         ((X ×ˢ X).filter
           (fun ⟨a, b⟩ ↦ c / 2 * (K ^ 2)⁻¹ * A.card ≤ (𝟭 B ○ 𝟭 B) (a - b))).card := by
   obtain ⟨s, hs⟩ := claim_eight c hc.le hA hB
   set X := A ∩ (s +ᵥ B)
-  refine ⟨X, inter_subset_left _ _, ?_, ?_⟩
+  refine ⟨s, X, subset_rfl, ?_, ?_⟩
   · have : (2 : ℝ)⁻¹ * (additiveEnergy A B / (card A * card B)) ^ 2 ≤ (card X) ^ 2 := by
       refine le_of_mul_le_mul_left ?_ hc
       exact ((le_add_of_nonneg_right (Nat.cast_nonneg _)).trans hs).trans_eq' (by ring)
@@ -217,12 +217,12 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
 lemma lemma_one' {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
     (hE : K⁻¹ * (A.card ^ 2 * B.card) ≤ additiveEnergy A B)
     (hA : (0 : ℝ) < card A) (hB : (0 : ℝ) < card B) :
-    ∃ X ⊆ A, A.card / (2 * K) ≤ X.card ∧
+    ∃ s : G, ∃ X ⊆ A ∩ (s +ᵥ B), A.card / (2 * K) ≤ X.card ∧
       (1 - c) * X.card ^ 2 ≤
         ((X ×ˢ X).filter
           (fun ⟨a, b⟩ ↦ c / 2 * (K ^ 2)⁻¹ * A.card ≤ (𝟭 B ○ 𝟭 B) (a - b))).card := by
-  obtain ⟨X, hX₁, hX₂, hX₃⟩ := lemma_one hc hK hE hA hB
-  refine ⟨X, hX₁, hX₂.trans' ?_, hX₃⟩
+  obtain ⟨s, X, hX₁, hX₂, hX₃⟩ := lemma_one hc hK hE hA hB
+  refine ⟨s, X, hX₁, hX₂.trans' ?_, hX₃⟩
   gcongr _ / (?_ * _)
   rw [Real.sqrt_le_iff]
   norm_num
@@ -401,13 +401,13 @@ lemma big_quadruple_bound {K : ℝ}
 
 theorem BSG_aux {K : ℝ} (hK : 0 < K) (hA : (0 : ℝ) < A.card) (hB : (0 : ℝ) < B.card)
     (hAB : K⁻¹ * (A.card ^ 2 * B.card) ≤ additiveEnergy A B) :
-    ∃ A' ⊆ A, (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ A'.card ∧
+    ∃ s : G, ∃ A' ⊆ A ∩ (s +ᵥ B), (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ A'.card ∧
     (A' - A').card ≤ 2 ^ 10 * K ^ 5 * B.card ^ 4 / A.card ^ 3 := by
-  obtain ⟨X, hX₁, hX₂, hX₃⟩ := lemma_one' (c := 1 / 8) (by norm_num) hK hAB hA hB
+  obtain ⟨s, X, hX₁, hX₂, hX₃⟩ := lemma_one' (c := 1 / 8) (by norm_num) hK hAB hA hB
   set H : Finset (G × G) := (X ×ˢ X).filter
     fun ⟨a, b⟩ ↦ (1 / 8 : ℝ) / 2 * (K ^ 2)⁻¹ * A.card ≤ (𝟭 B ○ 𝟭 B) (a - b)
   have : (0 : ℝ) < X.card := hX₂.trans_lt' (by positivity)
-  refine ⟨oneOfPair H X, (filter_subset _ _).trans hX₁, ?_, ?_⟩
+  refine ⟨s, oneOfPair H X, (filter_subset _ _).trans hX₁, ?_, ?_⟩
   · rw [←mul_inv, inv_mul_eq_div]
     exact oneOfPair_bound (filter_subset _ _) this (hX₃.trans_eq' (by norm_num)) hX₂
   have := big_quadruple_bound (H := H) (fun x hx ↦ (mem_filter.1 hx).2) (filter_subset _ _) hX₂
@@ -422,7 +422,28 @@ theorem BSG {K : ℝ} (hK : 0 ≤ K) (hB : B.Nonempty) (hAB : K⁻¹ * (A.card ^
   · exact ⟨∅, by simp⟩
   obtain rfl | hK := eq_or_lt_of_le hK
   · exact ⟨∅, by simp⟩
-  · exact BSG_aux hK (by simpa [card_pos]) (by simpa [card_pos]) hAB
+  · obtain ⟨s, A', hA, h⟩ := BSG_aux hK (by simpa [card_pos]) (by simpa [card_pos]) hAB
+    exact ⟨A', hA.trans (inter_subset_left ..), h⟩
+
+theorem BSG₂ {K : ℝ} (hK : 0 ≤ K) (hB : B.Nonempty) (hAB : K⁻¹ * (A.card ^ 2 * B.card) ≤ E[A, B]) :
+    ∃ A' ⊆ A, ∃ B' ⊆ B, (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ A'.card ∧
+    (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ B'.card ∧
+      (A' - B').card ≤ 2 ^ 10 * K ^ 5 * B.card ^ 4 / A.card ^ 3 := by
+  obtain rfl | hA := A.eq_empty_or_nonempty
+  · exact ⟨∅, by simp, ∅, by simp⟩
+  obtain rfl | hK := eq_or_lt_of_le hK
+  · exact ⟨∅, by simp, ∅, by simp⟩
+  · obtain ⟨s, A', hA, h⟩ := BSG_aux hK (by simpa [card_pos]) (by simpa [card_pos]) hAB
+    refine ⟨A', hA.trans (inter_subset_left ..), -s +ᵥ A' ,?_, ?_⟩
+    calc
+      -s +ᵥ A' ⊆ -s +ᵥ (A ∩ (s +ᵥ B)) := vadd_finset_subset_vadd_finset hA
+      _ ⊆ -s +ᵥ (s +ᵥ B) := vadd_finset_subset_vadd_finset (inter_subset_right ..)
+      _ = B := neg_vadd_vadd ..
+    refine ⟨h.1, (card_vadd_finset (-s) A') ▸ h.1, ?_⟩
+    convert h.2 using 2
+    simp only [sub_eq_add_neg, neg_vadd_finset_distrib, neg_neg]
+    rw [add_vadd_comm]
+    apply card_vadd_finset
 
 theorem BSG_self {K : ℝ} (hK : 0 ≤ K) (hA : A.Nonempty) (hAK : K⁻¹ * A.card ^ 3 ≤ E[A]) :
     ∃ A' ⊆ A, (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ A'.card ∧
