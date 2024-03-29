@@ -1,5 +1,5 @@
 import Mathlib.Algebra.BigOperators.Ring
-import Mathlib.Data.IsROrC.Basic
+import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
@@ -482,8 +482,8 @@ lemma expect_eq_zero_iff_of_nonpos [Nonempty ι] (hf : f ≤ 0) : 𝔼 i, f i = 
 end OrderedAddCommMonoid
 end Fintype
 
-namespace IsROrC
-variable [IsROrC α] [Fintype ι] (f : ι → ℝ) (a : ι)
+namespace RCLike
+variable [RCLike α] [Fintype ι] (f : ι → ℝ) (a : ι)
 
 @[simp, norm_cast]
 lemma coe_balance : (↑(balance f a) : α) = balance ((↑) ∘ f) a := map_balance (algebraMap ℝ α) _ _
@@ -491,7 +491,7 @@ lemma coe_balance : (↑(balance f a) : α) = balance ((↑) ∘ f) a := map_bal
 @[simp] lemma coe_comp_balance : ((↑) : ℝ → α) ∘ balance f = balance ((↑) ∘ f) :=
   funext $ coe_balance _
 
-end IsROrC
+end RCLike
 
 open Finset
 

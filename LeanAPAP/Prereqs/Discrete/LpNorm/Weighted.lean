@@ -127,7 +127,7 @@ variable [∀ i, NormedSpace ℝ (α i)]
 
 lemma wlpNorm_nsmul (hp : 1 ≤ p) (n : ℕ) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖n • f‖_[p, w] = n • ‖f‖_[p, w] := by
-  rw [nsmul_eq_smul_cast ℝ, wlpNorm_smul hp, IsROrC.norm_natCast, nsmul_eq_mul]
+  rw [nsmul_eq_smul_cast ℝ, wlpNorm_smul hp, RCLike.norm_natCast, nsmul_eq_mul]
 
 end one_le
 
@@ -155,10 +155,10 @@ variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0} {w : α �
   (lpNorm_translate a fun i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖ : _)
 
 @[simp]
-lemma wlpNorm_conj [IsROrC β] (f : α → β) : ‖conj f‖_[p, w] = ‖f‖_[p, w] := by simp [wlpNorm]
+lemma wlpNorm_conj [RCLike β] (f : α → β) : ‖conj f‖_[p, w] = ‖f‖_[p, w] := by simp [wlpNorm]
 
 @[simp]
-lemma wlpNorm_conjneg [IsROrC β] (f : α → β) : ‖conjneg f‖_[p] = ‖f‖_[p] := by simp [wlpNorm]
+lemma wlpNorm_conjneg [RCLike β] (f : α → β) : ‖conjneg f‖_[p] = ‖f‖_[p] := by simp [wlpNorm]
 
 end wlpNorm
 

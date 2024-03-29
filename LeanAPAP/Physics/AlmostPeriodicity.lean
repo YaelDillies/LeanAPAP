@@ -123,7 +123,7 @@ lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m)  (hk : (64 : ℝ) * m / ε ^ 2 �
     mul_right_comm _ (A.card ^ k : ℝ), mul_right_comm _ (A.card ^ k : ℝ),
     mul_right_comm _ (A.card ^ k : ℝ)]
   gcongr ?_ * _ * _
-  rw [mul_assoc (_ ^ m : ℝ), ←pow_succ', Nat.sub_add_cancel hm, pow_mul, pow_mul, ← mul_pow,
+  rw [mul_assoc (_ ^ m : ℝ), ←pow_succ, Nat.sub_add_cancel hm, pow_mul, pow_mul, ← mul_pow,
     ← mul_pow]
   have : (1 / 2 : ℝ) ^ m ≤ 1 / 2 := by
     have :=
@@ -314,7 +314,7 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
   rw [Nat.cast_mul, ←mul_assoc, ←mul_assoc, Nat.cast_pow]
   refine' mul_le_mul_of_nonneg_right _ (Nat.cast_nonneg _)
   refine' (mul_le_mul_of_nonneg_left (pow_le_pow_left (Nat.cast_nonneg _) h₃ k) hK.le).trans _
-  rw [mul_pow, ←mul_assoc, ←pow_succ]
+  rw [mul_pow, ←mul_assoc, ←pow_succ']
   refine' mul_le_mul_of_nonneg_right _ (pow_nonneg (Nat.cast_nonneg _) _)
   rw [←Real.rpow_nat_cast]
   refine' Real.rpow_le_rpow_of_exponent_le (one_le_two.trans hK') _
@@ -364,7 +364,7 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
   intro t ht
   simp only [exists_prop, exists_eq_right, mem_filter, mem_univ, true_and_iff] at ht
   have := just_the_triangle_inequality ha ht hk.bot_lt hm
-  rwa [neg_neg, mul_div_cancel' _ (two_ne_zero' ℝ)] at this
+  rwa [neg_neg, mul_div_cancel₀ _ (two_ne_zero' ℝ)] at this
 
 theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hK₂ : 2 ≤ K)
     (hK : (A + S).card ≤ K * A.card) (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
@@ -456,6 +456,6 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
     ‖τ (∑ i, x i) F - F‖_[⊤]
     _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := lpNorm_translate_sum_sub_le le_top _ _ _
     _ ≤ ∑ _i, ε / k := sum_le_sum fun i _ ↦ hT _ $ Fintype.mem_piFinset.1 hx _
-    _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel']; positivity
+    _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel₀]; positivity
 
 end AlmostPeriodicity

@@ -283,13 +283,13 @@ variable [StarRing β]
 
 end Semifield
 
-namespace IsROrC
-variable {𝕜 : Type*} [IsROrC 𝕜] [Fintype α] (s : Finset α) (a : α)
+namespace RCLike
+variable {𝕜 : Type*} [RCLike 𝕜] [Fintype α] (s : Finset α) (a : α)
 
 @[simp, norm_cast] lemma coe_mu : ↑(μ_[ℝ] s a) = μ_[𝕜] s a := map_mu (algebraMap ℝ 𝕜) _ _
 @[simp] lemma coe_comp_mu : (↑) ∘ μ_[ℝ] s = μ_[𝕜] s := funext $ coe_mu _
 
-end IsROrC
+end RCLike
 
 namespace NNReal
 open scoped NNReal

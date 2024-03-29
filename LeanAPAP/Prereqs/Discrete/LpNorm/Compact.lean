@@ -137,12 +137,12 @@ lemma nlpNorm_const [Nonempty ι] (hp : p ≠ 0) (a : α) : ‖const ι a‖ₙ_
   obtain _ | p := p
   · simp [nlinftyNorm_eq_ciSup]
   have : (card ι : ℝ) ^ (p : ℝ)⁻¹ ≠ 0 := by positivity
-  simp [nlpNorm, ENNReal.coe_ne_coe.1 hp, mul_div_cancel_left _ this]
+  simp [nlpNorm, ENNReal.coe_ne_coe.1 hp, mul_div_cancel_left₀ _ this]
 
 end NormedAddCommGroup
 
-section IsROrC
-variable [IsROrC 𝕜] {p : ℝ≥0∞} {f g : ι → 𝕜}
+section RCLike
+variable [RCLike 𝕜] {p : ℝ≥0∞} {f g : ι → 𝕜}
 
 @[simp] lemma nlpNorm_one [Nonempty ι] (hp : p ≠ 0) : ‖(1 : ι → 𝕜)‖ₙ_[p] = 1 :=
   (nlpNorm_const hp 1).trans $ by simp
@@ -166,7 +166,7 @@ lemma nlpNorm_div_natCast' (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
 lemma nlpNorm_div_natCast (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
     ‖f / (n : ι → 𝕜)‖ₙ_[p] = ‖f‖ₙ_[p] / n := nlpNorm_div_natCast' hp _ _
 
-end IsROrC
+end RCLike
 
 section Real
 variable {p : ℝ≥0} {f g : ι → ℝ}
@@ -264,15 +264,15 @@ lemma abs_nl2Inner_le_nl2Inner_abs : |⟪f, g⟫ₙ_[𝕜]| ≤ ⟪|f|, |g|⟫�
 
 end LinearOrderedField
 
-section IsROrC
-variable {κ : Type*} [IsROrC 𝕜] {f : ι → 𝕜}
+section RCLike
+variable {κ : Type*} [RCLike 𝕜] {f : ι → 𝕜}
 
 @[simp] lemma nl2Inner_self (f : ι → 𝕜) : ⟪f, f⟫ₙ_[𝕜] = (‖f‖ₙ_[2] : 𝕜) ^ 2 := by
   simp_rw [←algebraMap.coe_pow, nl2Norm_sq_eq_expect, nl2Inner,
-    algebraMap.coe_expect _ (α := ℝ) (β := 𝕜), IsROrC.ofReal_pow, IsROrC.conj_mul]
+    algebraMap.coe_expect _ (α := ℝ) (β := 𝕜), RCLike.ofReal_pow, RCLike.conj_mul]
 
 lemma nl2Inner_self_of_norm_eq_one [Nonempty ι] (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫ₙ_[𝕜] = 1 := by
-  simp [-nl2Inner_self, nl2Inner, IsROrC.conj_mul, hf]
+  simp [-nl2Inner_self, nl2Inner, RCLike.conj_mul, hf]
 
 lemma linearIndependent_of_ne_zero_of_nl2Inner_eq_zero {v : κ → ι → 𝕜} (hz : ∀ k, v k ≠ 0)
     (ho : Pairwise fun k l ↦ ⟪v k, v l⟫ₙ_[𝕜] = 0) : LinearIndependent 𝕜 v := by
@@ -282,7 +282,7 @@ lemma linearIndependent_of_ne_zero_of_nl2Inner_eq_zero {v : κ → ι → 𝕜} 
   · exact linearIndependent_of_ne_zero_of_l2Inner_eq_zero hz $ by
       simpa [nl2Inner_eq_l2Inner_div_card] using ho
 
-end IsROrC
+end RCLike
 
 section nlpNorm
 variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0∞}
@@ -291,20 +291,20 @@ variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0∞}
 lemma nlpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ a f‖ₙ_[p] = ‖f‖ₙ_[p] := by
   simp [nlpNorm]
 
-@[simp] lemma nlpNorm_conj [IsROrC β] (f : α → β) : ‖conj f‖ₙ_[p] = ‖f‖ₙ_[p] := by simp [nlpNorm]
+@[simp] lemma nlpNorm_conj [RCLike β] (f : α → β) : ‖conj f‖ₙ_[p] = ‖f‖ₙ_[p] := by simp [nlpNorm]
 
-@[simp] lemma nlpNorm_conjneg [IsROrC β] (f : α → β) : ‖conjneg f‖ₙ_[p] = ‖f‖ₙ_[p] := by
+@[simp] lemma nlpNorm_conjneg [RCLike β] (f : α → β) : ‖conjneg f‖ₙ_[p] = ‖f‖ₙ_[p] := by
   simp [nlpNorm]
 
 end nlpNorm
 
-section IsROrC
+section RCLike
 variable {α β : Type*} [Fintype α]
 
-lemma nl1Norm_mul [IsROrC β] (f g : α → β) :
+lemma nl1Norm_mul [RCLike β] (f g : α → β) :
     ‖f * g‖ₙ_[1] = ⟪fun i ↦ ‖f i‖, fun i ↦ ‖g i‖⟫ₙ_[ℝ] := by simp [nl2Inner, nl1Norm_eq_expect]
 
-end IsROrC
+end RCLike
 
 /-- **Cauchy-Schwarz inequality** -/
 lemma nl2Inner_le_l2Norm_mul_l2Norm (f g : ι → ℝ) : ⟪f, g⟫ₙ_[ℝ] ≤ ‖f‖ₙ_[2] * ‖g‖ₙ_[2] := by
@@ -444,7 +444,7 @@ lemma nlpNorm_eq_l1Norm_rpow (hp : p ≠ 0) (f : α → ℝ) :
 lemma nlpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → ℝ) :
     ‖f‖ₙ_[p] ^ (q : ℝ) = ‖|f| ^ (q : ℝ)‖ₙ_[p / q] := by
   rw [←ENNReal.coe_div hq, nlpNorm_rpow (div_ne_zero hp hq) hq (abs_nonneg f), nlpNorm_abs,
-    ← ENNReal.coe_mul, div_mul_cancel _ hq]
+    ← ENNReal.coe_mul, div_mul_cancel₀ _ hq]
 
 --TODO: Generalise the following four to include `f g : α → ℂ`
 /-- **Hölder's inequality**, binary case. -/
@@ -488,7 +488,7 @@ end nlpNorm
 /-! ### Indicator -/
 
 section indicate
-variable {α β : Type*} [IsROrC β] [Fintype α] [DecidableEq α] {s : Finset α} {p : ℝ≥0}
+variable {α β : Type*} [RCLike β] [Fintype α] [DecidableEq α] {s : Finset α} {p : ℝ≥0}
 
 lemma nlpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖ₙ_[p] ^ (p : ℝ) = s.dens := by
   rw [nlpNorm, div_rpow]
@@ -514,11 +514,11 @@ lemma nl2Norm_indicate (s : Finset α) : ‖𝟭_[β] s‖ₙ_[2] = Real.sqrt s.
 end indicate
 
 section mu
-variable {α β : Type*} [IsROrC β] [Fintype α] [DecidableEq α] {s : Finset α} {p : ℝ≥0}
+variable {α β : Type*} [RCLike β] [Fintype α] [DecidableEq α] {s : Finset α} {p : ℝ≥0}
 
 lemma nlpNorm_mu (hp : 1 ≤ p) (s : Finset α) : ‖μ_[β] s‖ₙ_[p] = s.dens ^ (p⁻¹ : ℝ) / s.card := by
   rw [mu, nlpNorm_smul (ENNReal.one_le_coe_iff.2 hp) (s.card⁻¹ : β) (𝟭_[β] s), nlpNorm_indicate,
-      norm_inv, IsROrC.norm_natCast, inv_mul_eq_div]; positivity
+      norm_inv, RCLike.norm_natCast, inv_mul_eq_div]; positivity
 
 lemma nl1Norm_mu (s : Finset α) : ‖μ_[β] s‖ₙ_[1] = s.dens / s.card := by
   simpa using nlpNorm_mu le_rfl s
@@ -529,12 +529,12 @@ section
 variable {α : Type*} [Fintype α]
 
 @[simp]
-lemma IsROrC.nlpNorm_coe_comp {𝕜 : Type*} [IsROrC 𝕜] (p) (f : α → ℝ) :
+lemma RCLike.nlpNorm_coe_comp {𝕜 : Type*} [RCLike 𝕜] (p) (f : α → ℝ) :
     ‖((↑) : ℝ → 𝕜) ∘ f‖ₙ_[p] = ‖f‖ₙ_[p] := by
   simp only [←nlpNorm_norm _ (((↑) : ℝ → 𝕜) ∘ f), ←nlpNorm_norm _ f, Function.comp_apply,
-    IsROrC.norm_ofReal, Real.norm_eq_abs]
+    RCLike.norm_ofReal, Real.norm_eq_abs]
 
 @[simp] lemma Complex.nlpNorm_coe_comp (p) (f : α → ℝ) : ‖((↑) : ℝ → ℂ) ∘ f‖ₙ_[p] = ‖f‖ₙ_[p] :=
-  IsROrC.nlpNorm_coe_comp _ _
+  RCLike.nlpNorm_coe_comp _ _
 
 end

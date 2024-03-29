@@ -50,7 +50,7 @@ variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β} {n : �
 
 @[simp] lemma iterConv_nonneg (hf : 0 ≤ f) : ∀ {n}, 0 ≤ f ∗^ n
   | 0 => fun _ ↦ by dsimp; split_ifs <;> norm_num
-  | n + 1 => conv_nonneg hf (iterConv_nonneg hf)
+  | n + 1 => conv_nonneg (iterConv_nonneg hf) hf
 
 end OrderedCommSemiring
 
@@ -59,7 +59,7 @@ variable [StrictOrderedCommSemiring β] [StarOrderedRing β] {f g : α → β} {
 
 @[simp] lemma iterConv_pos (hf : 0 < f) : ∀ {n}, 0 < f ∗^ n
   | 0 => Pi.lt_def.2 ⟨iterConv_nonneg hf.le, 0, by simp⟩
-  | n + 1 => conv_pos hf (iterConv_pos hf)
+  | n + 1 => conv_pos (iterConv_pos hf) hf
 
 end StrictOrderedCommSemiring
 

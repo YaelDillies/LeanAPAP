@@ -46,7 +46,7 @@ lemma mem_def : x ∈ B ↔ ∀ ψ, ‖1 - ψ.1 x‖ ≤ B.width ψ := Iff.rfl
 
 @[simp] lemma zero_mem : 0 ∈ B := by simp [mem_def]
 @[simp] lemma neg_mem : -x ∈ B ↔ x ∈ B :=
-  forall_congr' fun ψ ↦ by rw [Iff.comm, ← IsROrC.norm_conj, map_sub, map_one, map_neg_eq_conj]
+  forall_congr' fun ψ ↦ by rw [Iff.comm, ← RCLike.norm_conj, map_sub, map_one, map_neg_eq_conj]
 
 /-! ### Width, frequencies, rank -/
 

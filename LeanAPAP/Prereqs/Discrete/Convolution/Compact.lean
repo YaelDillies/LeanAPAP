@@ -365,8 +365,8 @@ variable [Field β] [StarRing β] [CharZero β]
 
 end Field
 
-namespace IsROrC
-variable {𝕜 : Type} [IsROrC 𝕜] (f g : α → ℝ) (a : α)
+namespace RCLike
+variable {𝕜 : Type} [RCLike 𝕜] (f g : α → ℝ) (a : α)
 
 @[simp, norm_cast]
 lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → 𝕜) a := map_nconv (algebraMap ℝ 𝕜) _ _ _
@@ -380,16 +380,16 @@ lemma coe_comp_nconv : ofReal ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g
 @[simp]
 lemma coe_comp_ndconv : ofReal ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : α → 𝕜) := funext $ coe_ndconv _ _
 
-end IsROrC
+end RCLike
 
 namespace Complex
 variable (f g : α → ℝ) (a : α)
 
 @[simp, norm_cast]
-lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → ℂ) a := IsROrC.coe_nconv _ _ _
+lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → ℂ) a := RCLike.coe_nconv _ _ _
 
 @[simp, norm_cast]
-lemma coe_ndconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : α → ℂ) a := IsROrC.coe_ndconv _ _ _
+lemma coe_ndconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : α → ℂ) a := RCLike.coe_ndconv _ _ _
 
 @[simp]
 lemma coe_comp_nconv : ofReal' ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : α → ℂ) := funext $ coe_nconv _ _
@@ -421,23 +421,23 @@ variable [Semifield β] [CharZero β] [SMul ℚ≥0 β] [CompAction β] [StarRin
 /-- Iterated convolution. -/
 def iterNConv (f : α → β) : ℕ → α → β
   | 0 => trivNChar
-  | n + 1 => f ∗ₙ iterNConv f n
+  | n + 1 => iterNConv f n ∗ₙ f
 
 infixl:78 " ∗^ₙ " => iterNConv
 
 @[simp] lemma iterNConv_zero (f : α → β) : f ∗^ₙ 0 = trivNChar := rfl
-@[simp] lemma iterBConv_one [CharZero β] (f : α → β) : f ∗^ₙ 1 = f := nconv_trivNChar _
+@[simp] lemma iterNConv_one [CharZero β] (f : α → β) : f ∗^ₙ 1 = f := trivNChar_nconv _
 
-lemma iterNConv_succ (f : α → β) (n : ℕ) : f ∗^ₙ (n + 1) = f ∗ₙ f ∗^ₙ n := rfl
-lemma iterNConv_succ' (f : α → β) (n : ℕ) : f ∗^ₙ (n + 1) = f ∗^ₙ n ∗ₙ f := nconv_comm _ _
+lemma iterNConv_succ (f : α → β) (n : ℕ) : f ∗^ₙ (n + 1) = f ∗^ₙ n ∗ₙ f := rfl
+lemma iterNConv_succ' (f : α → β) (n : ℕ) : f ∗^ₙ (n + 1) = f ∗ₙ f ∗^ₙ n := nconv_comm _ _
 
 lemma iterNConv_add [CharZero β] (f : α → β) (m : ℕ) : ∀ n, f ∗^ₙ (m + n) = f ∗^ₙ m ∗ₙ f ∗^ₙ n
   | 0 => by simp
-  | n + 1 => by simp [←add_assoc, iterNConv_succ, iterNConv_add, nconv_left_comm]
+  | n + 1 => by simp [←add_assoc, iterNConv_succ', iterNConv_add, nconv_left_comm]
 
 lemma iterNConv_mul [CharZero β] (f : α → β) (m : ℕ) : ∀ n, f ∗^ₙ (m * n) = f ∗^ₙ m ∗^ₙ n
   | 0 => rfl
-  | n + 1 => by simp [mul_add_one, iterNConv_succ', iterNConv_add, iterNConv_mul]
+  | n + 1 => by simp [mul_add_one, iterNConv_succ, iterNConv_add, iterNConv_mul]
 
 lemma iterNConv_mul' [CharZero β] (f : α → β) (m n : ℕ) : f ∗^ₙ (m * n) = f ∗^ₙ n ∗^ₙ m := by
   rw [mul_comm, iterNConv_mul]
@@ -461,7 +461,7 @@ lemma iterNConv_ndconv_distrib [CharZero β] (f g : α → β) : ∀ n, (f ○�
 
 @[simp] lemma zero_iterNConv : ∀ {n}, n ≠ 0 → (0 : α → β) ∗^ₙ n = 0
   | 0, hn => by cases hn rfl
-  | n + 1, _ => zero_nconv _
+  | n + 1, _ => nconv_zero _
 
 @[simp] lemma smul_iterNConv [Monoid γ] [DistribMulAction γ β] [IsScalarTower γ β β]
     [SMulCommClass γ β β] (c : γ) (f : α → β) : ∀ n, (c • f) ∗^ₙ n = c ^ n • f ∗^ₙ n
@@ -483,13 +483,13 @@ lemma expect_iterNConv [CharZero β] (f : α → β) : ∀ n, 𝔼 a, (f ∗^ₙ
 
 @[simp] lemma iterNConv_trivNChar [CharZero β] : ∀ n, (trivNChar : α → β) ∗^ₙ n = trivNChar
   | 0 => rfl
-  | _n + 1 => (trivNChar_nconv _).trans $ iterNConv_trivNChar _
+  | _n + 1 => (nconv_trivNChar _).trans $ iterNConv_trivNChar _
 
 lemma support_iterNConv_subset (f : α → β) : ∀ n, support (f ∗^ₙ n) ⊆ n • support f
   | 0 => by
     simp only [iterNConv_zero, zero_smul, support_subset_iff, Ne.def, ite_eq_right_iff, not_forall,
       exists_prop, Set.mem_zero, and_imp, forall_eq, eq_self_iff_true, imp_true_iff, trivNChar_apply]
-  | n + 1 => (support_nconv_subset _ _).trans $ Set.add_subset_add_left $ support_iterNConv_subset _ _
+  | n + 1 => (support_nconv_subset _ _).trans $ Set.add_subset_add_right $ support_iterNConv_subset _ _
 
 -- lemma indicate_iterNConv_apply (s : Finset α) (n : ℕ) (a : α) :
 --     (𝟭_[ℝ] s ∗^ₙ n) a = ((piFinset fun _i ↦ s).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by

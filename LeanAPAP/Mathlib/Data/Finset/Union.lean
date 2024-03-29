@@ -1,4 +1,4 @@
-import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Union
 
 namespace Finset
 variable {ι κ α β : Type*}

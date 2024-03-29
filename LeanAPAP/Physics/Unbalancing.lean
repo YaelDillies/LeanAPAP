@@ -21,7 +21,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
     rw [this]
     positivity
   rw [hf, hν, l2Inner_eq_sum]
-  simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, IsROrC.inner_apply, map_pow]
+  simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
   simp_rw [dconv_apply h, mul_sum]
   --TODO: Please make `conv` work here :(
   have : ∀ x, ∀ yz ∈ univ.filter fun yz : G × G ↦ yz.1 - yz.2 = x,

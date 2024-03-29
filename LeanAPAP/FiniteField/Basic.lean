@@ -40,7 +40,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
     _ ≤ _ := mul_le_mul_of_nonneg_left ?_ $ by positivity
   · rw [← balance_conv, balance, l2Inner_sub_left, l2Inner_const_left, expect_conv, sum_mu ℝ hA,
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel, ← mul_sub,
-      abs_mul, abs_of_nonneg, mul_div_cancel_left] <;> positivity
+      abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
   · rw [lpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_nat_cast, ← mul_rpow]
     rw [le_div_iff, mul_comm] at hγC
     refine' rpow_le_rpow_of_nonpos _ hγC (neg_nonpos.2 _)

@@ -64,7 +64,7 @@ lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
           congr with ψ
           obtain hψ | hψ := eq_or_ne (cft f ψ) 0
           · simp [hψ]
-          · simp only [hcf, mul_left_comm (c _), mul_div_cancel_left _ hψ, ← Complex.re_mul_ofReal,
+          · simp only [hcf, mul_left_comm (c _), mul_div_cancel_left₀ _ hψ, ← Complex.re_mul_ofReal,
               mul_right_comm]
   calc
     _ ≤ 𝔼 a, ∏ ψ, (cosh ‖cft f ψ‖ + (c ψ * sinh ‖cft f ψ‖ * ψ a).re) :=
@@ -97,7 +97,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
     rw [nlpNorm_smul, nlpNorm_smul, norm_div, norm_of_nonneg, norm_of_nonneg, mul_left_comm,
       mul_le_mul_left] at H
     refine H ?_
-    rw [div_mul_cancel]
+    rw [div_mul_cancel₀]
     any_goals positivity
     · norm_cast
       exact one_le_two.trans hp

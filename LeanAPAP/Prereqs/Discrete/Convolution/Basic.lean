@@ -377,8 +377,8 @@ variable [Field β] [StarRing β] [CharZero β]
 
 end Field
 
-namespace IsROrC
-variable {𝕜 : Type} [IsROrC 𝕜] (f g : α → ℝ) (a : α)
+namespace RCLike
+variable {𝕜 : Type} [RCLike 𝕜] (f g : α → ℝ) (a : α)
 
 @[simp, norm_cast]
 lemma coe_conv : (↑((f ∗ g) a) : 𝕜) = ((↑) ∘ f ∗ (↑) ∘ g) a :=
@@ -390,16 +390,16 @@ lemma coe_dconv : (↑((f ○ g) a) : 𝕜) = ((↑) ∘ f ○ (↑) ∘ g) a :=
 @[simp] lemma coe_comp_conv : ((↑) : ℝ → 𝕜) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g := funext $ coe_conv _ _
 @[simp] lemma coe_comp_dconv : ((↑) : ℝ → 𝕜) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g := funext $ coe_dconv _ _
 
-end IsROrC
+end RCLike
 
 namespace Complex
 variable (f g : α → ℝ) (n : ℕ) (a : α)
 
 @[simp, norm_cast]
-lemma coe_conv : (↑((f ∗ g) a) : ℂ) = ((↑) ∘ f ∗ (↑) ∘ g) a := IsROrC.coe_conv _ _ _
+lemma coe_conv : (↑((f ∗ g) a) : ℂ) = ((↑) ∘ f ∗ (↑) ∘ g) a := RCLike.coe_conv _ _ _
 
 @[simp, norm_cast]
-lemma coe_dconv : (↑((f ○ g) a) : ℂ) = ((↑) ∘ f ○ (↑) ∘ g) a := IsROrC.coe_dconv _ _ _
+lemma coe_dconv : (↑((f ○ g) a) : ℂ) = ((↑) ∘ f ○ (↑) ∘ g) a := RCLike.coe_dconv _ _ _
 
 @[simp] lemma coe_comp_conv : ((↑) : ℝ → ℂ) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g := funext $ coe_conv _ _
 @[simp] lemma coe_comp_dconv : ((↑) : ℝ → ℂ) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g := funext $ coe_dconv _ _
@@ -428,23 +428,23 @@ variable [CommSemiring β] [StarRing β] {f g : α → β} {n : ℕ}
 /-- Iterated convolution. -/
 def iterConv (f : α → β) : ℕ → α → β
   | 0 => trivChar
-  | n + 1 => f ∗ iterConv f n
+  | n + 1 => iterConv f n ∗ f
 
 infixl:78 " ∗^ " => iterConv
 
 @[simp] lemma iterConv_zero (f : α → β) : f ∗^ 0 = trivChar := rfl
-@[simp] lemma iterConv_one (f : α → β) : f ∗^ 1 = f := conv_trivChar _
+@[simp] lemma iterConv_one (f : α → β) : f ∗^ 1 = f := trivChar_conv _
 
-lemma iterConv_succ (f : α → β) (n : ℕ) : f ∗^ (n + 1) = f ∗ f ∗^ n := rfl
-lemma iterConv_succ' (f : α → β) (n : ℕ) : f ∗^ (n + 1) = f ∗^ n ∗ f := conv_comm _ _
+lemma iterConv_succ (f : α → β) (n : ℕ) : f ∗^ (n + 1) = f ∗^ n ∗ f := rfl
+lemma iterConv_succ' (f : α → β) (n : ℕ) : f ∗^ (n + 1) = f ∗ f ∗^ n := conv_comm _ _
 
 lemma iterConv_add (f : α → β) (m : ℕ) : ∀ n, f ∗^ (m + n) = f ∗^ m ∗ f ∗^ n
   | 0 => by simp
-  | n + 1 => by simp [←add_assoc, iterConv_succ, iterConv_add, conv_left_comm]
+  | n + 1 => by simp [←add_assoc, iterConv_succ', iterConv_add, conv_left_comm]
 
 lemma iterConv_mul (f : α → β) (m : ℕ) : ∀ n, f ∗^ (m * n) = f ∗^ m ∗^ n
   | 0 => rfl
-  | n + 1 => by simp [mul_add_one, iterConv_succ', iterConv_add, iterConv_mul]
+  | n + 1 => by simp [mul_add_one, iterConv_succ, iterConv_add, iterConv_mul]
 
 lemma iterConv_mul' (f : α → β) (m n : ℕ) : f ∗^ (m * n) = f ∗^ n ∗^ m := by
   rw [mul_comm, iterConv_mul]
@@ -474,7 +474,7 @@ lemma iterConv_dconv_distrib (f g : α → β) : ∀ n, (f ○ g) ∗^ n = f ∗
 
 @[simp] lemma zero_iterConv : ∀ {n}, n ≠ 0 → (0 : α → β) ∗^ n = 0
   | 0, hn => by cases hn rfl
-  | n + 1, _ => zero_conv _
+  | n + 1, _ => conv_zero _
 
 @[simp] lemma smul_iterConv [Monoid γ] [DistribMulAction γ β] [IsScalarTower γ β β]
     [SMulCommClass γ β β] (c : γ) (f : α → β) : ∀ n, (c • f) ∗^ n = c ^ n • f ∗^ n
@@ -496,20 +496,20 @@ lemma sum_iterConv (f : α → β) : ∀ n, ∑ a, (f ∗^ n) a = (∑ a, f a) ^
 
 @[simp] lemma iterConv_trivChar : ∀ n, (trivChar : α → β) ∗^ n = trivChar
   | 0 => rfl
-  | _n + 1 => (trivChar_conv _).trans $ iterConv_trivChar _
+  | _n + 1 => (conv_trivChar _).trans $ iterConv_trivChar _
 
 lemma support_iterConv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n • support f
   | 0 => by
     simp only [iterConv_zero, zero_smul, support_subset_iff, Ne.def, ite_eq_right_iff, not_forall,
       exists_prop, Set.mem_zero, and_imp, forall_eq, eq_self_iff_true, imp_true_iff, trivChar_apply]
-  | n + 1 => (support_conv_subset _ _).trans $ Set.add_subset_add_left $ support_iterConv_subset _ _
+  | n + 1 => (support_conv_subset _ _).trans $ Set.add_subset_add_right $ support_iterConv_subset _ _
 
 lemma indicate_iterConv_apply (s : Finset α) (n : ℕ) (a : α) :
     (𝟭_[β] s ∗^ n) a = ((s ^^ n).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by
   induction' n with n ih generalizing a
   · simp [apply_ite card, eq_comm]
-  simp_rw [iterConv_succ, conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite, filter_univ_mem,
-    sum_const_zero, add_zero, ←Nat.cast_sum, ←Finset.card_sigma]
+  simp_rw [iterConv_succ', conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite,
+    filter_univ_mem, sum_const_zero, add_zero, ←Nat.cast_sum, ←Finset.card_sigma]
   congr 1
   refine' Finset.card_congr (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
   · simp only [Fin.sum_cons, eq_sub_iff_add_eq', mem_sigma, mem_filter, mem_piFinset, and_imp]

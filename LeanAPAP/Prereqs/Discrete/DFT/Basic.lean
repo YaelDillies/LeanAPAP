@@ -98,7 +98,7 @@ lemma dft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conj f) ψ = conj (
     inv_inv, Pi.conj_apply]
 
 lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f) ψ = conj (dft f ψ) := by
-  simp only [dft_apply, l2Inner_eq_sum, conjneg_apply, map_sum, map_mul, IsROrC.conj_conj]
+  simp only [dft_apply, l2Inner_eq_sum, conjneg_apply, map_sum, map_mul, RCLike.conj_conj]
   refine' Fintype.sum_equiv (Equiv.neg α) _ _ fun i ↦ _
   simp only [Equiv.neg_apply, ←inv_apply_eq_conj, ←inv_apply', inv_apply]
 
@@ -133,7 +133,7 @@ lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ
     ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
   simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
     Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
-  rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel'_right]
+  rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel]
 
 lemma dft_dconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
     dft (f ○ g) ψ = dft f ψ * conj (dft g ψ) := by
@@ -177,7 +177,7 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
 --     map_mul, Fintype.sum_pow, Fintype.sum_mul_sum]
 --   simp only [@sum_comm _ _ α, ←mul_sum, prod_mul_prod_comm]
 --   refine' (norm_sum_le _ _).trans_eq (Complex.ofReal_injective _)
---   simp only [norm_mul, norm_prod, IsROrC.norm_conj, ←pow_mul]
+--   simp only [norm_mul, norm_prod, RCLike.norm_conj, ←pow_mul]
 --   push_cast
 --   have : ∀ f g : Fin n → AddChar α ℂ, 0 ≤ ∑ a, ∏ i, conj (f i a) * g i a := by
 --     rintro f g
@@ -186,13 +186,13 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
 --       split_ifs <;> positivity
 --     simp_rw [←AddChar.sum_eq_ite, AddChar.sum_apply, AddChar.sub_apply, AddChar.map_neg_eq_inv,
 --       AddChar.inv_apply_eq_conj, mul_comm]
---   simp only [IsROrC.ofReal_pow, pow_mul, ←Complex.conj_mul', map_sum, map_mul, Complex.conj_conj,
+--   simp only [RCLike.ofReal_pow, pow_mul, ←Complex.conj_mul', map_sum, map_mul, Complex.conj_conj,
 --     Pi.conj_apply, mul_pow, Fintype.sum_pow, ←sq, Fintype.sum_mul_sum]
 --   conv_lhs =>
 --     arg 2
 --     ext
 --     rw [←Complex.eq_coe_norm_of_nonneg (this _ _)]
---   simp only [@sum_comm _ _ α, mul_sum, map_prod, map_mul, IsROrC.conj_conj, ←prod_mul_distrib]
+--   simp only [@sum_comm _ _ α, mul_sum, map_prod, map_mul, RCLike.conj_conj, ←prod_mul_distrib]
 --   refine' sum_congr rfl fun x _ ↦ sum_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
 --   ring
 

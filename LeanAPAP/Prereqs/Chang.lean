@@ -32,7 +32,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       energy m Δ (dft fun a ↦ ν a) := by
   obtain rfl | hf := eq_or_ne f 0
   · simp
-  choose c norm_c hc using fun γ ↦ IsROrC.exists_norm_eq_mul_self (dft f γ)
+  choose c norm_c hc using fun γ ↦ RCLike.exists_norm_eq_mul_self (dft f γ)
   have :=
     calc
       η * ‖f‖_[1] * Δ.card ≤ ∑ γ in Δ, ‖dft f γ‖ := ?_
@@ -47,7 +47,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
   · rw [←nsmul_eq_mul']
     exact card_nsmul_le_sum _ _ _ fun x hx ↦ mem_largeSpec.1 $ hΔ hx
   · simp_rw [mul_sum, mul_comm (f _), mul_assoc (c _), @sum_comm _ _ G, ←mul_sum, ←l2Inner_eq_sum,
-      ←dft_apply, ←hc, ←IsROrC.ofReal_sum, IsROrC.norm_ofReal]
+      ←dft_apply, ←hc, ←RCLike.ofReal_sum, RCLike.norm_ofReal]
     exact le_abs_self _
   · norm_cast
     exact hm.bot_lt
@@ -78,7 +78,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
     mul_div_assoc, mul_div_assoc] at this
   calc
     _ ≤ _ := this
-    _ = ‖(_ : ℂ)‖ := Eq.symm $ IsROrC.norm_of_nonneg $ sum_nonneg fun _ _ ↦ by positivity
+    _ = ‖(_ : ℂ)‖ := Eq.symm $ RCLike.norm_of_nonneg $ sum_nonneg fun _ _ ↦ by positivity
     _ = ‖∑ γ in Δ ^^ m, ∑ δ in Δ ^^ m,
           (∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ := ?_
     _ ≤ ∑ γ in Δ ^^ m, ∑ δ in Δ ^^ m,
@@ -86,7 +86,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       (norm_sum_le _ _).trans $ sum_le_sum fun _ _ ↦ norm_sum_le _ _
     _ = _ := by simp [energy, norm_c, -Complex.norm_eq_abs, norm_prod]
   · push_cast
-    simp_rw [←IsROrC.conj_mul, dft_apply, l2Inner_eq_sum, map_sum, map_mul, IsROrC.conj_conj,
+    simp_rw [←RCLike.conj_mul, dft_apply, l2Inner_eq_sum, map_sum, map_mul, RCLike.conj_conj,
       mul_pow, sum_pow', sum_mul, mul_sum, @sum_comm _ _ G, ←AddChar.inv_apply_eq_conj, ←
       AddChar.neg_apply', prod_mul_prod_comm, ←AddChar.add_apply, ←AddChar.sum_apply,
       mul_left_comm (Algebra.cast (ν _ : ℝ) : ℂ), ←mul_sum, ←sub_eq_add_neg, sum_sub_distrib,

@@ -20,7 +20,7 @@ private lemma lemma_0 (p : ℕ) (B₁ B₂ A : Finset G) (f : G → ℝ) :
     ∑ s, ⟪𝟭_[ℝ] (B₁ ∩ c p A s) ○ 𝟭 (B₂ ∩ c p A s), f⟫_[ℝ] =
       (B₁.card * B₂.card) • ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x := by
   simp_rw [mul_assoc]
-  simp only [l2Inner_eq_sum, IsROrC.conj_to_real, mul_sum, sum_mul, smul_sum,
+  simp only [l2Inner_eq_sum, RCLike.conj_to_real, mul_sum, sum_mul, smul_sum,
     @sum_comm _ _ (Fin p → G), sum_dconv_mul, dconv_apply_sub, Fintype.sum_pow, map_indicate]
   congr with b₁
   congr with b₂
@@ -31,7 +31,7 @@ private lemma lemma_0 (p : ℕ) (B₁ B₂ A : Finset G) (f : G → ℝ) :
 
 private lemma sum_c (p : ℕ) (B A : Finset G) : ∑ s, (B ∩ c p A s).card = A.card ^ p * B.card := by
   simp only [card_eq_sum_indicate, indicate_inter_apply, c, indicate_inf_apply, mul_sum, sum_mul,
-    sum_pow', @sum_comm _ G, Fintype.piFinset_univ, ←translate_indicate, translate_apply]
+    sum_pow', @sum_comm G, Fintype.piFinset_univ, ←translate_indicate, translate_apply]
   congr with x
   exact Fintype.sum_equiv (Equiv.subLeft fun _ ↦ x) _ _ fun s ↦ mul_comm _ _
 
@@ -87,7 +87,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
   have hgB : ∑ s, g s = B₁.card * B₂.card * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p := by
     have hAdconv : 0 ≤ 𝟭_[ℝ] A ○ 𝟭 A := dconv_nonneg indicate_nonneg indicate_nonneg
     simpa only [wlpNorm_pow_eq_sum hp₀, l2Inner_eq_sum, sum_dconv, sum_indicate, Pi.one_apply,
-      IsROrC.inner_apply, IsROrC.conj_to_real, norm_of_nonneg (hAdconv _), mul_one, nsmul_eq_mul,
+      RCLike.inner_apply, RCLike.conj_to_real, norm_of_nonneg (hAdconv _), mul_one, nsmul_eq_mul,
       Nat.cast_mul, ←hg_def, NNReal.smul_def, NNReal.coe_dconv, NNReal.coe_comp_mu]
         using lemma_0 p B₁ B₂ A 1
   suffices ∑ s, ⟪𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s), (↑) ∘ f⟫_[ℝ] * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p
@@ -97,8 +97,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     refine ⟨_, inter_subset_left _ $ c p A s, _, inter_subset_left _ $ c p A s, ?_⟩
     simp only [indicate_apply, mem_filter, mem_univ, true_and_iff, boole_mul] at hs
     split_ifs at hs with h; swap
-    · simp only [zero_mul, l2Inner_eq_sum, Function.comp_apply, IsROrC.inner_apply,
-        IsROrC.conj_to_real] at hs
+    · simp only [zero_mul, l2Inner_eq_sum, Function.comp_apply, RCLike.inner_apply,
+        RCLike.conj_to_real] at hs
       have : 0 ≤ 𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s) := dconv_nonneg indicate_nonneg indicate_nonneg
       -- positivity
       cases hs.not_le $ mul_nonneg (sum_nonneg fun x _ ↦ mul_nonneg (this _) $ by positivity) $ by
@@ -149,7 +149,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     exact fun s hsM hs ↦ mul_lt_mul_of_pos_right ((sqrt_lt' hM).2 hsM) $
       sqrt_pos.2 $ (hg _).lt_of_ne' hs
   rw [sum_cast_c, sum_cast_c, sqrt_mul', sqrt_mul', mul_mul_mul_comm (sqrt _), mul_self_sqrt,
-    ←mul_assoc, hM_def, div_mul_cancel, ←sqrt_mul, mul_assoc, mul_self_sqrt, hgB, mul_right_comm,
+    ←mul_assoc, hM_def, div_mul_cancel₀, ←sqrt_mul, mul_assoc, mul_self_sqrt, hgB, mul_right_comm,
     mul_assoc]
   all_goals positivity
 

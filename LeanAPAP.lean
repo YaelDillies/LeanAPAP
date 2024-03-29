@@ -3,10 +3,11 @@ import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
+import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
-import LeanAPAP.Mathlib.Data.Finset.Basic
+import LeanAPAP.Mathlib.Data.Finset.Union
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.NNRat.Defs
 import LeanAPAP.Mathlib.Data.ZMod.Basic

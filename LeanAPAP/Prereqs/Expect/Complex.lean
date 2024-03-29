@@ -22,11 +22,11 @@ lemma ofReal_expect (s : Finset ι) (a : ι → ℝ) : 𝔼 i ∈ s, a i = 𝔼 
 
 end Complex
 
-namespace IsROrC
-variable {ι 𝕜 : Type*} [IsROrC 𝕜]
+namespace RCLike
+variable {ι 𝕜 : Type*} [RCLike 𝕜]
 
 @[simp, norm_cast]
 lemma coe_expect (s : Finset ι) (a : ι → ℝ) : 𝔼 i ∈ s, a i = 𝔼 i ∈ s, (a i : 𝕜) :=
   map_expect (algebraMap _ _) _ _
 
-end IsROrC
+end RCLike

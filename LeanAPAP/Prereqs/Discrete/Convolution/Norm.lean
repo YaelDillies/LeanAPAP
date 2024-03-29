@@ -13,8 +13,8 @@ open scoped BigOperators ComplexConjugate ENNReal NNReal Pointwise
 
 variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 
-section IsROrC
-variable [IsROrC β]
+section RCLike
+variable [RCLike β]
 
 @[simp] lemma lpNorm_trivChar (p : ℝ≥0∞) : ‖(trivChar : α → β)‖_[p] = 1 := by
   obtain _ | p := p
@@ -49,7 +49,7 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
   dsimp
   simp_rw [lpNorm_rpow_eq_sum hp₀.ne', conv_eq_sum_sub']
   have hpconj : (p : ℝ).IsConjExponent (1 - (p : ℝ)⁻¹)⁻¹ :=
-    ⟨hp, by simp_rw [inv_inv, add_sub_cancel'_right]⟩
+    ⟨hp, by simp_rw [inv_inv, add_sub_cancel]⟩
   have (x) : ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
       (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ) := by
     rw [←le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ←rpow_mul, sub_one_mul, mul_inv_cancel]
@@ -60,7 +60,7 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
       _ ≤ _ := inner_le_Lp_mul_Lq _ _ _ hpconj
       _ = _ := ?_
     · congr with t
-      rw [norm_mul, mul_assoc, ←rpow_add' (norm_nonneg _), add_sub_cancel'_right, rpow_one]
+      rw [norm_mul, mul_assoc, ←rpow_add' (norm_nonneg _), add_sub_cancel, rpow_one]
       simp
     · have : 1 - (p : ℝ)⁻¹ ≠ 0 := sub_ne_zero.2 (inv_ne_one.2 $ NNReal.coe_ne_one.2 hp.ne').symm
       simp only [abs_mul, abs_rpow_of_nonneg, mul_rpow, rpow_nonneg, hp₀.ne', this,
@@ -80,15 +80,15 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
   simp_rw [hg]
   rw [←sum_mul, sum_comm]
   simp_rw [←mul_sum, hg']
-  rw [←sum_mul, mul_assoc, ←rpow_one_add' lpNorm_nonneg, add_sub_cancel'_right]
-  · rw [add_sub_cancel'_right]
+  rw [←sum_mul, mul_assoc, ←rpow_one_add' lpNorm_nonneg, add_sub_cancel]
+  · rw [add_sub_cancel]
     positivity
 
 /-- A special case of **Young's convolution inequality**. -/
 lemma lpNorm_dconv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ○ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] := by
   simpa only [conv_conjneg, lpNorm_conjneg] using lpNorm_conv_le hp f (conjneg g)
 
-end IsROrC
+end RCLike
 
 section Real
 variable {f g : α → ℝ} {n : ℕ}

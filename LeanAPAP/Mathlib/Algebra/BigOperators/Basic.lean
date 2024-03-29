@@ -1,5 +1,5 @@
 import Mathlib.Algebra.BigOperators.Basic
-import LeanAPAP.Mathlib.Data.Finset.Basic
+import LeanAPAP.Mathlib.Data.Finset.Union
 
 open scoped BigOperators
 
