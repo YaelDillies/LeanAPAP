@@ -252,7 +252,7 @@ to show the domain type when the product is over `Finset.univ`. -/
   if s.isAppOfArity ``Finset.univ 2 then
     let binder ←
       if ppDomain then
-        let ty ← withNaryArg 1 delab
+        let ty ← withNaryArg 0 delab
         `(bigOpBinder| $(.mk i):ident : $ty)
       else
         `(bigOpBinder| $(.mk i):ident)
@@ -272,7 +272,7 @@ to show the domain type when the sum is over `Finset.univ`. -/
   if s.isAppOfArity ``Finset.univ 2 then
     let binder ←
       if ppDomain then
-        let ty ← withNaryArg 1 delab
+        let ty ← withNaryArg 0 delab
         `(bigOpBinder| $(.mk i):ident : $ty)
       else
         `(bigOpBinder| $(.mk i):ident)
