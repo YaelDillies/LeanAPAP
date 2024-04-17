@@ -103,7 +103,7 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
   refine' (lpNorm_sub_le hm'' _ _).trans _
   rw [lpNorm_translate, two_mul ‖f‖_[2 * m], add_le_add_iff_left]
   have hmeq' : ((2 * m : ℝ≥0) : ℝ≥0∞) = 2 * m := by
-    rw [ENNReal.coe_mul, ENNReal.coe_two, ENNReal.coe_nat]
+    rw [ENNReal.coe_mul, ENNReal.coe_two, ENNReal.coe_natCast]
   have : (1 : ℝ≥0) < 2 * m := by
     rw [←Nat.cast_two, ←Nat.cast_mul, Nat.one_lt_cast]
     exact hm'
@@ -414,7 +414,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
     _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := l1Norm_mul_le hM _ _
     _ ≤ ε / exp 1 * B.card ^ (M : ℝ)⁻¹ * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := by
         gcongr
-        simpa only [← ENNReal.coe_nat, lpNorm_indicate hM₀] using hT _ ht
+        simpa only [← ENNReal.coe_natCast, lpNorm_indicate hM₀] using hT _ ht
     _ = ε * ((C.card / B.card) ^ (-(M : ℝ)⁻¹) / exp 1) := by
         rw [← mul_comm_div, lpNorm_mu hM.symm.one_le hC.neg.vadd_finset, card_vadd_finset,
           card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_nat_cast,

@@ -18,7 +18,7 @@ lemma energy_nonneg (n : ℕ) (s : Finset G) (ν : G → ℂ) : 0 ≤ energy n s
 
 lemma energy_nsmul (m n : ℕ) (s : Finset G) (ν : G → ℂ) :
     energy n s (m • ν) = m • energy n s ν := by
-  simp only [energy, nsmul_eq_mul, mul_sum, @Pi.coe_nat G (fun _ ↦ ℂ) _ m, Pi.mul_apply, norm_mul,
+  simp only [energy, nsmul_eq_mul, mul_sum, Pi.natCast_def, Pi.mul_apply, norm_mul,
     Complex.norm_nat]
 
 @[simp] lemma energy_zero (s : Finset G) (ν : G → ℂ) : energy 0 s ν = ‖ν 0‖ := by simp [energy]

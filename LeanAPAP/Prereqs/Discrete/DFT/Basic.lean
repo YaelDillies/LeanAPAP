@@ -82,7 +82,7 @@ lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
 
 lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
   funext fun a ↦ by
-    simp_rw [Pi.mul_apply, Function.comp_apply, map_neg, Pi.nat_apply, ←dft_dft_doubleDualEmb,
+    simp_rw [Pi.mul_apply, Function.comp_apply, map_neg, Pi.natCast_apply, ←dft_dft_doubleDualEmb,
       doubleDualEmb_doubleDualEquiv_symm_apply]
 
 lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) := fun f g h ↦

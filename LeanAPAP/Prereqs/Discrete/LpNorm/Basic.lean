@@ -276,7 +276,7 @@ lemma l2Inner_sub_right (f g₁ g₂ : ι → 𝕜) : ⟪f, g₁ - g₂⟫_[𝕜
 end CommRing
 
 section OrderedCommSemiring
-variable [OrderedCommSemiring 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+variable [OrderedCommSemiring 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 lemma l2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
   sum_nonneg fun _ _ ↦ mul_nonneg (star_nonneg_iff.2 $ hf _) $ hg _
@@ -284,7 +284,7 @@ lemma l2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
 end OrderedCommSemiring
 
 section LinearOrderedCommRing
-variable [LinearOrderedCommRing 𝕜] [StarOrderedRing 𝕜] [TrivialStar 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedCommRing 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] [TrivialStar 𝕜] {f g : ι → 𝕜}
 
 --TODO: Can we remove the `TrivialStar` assumption?
 lemma abs_l2Inner_le_l2Inner_abs : |⟪f, g⟫_[𝕜]| ≤ ⟪|f|, |g|⟫_[𝕜] :=
@@ -393,7 +393,7 @@ private lemma lpNorm_pos_of_pos {α : ι → Type*} [∀ i, NormedAddCommGroup (
   lpNorm_pos_of_ne_zero hf.ne'
 
 section OrderedCommSemiring
-variable [OrderedCommSemiring 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+variable [OrderedCommSemiring 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 private lemma l2Inner_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
   l2Inner_nonneg hf.le hg
@@ -467,7 +467,7 @@ example {p : ℝ≥0∞} {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by p
 end Complex
 
 section OrderedCommSemiring
-variable [OrderedCommSemiring 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+variable [OrderedCommSemiring 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 example (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
 example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] := by positivity
@@ -501,7 +501,7 @@ lemma lpNorm_pow (hp : p ≠ 0) {q : ℕ} (hq : q ≠ 0) (f : α → ℂ) :
     ‖f ^ q‖_[p] = ‖f‖_[p * q] ^ q := by
   refine rpow_left_injOn (NNReal.coe_ne_zero.2 hp) lpNorm_nonneg (by dsimp; positivity) ?_
   dsimp
-  rw [← rpow_natCast_mul lpNorm_nonneg, ← mul_comm, ← ENNReal.coe_nat, ← ENNReal.coe_mul,
+  rw [← rpow_natCast_mul lpNorm_nonneg, ← mul_comm, ← ENNReal.coe_natCast, ← ENNReal.coe_mul,
     ← NNReal.coe_nat_cast, ←NNReal.coe_mul, lpNorm_rpow_eq_sum hp, lpNorm_rpow_eq_sum]
   simp [← rpow_natCast_mul]
   positivity

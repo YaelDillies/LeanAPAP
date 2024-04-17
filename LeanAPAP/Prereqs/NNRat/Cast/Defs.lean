@@ -159,7 +159,7 @@ end DivisionSemiring
 
 instance [DivisionRing α] [CharZero α] : CompAction α where
   nnqsmul_eq_mul' q a := (Rat.smul_def _ _).trans $ by
-    simp [NNRat.cast_def, Rat.cast_def, NNRat.num_coe]
+    simp [NNRat.cast_def, Rat.cast_def, NNRat.num_coe, NNRat.den_coe]
 
 -- Porting note: statement made more explicit
 @[norm_cast] lemma cast_id (n : ℚ≥0) : NNRat.cast n = n := rfl

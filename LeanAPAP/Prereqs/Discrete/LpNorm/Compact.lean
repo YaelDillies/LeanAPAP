@@ -247,7 +247,7 @@ end Field
 
 section LinearOrderedSemifield
 variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [PosSMulMono ℚ≥0 𝕜] [CharZero 𝕜]
-  [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+  [StarRing 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 lemma nl2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
   expect_nonneg fun _ _ ↦ mul_nonneg (star_nonneg_iff.2 $ hf _) $ hg _
@@ -255,7 +255,7 @@ lemma nl2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜]
 end LinearOrderedSemifield
 
 section LinearOrderedField
-variable [LinearOrderedField 𝕜] [StarOrderedRing 𝕜] [TrivialStar 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedField 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] [TrivialStar 𝕜] {f g : ι → 𝕜}
 
 --TODO: Can we remove the `TrivialStar` assumption?
 lemma abs_nl2Inner_le_nl2Inner_abs : |⟪f, g⟫ₙ_[𝕜]| ≤ ⟪|f|, |g|⟫ₙ_[𝕜] :=
@@ -323,7 +323,7 @@ private lemma nlpNorm_pos_of_pos {α : ι → Type*} [Nonempty ι] [∀ i, Norme
   nlpNorm_pos_of_ne_zero hf.ne'
 
 section LinearOrderedSemifield
-variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 private lemma nl2Inner_nonneg_of_nonneg_of_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
   sorry
@@ -369,6 +369,7 @@ end LinearOrderedSemifield
   match e with
   | ~q(@nl2Inner $ι _ $instι $instfield $instmod $inststar $f $g) =>
       let _p𝕜 ← synthInstanceQ q(LinearOrderedSemifield $𝕜)
+      let _p𝕜 ← synthInstanceQ q(StarRing $𝕜)
       let _p𝕜 ← synthInstanceQ q(StarOrderedRing $𝕜)
       assumeInstancesCommute
       match ← core q(inferInstance) q(inferInstance) f,
@@ -403,7 +404,7 @@ example {p : ℝ≥0∞} [Nonempty ι] {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f�
 end Complex
 
 section LinearOrderedSemifield
-variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [StarOrderedRing 𝕜]
+variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜]
   {f g : ι → 𝕜}
 
 example (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] := by positivity

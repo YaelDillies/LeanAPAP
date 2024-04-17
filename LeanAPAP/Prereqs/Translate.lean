@@ -123,7 +123,7 @@ variable [CommRing β] [StarRing β]
 end CommRing
 
 section OrderedCommSemiring
-variable [OrderedCommSemiring β] [StarOrderedRing β] {f : α → β}
+variable [OrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f : α → β}
 
 @[simp] lemma conjneg_nonneg : 0 ≤ conjneg f ↔ 0 ≤ f :=
   (Equiv.neg _).forall_congr' $ by simp [starRingEnd_apply]
@@ -134,7 +134,7 @@ variable [OrderedCommSemiring β] [StarOrderedRing β] {f : α → β}
 end OrderedCommSemiring
 
 section OrderedCommRing
-variable [OrderedCommRing β] [StarOrderedRing β] {f : α → β}
+variable [OrderedCommRing β] [StarRing β] [StarOrderedRing β] {f : α → β}
 
 @[simp] lemma conjneg_nonpos : conjneg f ≤ 0 ↔ f ≤ 0 := by
   simp_rw [←neg_nonneg, ←conjneg_neg, conjneg_nonneg]
