@@ -1,5 +1,6 @@
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.NNReal
+import LeanAPAP.Mathlib.Algebra.Field.Defs
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Translate
 
@@ -265,7 +266,7 @@ end Group
 end DivisionSemiring
 
 section Semifield
-variable (β) [Semifield β] [Module ℚ≥0 β] [CompAction β] {s : Finset α}
+variable (β) [Semifield β] {s : Finset α}
 
 lemma expect_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : 𝔼 x, μ_[β] s x = (↑(card α))⁻¹ := by
   rw [expect, card_univ, sum_mu _ hs, NNRat.smul_one_eq_cast, NNRat.cast_inv, NNRat.cast_natCast]

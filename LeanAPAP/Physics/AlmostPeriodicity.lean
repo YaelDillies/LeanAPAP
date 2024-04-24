@@ -316,7 +316,7 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
   refine' (mul_le_mul_of_nonneg_left (pow_le_pow_left (Nat.cast_nonneg _) h₃ k) hK.le).trans _
   rw [mul_pow, ←mul_assoc, ←pow_succ']
   refine' mul_le_mul_of_nonneg_right _ (pow_nonneg (Nat.cast_nonneg _) _)
-  rw [←Real.rpow_nat_cast]
+  rw [←Real.rpow_natCast]
   refine' Real.rpow_le_rpow_of_exponent_le (one_le_two.trans hK') _
   rw [Nat.cast_add_one, ←le_sub_iff_add_le, hk']
   refine' (Nat.ceil_lt_add_one _).le.trans _
@@ -417,7 +417,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
         simpa only [← ENNReal.coe_natCast, lpNorm_indicate hM₀] using hT _ ht
     _ = ε * ((C.card / B.card) ^ (-(M : ℝ)⁻¹) / exp 1) := by
         rw [← mul_comm_div, lpNorm_mu hM.symm.one_le hC.neg.vadd_finset, card_vadd_finset,
-          card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_nat_cast,
+          card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_natCast,
           rpow_neg, rpow_neg, ← div_eq_mul_inv, inv_div_inv] <;> positivity
     _ ≤ ε := mul_le_of_le_one_right (by positivity) $ (div_le_one $ by positivity).2 ?_
   calc

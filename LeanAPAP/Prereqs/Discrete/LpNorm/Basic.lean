@@ -141,8 +141,8 @@ lemma lpNorm_nsmul (hp : 1 ≤ p) (n : ℕ) (f : ∀ i, α i) : ‖n • f‖_[p
   haveI := Fact.mk hp
   RCLike.norm_nsmul ℝ _ _
 
-lemma lpNorm_expect_le [∀ i, Module ℚ≥0 (α i)] (hp : 1 ≤ p) {κ : Type*} (s : Finset κ) (f : κ → ∀ i, α i) :
-    ‖𝔼 i ∈ s, f i‖_[p] ≤ 𝔼 i ∈ s, ‖f i‖_[p] := by
+lemma lpNorm_expect_le [∀ i, Module ℚ≥0 (α i)] (hp : 1 ≤ p) {κ : Type*} (s : Finset κ)
+    (f : κ → ∀ i, α i) : ‖𝔼 i ∈ s, f i‖_[p] ≤ 𝔼 i ∈ s, ‖f i‖_[p] := by
   obtain rfl | hs := s.eq_empty_or_nonempty
   · simp
   refine (le_inv_smul_iff_of_pos $ by positivity).2 ?_
@@ -502,7 +502,7 @@ lemma lpNorm_pow (hp : p ≠ 0) {q : ℕ} (hq : q ≠ 0) (f : α → ℂ) :
   refine rpow_left_injOn (NNReal.coe_ne_zero.2 hp) lpNorm_nonneg (by dsimp; positivity) ?_
   dsimp
   rw [← rpow_natCast_mul lpNorm_nonneg, ← mul_comm, ← ENNReal.coe_natCast, ← ENNReal.coe_mul,
-    ← NNReal.coe_nat_cast, ←NNReal.coe_mul, lpNorm_rpow_eq_sum hp, lpNorm_rpow_eq_sum]
+    ← NNReal.coe_natCast, ←NNReal.coe_mul, lpNorm_rpow_eq_sum hp, lpNorm_rpow_eq_sum]
   simp [← rpow_natCast_mul]
   positivity
 

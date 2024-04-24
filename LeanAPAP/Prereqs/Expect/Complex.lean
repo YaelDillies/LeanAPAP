@@ -1,6 +1,5 @@
 import Mathlib.Data.Complex.Basic
 import LeanAPAP.Prereqs.Expect.Basic
-import LeanAPAP.Prereqs.NNRat.NNReal
 
 open scoped BigOps NNReal NNRat
 

@@ -179,8 +179,7 @@ end Real
 /-! #### Inner product -/
 
 section Semifield
-variable [Semifield 𝕜] [CharZero 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [StarRing 𝕜] {γ : Type*}
-  [DistribSMul γ 𝕜]
+variable [Semifield 𝕜] [CharZero 𝕜] [StarRing 𝕜] {γ : Type*} [DistribSMul γ 𝕜]
 
 /-- Inner product giving rise to the L2 norm with the compact normalisation. -/
 def nl2Inner (f g : ι → 𝕜) : 𝕜 := 𝔼 i, conj (f i) * g i
@@ -246,8 +245,8 @@ lemma nl2Inner_sub_right (f g₁ g₂ : ι → 𝕜) : ⟪f, g₁ - g₂⟫ₙ_[
 end Field
 
 section LinearOrderedSemifield
-variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [PosSMulMono ℚ≥0 𝕜] [CharZero 𝕜]
-  [StarRing 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedSemifield 𝕜] [PosSMulMono ℚ≥0 𝕜] [CharZero 𝕜] [StarRing 𝕜]
+  [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 lemma nl2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] :=
   expect_nonneg fun _ _ ↦ mul_nonneg (star_nonneg_iff.2 $ hf _) $ hg _
@@ -404,8 +403,7 @@ example {p : ℝ≥0∞} [Nonempty ι] {f : ι → ℝ} (hf : 0 < f) : 0 < ‖f�
 end Complex
 
 section LinearOrderedSemifield
-variable [LinearOrderedSemifield 𝕜] [Module ℚ≥0 𝕜] [CompAction 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜]
-  {f g : ι → 𝕜}
+variable [LinearOrderedSemifield 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] {f g : ι → 𝕜}
 
 example (hf : 0 < f) (hg : 0 < g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] := by positivity
 example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜] := by positivity

@@ -67,7 +67,8 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a := by
   classical simp_rw [dft, l2Inner_eq_sum, sum_mul, expect_sum_comm, mul_right_comm _ (f _),
-    ← expect_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div, AddChar.expect_apply_eq_ite, sub_eq_zero, boole_mul, Fintype.sum_ite_eq]
+    ← expect_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div,
+    AddChar.expect_apply_eq_ite, sub_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion' (f : α → ℂ) (a : α) : ∑ ψ : AddChar α ℂ, dft f ψ * ψ a = card α * f a := by
@@ -160,7 +161,8 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
     _ = ∑ x, ‖(𝔼 ψ, dft f ψ ^ 2 * ψ x)‖ ^ n := by
         simp_rw [← norm_pow, ← dft_inversion (f ∗ f), dft_conv_apply, sq]
     _ ≤ ∑ x, ‖𝔼 ψ, ‖dft f ψ‖ ^ 2 * ψ x‖ ^ n := Complex.le_of_eq_sum_of_eq_sum_norm
-          (fun ψ : (Fin n → AddChar α ℂ) × (Fin n → AddChar α ℂ) ↦ conj (∏ i, dft f (ψ.1 i) ^ 2) * (∏ i, dft f (ψ.2 i) ^ 2) * ∑ x, (∑ i, ψ.1 i - ∑ i, ψ.2 i) x) univ (by positivity) ?_ ?_
+          (fun ψ : (Fin n → AddChar α ℂ) × (Fin n → AddChar α ℂ) ↦ conj (∏ i, dft f (ψ.1 i) ^ 2) *
+            (∏ i, dft f (ψ.2 i) ^ 2) * ∑ x, (∑ i, ψ.1 i - ∑ i, ψ.2 i) x) univ (by positivity) ?_ ?_
     _ = ∑ x, ‖(f ○ f) x‖ ^ n := by
         simp_rw [← norm_pow, ← dft_inversion (f ○ f), dft_dconv_apply, Complex.mul_conj']
     _ = ‖f ○ f‖_[n] ^ n := (lpNorm_pow_eq_sum hn₀ _).symm

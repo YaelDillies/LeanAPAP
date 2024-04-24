@@ -3,7 +3,8 @@ import LeanAPAP.Prereqs.AddChar.Basic
 open AddChar Complex Function
 open scoped NNReal
 
-/-- A *Bohr set* `B` on an additive group `G` is a set of characters of `G`, called the *frequencies*, along with a real number for each frequency `ψ`, called the *width of `B` at `ψ`*.
+/-- A *Bohr set* `B` on an additive group `G` is a set of characters of `G`, called the
+*frequencies*, along with a real number for each frequency `ψ`, called the *width of `B` at `ψ`*.
 
 A Bohr set `B` is thought of as the set `{x | ∀ ψ ∈ B.frequencies, ‖1 - ψ x‖ ≤ B.width ψ}`. This is
 the *chord-length* convention. The arc-length convention would instead be

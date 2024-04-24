@@ -48,7 +48,7 @@ private def zmodAux (n : ℕ) : AddChar (ZMod n) circle :=
 
 lemma zmodAux_injective (hn : n ≠ 0) : Injective (zmodAux n) := by
   replace hn : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hn
-  simp [zmodAux, ZMod.lift_injective, CharP.int_cast_eq_zero_iff _ n, e_eq_one, div_eq_iff hn,
+  simp [zmodAux, ZMod.lift_injective, CharP.intCast_eq_zero_iff _ n, e_eq_one, div_eq_iff hn,
     mul_comm _ (n : ℝ), -forall_exists_index]
   norm_cast
   exact fun _ ↦ id
@@ -64,12 +64,12 @@ def zmod (n : ℕ) (x : ZMod n) : AddChar (ZMod n) circle :=
 
 @[simp] lemma zmod_zero (n : ℕ) : zmod n 0 = 1 := by
   refine DFunLike.ext _ _ ?_
-  rw [ZMod.int_cast_surjective.forall]
+  rw [ZMod.intCast_surjective.forall]
   rintro y
   simpa using zmod_apply n 0 y
 
 @[simp] lemma zmod_add (n : ℕ) : ∀ x y : ZMod n, zmod n (x + y) = zmod n x * zmod n y := by
-  simp only [DFunLike.ext_iff, ZMod.int_cast_surjective.forall, ←Int.cast_add, AddChar.mul_apply,
+  simp only [DFunLike.ext_iff, ZMod.intCast_surjective.forall, ←Int.cast_add, AddChar.mul_apply,
     zmod_apply]
   simp [add_mul, add_div, map_add_mul]
 
@@ -78,7 +78,7 @@ def zmod (n : ℕ) (x : ZMod n) : AddChar (ZMod n) circle :=
 -- by simp [addChar.zmod, ZMod.coe_mul]
 
 lemma zmod_injective (hn : n ≠ 0) : Injective (zmod n) := by
-  simp_rw [Injective, ZMod.int_cast_surjective.forall]
+  simp_rw [Injective, ZMod.intCast_surjective.forall]
   rintro x y h
   replace hn : (n : ℝ) ≠ 0 := by positivity
   simpa only [Int.cast_one, mul_one, one_mul, e_inj, AddCommGroup.div_modEq_div hn,

@@ -136,11 +136,11 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ ≤ _ := mul_le_mul_of_nonneg_left (pow_le_pow_left wlpNorm_nonneg hf₁ _) ?_
     any_goals positivity
     rotate_left
-    rw [wlpNorm_eq_sum hp'.ne', NNReal.coe_mul, mul_inv, rpow_mul, NNReal.coe_nat_cast,
+    rw [wlpNorm_eq_sum hp'.ne', NNReal.coe_mul, mul_inv, rpow_mul, NNReal.coe_natCast,
       rpow_inv_natCast_pow]
     simp only [wlpNorm_eq_sum hp'.ne', sqrt_eq_rpow, Nonneg.coe_one, rpow_two,
       abs_nonneg, NNReal.smul_def, rpow_mul, Pi.pow_apply, abs_pow, norm_eq_abs, mul_pow,
-      rpow_nat_cast, smul_eq_mul, pow_mul, one_div, NNReal.coe_two]
+      rpow_natCast, smul_eq_mul, pow_mul, one_div, NNReal.coe_two]
     all_goals positivity
   set p' := 24 / ε * log (3 / ε) * p
   have hp' : 0 < p' := p'_pos hp hε₀ hε₁
@@ -150,9 +150,9 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ ≤ exp (-(8⁻¹ * ε)) := one_sub_le_exp_neg _
       _ = ((ε / 3) ^ p * (ε / 3) ^ (2 * p)) ^ p'⁻¹ := ?_
       _ ≤ _ := rpow_le_rpow ?_ ((mul_le_mul_of_nonneg_right ?_ ?_).trans this) ?_
-    · rw [←pow_add, ←one_add_mul _ p, ←rpow_nat_cast, Nat.cast_mul, ←rpow_mul, ←div_eq_mul_inv,
+    · rw [←pow_add, ←one_add_mul _ p, ←rpow_natCast, Nat.cast_mul, ←rpow_mul, ←div_eq_mul_inv,
         mul_div_mul_right, ←exp_log (_ : 0 < ε / 3), ←exp_mul, ←inv_div, log_inv, neg_mul,
-        mul_div_left_comm, div_mul_left (log_ε_pos hε₀ hε₁).ne']
+        mul_div_left_comm, div_mul_cancel_right₀ (log_ε_pos hε₀ hε₁).ne']
       field_simp
       ring
       all_goals positivity

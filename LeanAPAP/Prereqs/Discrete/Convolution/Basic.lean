@@ -329,7 +329,7 @@ lemma sub_dconv (f g h : α → β) : (f - g) ○ h = f ○ h - g ○ h := by
 end CommRing
 
 section Semifield
-variable [Semifield β] [Module ℚ≥0 β] [CompAction β] [StarRing β]
+variable [Semifield β] [CharZero β] [StarRing β]
 
 @[simp] lemma mu_univ_conv_mu_univ : μ_[β] (univ : Finset α) ∗ μ univ = μ univ := by
   ext; cases eq_or_ne (card α : β) 0 <;> simp [mu_apply, conv_eq_sum_add, card_univ, *]
@@ -502,7 +502,8 @@ lemma support_iterConv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n 
   | 0 => by
     simp only [iterConv_zero, zero_smul, support_subset_iff, Ne.def, ite_eq_right_iff, not_forall,
       exists_prop, Set.mem_zero, and_imp, forall_eq, eq_self_iff_true, imp_true_iff, trivChar_apply]
-  | n + 1 => (support_conv_subset _ _).trans $ Set.add_subset_add_right $ support_iterConv_subset _ _
+  | n + 1 =>
+    (support_conv_subset _ _).trans $ Set.add_subset_add_right $ support_iterConv_subset _ _
 
 lemma indicate_iterConv_apply (s : Finset α) (n : ℕ) (a : α) :
     (𝟭_[β] s ∗^ n) a = ((s ^^ n).filter fun x : Fin n → α ↦ ∑ i, x i = a).card := by
@@ -547,7 +548,7 @@ lemma dconv_indicate_iterConv (f : α → β) (s : Finset α) (n : ℕ) :
 end CommSemiring
 
 section Semifield
-variable [Semifield β] [CharZero β] [Module ℚ≥0 β] [CompAction β] [StarRing β]
+variable [Semifield β] [CharZero β] [Module ℚ≥0 β] [StarRing β]
 
 lemma mu_iterConv_conv (s : Finset α) (n : ℕ) (f : α → β) :
     μ s ∗^ n ∗ f = 𝔼 a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) f := by

@@ -1,10 +1,10 @@
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Tactic.Positivity.Finset
+import LeanAPAP.Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
+import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
 import LeanAPAP.Mathlib.Data.Fintype.Pi
-import LeanAPAP.Prereqs.NNRat.Algebra
-import LeanAPAP.Prereqs.NNRat.GroupPower.Lemmas
 
 /-!
 # Average over a finset
@@ -273,8 +273,8 @@ lemma balance_apply (f : ι → α) (x : ι) : balance f x = f x - 𝔼 y, f y :
 @[simp] lemma balance_idem (f : ι → α) : balance (balance f) = balance f := by
   cases isEmpty_or_nonempty ι <;> ext x <;> simp [balance, expect_sub_distrib, univ_nonempty]
 
-@[simp] lemma map_balance {F : Type*} [FunLike F α β] [LinearMapClass F ℚ≥0 α β] (g : F) (f : ι → α) (a : ι) :
-    g (balance f a) = balance (g ∘ f) a := by simp [balance, map_expect]
+@[simp] lemma map_balance {F : Type*} [FunLike F α β] [LinearMapClass F ℚ≥0 α β] (g : F) (f : ι → α)
+    (a : ι) : g (balance f a) = balance (g ∘ f) a := by simp [balance, map_expect]
 
 end AddCommGroup
 
@@ -295,7 +295,8 @@ lemma mul_expect [SMulCommClass ℚ≥0 α α] (s : Finset ι) (f : ι → α) (
 
 -- TODO: Change `sum_mul_sum` to match?
 lemma expect_mul_expect [IsScalarTower ℚ≥0 α α] [SMulCommClass ℚ≥0 α α] (s : Finset ι)
-    (t : Finset κ) (f : ι → α) (g : κ → α) : (𝔼 i ∈ s, f i) * 𝔼 j ∈ t, g j = 𝔼 i ∈ s, 𝔼 j ∈ t, f i * g j := by
+    (t : Finset κ) (f : ι → α) (g : κ → α) :
+    (𝔼 i ∈ s, f i) * 𝔼 j ∈ t, g j = 𝔼 i ∈ s, 𝔼 j ∈ t, f i * g j := by
   simp_rw [expect_mul, mul_expect]
 
 end Semiring
@@ -311,7 +312,7 @@ lemma expect_pow (s : Finset ι) (f : ι → α) (n : ℕ) :
 end CommSemiring
 
 section Semifield
-variable [Semifield α] [CharZero α] [SMul ℚ≥0 α] [CompAction α] {s : Finset ι} {f g : ι → α}
+variable [Semifield α] [CharZero α] [SMul ℚ≥0 α] {s : Finset ι} {f g : ι → α}
   {m : β → α}
 
 lemma expect_indicate_eq [Fintype ι] [Nonempty ι] [DecidableEq ι] (f : ι → α) (x : ι) :
@@ -406,8 +407,8 @@ end LinearOrderedAddCommGroup
 end Finset
 
 namespace algebraMap
-variable [Semifield α] [CharZero α] [SMul ℚ≥0 α] [CompAction α] [Semifield β] [CharZero β]
-  [SMul ℚ≥0 β] [CompAction β] [Algebra α β]
+variable [Semifield α] [CharZero α] [SMul ℚ≥0 α] [Semifield β] [CharZero β]
+  [SMul ℚ≥0 β] [Algebra α β]
 
 @[simp, norm_cast]
 lemma coe_expect (s : Finset ι) (f : ι → α) : 𝔼 i ∈ s, f i = 𝔼 i ∈ s, (f i : β) :=
@@ -498,12 +499,12 @@ open Finset
 instance [Preorder α] [MulAction ℚ α] [PosSMulMono ℚ α] : PosSMulMono ℚ≥0 α where
   elim a _ _b₁ _b₂ hb := (smul_le_smul_of_nonneg_left hb a.2 :)
 
-instance [Preorder α] [Semifield α] [PosMulMono α] [NNRatCast α] [MulAction ℚ α] [CompAction α] :
+instance [Preorder α] [Semifield α] [PosMulMono α] [NNRatCast α] [MulAction ℚ α] :
     PosSMulMono ℚ≥0 α where
   elim a ha b₁ b₂ hb := by simp_rw [NNRat.smul_def]; exact mul_le_mul_of_nonneg_left hb sorry
 
 instance [Preorder α] [Semifield α] [PosMulStrictMono α] [NNRatCast α] [MulAction ℚ α]
-    [CompAction α] : PosSMulStrictMono ℚ≥0 α where
+    : PosSMulStrictMono ℚ≥0 α where
   elim a ha b₁ b₂ hb := by simp_rw [NNRat.smul_def]; exact mul_lt_mul_of_pos_left hb sorry
 
 namespace Mathlib.Meta.Positivity

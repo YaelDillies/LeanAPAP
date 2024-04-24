@@ -42,7 +42,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       _ ≤ _ := inner_le_weight_mul_Lp_of_nonneg _ (p := m) ?_ _ _ (fun _ ↦ norm_nonneg _)
             fun _ ↦ norm_nonneg _
       _ = ‖f‖_[1] ^ (1 - (m : ℝ)⁻¹) * (∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ (m⁻¹ : ℝ) :=
-        by push_cast; simp_rw [l1Norm_eq_sum, rpow_nat_cast]
+        by push_cast; simp_rw [l1Norm_eq_sum, rpow_natCast]
   rotate_left
   · rw [←nsmul_eq_mul']
     exact card_nsmul_le_sum _ _ _ fun x hx ↦ mem_largeSpec.1 $ hΔ hx
@@ -54,7 +54,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
   replace this := pow_le_pow_left (by positivity) this m
   simp_rw [mul_pow] at this
   rw [rpow_inv_natCast_pow _ hm, ←rpow_mul_natCast, one_sub_mul,
-    inv_mul_cancel, ←Nat.cast_pred, rpow_nat_cast, mul_assoc, mul_left_comm, ←pow_sub_one_mul,
+    inv_mul_cancel, ←Nat.cast_pred, rpow_natCast, mul_assoc, mul_left_comm, ←pow_sub_one_mul,
     mul_assoc, mul_le_mul_left] at this
   any_goals positivity
   replace hfν : ∀ x, ‖f x‖ ≤ ‖f x‖ * sqrt (ν x) := by

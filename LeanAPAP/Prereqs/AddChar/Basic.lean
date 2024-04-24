@@ -45,8 +45,7 @@ protected lemma l2Inner_self [Fintype G] (ψ : AddChar G R) :
 end RCLike
 
 section Semifield
-variable [Fintype G] [Semifield R] [IsDomain R] [CharZero R] [SMul ℚ≥0 R] [CompAction R]
-  {ψ : AddChar G R}
+variable [Fintype G] [Semifield R] [IsDomain R] [CharZero R] {ψ : AddChar G R}
 
 lemma expect_eq_ite (ψ : AddChar G R) : 𝔼 a, ψ a = if ψ = 0 then 1 else 0 := by
   split_ifs with h

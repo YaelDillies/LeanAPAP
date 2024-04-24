@@ -59,7 +59,8 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma cft_inversion (f : α → ℂ) (a : α) : ∑ ψ, cft f ψ * ψ a = f a := by
   classical simp_rw [cft, nl2Inner_eq_expect, expect_mul, ← expect_sum_comm, mul_right_comm _ (f _),
-    ← sum_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div, AddChar.sum_apply_eq_ite, sub_eq_zero, ite_mul, zero_mul, Fintype.expect_ite_eq]
+    ← sum_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ← map_sub_eq_div,
+    AddChar.sum_apply_eq_ite, sub_eq_zero, ite_mul, zero_mul, Fintype.expect_ite_eq]
   simp [add_neg_eq_zero, card_univ, NNRat.smul_def (α := ℂ), Fintype.card_ne_zero]
 
 lemma dft_cft_doubleDualEmb (f : α → ℂ) (a : α) : dft (cft f) (doubleDualEmb a) = f (-a) := by

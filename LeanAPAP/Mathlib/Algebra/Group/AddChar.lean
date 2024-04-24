@@ -28,8 +28,8 @@ attribute [simp, norm_cast] mul_apply one_apply MonoidHom.coe_compAddChar coe_co
 /-- Interpret an additive character as a monoid homomorphism. -/
 def toMonoidHomEquiv' : AddChar G R ≃ (Multiplicative G →* R) := toMonoidHomEquiv _ _
 
-@[simp, norm_cast]
-lemma coe_toMonoidHomEquiv' (ψ : AddChar G R) : ⇑(toMonoidHomEquiv' ψ) = ψ ∘ Multiplicative.toAdd := rfl
+@[simp, norm_cast] lemma coe_toMonoidHomEquiv' (ψ : AddChar G R) :
+    ⇑(toMonoidHomEquiv' ψ) = ψ ∘ Multiplicative.toAdd := rfl
 
 @[simp, norm_cast] lemma coe_toMonoidHomEquiv'_symm (ψ : Multiplicative G →* R) :
     ⇑(toMonoidHomEquiv'.symm ψ) = ψ ∘ Multiplicative.ofAdd := rfl
@@ -41,7 +41,8 @@ lemma coe_toMonoidHomEquiv' (ψ : AddChar G R) : ⇑(toMonoidHomEquiv' ψ) = ψ 
     toMonoidHomEquiv'.symm ψ a = ψ (Multiplicative.ofAdd a) := rfl
 
 @[simp] lemma toMonoidHomEquiv'_zero : toMonoidHomEquiv' (0 : AddChar G R) = 1 := rfl
-@[simp] lemma toMonoidHomEquiv'_symm_one : toMonoidHomEquiv'.symm (1 : Multiplicative G →* R) = 0 := rfl
+@[simp] lemma toMonoidHomEquiv'_symm_one
+    toMonoidHomEquiv'.symm (1 : Multiplicative G →* R) = 0 := rfl
 
 @[simp] lemma toMonoidHomEquiv'_add (ψ φ : AddChar G R) :
     toMonoidHomEquiv' (ψ + φ) = toMonoidHomEquiv' ψ * toMonoidHomEquiv' φ := rfl
@@ -52,7 +53,8 @@ lemma coe_toMonoidHomEquiv' (ψ : AddChar G R) : ⇑(toMonoidHomEquiv' ψ) = ψ 
 def toAddMonoidHomEquiv' : AddChar G R ≃ (G →+ Additive R) := toAddMonoidHomEquiv _ _
 
 @[simp, norm_cast]
-lemma coe_toAddMonoidHomEquiv' (ψ : AddChar G R) : ⇑(toAddMonoidHomEquiv' ψ) = Additive.ofMul ∘ ψ := rfl
+lemma coe_toAddMonoidHomEquiv' (ψ : AddChar G R) :
+    ⇑(toAddMonoidHomEquiv' ψ) = Additive.ofMul ∘ ψ := rfl
 
 @[simp, norm_cast] lemma coe_toAddMonoidHomEquiv'_symm (ψ : G →+ Additive R) :
     ⇑(toAddMonoidHomEquiv'.symm ψ) = Additive.toMul ∘ ψ := rfl
