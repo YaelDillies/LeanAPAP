@@ -5,7 +5,7 @@ import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 -/
 
 open Finset Function Real
-open scoped BigOps ComplexConjugate ENNReal NNReal
+open scoped BigOperators ComplexConjugate ENNReal NNReal
 
 variable {ι 𝕜 : Type*} [Fintype ι]
 

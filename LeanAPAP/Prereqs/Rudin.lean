@@ -13,7 +13,7 @@ open Finset hiding card
 open Fintype (card)
 open Function Real
 open Complex (I re im)
-open scoped BigOps Nat NNReal ENNReal ComplexConjugate ComplexOrder
+open scoped BigOperators Nat NNReal ENNReal ComplexConjugate ComplexOrder
 
 variable {α : Type*} [Fintype α] [AddCommGroup α] {p : ℕ}
 

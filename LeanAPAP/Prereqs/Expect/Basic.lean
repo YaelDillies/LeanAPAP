@@ -2,7 +2,6 @@ import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.Algebra.Basic
-import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 
@@ -35,7 +34,7 @@ notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
 def Finset.expect [AddCommMonoid α] [Module ℚ≥0 α] (s : Finset ι) (f : ι → α) : α :=
   (s.card : ℚ≥0)⁻¹ • s.sum f
 
-namespace BigOps
+namespace BigOperators
 open Std.ExtendedBinder Lean Meta
 
 /--
@@ -83,9 +82,9 @@ to show the domain type when the expect is over `Finset.univ`. -/
     let ss ← withNaryArg 3 $ delab
     `(𝔼 $(.mk i):ident ∈ $ss, $body)
 
-end BigOps
+end BigOperators
 
-open scoped BigOps
+open scoped BigOperators
 
 namespace Finset
 section AddCommMonoid
@@ -499,13 +498,10 @@ open Finset
 instance [Preorder α] [MulAction ℚ α] [PosSMulMono ℚ α] : PosSMulMono ℚ≥0 α where
   elim a _ _b₁ _b₂ hb := (smul_le_smul_of_nonneg_left hb a.2 :)
 
-instance [Preorder α] [Semifield α] [PosMulMono α] [NNRatCast α] [MulAction ℚ α] :
-    PosSMulMono ℚ≥0 α where
-  elim a ha b₁ b₂ hb := by simp_rw [NNRat.smul_def]; exact mul_le_mul_of_nonneg_left hb sorry
-
-instance [Preorder α] [Semifield α] [PosMulStrictMono α] [NNRatCast α] [MulAction ℚ α]
-    : PosSMulStrictMono ℚ≥0 α where
-  elim a ha b₁ b₂ hb := by simp_rw [NNRat.smul_def]; exact mul_lt_mul_of_pos_left hb sorry
+instance LinearOrderedSemifield.toPosSMulStrictMono [LinearOrderedSemifield α] :
+    PosSMulStrictMono ℚ≥0 α where
+  elim a ha b₁ b₂ hb := by
+    simp_rw [NNRat.smul_def]; exact mul_lt_mul_of_pos_left hb (NNRat.cast_pos.2 ha)
 
 namespace Mathlib.Meta.Positivity
 open Qq Lean Meta

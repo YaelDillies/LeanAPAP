@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Discrete.Convolution.Compact
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
@@ -14,7 +13,7 @@ Fourier inversion formula for it.
 namespace Complex
 variable {ι : Type*} {a b : ℝ}
 
-open scoped BigOps
+open scoped BigOperators
 
 lemma le_of_eq_sum_of_eq_sum_norm (f : ι → ℂ) (s : Finset ι) (ha₀ : 0 ≤ a)
     (ha : a = ∑ i ∈ s, f i) (hb : b = ∑ i ∈ s, (‖f i‖ : ℂ)) : a ≤ b := by
@@ -24,7 +23,7 @@ end Complex
 
 open AddChar Finset Function
 open Fintype (card)
-open scoped BigOps ComplexConjugate ComplexOrder
+open scoped BigOperators ComplexConjugate ComplexOrder
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 

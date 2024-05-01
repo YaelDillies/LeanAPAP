@@ -1,5 +1,4 @@
 import Mathlib.Analysis.MeanInequalitiesPow
-import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Prereqs.Multinomial
 

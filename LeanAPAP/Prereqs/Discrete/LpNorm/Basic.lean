@@ -7,7 +7,7 @@ import LeanAPAP.Prereqs.Indicator
 -/
 
 open Finset Function Real
-open scoped BigOps ComplexConjugate ENNReal NNReal NNRat
+open scoped BigOperators ComplexConjugate ENNReal NNReal NNRat
 
 variable {ι 𝕜 : Type*} [Fintype ι]
 

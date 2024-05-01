@@ -1,5 +1,5 @@
 import Mathlib.Algebra.BigOperators.Pi
-import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 
 open Finset

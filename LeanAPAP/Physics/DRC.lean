@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
 
@@ -7,7 +6,7 @@ import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
 -/
 
 open Real Finset Fintype Function
-open scoped BigOps NNReal Pointwise
+open scoped BigOperators NNReal Pointwise
 
 variable {G : Type*} [DecidableEq G] [Fintype G] [AddCommGroup G] {p : ℕ} {B₁ B₂ A : Finset G}
   {ε δ : ℝ}

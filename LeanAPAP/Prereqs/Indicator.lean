@@ -6,7 +6,7 @@ import LeanAPAP.Prereqs.Translate
 
 open Finset Function
 open Fintype (card)
-open scoped BigOps ComplexConjugate Pointwise NNRat
+open scoped BigOperators ComplexConjugate Pointwise NNRat
 
 /-! ### Indicator -/
 

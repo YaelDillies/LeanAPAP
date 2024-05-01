@@ -41,7 +41,7 @@ def toMonoidHomEquiv' : AddChar G R ≃ (Multiplicative G →* R) := toMonoidHom
     toMonoidHomEquiv'.symm ψ a = ψ (Multiplicative.ofAdd a) := rfl
 
 @[simp] lemma toMonoidHomEquiv'_zero : toMonoidHomEquiv' (0 : AddChar G R) = 1 := rfl
-@[simp] lemma toMonoidHomEquiv'_symm_one
+@[simp] lemma toMonoidHomEquiv'_symm_one :
     toMonoidHomEquiv'.symm (1 : Multiplicative G →* R) = 0 := rfl
 
 @[simp] lemma toMonoidHomEquiv'_add (ψ φ : AddChar G R) :

@@ -17,7 +17,7 @@ noncomputable section
 
 open circle Circle Finset Function Multiplicative
 open Fintype (card)
-open scoped BigOps DirectSum
+open scoped BigOperators DirectSum
 
 variable {α : Type*} [AddCommGroup α] {n : ℕ} {a b : α}
 

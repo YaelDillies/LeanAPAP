@@ -33,7 +33,7 @@ Multiplicativise? Probably ugly and not very useful.
 -/
 
 open Finset Fintype Function
-open scoped BigOps ComplexConjugate NNReal Pointwise NNRat
+open scoped BigOperators ComplexConjugate NNReal Pointwise NNRat
 
 variable {α β γ : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 

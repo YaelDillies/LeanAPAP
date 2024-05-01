@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Curlog
@@ -48,7 +47,7 @@ variable {G : Type*} [DecidableEq G] [Fintype G] [AddCommGroup G] {A S : Finset 
   {ε K : ℝ} {k m : ℕ}
 
 open Finset Real
-open scoped BigOps Pointwise NNReal ENNReal
+open scoped BigOperators Pointwise NNReal ENNReal
 
 namespace AlmostPeriodicity
 

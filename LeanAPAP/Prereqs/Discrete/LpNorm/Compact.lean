@@ -8,7 +8,7 @@ import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 open Finset hiding card
 open Function Real
 open Fintype (card)
-open scoped BigOps ComplexConjugate ENNReal NNReal NNRat
+open scoped BigOperators ComplexConjugate ENNReal NNReal NNRat
 
 variable {ι 𝕜 : Type*} [Fintype ι]
 

@@ -13,7 +13,7 @@ noncomputable section
 
 open AddChar Finset Function
 open Fintype (card)
-open scoped BigOps ComplexConjugate ComplexOrder
+open scoped BigOperators ComplexConjugate ComplexOrder
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 

@@ -1,6 +1,5 @@
 import Mathlib.Algebra.Module.Pi
 import Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Prereqs.Indicator
 
@@ -35,7 +34,7 @@ Multiplicativise? Probably ugly and not very useful.
 -/
 
 open Finset Fintype Function
-open scoped BigOps ComplexConjugate NNReal Pointwise NNRat
+open scoped BigOperators ComplexConjugate NNReal Pointwise NNRat
 
 variable {α β γ : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 
@@ -250,10 +249,10 @@ lemma sum_dconv_mul (f g h : α → β) :
   exact Fintype.sum_congr _ _ fun x ↦ Fintype.sum_equiv (Equiv.subLeft x) _ _ fun y ↦ by simp
 
 lemma sum_conv (f g : α → β) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a := by
-  simpa only [sum_mul_sum, sum_product, Pi.one_apply, mul_one] using sum_conv_mul f g 1
+  simpa only [Fintype.sum_mul_sum, Pi.one_apply, mul_one] using sum_conv_mul f g 1
 
 lemma sum_dconv (f g : α → β) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, conj (g a) := by
-  simpa only [sum_mul_sum, sum_product, Pi.one_apply, mul_one] using sum_dconv_mul f g 1
+  simpa only [Fintype.sum_mul_sum, Pi.one_apply, mul_one] using sum_dconv_mul f g 1
 
 @[simp] lemma conv_const (f : α → β) (b : β) : f ∗ const _ b = const _ ((∑ x, f x) * b) := by
   ext; simp [conv_eq_sum_sub', sum_mul]

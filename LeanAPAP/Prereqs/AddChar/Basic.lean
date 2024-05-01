@@ -14,7 +14,7 @@ Rename
 open Finset hiding card
 open Fintype (card)
 open Function
-open scoped BigOps ComplexConjugate DirectSum NNRat
+open scoped BigOperators ComplexConjugate DirectSum NNRat
 
 variable {G H R : Type*}
 
