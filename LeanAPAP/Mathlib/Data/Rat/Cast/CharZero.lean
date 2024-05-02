@@ -53,7 +53,11 @@ lemma cast_zpow (q : ℚ≥0) (n : ℤ) : ↑(q ^ n) = ((q : α) ^ n : α) := ma
 @[simp, norm_cast] lemma cast_div (p q) : (p / q : ℚ≥0) = (p / q : α) := map_div₀ (castHom α) _ _
 
 @[simp, norm_cast]
-lemma cast_divNat (a b : ℕ) : (divNat a b : α) = a / b := sorry
+lemma cast_divNat (a b : ℕ) : (divNat a b : α) = a / b := by
+  rw [← cast_natCast, ← cast_natCast b, ← cast_div]
+  congr
+  ext
+  apply Rat.mkRat_eq_div
 
 end DivisionSemiring
 end NNRat
