@@ -18,7 +18,7 @@ lemma energy_nonneg (n : ℕ) (s : Finset G) (ν : G → ℂ) : 0 ≤ energy n s
 
 lemma energy_nsmul (m n : ℕ) (s : Finset G) (ν : G → ℂ) :
     energy n s (m • ν) = m • energy n s ν := by
-  simp only [energy, nsmul_eq_mul, mul_sum, @Pi.coe_nat G (fun _ ↦ ℂ) _ m, Pi.mul_apply, norm_mul,
+  simp only [energy, nsmul_eq_mul, mul_sum, Pi.natCast_def, Pi.mul_apply, norm_mul,
     Complex.norm_nat]
 
 @[simp] lemma energy_zero (s : Finset G) (ν : G → ℂ) : energy 0 s ν = ‖ν 0‖ := by simp [energy]
@@ -54,7 +54,7 @@ lemma nlpNorm_dft_indicate_pow (n : ℕ) (s : Finset G) :
     simp_rw [pow_mul', ←norm_pow _ n, Complex.ofReal_expect, Complex.ofReal_pow, ←Complex.conj_mul',
       nl2Inner_eq_expect, dft_iterConv_apply]
     positivity
-  · simp only [l2Inner_eq_sum, boringEnergy_eq, Complex.ofReal_mul, Complex.ofReal_nat_cast,
+  · simp only [l2Inner_eq_sum, boringEnergy_eq, Complex.ofReal_mul, Complex.ofReal_natCast,
       Complex.ofReal_sum, Complex.ofReal_pow, mul_eq_mul_left_iff, Nat.cast_eq_zero, card_ne_zero,
       or_false, sq, (((indicate_isSelfAdjoint _).iterConv _).apply _).conj_eq, Complex.coe_iterConv,
       Complex.ofReal_comp_indicate]

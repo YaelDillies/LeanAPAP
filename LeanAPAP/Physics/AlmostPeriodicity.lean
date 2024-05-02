@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Mathlib.GroupTheory.GroupAction.BigOperators
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Curlog
@@ -48,7 +47,7 @@ variable {G : Type*} [DecidableEq G] [Fintype G] [AddCommGroup G] {A S : Finset 
   {ε K : ℝ} {k m : ℕ}
 
 open Finset Real
-open scoped BigOps Pointwise NNReal ENNReal
+open scoped BigOperators Pointwise NNReal ENNReal
 
 namespace AlmostPeriodicity
 
@@ -103,7 +102,7 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
   refine' (lpNorm_sub_le hm'' _ _).trans _
   rw [lpNorm_translate, two_mul ‖f‖_[2 * m], add_le_add_iff_left]
   have hmeq' : ((2 * m : ℝ≥0) : ℝ≥0∞) = 2 * m := by
-    rw [ENNReal.coe_mul, ENNReal.coe_two, ENNReal.coe_nat]
+    rw [ENNReal.coe_mul, ENNReal.coe_two, ENNReal.coe_natCast]
   have : (1 : ℝ≥0) < 2 * m := by
     rw [←Nat.cast_two, ←Nat.cast_mul, Nat.one_lt_cast]
     exact hm'
@@ -123,7 +122,7 @@ lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m)  (hk : (64 : ℝ) * m / ε ^ 2 �
     mul_right_comm _ (A.card ^ k : ℝ), mul_right_comm _ (A.card ^ k : ℝ),
     mul_right_comm _ (A.card ^ k : ℝ)]
   gcongr ?_ * _ * _
-  rw [mul_assoc (_ ^ m : ℝ), ←pow_succ', Nat.sub_add_cancel hm, pow_mul, pow_mul, ← mul_pow,
+  rw [mul_assoc (_ ^ m : ℝ), ←pow_succ, Nat.sub_add_cancel hm, pow_mul, pow_mul, ← mul_pow,
     ← mul_pow]
   have : (1 / 2 : ℝ) ^ m ≤ 1 / 2 := by
     have :=
@@ -314,9 +313,9 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
   rw [Nat.cast_mul, ←mul_assoc, ←mul_assoc, Nat.cast_pow]
   refine' mul_le_mul_of_nonneg_right _ (Nat.cast_nonneg _)
   refine' (mul_le_mul_of_nonneg_left (pow_le_pow_left (Nat.cast_nonneg _) h₃ k) hK.le).trans _
-  rw [mul_pow, ←mul_assoc, ←pow_succ]
+  rw [mul_pow, ←mul_assoc, ←pow_succ']
   refine' mul_le_mul_of_nonneg_right _ (pow_nonneg (Nat.cast_nonneg _) _)
-  rw [←Real.rpow_nat_cast]
+  rw [←Real.rpow_natCast]
   refine' Real.rpow_le_rpow_of_exponent_le (one_le_two.trans hK') _
   rw [Nat.cast_add_one, ←le_sub_iff_add_le, hk']
   refine' (Nat.ceil_lt_add_one _).le.trans _
@@ -364,7 +363,7 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
   intro t ht
   simp only [exists_prop, exists_eq_right, mem_filter, mem_univ, true_and_iff] at ht
   have := just_the_triangle_inequality ha ht hk.bot_lt hm
-  rwa [neg_neg, mul_div_cancel' _ (two_ne_zero' ℝ)] at this
+  rwa [neg_neg, mul_div_cancel₀ _ (two_ne_zero' ℝ)] at this
 
 theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hK₂ : 2 ≤ K)
     (hK : (A + S).card ≤ K * A.card) (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
@@ -414,10 +413,10 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
     _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := l1Norm_mul_le hM _ _
     _ ≤ ε / exp 1 * B.card ^ (M : ℝ)⁻¹ * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := by
         gcongr
-        simpa only [← ENNReal.coe_nat, lpNorm_indicate hM₀] using hT _ ht
+        simpa only [← ENNReal.coe_natCast, lpNorm_indicate hM₀] using hT _ ht
     _ = ε * ((C.card / B.card) ^ (-(M : ℝ)⁻¹) / exp 1) := by
         rw [← mul_comm_div, lpNorm_mu hM.symm.one_le hC.neg.vadd_finset, card_vadd_finset,
-          card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_nat_cast,
+          card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_natCast,
           rpow_neg, rpow_neg, ← div_eq_mul_inv, inv_div_inv] <;> positivity
     _ ≤ ε := mul_le_of_le_one_right (by positivity) $ (div_le_one $ by positivity).2 ?_
   calc
@@ -456,6 +455,6 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
     ‖τ (∑ i, x i) F - F‖_[⊤]
     _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := lpNorm_translate_sum_sub_le le_top _ _ _
     _ ≤ ∑ _i, ε / k := sum_le_sum fun i _ ↦ hT _ $ Fintype.mem_piFinset.1 hx _
-    _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel']; positivity
+    _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel₀]; positivity
 
 end AlmostPeriodicity

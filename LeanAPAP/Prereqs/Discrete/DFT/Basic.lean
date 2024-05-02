@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Discrete.Convolution.Compact
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
@@ -14,7 +13,7 @@ Fourier inversion formula for it.
 namespace Complex
 variable {ι : Type*} {a b : ℝ}
 
-open scoped BigOps
+open scoped BigOperators
 
 lemma le_of_eq_sum_of_eq_sum_norm (f : ι → ℂ) (s : Finset ι) (ha₀ : 0 ≤ a)
     (ha : a = ∑ i ∈ s, f i) (hb : b = ∑ i ∈ s, (‖f i‖ : ℂ)) : a ≤ b := by
@@ -24,7 +23,7 @@ end Complex
 
 open AddChar Finset Function
 open Fintype (card)
-open scoped BigOps ComplexConjugate ComplexOrder
+open scoped BigOperators ComplexConjugate ComplexOrder
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 
@@ -67,7 +66,8 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a := by
   classical simp_rw [dft, l2Inner_eq_sum, sum_mul, expect_sum_comm, mul_right_comm _ (f _),
-    ← expect_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div, AddChar.expect_apply_eq_ite, sub_eq_zero, boole_mul, Fintype.sum_ite_eq]
+    ← expect_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div,
+    AddChar.expect_apply_eq_ite, sub_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion' (f : α → ℂ) (a : α) : ∑ ψ : AddChar α ℂ, dft f ψ * ψ a = card α * f a := by
@@ -82,7 +82,7 @@ lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
 
 lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
   funext fun a ↦ by
-    simp_rw [Pi.mul_apply, Function.comp_apply, map_neg, Pi.nat_apply, ←dft_dft_doubleDualEmb,
+    simp_rw [Pi.mul_apply, Function.comp_apply, map_neg, Pi.natCast_apply, ←dft_dft_doubleDualEmb,
       doubleDualEmb_doubleDualEquiv_symm_apply]
 
 lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) := fun f g h ↦
@@ -98,7 +98,7 @@ lemma dft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conj f) ψ = conj (
     inv_inv, Pi.conj_apply]
 
 lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f) ψ = conj (dft f ψ) := by
-  simp only [dft_apply, l2Inner_eq_sum, conjneg_apply, map_sum, map_mul, IsROrC.conj_conj]
+  simp only [dft_apply, l2Inner_eq_sum, conjneg_apply, map_sum, map_mul, RCLike.conj_conj]
   refine' Fintype.sum_equiv (Equiv.neg α) _ _ fun i ↦ _
   simp only [Equiv.neg_apply, ←inv_apply_eq_conj, ←inv_apply', inv_apply]
 
@@ -133,7 +133,7 @@ lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ
     ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
   simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
     Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
-  rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel'_right]
+  rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel]
 
 lemma dft_dconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
     dft (f ○ g) ψ = dft f ψ * conj (dft g ψ) := by
@@ -160,7 +160,8 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
     _ = ∑ x, ‖(𝔼 ψ, dft f ψ ^ 2 * ψ x)‖ ^ n := by
         simp_rw [← norm_pow, ← dft_inversion (f ∗ f), dft_conv_apply, sq]
     _ ≤ ∑ x, ‖𝔼 ψ, ‖dft f ψ‖ ^ 2 * ψ x‖ ^ n := Complex.le_of_eq_sum_of_eq_sum_norm
-          (fun ψ : (Fin n → AddChar α ℂ) × (Fin n → AddChar α ℂ) ↦ conj (∏ i, dft f (ψ.1 i) ^ 2) * (∏ i, dft f (ψ.2 i) ^ 2) * ∑ x, (∑ i, ψ.1 i - ∑ i, ψ.2 i) x) univ (by positivity) ?_ ?_
+          (fun ψ : (Fin n → AddChar α ℂ) × (Fin n → AddChar α ℂ) ↦ conj (∏ i, dft f (ψ.1 i) ^ 2) *
+            (∏ i, dft f (ψ.2 i) ^ 2) * ∑ x, (∑ i, ψ.1 i - ∑ i, ψ.2 i) x) univ (by positivity) ?_ ?_
     _ = ∑ x, ‖(f ○ f) x‖ ^ n := by
         simp_rw [← norm_pow, ← dft_inversion (f ○ f), dft_dconv_apply, Complex.mul_conj']
     _ = ‖f ○ f‖_[n] ^ n := (lpNorm_pow_eq_sum hn₀ _).symm
@@ -177,7 +178,7 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
 --     map_mul, Fintype.sum_pow, Fintype.sum_mul_sum]
 --   simp only [@sum_comm _ _ α, ←mul_sum, prod_mul_prod_comm]
 --   refine' (norm_sum_le _ _).trans_eq (Complex.ofReal_injective _)
---   simp only [norm_mul, norm_prod, IsROrC.norm_conj, ←pow_mul]
+--   simp only [norm_mul, norm_prod, RCLike.norm_conj, ←pow_mul]
 --   push_cast
 --   have : ∀ f g : Fin n → AddChar α ℂ, 0 ≤ ∑ a, ∏ i, conj (f i a) * g i a := by
 --     rintro f g
@@ -186,13 +187,13 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
 --       split_ifs <;> positivity
 --     simp_rw [←AddChar.sum_eq_ite, AddChar.sum_apply, AddChar.sub_apply, AddChar.map_neg_eq_inv,
 --       AddChar.inv_apply_eq_conj, mul_comm]
---   simp only [IsROrC.ofReal_pow, pow_mul, ←Complex.conj_mul', map_sum, map_mul, Complex.conj_conj,
+--   simp only [RCLike.ofReal_pow, pow_mul, ←Complex.conj_mul', map_sum, map_mul, Complex.conj_conj,
 --     Pi.conj_apply, mul_pow, Fintype.sum_pow, ←sq, Fintype.sum_mul_sum]
 --   conv_lhs =>
 --     arg 2
 --     ext
 --     rw [←Complex.eq_coe_norm_of_nonneg (this _ _)]
---   simp only [@sum_comm _ _ α, mul_sum, map_prod, map_mul, IsROrC.conj_conj, ←prod_mul_distrib]
+--   simp only [@sum_comm _ _ α, mul_sum, map_prod, map_mul, RCLike.conj_conj, ←prod_mul_distrib]
 --   refine' sum_congr rfl fun x _ ↦ sum_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
 --   ring
 

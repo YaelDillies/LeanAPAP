@@ -1,7 +1,6 @@
-import Mathlib.Algebra.BigOperators.Order
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 import Mathlib.Data.Finset.Pointwise
-import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 
 noncomputable section
 

@@ -1,5 +1,5 @@
 import Mathlib.Algebra.BigOperators.Pi
-import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 
 open Finset
@@ -17,7 +17,7 @@ lemma filter_piFinset_card_of_mem [∀ a, DecidableEq (δ a)] (t : ∀ a, Finset
     if h : a = a' then {(@Eq.ndrec _ _ δ x _ h : δ a')} else t a'
   have : (t' a).card = 1 := by simp [t']
   have h₁ : ∏ b in univ.erase a, (t b).card = ∏ b, (t' b).card := by
-    rw [←@prod_erase ℕ α _ _ univ (fun b ↦ (t' b).card) a this]
+    rw [← prod_erase (f := fun b ↦ (t' b).card) univ this]
     refine' Finset.prod_congr rfl _
     intro b hb
     simp only [mem_erase, Ne.def, mem_univ, and_true_iff] at hb

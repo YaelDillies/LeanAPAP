@@ -7,7 +7,7 @@ open scoped BigOperators ComplexConjugate NNReal Pointwise
 variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 
 section OrderedCommSemiring
-variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
+variable [OrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f g : α → β}
 
 lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
   fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) (hg _)
@@ -18,7 +18,7 @@ lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
 end OrderedCommSemiring
 
 section StrictOrderedCommSemiring
-variable [StrictOrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
+variable [StrictOrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f g : α → β}
 
 --TODO: Those can probably be generalised to `OrderedCommSemiring` but we don't really care
 @[simp] lemma support_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ∗ g) = support f + support g := by
@@ -46,20 +46,20 @@ lemma dconv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by
 end StrictOrderedCommSemiring
 
 section OrderedCommSemiring
-variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β} {n : ℕ}
+variable [OrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f g : α → β} {n : ℕ}
 
 @[simp] lemma iterConv_nonneg (hf : 0 ≤ f) : ∀ {n}, 0 ≤ f ∗^ n
   | 0 => fun _ ↦ by dsimp; split_ifs <;> norm_num
-  | n + 1 => conv_nonneg hf (iterConv_nonneg hf)
+  | n + 1 => conv_nonneg (iterConv_nonneg hf) hf
 
 end OrderedCommSemiring
 
 section StrictOrderedCommSemiring
-variable [StrictOrderedCommSemiring β] [StarOrderedRing β] {f g : α → β} {n : ℕ}
+variable [StrictOrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f g : α → β} {n : ℕ}
 
 @[simp] lemma iterConv_pos (hf : 0 < f) : ∀ {n}, 0 < f ∗^ n
   | 0 => Pi.lt_def.2 ⟨iterConv_nonneg hf.le, 0, by simp⟩
-  | n + 1 => conv_pos hf (iterConv_pos hf)
+  | n + 1 => conv_pos (iterConv_pos hf) hf
 
 end StrictOrderedCommSemiring
 
@@ -67,7 +67,7 @@ namespace Mathlib.Meta.Positivity
 open Lean Meta Qq Function
 
 section
-variable [OrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
+variable [OrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f g : α → β}
 
 private lemma conv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
   conv_nonneg hf.le hg
@@ -132,7 +132,7 @@ such that `positivity` successfully recognises both `f` and `g`. -/
   | .nonzero pa => return .nonzero q(dummy_nzr_of_nzr $pa)
   | _ => return .none
 
-variable [StrictOrderedCommSemiring β] [StarOrderedRing β] {f g : α → β}
+variable [StrictOrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f g : α → β}
 
 example (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by positivity
 example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g := by positivity

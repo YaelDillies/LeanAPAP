@@ -1,11 +1,12 @@
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Real.NNReal
+import LeanAPAP.Mathlib.Algebra.Field.Defs
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Translate
 
 open Finset Function
 open Fintype (card)
-open scoped BigOps ComplexConjugate Pointwise NNRat
+open scoped BigOperators ComplexConjugate Pointwise NNRat
 
 /-! ### Indicator -/
 
@@ -265,7 +266,7 @@ end Group
 end DivisionSemiring
 
 section Semifield
-variable (β) [Semifield β] [Module ℚ≥0 β] [CompAction β] {s : Finset α}
+variable (β) [Semifield β] {s : Finset α}
 
 lemma expect_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : 𝔼 x, μ_[β] s x = (↑(card α))⁻¹ := by
   rw [expect, card_univ, sum_mu _ hs, NNRat.smul_one_eq_cast, NNRat.cast_inv, NNRat.cast_natCast]
@@ -283,13 +284,13 @@ variable [StarRing β]
 
 end Semifield
 
-namespace IsROrC
-variable {𝕜 : Type*} [IsROrC 𝕜] [Fintype α] (s : Finset α) (a : α)
+namespace RCLike
+variable {𝕜 : Type*} [RCLike 𝕜] [Fintype α] (s : Finset α) (a : α)
 
 @[simp, norm_cast] lemma coe_mu : ↑(μ_[ℝ] s a) = μ_[𝕜] s a := map_mu (algebraMap ℝ 𝕜) _ _
 @[simp] lemma coe_comp_mu : (↑) ∘ μ_[ℝ] s = μ_[𝕜] s := funext $ coe_mu _
 
-end IsROrC
+end RCLike
 
 namespace NNReal
 open scoped NNReal

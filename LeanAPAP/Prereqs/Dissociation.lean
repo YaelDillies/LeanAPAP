@@ -1,7 +1,7 @@
+import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Algebra.Module.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Set.Pointwise.Basic
-import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 
 /-!
 # Dissociation
@@ -50,7 +50,7 @@ lemma not_mulDissociated_iff_exists_disjoint :
     ⟨?_, fun ⟨B, C, hB, hC, _, hBCne, hBCsum⟩ ↦ ⟨B, hB, C, hC, hBCne, hBCsum⟩⟩
   rintro ⟨B, hB, C, hC, hBC, h⟩
   refine ⟨B \ C, C \ B, ?_, ?_, disjoint_sdiff_sdiff, sdiff_ne_sdiff_iff.2 hBC,
-    Finset.prod_sdiff_eq_prod_sdiff.2 h⟩ <;> push_cast <;> exact (diff_subset _ _).trans ‹_›
+    Finset.prod_sdiff_eq_prod_sdiff_iff.2 h⟩ <;> push_cast <;> exact (diff_subset _ _).trans ‹_›
 
 @[to_additive (attr := simp)] lemma MulEquiv.mulDissociated_preimage (e : β ≃* α) :
     MulDissociated (e ⁻¹' s) ↔ MulDissociated s := by

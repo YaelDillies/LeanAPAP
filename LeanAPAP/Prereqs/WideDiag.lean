@@ -1,5 +1,4 @@
 import Mathlib.Data.Finset.Pointwise
-import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 
 /-!
 # Wide diagonal
@@ -51,7 +50,7 @@ lemma reindex_count (L : Finset (Fin k → α)) (hk : k ≠ 0) (hL' : L.Nonempty
     ∑ l₂ : Fin k → α in L, ite (l₁ - l₂ ∈ fintypeWideDiag α k) 1 0 =
         ∑ l₂ in L, ∑ t : α, ite ((l₁ - fun _ ↦ t) = l₂) 1 0 := by
       refine' sum_congr rfl fun l₂ hl₂ ↦ _
-      rw [Fintype.sum_ite_exists]
+      rw [Fintype.sum_ite_eq_ite_exists]
       simp only [mem_fintypeWideDiag, @eq_comm _ l₁, eq_sub_iff_add_eq, sub_eq_iff_eq_add']
       rintro i j h rfl
       cases k

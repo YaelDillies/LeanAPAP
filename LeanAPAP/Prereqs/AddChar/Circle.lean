@@ -51,8 +51,8 @@ lemma e_apply (r : ℝ) : e r = expMapCircle (2 * π * r) := rfl
 @[simp] lemma e_mod_div {m : ℤ} {n : ℕ} : e ((m % n : ℤ) / n) = e (m / n) := by
   obtain hn | hn := eq_or_ne (n : ℝ) 0
   · rw [hn, div_zero, div_zero]
-  · rw [Int.emod_def, Int.cast_sub, sub_div, Int.cast_mul, Int.cast_ofNat, mul_div_cancel_left _ hn,
-      e_sub_int]
+  · rw [Int.emod_def, Int.cast_sub, sub_div, Int.cast_mul, Int.cast_natCast,
+      mul_div_cancel_left₀ _ hn, e_sub_int]
 
 lemma e_eq_one : e r = 1 ↔ ∃ n : ℤ, r = n := by
   simp [e_apply, exp_eq_one, mul_comm (2 * π), pi_ne_zero]

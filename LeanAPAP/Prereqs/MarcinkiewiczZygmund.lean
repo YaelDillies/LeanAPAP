@@ -1,5 +1,4 @@
 import Mathlib.Analysis.MeanInequalitiesPow
-import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Prereqs.Multinomial
 
@@ -18,13 +17,14 @@ private lemma step_one (hA : A.Nonempty) (f : G → ℝ) (a : Fin n → G)
     _ = |(∑ b in A^^n, ∑ i, (f (a i) - f (b i))) / (A^^n).card| ^ (m + 1) := by
         simp only [sum_sub_distrib]
         rw [sum_const, sub_div, sum_comm, sum_div, nsmul_eq_mul, card_piFinsetConst, Nat.cast_pow,
-          mul_div_cancel_left]
+          mul_div_cancel_left₀]
         exact pow_ne_zero _ $ Nat.cast_ne_zero.2 hA.card_pos.ne'
     _ = |∑ b in A^^n, ∑ i, (f (a i) - f (b i))| ^ (m + 1) / (A^^n).card ^ (m + 1) := by
       rw [abs_div, div_pow, Nat.abs_cast]
-    _ ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ (m + 1) := by gcongr; exact IsAbsoluteValue.abv_sum _ _ _
+    _ ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ (m + 1) := by
+      gcongr; exact IsAbsoluteValue.abv_sum _ _ _
     _ = (∑ b in A^^n, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / (A^^n).card ^ m / (A^^n).card := by
-      rw [div_div, ←_root_.pow_succ']
+      rw [div_div, ←_root_.pow_succ]
     _ ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))| ^ (m + 1)) / (A^^n).card := by
       gcongr; exact pow_sum_div_card_le_sum_pow _ _ fun _ _ ↦ abs_nonneg _
     _ = _ := by simp
@@ -170,9 +170,9 @@ private lemma end_step {f : G → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
         exact step_six.trans $ step_seven.trans step_eight
     _ = _ := by
       simp only [mul_add, sum_add_distrib, sum_const, nsmul_eq_mul, ←mul_sum]
-      rw [←mul_add, ←two_mul, ←mul_assoc 2, ←mul_assoc 2, mul_right_comm 2, ←_root_.pow_succ,
+      rw [←mul_add, ←two_mul, ←mul_assoc 2, ←mul_assoc 2, mul_right_comm 2, ←_root_.pow_succ',
         add_assoc, Nat.sub_add_cancel hm, pow_add, ←mul_pow, ←mul_pow, card_piFinsetConst,
-        Nat.cast_pow, mul_div_cancel_left]
+        Nat.cast_pow, mul_div_cancel_left₀]
       norm_num
       · have := hA.card_pos
         positivity
@@ -264,7 +264,7 @@ lemma complex_marcinkiewicz_zygmund (f : G → ℂ) (hm : m ≠ 0)
   refine' (mul_le_mul_of_nonneg_left (pow_add_pow_le' (sq_nonneg (f (a i)).re) $
     sq_nonneg (f (a i)).im) _).trans_eq _
   · positivity
-  rw [mul_assoc (2 ^ _ : ℝ), mul_mul_mul_comm, ←_root_.pow_succ', Nat.sub_add_cancel, ←mul_assoc,
+  rw [mul_assoc (2 ^ _ : ℝ), mul_mul_mul_comm, ←_root_.pow_succ, Nat.sub_add_cancel, ←mul_assoc,
     ←mul_assoc, ←mul_pow, ←mul_assoc]
   norm_num
   rwa [succ_le_iff, pos_iff_ne_zero]

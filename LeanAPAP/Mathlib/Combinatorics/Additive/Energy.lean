@@ -1,7 +1,6 @@
-import Mathlib.Algebra.BigOperators.Order
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Combinatorics.Additive.Energy
 import Mathlib.Data.Finset.Pointwise
-import LeanAPAP.Mathlib.Algebra.BigOperators.Basic
 
 open scoped BigOperators Pointwise
 
@@ -47,9 +46,9 @@ lemma card_sq_le_card_mul_multiplicativeEnergy (s t u : Finset α) :
     ((s ×ˢ t).filter fun (a, b) ↦ a * b ∈ u).card ^ 2 ≤ u.card * Eₘ[s, t] := by
   calc
     _ = (∑ c in u, ((s ×ˢ t).filter fun (a, b) ↦ a * b = c).card) ^ 2 := by
-        rw [← sum_card_filter_eq]
+        rw [← sum_card_fiberwise_eq_card_filter]
     _ ≤ u.card * ∑ c in u, ((s ×ˢ t).filter fun (a, b) ↦ a * b = c).card ^ 2 := by
-        simpa using sum_mul_sq_le_sq_mul_sq (α := ℕ) _ 1 _
+        simpa using sum_mul_sq_le_sq_mul_sq (R := ℕ) _ 1 _
     _ ≤ u.card * ∑ c in s * t, ((s ×ˢ t).filter fun (a, b) ↦ a * b = c).card ^ 2 := by
         refine mul_le_mul_left' (sum_le_sum_of_ne_zero ?_) _
         aesop (add simp [filter_eq_empty_iff]) (add unsafe mul_mem_mul)

@@ -13,7 +13,7 @@ noncomputable section
 
 open AddChar Finset Function
 open Fintype (card)
-open scoped BigOps ComplexConjugate ComplexOrder
+open scoped BigOperators ComplexConjugate ComplexOrder
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 
@@ -59,7 +59,8 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma cft_inversion (f : α → ℂ) (a : α) : ∑ ψ, cft f ψ * ψ a = f a := by
   classical simp_rw [cft, nl2Inner_eq_expect, expect_mul, ← expect_sum_comm, mul_right_comm _ (f _),
-    ← sum_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ←map_sub_eq_div, AddChar.sum_apply_eq_ite, sub_eq_zero, ite_mul, zero_mul, Fintype.expect_ite_eq]
+    ← sum_mul, ←AddChar.inv_apply_eq_conj, inv_mul_eq_div, ← map_sub_eq_div,
+    AddChar.sum_apply_eq_ite, sub_eq_zero, ite_mul, zero_mul, Fintype.expect_ite_eq]
   simp [add_neg_eq_zero, card_univ, NNRat.smul_def (α := ℂ), Fintype.card_ne_zero]
 
 lemma dft_cft_doubleDualEmb (f : α → ℂ) (a : α) : dft (cft f) (doubleDualEmb a) = f (-a) := by
@@ -91,7 +92,7 @@ lemma cft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : cft (conj f) ψ = conj (
     inv_inv, Pi.conj_apply]
 
 lemma cft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft (conjneg f) ψ = conj (cft f ψ) := by
-  simp only [cft_apply, nl2Inner_eq_expect, conjneg_apply, map_expect, map_mul, IsROrC.conj_conj]
+  simp only [cft_apply, nl2Inner_eq_expect, conjneg_apply, map_expect, map_mul, RCLike.conj_conj]
   refine Fintype.expect_equiv (Equiv.neg _) _ _ fun i ↦ ?_
   simp only [Equiv.neg_apply, ←inv_apply_eq_conj, ←inv_apply', inv_apply]
 
@@ -130,7 +131,7 @@ lemma cft_nconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : cft (f ∗ₙ g
     ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
   simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
     Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
-  rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel'_right]
+  rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel]
 
 lemma cft_ndconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
     cft (f ○ₙ g) ψ = cft f ψ * conj (cft g ψ) := by
@@ -174,7 +175,7 @@ lemma nlpNorm_nconv_le_nlpNorm_ndconv (hn₀ : n ≠ 0) (hn : Even n) (f : α �
   sorry
   -- simp only [@expect_comm _ _ α, ←mul_expect, prod_mul_prod_comm]
   -- refine' (norm_expect_le _ _).trans_eq (Complex.ofReal_injective _)
-  -- simp only [norm_mul, norm_prod, IsROrC.norm_conj, ←pow_mul]
+  -- simp only [norm_mul, norm_prod, RCLike.norm_conj, ←pow_mul]
   -- push_cast
   -- have : ∀ f g : Fin n → AddChar α ℂ, 0 ≤ ∑ a, ∏ i, conj (f i a) * g i a := by
   --   rintro f g
@@ -183,13 +184,13 @@ lemma nlpNorm_nconv_le_nlpNorm_ndconv (hn₀ : n ≠ 0) (hn : Even n) (f : α �
   --     split_ifs <;> positivity
   --   simp_rw [←AddChar.expect_eq_ite, AddChar.expect_apply, AddChar.sub_apply, AddChar.map_neg_eq_inv,
   --     AddChar.inv_apply_eq_conj, mul_comm]
-  -- simp only [IsROrC.ofReal_pow, pow_mul, ←Complex.conj_mul', map_expect, map_mul, Complex.conj_conj,
+  -- simp only [RCLike.ofReal_pow, pow_mul, ←Complex.conj_mul', map_expect, map_mul, Complex.conj_conj,
   --   Pi.conj_apply, mul_pow, Fintype.expect_pow, ←sq, Fintype.expect_mul_expect]
   -- conv_lhs =>
   --   arg 2
   --   ext
   --   rw [←Complex.eq_coe_norm_of_nonneg (this _ _)]
-  -- simp only [@expect_comm _ _ α, mul_expect, map_prod, map_mul, IsROrC.conj_conj, ←prod_mul_distrib]
+  -- simp only [@expect_comm _ _ α, mul_expect, map_prod, map_mul, RCLike.conj_conj, ←prod_mul_distrib]
   -- refine' expect_congr rfl fun x _ ↦ expect_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
   -- ring
 
