@@ -45,10 +45,8 @@ private lemma lpNorm_conv_pos (hp : p ≠ 0) (hB : (B₁ ∩ B₂).Nonempty) (hA
   rw [wlpNorm_pow_eq_sum]
   refine sum_pos' (fun x _ ↦ smul_nonneg zero_le' $ by positivity)
       ⟨0, mem_univ _, smul_pos ?_ $ pow_pos ?_ _⟩
-  · refine lt_of_le_of_ne' (Pi.le_def.1 (dconv_nonneg mu_nonneg mu_nonneg) _) ?_
-    rwa [←Function.mem_support, support_dconv, support_mu, support_mu, ←coe_sub, mem_coe,
-      zero_mem_sub_iff, not_disjoint_iff_nonempty_inter] <;>
-      exact mu_nonneg
+  · rwa [pos_iff_ne_zero, ← Function.mem_support, support_dconv, support_mu, support_mu, ← coe_sub,
+      mem_coe, zero_mem_sub_iff, not_disjoint_iff_nonempty_inter] <;> exact mu_nonneg
   · rw [norm_pos_iff, ←Function.mem_support, support_dconv, support_indicate]
     exact hA.to_set.zero_mem_sub
     all_goals exact indicate_nonneg -- positivity
@@ -201,13 +199,14 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
   calc
     ∑ x in (s p ε B₁ B₂ A)ᶜ, (μ B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p ≤
         ∑ x in (s p ε B₁ B₂ A)ᶜ,
-          (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p :=
-      sum_le_sum fun x hx ↦ mul_le_mul_of_nonneg_left (pow_le_pow_left
-        (dconv_nonneg indicate_nonneg indicate_nonneg _) (by simpa using hx) _)
-          (dconv_nonneg mu_nonneg mu_nonneg _)
+          (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p := by
+      gcongr with x hx
+      · exact dconv_nonneg (β := ℝ) mu_nonneg mu_nonneg _
+      · exact dconv_nonneg indicate_nonneg indicate_nonneg _
+      · simpa using hx
     _ ≤ ∑ x, (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p :=
-      (sum_le_univ_sum_of_nonneg fun x ↦
-        mul_nonneg (dconv_nonneg mu_nonneg mu_nonneg _) $ hp.pow_nonneg _)
+      sum_le_univ_sum_of_nonneg fun x ↦
+        mul_nonneg (dconv_nonneg (mu_nonneg (β := ℝ)) mu_nonneg _) $ hp.pow_nonneg _
     _ = ‖μ_[ℝ] B₁‖_[1] * ‖μ_[ℝ] B₂‖_[1] * ((1 - ε) ^ p * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p)
         := ?_
     _ ≤ _ :=

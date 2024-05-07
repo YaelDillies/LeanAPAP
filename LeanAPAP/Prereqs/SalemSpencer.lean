@@ -1,4 +1,4 @@
-import Mathlib.Combinatorics.Additive.SalemSpencer
+import Mathlib.Combinatorics.Additive.AP.Three.Defs
 import Mathlib.Data.Nat.Parity
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 
@@ -8,8 +8,8 @@ open scoped BigOperators Pointwise
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {s : Finset G}
 
-lemma AddSalemSpencer.l2Inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
-    (hs : AddSalemSpencer (s : Set G)) :
+lemma ThreeAPFree.l2Inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
+    (hs : ThreeAPFree (s : Set G)) :
     ⟪μ s ∗ μ s, μ (s.image (2 • ·))⟫_[ℝ] = (s.card ^ 2 : ℝ)⁻¹ := by
   obtain rfl | hs' := s.eq_empty_or_nonempty
   · simp

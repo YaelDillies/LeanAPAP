@@ -499,7 +499,7 @@ lemma sum_iterConv (f : α → β) : ∀ n, ∑ a, (f ∗^ n) a = (∑ a, f a) ^
 
 lemma support_iterConv_subset (f : α → β) : ∀ n, support (f ∗^ n) ⊆ n • support f
   | 0 => by
-    simp only [iterConv_zero, zero_smul, support_subset_iff, Ne.def, ite_eq_right_iff, not_forall,
+    simp only [iterConv_zero, zero_smul, support_subset_iff, Ne, ite_eq_right_iff, not_forall,
       exists_prop, Set.mem_zero, and_imp, forall_eq, eq_self_iff_true, imp_true_iff, trivChar_apply]
   | n + 1 =>
     (support_conv_subset _ _).trans $ Set.add_subset_add_right $ support_iterConv_subset _ _

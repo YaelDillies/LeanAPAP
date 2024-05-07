@@ -95,7 +95,7 @@ lemma cut_insert_disjoint_bUnion (n : ℕ) (a : ι) (s : Finset ι) (h : a ∉ s
     (antidiagonal n : Set (ℕ × ℕ)).PairwiseDisjoint fun p : ℕ × ℕ ↦
       (cut s p.snd).map (addLeftEmbedding fun t ↦ if t = a then p.fst else 0) := by
   simp only [Set.PairwiseDisjoint, Function.onFun_apply, Finset.disjoint_iff_ne, mem_map,
-    Function.Embedding.coeFn_mk, Ne.def, forall_exists_index, Set.Pairwise, mem_coe, mem_cut,
+    Function.Embedding.coeFn_mk, Ne, forall_exists_index, Set.Pairwise, mem_coe, mem_cut,
     and_imp]
   rintro x hx y hy h' f g hg hg' rfl _ f hf hf' e rfl
   rw [antidiagonal_congr' hx hy] at h'

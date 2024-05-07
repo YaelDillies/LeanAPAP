@@ -20,7 +20,7 @@ lemma filter_piFinset_card_of_mem [∀ a, DecidableEq (δ a)] (t : ∀ a, Finset
     rw [← prod_erase (f := fun b ↦ (t' b).card) univ this]
     refine' Finset.prod_congr rfl _
     intro b hb
-    simp only [mem_erase, Ne.def, mem_univ, and_true_iff] at hb
+    simp only [mem_erase, Ne, mem_univ, and_true_iff] at hb
     simp only [dif_neg (Ne.symm hb), t']
   have h₂ : ∏ b, (t' b).card = ∏ b, ∑ i in t' b, 1 := by simp
   rw [h₁, h₂, prod_univ_sum]

@@ -1,4 +1,4 @@
-import LeanAPAP.Mathlib.Combinatorics.Additive.Energy
+import Mathlib.Combinatorics.Additive.Energy
 import LeanAPAP.Prereqs.Discrete.Convolution.Order
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
@@ -6,7 +6,7 @@ variable {β : Type*} [CommSemiring β] [StarRing β]
 variable {A B : Finset G} {x : G}
 
 open BigOperators Finset
-open scoped ComplexConjugate Pointwise
+open scoped ComplexConjugate Pointwise Combinatorics.Additive
 
 lemma thing_one : (𝟭_[β] B ○ 𝟭 A) x = ∑ y, 𝟭 A y * 𝟭 B (x + y) := by
   simp only [dconv_eq_sum_add, conj_indicate_apply, mul_comm]
@@ -24,21 +24,20 @@ lemma thing_one_right : (𝟭_[β] A ○ 𝟭 B) x = (A ∩ (x +ᵥ B)).card := 
 lemma thing_two : ∑ s, (𝟭_[β] A ○ 𝟭 B) s = A.card * B.card := by
   simp only [sum_dconv, conj_indicate_apply, sum_indicate]
 
-lemma thing_three : ∑ s, ((𝟭 A ○ 𝟭 B) s ^ 2 : β) = additiveEnergy A B := by
+lemma thing_three : ∑ s, ((𝟭 A ○ 𝟭 B) s ^ 2 : β) = E[A, B] := by
   simp only [indicate_dconv_indicate_apply, card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_mul,
-    sum_filter, Nat.cast_ite, Nat.cast_zero, sum_product, sq, additiveEnergy, mul_sum]
+    sum_filter, Nat.cast_ite, Nat.cast_zero, sum_product, sq, addEnergy, mul_sum]
   simp only [mul_boole, sum_comm (s := univ), sum_ite_eq, mem_univ, ite_true]
   simp only [sum_comm (s := B) (t := A), sub_eq_sub_iff_add_eq_add]
   exact sum_comm
 
 section lemma1
 
-lemma claim_one : ∑ s, (𝟭_[β] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card = additiveEnergy A B := by
+lemma claim_one : ∑ s, (𝟭_[β] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card = E[A, B] := by
   simp only [←thing_three, ←thing_one_right, sq]
 
 lemma claim_two :
-    (additiveEnergy A B : ℝ) ^ 2 / (A.card * B.card) ≤
-      ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card ^ 2 := by
+    (E[A, B] : ℝ) ^ 2 / (A.card * B.card) ≤ ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card ^ 2 := by
   let f := fun s ↦ ((𝟭_[ℝ] A ○ 𝟭 B) s).sqrt
   have hf : ∀ s, f s ^ 2 = (𝟭_[ℝ] A ○ 𝟭 B) s := by
     intro s
@@ -95,15 +94,15 @@ lemma claim_five {H : Finset (G × G)} (hH : H ⊆ A ×ˢ A) :
 noncomputable def H_choice (A B : Finset G) (c : ℝ) : Finset (G × G) :=
   (A ×ˢ A).filter
     fun ab ↦
-      (𝟭_[ℝ] B ○ 𝟭 B) (ab.1 - ab.2) ≤ c / 2 * ((additiveEnergy A B) ^ 2 / (A.card ^ 3 * B.card ^ 2))
+      (𝟭_[ℝ] B ○ 𝟭 B) (ab.1 - ab.2) ≤ c / 2 * (E[A, B] ^ 2 / (A.card ^ 3 * B.card ^ 2))
 
 -- lemma H_choice_subset :
 lemma claim_six (c : ℝ) (hc : 0 ≤ c) :
     ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s * ((A ∩ (s +ᵥ B)) ×ˢ (A ∩ (s +ᵥ B)) ∩ H_choice A B c).card ≤
-      c / 2 * ((additiveEnergy A B) ^ 2 / (A.card * B.card)) := by
+      c / 2 * (E[A, B] ^ 2 / (A.card * B.card)) := by
   refine (claim_five (filter_subset _ _)).trans ?_
   have : ∑ ab in H_choice A B c, (𝟭_[ℝ] B ○ 𝟭 B) (ab.1 - ab.2) ≤
-      (H_choice A B c).card * (c / 2 * ((additiveEnergy A B) ^ 2 / (A.card ^ 3 * B.card ^ 2))) := by
+      (H_choice A B c).card * (c / 2 * (E[A, B] ^ 2 / (A.card ^ 3 * B.card ^ 2))) := by
     rw [←nsmul_eq_mul]
     refine sum_le_card_nsmul _ _ _ ?_
     intro x hx
@@ -119,16 +118,16 @@ lemma claim_six (c : ℝ) (hc : 0 ≤ c) :
   · rw [hB]
     simp
   calc
-    _ ≤ (B.card : ℝ) * (A.card ^ 2 * (c / 2 * (additiveEnergy A B ^ 2 / (A.card ^ 3 * B.card ^ 2))))
+    _ ≤ (B.card : ℝ) * (A.card ^ 2 * (c / 2 * (E[A, B] ^ 2 / (A.card ^ 3 * B.card ^ 2))))
         := by gcongr
-    _ = c / 2 * (additiveEnergy A B ^ 2 / (card A * card B)) := by field_simp; ring
+    _ = c / 2 * (E[A, B] ^ 2 / (card A * card B)) := by field_simp; ring
 
 lemma claim_seven (c : ℝ) (hc : 0 ≤ c) (hA : (0 : ℝ) < card A) (hB : (0 : ℝ) < card B) :
     ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s *
-        ((c / 2) * (additiveEnergy A B ^ 2 / (A.card ^ 2 * B.card ^ 2)) +
+        ((c / 2) * (E[A, B] ^ 2 / (A.card ^ 2 * B.card ^ 2)) +
           ((A ∩ (s +ᵥ B)) ×ˢ (A ∩ (s +ᵥ B)) ∩ H_choice A B c).card) ≤
       ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s * (c * (A ∩ (s +ᵥ B)).card ^ 2) :=
-  calc _ = (c / 2 * (additiveEnergy A B ^ 2 / (card A * card B))) +
+  calc _ = (c / 2 * (E[A, B] ^ 2 / (card A * card B))) +
     ∑ x : G, (𝟭_[ℝ] A ○ 𝟭 B) x * (card ((A ∩ (x +ᵥ B)) ×ˢ (A ∩ (x +ᵥ B)) ∩ H_choice A B c)) := by
         simp only [mul_add, sum_add_distrib, ←sum_mul, thing_two, ←mul_pow]
         field_simp
@@ -141,7 +140,7 @@ lemma claim_seven (c : ℝ) (hc : 0 ≤ c) (hA : (0 : ℝ) < card A) (hB : (0 : 
         exact claim_two
 
 lemma claim_eight (c : ℝ) (hc : 0 ≤ c) (hA : (0 : ℝ) < card A) (hB : (0 : ℝ) < card B) :
-    ∃ s : G, ((c / 2) * (additiveEnergy A B ^ 2 / (A.card ^ 2 * B.card ^ 2)) +
+    ∃ s : G, ((c / 2) * (E[A, B] ^ 2 / (A.card ^ 2 * B.card ^ 2)) +
           ((A ∩ (s +ᵥ B)) ×ˢ (A ∩ (s +ᵥ B)) ∩ H_choice A B c).card) ≤
       c * (A ∩ (s +ᵥ B)).card ^ 2 := by
   by_contra!
@@ -170,7 +169,7 @@ lemma test_case {E A B : ℕ} {K : ℝ} (hK : 0 < K) (hE : K⁻¹ * (A ^ 2 * B) 
   ring
 
 lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
-  (hE : K⁻¹ * (A.card ^ 2 * B.card) ≤ additiveEnergy A B)
+  (hE : K⁻¹ * (A.card ^ 2 * B.card) ≤ E[A, B])
   (hA : (0 : ℝ) < card A) (hB : (0 : ℝ) < card B) :
     ∃ s : G, ∃ X ⊆ A ∩ (s +ᵥ B), A.card / (Real.sqrt 2 * K) ≤ X.card ∧
       (1 - c) * X.card ^ 2 ≤
@@ -179,7 +178,7 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
   obtain ⟨s, hs⟩ := claim_eight c hc.le hA hB
   set X := A ∩ (s +ᵥ B)
   refine ⟨s, X, subset_rfl, ?_, ?_⟩
-  · have : (2 : ℝ)⁻¹ * (additiveEnergy A B / (card A * card B)) ^ 2 ≤ (card X) ^ 2 := by
+  · have : (2 : ℝ)⁻¹ * (E[A, B] / (card A * card B)) ^ 2 ≤ (card X) ^ 2 := by
       refine le_of_mul_le_mul_left ?_ hc
       exact ((le_add_of_nonneg_right (Nat.cast_nonneg _)).trans hs).trans_eq' (by ring)
     replace := Real.sqrt_le_sqrt this
@@ -209,13 +208,13 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
   rw [mul_assoc]
   gcongr _ * ?_
   field_simp [hA, hB, hK, le_div_iff, div_le_iff] at hE ⊢
-  convert_to ((A.card : ℝ) ^ 2 * B.card) ^ 2 ≤ (additiveEnergy A B * K) ^ 2
+  convert_to ((A.card : ℝ) ^ 2 * B.card) ^ 2 ≤ (E[A, B] * K) ^ 2
   · ring_nf
   · ring_nf
   gcongr
 
 lemma lemma_one' {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
-    (hE : K⁻¹ * (A.card ^ 2 * B.card) ≤ additiveEnergy A B)
+    (hE : K⁻¹ * (A.card ^ 2 * B.card) ≤ E[A, B])
     (hA : (0 : ℝ) < card A) (hB : (0 : ℝ) < card B) :
     ∃ s : G, ∃ X ⊆ A ∩ (s +ᵥ B), A.card / (2 * K) ≤ X.card ∧
       (1 - c) * X.card ^ 2 ≤
@@ -400,7 +399,7 @@ lemma big_quadruple_bound {K : ℝ}
           · simp
 
 theorem BSG_aux {K : ℝ} (hK : 0 < K) (hA : (0 : ℝ) < A.card) (hB : (0 : ℝ) < B.card)
-    (hAB : K⁻¹ * (A.card ^ 2 * B.card) ≤ additiveEnergy A B) :
+    (hAB : K⁻¹ * (A.card ^ 2 * B.card) ≤ E[A, B]) :
     ∃ s : G, ∃ A' ⊆ A ∩ (s +ᵥ B), (2 ^ 4 : ℝ)⁻¹ * K⁻¹ * A.card ≤ A'.card ∧
     (A' - A').card ≤ 2 ^ 10 * K ^ 5 * B.card ^ 4 / A.card ^ 3 := by
   obtain ⟨s, X, hX₁, hX₂, hX₃⟩ := lemma_one' (c := 1 / 8) (by norm_num) hK hAB hA hB

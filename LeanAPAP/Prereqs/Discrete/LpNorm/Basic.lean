@@ -160,7 +160,7 @@ lemma lpNorm_const (hp : p ≠ 0) (a : α) :
     ‖const ι a‖_[p] = (Fintype.card ι : ℝ) ^ (p⁻¹ : ℝ) * ‖a‖ := by
   simp only [lpNorm_eq_sum hp, card_univ, mul_rpow, norm_nonneg, rpow_nonneg,
     NNReal.coe_ne_zero.2 hp, rpow_rpow_inv, const_apply, sum_const, nsmul_eq_mul, Nat.cast_nonneg,
-    Ne.def, not_false_iff]
+    Ne, not_false_iff]
 
 end NormedAddCommGroup
 
@@ -326,7 +326,7 @@ lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ 
   · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top, translate_apply]
     exact (Equiv.subRight _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [l0Norm_eq_card, translate_apply, Ne.def, ENNReal.some_eq_coe, ENNReal.coe_zero,
+  · simp only [l0Norm_eq_card, translate_apply, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero,
       Nat.cast_inj]
     exact
       card_congr (fun x _ ↦ x - a) (fun x hx ↦ by simpa using hx)
@@ -348,7 +348,7 @@ lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ 
   · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top, conjneg, RCLike.norm_conj]
     exact (Equiv.neg _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [l0Norm_eq_card, Ne.def, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
+  · simp only [l0Norm_eq_card, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
     exact
       card_congr (fun x _ ↦ -x) (fun x hx ↦ by simpa using hx) (fun x y _ _ ↦ neg_inj.1)
         fun x hx ↦ ⟨-x, by simpa using hx⟩

@@ -76,7 +76,7 @@ lemma l2Inner_eq [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
     ⟪(ψ₁ : G → R), ψ₂⟫_[R] = if ψ₁ = ψ₂ then ↑(card G) else 0 := by
   split_ifs with h
   · rw [h, AddChar.l2Inner_self]
-  have : ψ₁⁻¹ * ψ₂ ≠ 1 := by rwa [Ne.def, inv_mul_eq_one]
+  have : ψ₁⁻¹ * ψ₂ ≠ 1 := by rwa [Ne, inv_mul_eq_one]
   simp_rw [l2Inner_eq_sum, ←inv_apply_eq_conj]
   simpa [map_neg_eq_inv] using sum_eq_zero_iff_ne_zero.2 this
 

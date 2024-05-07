@@ -35,7 +35,7 @@ def Finset.expect [AddCommMonoid α] [Module ℚ≥0 α] (s : Finset ι) (f : ι
   (s.card : ℚ≥0)⁻¹ • s.sum f
 
 namespace BigOperators
-open Std.ExtendedBinder Lean Meta
+open Batteries.ExtendedBinder Lean Meta
 
 /--
 * `𝔼 i ∈ s, f i` is notation for `Finset.expect s f`. It is the expectation of `f i` where `i`
@@ -60,7 +60,7 @@ scoped macro_rules (kind := bigexpect)
     | none => `(Finset.expect $s (fun $x ↦ $v))
 
 open Lean Meta Parser.Term PrettyPrinter.Delaborator SubExpr
-open Std.ExtendedBinder
+open Batteries.ExtendedBinder
 
 /-- Delaborator for `Finset.expect`. The `pp.piBinderTypes` option controls whether
 to show the domain type when the expect is over `Finset.univ`. -/

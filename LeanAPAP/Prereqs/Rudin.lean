@@ -39,7 +39,7 @@ lemma AddDissociated.randomisation (c : AddChar α ℂ → ℝ) (d : AddChar α 
         simp_rw [mul_expect, AddChar.sub_apply, AddChar.sum_apply, mul_mul_mul_comm,
           ← prod_mul_distrib, AddChar.map_neg_eq_conj]
     _ = 0 := ?_
-  rw [mul_eq_zero, AddChar.expect_eq_zero_iff_ne_zero, sub_ne_zero, or_iff_not_imp_left, ← Ne.def,
+  rw [mul_eq_zero, AddChar.expect_eq_zero_iff_ne_zero, sub_ne_zero, or_iff_not_imp_left, ← Ne,
     mul_ne_zero_iff, prod_ne_zero_iff, prod_ne_zero_iff]
   exact fun h ↦ hcd.ne h.1 (by simpa only [map_ne_zero] using h.2) (sdiff_ne_right.2 $ .inl ht).symm
 

@@ -1,5 +1,5 @@
 import Mathlib.Data.NNRat.Lemmas
-import Mathlib.Data.Rat.Cast.Defs
+import Mathlib.Data.Rat.Cast.Lemmas
 import LeanAPAP.Mathlib.Data.NNRat.Defs
 
 open Function
@@ -42,9 +42,6 @@ def castHom : ℚ≥0 →+* α where
   map_add' := cast_add
 
 @[simp, norm_cast] lemma coe_castHom : ⇑(castHom α) = (↑) := rfl
-
-@[simp, norm_cast]
-lemma cast_pow (q : ℚ≥0) (n : ℕ) : ↑(q ^ n) = (q : α) ^ n := (castHom α).map_pow _ _
 
 @[simp, norm_cast]
 lemma cast_zpow (q : ℚ≥0) (n : ℤ) : ↑(q ^ n) = ((q : α) ^ n : α) := map_zpow₀ (castHom α) _ _

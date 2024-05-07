@@ -64,7 +64,7 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
       simp
     · have : 1 - (p : ℝ)⁻¹ ≠ 0 := sub_ne_zero.2 (inv_ne_one.2 $ NNReal.coe_ne_one.2 hp.ne').symm
       simp only [abs_mul, abs_rpow_of_nonneg, mul_rpow, rpow_nonneg, hp₀.ne', this,
-        abs_norm, norm_nonneg, rpow_inv_rpow, Ne.def, NNReal.coe_eq_zero, not_false_iff, one_div,
+        abs_norm, norm_nonneg, rpow_inv_rpow, Ne, NNReal.coe_eq_zero, not_false_iff, one_div,
         rpow_rpow_inv, div_inv_eq_mul, one_mul]
   calc
     ∑ x, ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤

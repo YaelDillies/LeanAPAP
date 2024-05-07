@@ -1,6 +1,6 @@
 import Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Mathlib.Data.NNRat.Lemmas
-import LeanAPAP.Mathlib.Data.Rat.Cast.CharZero
+import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 
 open NNRat
 

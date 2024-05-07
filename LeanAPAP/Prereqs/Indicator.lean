@@ -1,4 +1,5 @@
 import Mathlib.Data.Complex.Basic
+import Mathlib.Data.Fintype.Lattice
 import Mathlib.Data.Real.NNReal
 import LeanAPAP.Mathlib.Algebra.Field.Defs
 import LeanAPAP.Prereqs.Expect.Basic

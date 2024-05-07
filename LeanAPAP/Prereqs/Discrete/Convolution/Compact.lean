@@ -491,7 +491,7 @@ lemma expect_iterNConv [CharZero β] (f : α → β) : ∀ n, 𝔼 a, (f ∗^ₙ
 
 lemma support_iterNConv_subset (f : α → β) : ∀ n, support (f ∗^ₙ n) ⊆ n • support f
   | 0 => by
-    simp only [iterNConv_zero, zero_smul, support_subset_iff, Ne.def, ite_eq_right_iff, exists_prop,
+    simp only [iterNConv_zero, zero_smul, support_subset_iff, Ne, ite_eq_right_iff, exists_prop,
       not_forall, Set.mem_zero, and_imp, forall_eq, eq_self_iff_true, imp_true_iff, trivNChar_apply]
   | n + 1 =>
     (support_nconv_subset _ _).trans $ Set.add_subset_add_right $ support_iterNConv_subset _ _

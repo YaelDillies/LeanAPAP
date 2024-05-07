@@ -1,3 +1,4 @@
+import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Algebra.Order.Pi
 import Mathlib.Algebra.Star.Order
 import Mathlib.Data.ZMod.Basic
