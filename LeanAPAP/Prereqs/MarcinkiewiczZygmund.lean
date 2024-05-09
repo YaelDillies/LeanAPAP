@@ -33,7 +33,7 @@ private lemma step_one' (hA : A.Nonempty) (f : G → ℝ) (hf : ∀ i : Fin n, �
     (a : Fin n → G) :
     |∑ i, f (a i)| ^ m ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))| ^ m) / A.card ^ n := by
   cases m
-  · simp only [_root_.pow_zero, sum_const, prod_const, Nat.smul_one_eq_coe, Finset.card_fin,
+  · simp only [_root_.pow_zero, sum_const, prod_const, Nat.smul_one_eq_cast, Finset.card_fin,
       card_piFinset, ←Nat.cast_pow]
     rw [div_self]
     rw [Nat.cast_ne_zero, ←pos_iff_ne_zero]

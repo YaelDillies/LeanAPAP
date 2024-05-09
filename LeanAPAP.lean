@@ -2,15 +2,14 @@ import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
-import LeanAPAP.Mathlib.Algebra.Field.Defs
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Order.Field.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
+import LeanAPAP.Mathlib.Combinatorics.Additive.AP.Three.Convolution
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.NNRat.Defs
-import LeanAPAP.Mathlib.Data.NNRat.Lemmas
 import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 import LeanAPAP.Mathlib.Data.ZMod.Basic
@@ -46,6 +45,5 @@ import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Multinomial
 import LeanAPAP.Prereqs.Rudin
-import LeanAPAP.Prereqs.SalemSpencer
 import LeanAPAP.Prereqs.Translate
 import LeanAPAP.Prereqs.WideDiag

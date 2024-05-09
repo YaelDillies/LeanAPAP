@@ -2,8 +2,11 @@ import Mathlib.Combinatorics.Additive.AP.Three.Defs
 import Mathlib.Data.Nat.Parity
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 
-open Finset Fintype Function
+/-!
+# The convolution characterisation of 3AP-free sets
+-/
 
+open Finset Fintype Function
 open scoped BigOperators Pointwise
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {s : Finset G}
@@ -22,7 +25,8 @@ lemma ThreeAPFree.l2Inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
   · refine' fun i hi ↦ not_ne_iff.1 fun h ↦ (mem_offDiag.1 hi).2.2 _
     simp_rw [mul_ne_zero_iff, ←mem_support, support_mu, mem_coe, mem_image, two_smul] at h
     obtain ⟨b, hb, hab⟩ := h.2
-    exact hs h.1.1 h.1.2 hb hab.symm
+    obtain rfl := hs h.1.1 hb h.1.2 hab.symm
+    simpa using hab
   · simpa using fun _ ↦ Or.inl
   · rintro a ha
     simp only [mu_apply, ha, if_true, mul_one, mem_image, exists_prop, mul_ite,
