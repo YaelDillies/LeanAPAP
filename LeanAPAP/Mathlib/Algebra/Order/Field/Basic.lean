@@ -1,6 +1,5 @@
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.Positivity.Basic
-import LeanAPAP.Mathlib.Data.NNRat.Defs
 
 namespace NNRat
 variable {α : Type*} [LinearOrderedSemifield α] {q : ℚ≥0}

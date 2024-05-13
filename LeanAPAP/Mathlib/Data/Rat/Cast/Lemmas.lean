@@ -1,6 +1,6 @@
 import Mathlib.Data.NNRat.Lemmas
 import Mathlib.Data.Rat.Cast.Lemmas
-import LeanAPAP.Mathlib.Data.NNRat.Defs
+import Mathlib.Tactic.Positivity.Basic
 
 open Function
 

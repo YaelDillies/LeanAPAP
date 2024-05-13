@@ -9,7 +9,6 @@ import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Combinatorics.Additive.AP.Three.Convolution
 import LeanAPAP.Mathlib.Data.Fintype.Pi
-import LeanAPAP.Mathlib.Data.NNRat.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 import LeanAPAP.Mathlib.Data.ZMod.Basic
