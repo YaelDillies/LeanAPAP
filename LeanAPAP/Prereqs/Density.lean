@@ -26,7 +26,7 @@ section Semifield
 variable [Semifield 𝕜] {s t : Finset α} {a b : α}
 
 /-- `dens s` is the number of elements of `s`, aka its density. -/
-@[pp_dot] def dens (s : Finset α) : 𝕜 := s.card / Fintype.card α
+def dens (s : Finset α) : 𝕜 := s.card / Fintype.card α
 
 notation "dens[" 𝕜 "]" => @dens 𝕜
 
