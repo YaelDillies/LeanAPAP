@@ -14,12 +14,7 @@ lemma thing_one : (𝟭_[β] B ○ 𝟭 A) x = ∑ y, 𝟭 A y * 𝟭 B (x + y) 
 lemma thing_one_right : (𝟭_[β] A ○ 𝟭 B) x = (A ∩ (x +ᵥ B)).card := by
   rw [indicate_dconv_indicate_apply]
   congr 1
-  refine (Finset.card_congr (fun a _ ↦ (a, a - x)) ?_ (by simp) ?_).symm
-  · simp (config := {contextual := true}) [←neg_vadd_mem_iff, neg_add_eq_sub]
-  · simp only [mem_product, and_imp, Prod.forall, mem_filter, mem_inter, exists_prop, Prod.mk.injEq]
-    rintro a b ha hb rfl
-    refine ⟨a, ⟨ha, ?_⟩, rfl, by simp⟩
-    simp [←neg_vadd_mem_iff, hb]
+  apply card_nbij' Prod.fst (fun a ↦ (a, a - x)) <;> aesop (add simp [mem_vadd_finset])
 
 lemma thing_two : ∑ s, (𝟭_[β] A ○ 𝟭 B) s = A.card * B.card := by
   simp only [sum_dconv, conj_indicate_apply, sum_indicate]
@@ -252,10 +247,9 @@ lemma oneOfPair_mem :
 
 lemma oneOfPair_mem' (hH : H ⊆ X ×ˢ X) :
     (H.filter fun yz ↦ yz.1 = x).card = (X.filter fun c ↦ (x, c) ∈ H).card := by
-  refine card_congr (fun y _ ↦ y.2) ?_ (by aesop) (by simp)
-  simp only [Prod.forall, mem_filter, and_imp]
-  rintro a b hab rfl
-  exact ⟨(mem_product.1 (hH hab)).2, hab⟩
+  refine card_nbij' Prod.snd (fun c ↦ (x, c)) ?_ (by simp) (by aesop) (by simp)
+  simp (config := { contextual := true }) only [eq_comm, Prod.forall, mem_filter, and_imp, and_true]
+  exact fun a b hab _ ↦ (mem_product.1 (hH hab)).2
 
 lemma oneOfPair_bound_one :
     ∑ x in X \ oneOfPair H X, ((H.filter (fun xy ↦ xy.1 = x)).card : ℝ) ≤

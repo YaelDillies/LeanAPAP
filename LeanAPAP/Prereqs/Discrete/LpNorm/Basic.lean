@@ -328,9 +328,7 @@ lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ 
   obtain rfl | hp := eq_or_ne p 0
   · simp only [l0Norm_eq_card, translate_apply, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero,
       Nat.cast_inj]
-    exact
-      card_congr (fun x _ ↦ x - a) (fun x hx ↦ by simpa using hx)
-        (fun x y _ _ h ↦ by simpa using h) fun x hx ↦ ⟨x + a, by simpa using hx⟩
+    exact card_equiv (Equiv.subRight a) (by simp)
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe, translate_apply]
     congr 1
     exact Fintype.sum_equiv (Equiv.subRight _) _ _ fun _ ↦ rfl
@@ -349,9 +347,7 @@ lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ 
     exact (Equiv.neg _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
   · simp only [l0Norm_eq_card, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
-    exact
-      card_congr (fun x _ ↦ -x) (fun x hx ↦ by simpa using hx) (fun x y _ _ ↦ neg_inj.1)
-        fun x hx ↦ ⟨-x, by simpa using hx⟩
+    exact card_equiv (Equiv.neg _) (by simp)
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe]
     congr 1
     exact Fintype.sum_equiv (Equiv.neg _) _ _ fun _ ↦ rfl

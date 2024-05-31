@@ -143,7 +143,7 @@ lemma AddDissociated.boringEnergy_le [DecidableEq G] {s : Finset G}
 lemma chang (hf : f ≠ 0) (hη : 0 < η) :
     ∃ Δ, Δ ⊆ largeSpec f η ∧
       Δ.card ≤ ⌈changConst * exp 1 * ⌈curlog (α f)⌉₊ / η ^ 2⌉₊ ∧ largeSpec f η ⊆ Δ.addSpan := by
-  refine diss_addSpan fun Δ hΔη hΔ ↦ ?_
+  refine exists_subset_addSpan_card_le_of_forall_addDissociated fun Δ hΔη hΔ ↦ ?_
   obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ Δ.card
   · simp [hΔ']
   have : 0 < α f := α_pos hf

@@ -69,13 +69,13 @@ lemma nconv_apply_eq_smul_conv (f g : α → β) (a : α) :
     (f ∗ₙ g) a = (f ∗ g) a /ℚ Fintype.card α := by
   rw [nconv_apply, expect, eq_comm]
   congr 3
-  refine Finset.card_congr (fun b _ ↦ (b, a - b)) ?_ ?_ ?_ <;> simp [eq_sub_iff_add_eq', eq_comm]
+  refine card_nbij' (fun b ↦ (b, a - b)) Prod.fst ?_ ?_ ?_ ?_ <;> simp [eq_sub_iff_add_eq', eq_comm]
 
 lemma ndconv_apply_eq_smul_dconv (f g : α → β) (a : α) :
     (f ○ₙ g) a = (f ○ g) a /ℚ Fintype.card α := by
   rw [ndconv_apply, expect, eq_comm]
   congr 3
-  refine Finset.card_congr (fun b _ ↦ (a + b, b)) ?_ ?_ ?_ <;> simp [eq_sub_iff_add_eq, eq_comm]
+  refine card_nbij' (fun b ↦ (a + b, b)) Prod.snd ?_ ?_ ?_ ?_ <;> simp [eq_sub_iff_add_eq, eq_comm]
 
 lemma nconv_eq_smul_conv (f g : α → β) : f ∗ₙ g = (f ∗ g) /ℚ Fintype.card α :=
   funext $ nconv_apply_eq_smul_conv _ _
@@ -502,7 +502,7 @@ lemma support_iterNConv_subset (f : α → β) : ∀ n, support (f ∗^ₙ n) �
 --   · simp [apply_ite card, eq_comm]
 --   simp_rw [iterNConv_succ, nconv_eq_expect_sub', ih, indicate_apply, boole_mul, expect_ite, filter_univ_mem,
 --     expect_const_zero, add_zero, ←Nat.cast_expect, ←Finset.card_sigma, Nat.cast_inj]
---   refine' Finset.card_congr (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
+--   refine' Finset.card_bij (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
 --   · simp only [Fin.expect_cons, eq_sub_iff_add_eq', mem_sigma, mem_filter, mem_piFinset, and_imp]
 --     refine' fun bf hb hf ha ↦ ⟨Fin.cases _ _, ha⟩
 --     · exact hb

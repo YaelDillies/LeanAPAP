@@ -1,5 +1,4 @@
 import Mathlib.Combinatorics.Additive.AP.Three.Defs
-import Mathlib.Data.Nat.Parity
 import LeanAPAP.Prereqs.Discrete.Convolution.Norm
 
 /-!

@@ -51,8 +51,6 @@ lemma mem_def : x ∈ B ↔ ∀ ψ, ‖1 - ψ.1 x‖ ≤ B.width ψ := Iff.rfl
 
 /-! ### Width, frequencies, rank -/
 
-attribute [pp_dot] frequencies width
-
 /-- The rank of a Bohr set is the number of characters which have width strictly less than `2`. -/
 def rank (B : BohrSet G) : ℕ := B.frequencies.card
 

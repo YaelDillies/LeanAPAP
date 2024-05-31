@@ -1,7 +1,7 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
+import Mathlib.Combinatorics.Additive.Dissociation
 import LeanAPAP.Prereqs.Discrete.DFT.Compact
-import LeanAPAP.Prereqs.Dissociation
 
 /-!
 # Rudin's inequality

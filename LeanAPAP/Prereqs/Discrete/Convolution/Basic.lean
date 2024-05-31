@@ -511,18 +511,8 @@ lemma indicate_iterConv_apply (s : Finset α) (n : ℕ) (a : α) :
   simp_rw [iterConv_succ', conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite,
     filter_univ_mem, sum_const_zero, add_zero, ←Nat.cast_sum, ←Finset.card_sigma]
   congr 1
-  refine' Finset.card_congr (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
-  · simp only [Fin.sum_cons, eq_sub_iff_add_eq', mem_sigma, mem_filter, mem_piFinset, and_imp]
-    refine' fun bf hb hf ha ↦ ⟨Fin.cases _ _, ha⟩
-    · exact hb
-    · simpa only [Fin.cons_succ]
-  · simp only [Sigma.ext_iff, Fin.cons_eq_cons, heq_iff_eq, imp_self, imp_true_iff, forall_const,
-      Sigma.forall]
-  · simp only [mem_filter, mem_piFinset, mem_sigma, exists_prop, Sigma.exists, and_imp,
-      eq_sub_iff_add_eq', and_assoc]
-    exact fun f hf ha ↦
-      ⟨f 0, Fin.tail f, hf _, fun _ ↦ hf _, (Fin.sum_univ_succ _).symm.trans ha,
-        Fin.cons_self_tail _⟩
+  refine card_equiv ((Equiv.sigmaEquivProd ..).trans (Equiv.piFinSucc ..).symm) ?_
+  aesop (add simp [Fin.sum_cons, Fin.forall_fin_succ])
 
 lemma indicate_iterConv_conv (s : Finset α) (n : ℕ) (f : α → β) :
     𝟭 s ∗^ n ∗ f = ∑ a ∈ s ^^ n, τ (∑ i, a i) f := by

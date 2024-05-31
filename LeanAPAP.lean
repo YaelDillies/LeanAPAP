@@ -35,7 +35,6 @@ import LeanAPAP.Prereqs.Discrete.DFT.Compact
 import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
 import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
-import LeanAPAP.Prereqs.Dissociation
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex

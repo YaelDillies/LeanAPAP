@@ -163,38 +163,32 @@ end DecidableEq
 section bij
 variable {t : Finset κ} {g : κ → α}
 
--- TODO: Backport arguments changes to `card_congr` and `prod_bij`
 lemma expect_bij (i : ∀ a ∈ s, κ) (hi : ∀ a ha, i a ha ∈ t) (h : ∀ a ha, f a = g (i a ha))
     (i_inj : ∀ a₁ ha₁ a₂ ha₂, i a₁ ha₁ = i a₂ ha₂ → a₁ = a₂)
     (i_surj : ∀ b ∈ t, ∃ a ha, i a ha = b) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
-  rw [expect, expect, card_congr i hi (fun _ _ _ ↦ i_inj _ _ _) (by simpa using i_surj),
-    sum_bij i hi (fun _ _ _ ↦ i_inj _ _ _) (by simpa using i_surj) h]
+  simp_rw [expect, card_bij i hi i_inj i_surj, sum_bij i hi i_inj i_surj h]
 
 lemma expect_nbij (i : ι → κ) (hi : ∀ a ∈ s, i a ∈ t) (h : ∀ a ∈ s, f a = g (i a))
     (i_inj : (s : Set ι).InjOn i) (i_surj : (s : Set ι).SurjOn i t) :
-    𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
-  expect_bij (fun a _ ↦ i a) hi h i_inj $ by simpa [Set.SurjOn, Set.subset_def] using i_surj
+    𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
+  simp_rw [expect, card_nbij i hi i_inj i_surj, sum_nbij i hi i_inj i_surj h]
 
 lemma expect_bij' (i : ∀ a ∈ s, κ) (j : ∀ a ∈ t, ι) (hi : ∀ a ha, i a ha ∈ t)
     (hj : ∀ a ha, j a ha ∈ s) (left_inv : ∀ a ha, j (i a ha) (hi a ha) = a)
     (right_inv : ∀ a ha, i (j a ha) (hj a ha) = a) (h : ∀ a ha, f a = g (i a ha)) :
     𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
-  rw [expect, expect, sum_bij' i j hi hj left_inv right_inv h, card_congr i hi]
-  · intro a b ha hb z
-    rw [←left_inv a ha, ←left_inv b hb]
-    congr 1
-  · exact fun b hb ↦ ⟨j b hb, hj _ _, right_inv _ _⟩
+  simp_rw [expect, card_bij' i j hi hj left_inv right_inv, sum_bij' i j hi hj left_inv right_inv h]
 
 lemma expect_nbij' (i : ι → κ) (j : κ → ι) (hi : ∀ a ∈ s, i a ∈ t) (hj : ∀ a ∈ t, j a ∈ s)
     (left_inv : ∀ a ∈ s, j (i a) = a) (right_inv : ∀ a ∈ t, i (j a) = a)
-    (h : ∀ a ∈ s, f a = g (i a)) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x :=
-  expect_bij' (fun a _ ↦ i a) (fun b _ ↦ j b) hi hj left_inv right_inv h
+    (h : ∀ a ∈ s, f a = g (i a)) : 𝔼 x ∈ s, f x = 𝔼 x ∈ t, g x := by
+  simp_rw [expect, card_nbij' i j hi hj left_inv right_inv,
+    sum_nbij' i j hi hj left_inv right_inv h]
 
 /-- `Finset.expect_equiv` is a specialization of `Finset.expect_bij` that automatically fills in
 most arguments. -/
 lemma expect_equiv (e : ι ≃ κ) (hst : ∀ i, i ∈ s ↔ e i ∈ t) (hfg : ∀ i ∈ s, f i = g (e i)) :
-    𝔼 i ∈ s, f i = 𝔼 i ∈ t, g i :=
-  expect_nbij e (fun i ↦ (hst _).1) hfg (e.injective.injOn _) fun i hi ↦ ⟨e.symm i, by simpa [hst]⟩
+    𝔼 i ∈ s, f i = 𝔼 i ∈ t, g i := by simp_rw [expect, card_equiv e hst, sum_equiv e hst hfg]
 
 lemma expect_product' (f : ι → κ → α) : 𝔼 x ∈ s ×ˢ t, f x.1 x.2 = 𝔼 x ∈ s, 𝔼 y ∈ t, f x y := by
   simp only [expect, card_product, sum_product', smul_sum, mul_inv, mul_smul, Nat.cast_mul]
