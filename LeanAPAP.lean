@@ -1,10 +1,16 @@
 import LeanAPAP.Extras.BSG
+import LeanAPAP.Extras.DoublingConst
+import LeanAPAP.Extras.FreimanRuzsa
+import LeanAPAP.Extras.FreimanRuzsa.VerySmall
 import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
+import LeanAPAP.Mathlib.Algebra.Group.Subgroup.Basic
 import LeanAPAP.Mathlib.Analysis.Complex.Circle
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Circle
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+import LeanAPAP.Mathlib.Combinatorics.Additive.PluenneckeRuzsa
+import LeanAPAP.Mathlib.Combinatorics.Enumerative.DoubleCounting
 import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
