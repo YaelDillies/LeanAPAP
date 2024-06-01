@@ -1,4 +1,6 @@
 import LeanAPAP.Extras.BSG
+import LeanAPAP.Extras.FreimanRuzsa
+import LeanAPAP.Extras.FreimanRuzsa.VerySmall
 import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
