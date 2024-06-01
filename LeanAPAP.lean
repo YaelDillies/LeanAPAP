@@ -8,6 +8,7 @@ import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
 import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Combinatorics.Additive.AP.Three.Convolution
+import LeanAPAP.Mathlib.Data.Finset.PiAntidiagonal
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
@@ -23,7 +24,6 @@ import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular
 import LeanAPAP.Prereqs.Chang
 import LeanAPAP.Prereqs.Curlog
-import LeanAPAP.Prereqs.Cut
 import LeanAPAP.Prereqs.Density
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 import LeanAPAP.Prereqs.Discrete.Convolution.Compact

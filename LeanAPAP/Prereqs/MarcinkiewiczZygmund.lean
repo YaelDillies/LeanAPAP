@@ -92,7 +92,7 @@ private lemma step_two (f : G → ℝ) :
 private lemma step_three (f : G → ℝ) :
     ∑ ε in ({-1, 1} : Finset ℝ)^^n,
       ∑ a in A^^n, ∑ b in A^^n, (∑ i, ε i * (f (a i) - f (b i))) ^ (2 * m) =
-      ∑ a in A^^n, ∑ b in A^^n, ∑ k in cut univ (2 * m),
+      ∑ a in A^^n, ∑ b in A^^n, ∑ k in piAntidiag univ (2 * m),
           (multinomial univ k * ∏ t, (f (a t) - f (b t)) ^ k t) *
             ∑ ε in ({-1, 1} : Finset ℝ)^^n, ∏ t, ε t ^ k t := by
   simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A^^n), ←Complex.abs_pow, multinomial_expansion']
@@ -120,12 +120,12 @@ private lemma step_four {k : Fin n → ℕ} :
 
 -- double_multinomial
 private lemma step_six {f : G → ℝ} {a b : Fin n → G} :
-    ∑ k : Fin n → ℕ in cut univ m,
+    ∑ k : Fin n → ℕ in piAntidiag univ m,
         (multinomial univ fun a ↦ 2 * k a : ℝ) * ∏ i : Fin n, (f (a i) - f (b i)) ^ (2 * k i) ≤
       m ^ m * (∑ i : Fin n, (f (a i) - f (b i)) ^ 2) ^ m := by
   rw [multinomial_expansion', mul_sum]
   convert sum_le_sum fun k hk ↦ _
-  rw [mem_cut] at hk
+  rw [mem_piAntidiag] at hk
   simp only [←mul_assoc, pow_mul]
   refine' mul_le_mul_of_nonneg_right _ (prod_nonneg fun i _ ↦ by positivity)
   norm_cast
@@ -156,12 +156,12 @@ private lemma step_eight {f : G → ℝ} {a b : Fin n → G} :
   refine' add_pow_le _ _ m <;> positivity
 
 private lemma end_step {f : G → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
-    (∑ a in A^^n, ∑ b in A^^n, ∑ k : Fin n → ℕ in cut univ m,
+    (∑ a in A^^n, ∑ b in A^^n, ∑ k : Fin n → ℕ in piAntidiag univ m,
       ↑(multinomial univ fun i ↦ 2 * k i) * ∏ t : Fin n, (f (a t) - f (b t)) ^ (2 * k t)) /
         A.card ^ n ≤ (4 * m) ^ m * ∑ a in A^^n, (∑ i, f (a i) ^ 2) ^ m :=
   calc
     (∑ a in A^^n, ∑ b in A^^n,
-            ∑ k : Fin n → ℕ in cut univ m,
+            ∑ k : Fin n → ℕ in piAntidiag univ m,
               (multinomial univ fun i ↦ 2 * k i : ℝ) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) /
           A.card ^ n
     _ ≤ (∑ a in A^^n, ∑ b in A^^n, m ^ m * 2 ^ (m + (m - 1)) *
@@ -197,7 +197,7 @@ lemma basic_marcinkiewicz_zygmund (f : G → ℝ) (hf : ∀ i : Fin n, ∑ a in 
   simp only [←sum_filter, ←sum_mul]
   rw [mul_comm, mul_div_mul_left]
   swap; · positivity
-  simp only [even_iff_two_dvd, ←map_nsmul_cut_univ _ two_ne_zero, sum_map,
+  simp only [even_iff_two_dvd, ←map_nsmul_piAntidiag_univ _ two_ne_zero, sum_map,
     Function.Embedding.coeFn_mk]
   exact end_step hm' hA
 

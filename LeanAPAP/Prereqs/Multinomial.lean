@@ -1,6 +1,6 @@
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
-import LeanAPAP.Prereqs.Cut
+import LeanAPAP.Mathlib.Data.Finset.piAntidiagonal
 
 /-!
 ## TODO
@@ -18,21 +18,21 @@ namespace Nat
 
 lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] {s : Finset α}
     {x : α → β} {n : ℕ} :
-    (∑ i in s, x i) ^ n = ∑ k in cut s n, multinomial s k * ∏ t in s, x t ^ k t := by
+    (∑ i in s, x i) ^ n = ∑ k in piAntidiag s n, multinomial s k * ∏ t in s, x t ^ k t := by
   classical
-  -- maybe make cut_cons and use cons_induction
+  -- maybe make piAntidiag_cons and use cons_induction
   induction' s using Finset.induction_on with a s has ih generalizing n
   · cases n <;> simp
-  rw [sum_insert has, cut_insert _ _ _ has, sum_biUnion (cut_insert_disjoint_bUnion _ _ _ has)]
+  rw [sum_insert has, piAntidiag_insert _ _ _ has, sum_biUnion (piAntidiag_insert_disjoint_bUnion _ _ _ has)]
   simp only [sum_map, Function.Embedding.coeFn_mk, Pi.add_apply, multinomial_insert has,
     Pi.add_apply, eq_self_iff_true, if_true, Nat.cast_mul, prod_insert has, eq_self_iff_true,
     if_true, sum_add_distrib, sum_ite_eq', has, if_false, add_zero,
       addLeftEmbedding_eq_addRightEmbedding, addRightEmbedding_apply]
   suffices ∀ p : ℕ × ℕ, p ∈ antidiagonal n →
-    ∑ f in cut s p.2, ((f a + p.1 + s.sum f).choose (f a + p.1) : β) *
+    ∑ f in piAntidiag s p.2, ((f a + p.1 + s.sum f).choose (f a + p.1) : β) *
       multinomial s (f + fun t ↦ ite (t = a) p.1 0) *
         (x a ^ (f a + p.1) * ∏ t : α in s, x t ^ (f t + ite (t = a) p.1 0)) =
-      ∑ f in cut s p.2, n.choose p.1 * multinomial s f * (x a ^ p.1 * ∏ t : α in s, x t ^ f t) by
+      ∑ f in piAntidiag s p.2, n.choose p.1 * multinomial s f * (x a ^ p.1 * ∏ t : α in s, x t ^ f t) by
     rw [sum_congr rfl this]
     simp only [Nat.antidiagonal_eq_map, sum_map, Function.Embedding.coeFn_mk]
     rw [add_pow]
@@ -40,7 +40,7 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
     refine' sum_congr rfl fun i _ ↦ sum_congr rfl fun f _ ↦ _
     ac_rfl
   refine' fun p hp ↦ sum_congr rfl fun f hf ↦ _
-  rw [mem_cut] at hf
+  rw [mem_piAntidiag] at hf
   rw [hf.2 _ has, zero_add, hf.1]
   congr 2
   · rw [mem_antidiagonal.1 hp]
