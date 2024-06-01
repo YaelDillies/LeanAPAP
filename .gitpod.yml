@@ -1,5 +1,4 @@
-image:
-  file: .docker/gitpod/Dockerfile
+image: leanprovercommunity/mathlib:gitpod
 
 vscode:
   extensions:
