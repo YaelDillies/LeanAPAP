@@ -1,6 +1,6 @@
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
-import LeanAPAP.Mathlib.Data.Finset.piAntidiagonal
+import LeanAPAP.Mathlib.Data.Finset.PiAntidiagonal
 
 /-!
 ## TODO
