@@ -25,8 +25,8 @@ namespace AddChar
 
 private def zmodAuxAux (n : ℕ) : ℤ →+ Additive circle where
   toFun x := Additive.ofMul (e $ x / n)
-  map_zero' := by dsimp; rw [Int.cast_zero, zero_div, ofMul_eq_zero, map_zero_one]
-  map_add' x y := by rw [←ofMul_mul, Equiv.apply_eq_iff_eq, Int.cast_add, add_div, map_add_mul]
+  map_zero' := by dsimp; rw [Int.cast_zero, zero_div, ofMul_eq_zero, map_zero_eq_one]
+  map_add' x y := by rw [←ofMul_mul, Equiv.apply_eq_iff_eq, Int.cast_add, add_div, map_add_eq_mul]
 
 @[simp]
 lemma zmodAuxAux_apply (n : ℕ) (z : ℤ) : zmodAuxAux n z = Additive.ofMul (e $ z / n) := rfl
@@ -71,7 +71,7 @@ def zmod (n : ℕ) (x : ZMod n) : AddChar (ZMod n) circle :=
 @[simp] lemma zmod_add (n : ℕ) : ∀ x y : ZMod n, zmod n (x + y) = zmod n x * zmod n y := by
   simp only [DFunLike.ext_iff, ZMod.intCast_surjective.forall, ←Int.cast_add, AddChar.mul_apply,
     zmod_apply]
-  simp [add_mul, add_div, map_add_mul]
+  simp [add_mul, add_div, map_add_eq_mul]
 
 -- probably an evil lemma
 -- @[simp] lemma zmod_apply (n : ℕ) (x y : ZMod n) : zmod n x y = e (x * y / n) :=
@@ -91,8 +91,8 @@ lemma zmod_injective (hn : n ≠ 0) : Injective (zmod n) := by
 
 def zmodHom (n : ℕ) : AddChar (ZMod n) (AddChar (ZMod n) circle) where
   toFun := zmod n
-  map_zero_one' := by simp
-  map_add_mul' := by simp
+  map_zero_eq_one' := by simp
+  map_add_eq_mul' := by simp
 
 def mkZModAux {ι : Type} [DecidableEq ι] (n : ι → ℕ) (u : ∀ i, ZMod (n i)) :
     AddChar (⨁ i, ZMod (n i)) circle :=
@@ -108,8 +108,8 @@ def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
   toFun ψ := toMonoidHomEquiv'.symm $ circle.subtype.comp ψ.toMonoidHom
   invFun ψ :=
     { toFun := fun a ↦ (⟨ψ a, mem_circle_iff_abs.2 $ ψ.norm_apply _⟩ : circle)
-      map_zero_one' := by simp
-      map_add_mul' := fun a b ↦ by ext : 1; simp [map_add_mul] }
+      map_zero_eq_one' := by simp
+      map_add_eq_mul' := fun a b ↦ by ext : 1; simp [map_add_eq_mul] }
   left_inv ψ := by ext : 1; simp
   right_inv ψ := by ext : 1; simp
   map_add' ψ χ := rfl
@@ -157,14 +157,14 @@ lemma complexBasis_apply (ψ : AddChar α ℂ) : complexBasis α ψ = ψ := by r
 lemma exists_apply_ne_zero : (∃ ψ : AddChar α ℂ, ψ a ≠ 1) ↔ a ≠ 0 := by
   refine' ⟨_, fun ha ↦ _⟩
   · rintro ⟨ψ, hψ⟩ rfl
-    exact hψ ψ.map_zero_one
+    exact hψ ψ.map_zero_eq_one
   classical
   by_contra! h
   let f : α → ℂ := fun b ↦ if a = b then 1 else 0
   have h₀ := congr_fun ((complexBasis α).sum_repr f) 0
   have h₁ := congr_fun ((complexBasis α).sum_repr f) a
   simp only [complexBasis_apply, Fintype.sum_apply, Pi.smul_apply, h, smul_eq_mul, mul_one,
-    map_zero_one, if_pos rfl, if_neg ha, f] at h₀ h₁
+    map_zero_eq_one, if_pos rfl, if_neg ha, f] at h₀ h₁
   exact one_ne_zero (h₁.symm.trans h₀)
 
 lemma forall_apply_eq_zero : (∀ ψ : AddChar α ℂ, ψ a = 1) ↔ a = 0 := by

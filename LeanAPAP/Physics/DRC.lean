@@ -61,8 +61,8 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         ≤ A₁.card / B₁.card ∧
       (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
         ≤ A₂.card / B₂.card := by
-  have := hB.mono $ inter_subset_left _ _
-  have := hB.mono $ inter_subset_right _ _
+  have := hB.mono inter_subset_left
+  have := hB.mono inter_subset_right
   have hp₀ : p ≠ 0 := by positivity
   have := lpNorm_conv_pos hp₀ hB hA
   set M : ℝ :=
@@ -91,7 +91,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     < ∑ s, 𝟭 (univ.filter fun s ↦ M ^ 2 ≤ g s) s * g s *
         (2 * ∑ x, (μ B₁ ○ μ B₂) x * (𝟭_[ℝ] A ○ 𝟭 A) x ^ p * f x) by
     obtain ⟨s, -, hs⟩ := exists_lt_of_sum_lt this
-    refine ⟨_, inter_subset_left _ $ c p A s, _, inter_subset_left _ $ c p A s, ?_⟩
+    refine ⟨_, inter_subset_left (s₂ := c p A s), _, inter_subset_left (s₂ := c p A s), ?_⟩
     simp only [indicate_apply, mem_filter, mem_univ, true_and_iff, boole_mul] at hs
     split_ifs at hs with h; swap
     · simp only [zero_mul, l2Inner_eq_sum, Function.comp_apply, RCLike.inner_apply,
@@ -111,7 +111,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     · simp_rw [A₁, A₂, g, ←card_smul_mu, smul_dconv, dconv_smul, l2Inner_smul_left, star_trivial,
         nsmul_eq_mul, mul_assoc]
     any_goals positivity
-    all_goals exact Nat.cast_le.2 $ card_mono $ inter_subset_left _ _
+    all_goals exact Nat.cast_le.2 $ card_mono inter_subset_left
   rw [←sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ←sum_mul, mul_right_comm, ←hgB, mul_left_comm,
     ←mul_assoc]
   simp only [indicate_apply, boole_mul, mem_filter, mem_univ, true_and_iff, ←sum_filter,

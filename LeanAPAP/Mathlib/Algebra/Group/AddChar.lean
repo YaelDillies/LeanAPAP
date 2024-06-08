@@ -1,13 +1,5 @@
 import Mathlib.Algebra.Group.AddChar
 
-/-!
-### TODO
-
-Rename
-* `map_add_mul` → `map_add_eq_mul`
-* `map_zero_one` → `map_zero_eq_one`
-* `map_nsmul_pow` → `map_nsmul_eq_pow`
--/
 
 open Finset hiding card
 open Fintype (card)
@@ -118,10 +110,10 @@ lemma compAddMonoidHom_injective_right (ψ : AddChar H R) (hψ : Injective ψ) :
 /-- The double dual embedding. -/
 def doubleDualEmb : G →+ AddChar (AddChar G R) R where
   toFun a := { toFun := fun ψ ↦ ψ a
-               map_zero_one' := by simp
-               map_add_mul' := by simp }
+               map_zero_eq_one' := by simp
+               map_add_eq_mul' := by simp }
   map_zero' := by ext; simp
-  map_add' _ _ := by ext; simp [map_add_mul]
+  map_add' _ _ := by ext; simp [map_add_eq_mul]
 
 @[simp] lemma doubleDualEmb_apply (a : G) (ψ : AddChar G R) : doubleDualEmb a ψ = ψ a := rfl
 
@@ -150,7 +142,7 @@ lemma sum_eq_ite (ψ : AddChar G R) : ∑ a, ψ a = if ψ = 0 then ↑(card G) e
   obtain ⟨x, hx⟩ := ne_one_iff.1 h
   refine' eq_zero_of_mul_eq_self_left hx _
   rw [Finset.mul_sum]
-  exact Fintype.sum_equiv (Equiv.addLeft x) _ _ fun y ↦ (map_add_mul _ _ _).symm
+  exact Fintype.sum_equiv (Equiv.addLeft x) _ _ fun y ↦ (map_add_eq_mul ..).symm
 
 lemma sum_eq_zero_iff_ne_zero : ∑ x, ψ x = 0 ↔ ψ ≠ 0 := by
   rw [sum_eq_ite, Ne.ite_eq_right_iff]
@@ -182,14 +174,6 @@ end CommMonoid
 
 section DivisionCommMonoid
 variable [DivisionCommMonoid R]
-
--- TODO: Replace `map_zsmul_zpow`
-@[simp]
-lemma map_zsmul_eq_zpow (ψ : AddChar G R) (n : ℤ) (a : G) : ψ (n • a) = ψ a ^ n :=
-  map_zpow ψ.toMonoidHom _ _
-
-lemma map_neg_eq_inv (ψ : AddChar G R) (x : G) : ψ (-x) = (ψ x)⁻¹ :=
-  eq_inv_of_mul_eq_one_left $ by simp [← map_add_mul]
 
 lemma neg_apply' (ψ : AddChar G R) (x : G) : (-ψ) x = (ψ x)⁻¹ :=
   map_neg_eq_inv _ _

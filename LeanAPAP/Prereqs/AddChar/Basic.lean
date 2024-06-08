@@ -2,15 +2,6 @@ import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Prereqs.Discrete.Convolution.Basic
 import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 
-/-!
-### TODO
-
-Rename
-* `map_add_mul` → `map_add_eq_mul`
-* `map_zero_one` → `map_zero_eq_one`
-* `map_nsmul_pow` → `map_nsmul_eq_pow`
--/
-
 open Finset hiding card
 open Fintype (card)
 open Function
@@ -29,7 +20,7 @@ variable [Finite G] [NormedField R]
   (ψ.toMonoidHom.isOfFinOrder $ isOfFinOrder_of_finite _).norm_eq_one
 
 @[simp] lemma coe_ne_zero (ψ : AddChar G R) : (ψ : G → R) ≠ 0 :=
-  Function.ne_iff.2 ⟨0, fun h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_one ψ⟩
+  Function.ne_iff.2 ⟨0, fun h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_eq_one ψ⟩
 
 end NormedField
 
@@ -53,7 +44,7 @@ lemma expect_eq_ite (ψ : AddChar G R) : 𝔼 a, ψ a = if ψ = 0 then 1 else 0 
   obtain ⟨x, hx⟩ := ne_one_iff.1 h
   refine' eq_zero_of_mul_eq_self_left hx _
   rw [Finset.mul_expect]
-  exact Fintype.expect_equiv (Equiv.addLeft x) _ _ fun y ↦ (map_add_mul _ _ _).symm
+  exact Fintype.expect_equiv (Equiv.addLeft x) _ _ fun y ↦ (map_add_eq_mul _ _ _).symm
 
 lemma expect_eq_zero_iff_ne_zero : 𝔼 x, ψ x = 0 ↔ ψ ≠ 0 := by
   rw [expect_eq_ite, one_ne_zero.ite_eq_right_iff]

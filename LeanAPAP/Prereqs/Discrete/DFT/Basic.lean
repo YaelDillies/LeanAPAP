@@ -55,7 +55,7 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
   unfold dft
   simp_rw [l2Inner_eq_sum, nl2Inner_eq_expect, map_sum, map_mul, starRingEnd_self_apply, sum_mul,
     mul_sum, expect_sum_comm, mul_mul_mul_comm _ (conj $ f _), ←expect_mul, ←
-    AddChar.inv_apply_eq_conj, ←map_neg_eq_inv, ←map_add_mul, AddChar.expect_apply_eq_ite,
+    AddChar.inv_apply_eq_conj, ←map_neg_eq_inv, ←map_add_eq_mul, AddChar.expect_apply_eq_ite,
     add_neg_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
@@ -113,7 +113,7 @@ lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime 
   simp_rw [dft_apply, l2Inner_eq_sum, dilate]
   rw [← Nat.card_eq_fintype_card] at hn
   refine (Fintype.sum_bijective _ hn.nsmul_right_bijective _ _  ?_).symm
-  simp only [pow_apply, ← map_nsmul_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
+  simp only [pow_apply, ← map_nsmul_eq_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
 
 @[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
   ext; simp [trivChar_apply, dft_apply, l2Inner_eq_sum, ←map_sum]
@@ -133,7 +133,7 @@ lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ
     ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
   simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
     Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
-  rw [mul_mul_mul_comm, ←map_mul, ←map_add_mul, add_sub_cancel]
+  rw [mul_mul_mul_comm, ←map_mul, ←map_add_eq_mul, add_sub_cancel]
 
 lemma dft_dconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
     dft (f ○ g) ψ = dft f ψ * conj (dft g ψ) := by

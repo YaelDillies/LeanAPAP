@@ -442,7 +442,7 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
   set F := μ_[ℂ] A ∗ 𝟭 B ∗ μ C
   have hT' : T.Nonempty := by
     have := hS.card_pos -- TODO: positivity
-    have : 0 < _ := hKT.trans_lt' $ by positivity
+    have : (0 : ℝ) < T.card := hKT.trans_lt' $ by positivity
     simpa [card_pos] using this
   calc
     ‖μ T ∗^ k ∗ F - F‖_[∞]

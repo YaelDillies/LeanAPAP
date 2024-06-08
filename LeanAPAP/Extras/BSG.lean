@@ -258,10 +258,7 @@ lemma oneOfPair_bound_one :
           simp only [oneOfPair, ←filter_not, Prod.forall, not_le, not_lt, mem_filter] at hi
           exact hi.2.le
        _ = (X \ oneOfPair H X).card * ((3 / 4 : ℝ) * X.card) := by simp
-       _ ≤ X.card * ((3 / 4 : ℝ) * X.card) :=
-          mul_le_mul_of_nonneg_right
-            (Nat.cast_le.2 (card_le_card (sdiff_subset _ _)))
-            (by positivity)
+       _ ≤ X.card * ((3 / 4 : ℝ) * X.card) := by gcongr; exact sdiff_subset
        _ = _ := by ring
 
 lemma oneOfPair_bound_two (hH : H ⊆ X ×ˢ X) (Hcard : (7 / 8 : ℝ) * X.card ^ 2 ≤ H.card) :

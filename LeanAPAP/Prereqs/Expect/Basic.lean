@@ -202,10 +202,10 @@ lemma expect_image [DecidableEq ι] {m : κ → ι} (hm : (t : Set κ).InjOn m) 
 end bij
 
 @[simp] lemma expect_inv_index [DecidableEq ι] [InvolutiveInv ι] (s : Finset ι) (f : ι → α) :
-    𝔼 i ∈ s⁻¹, f i = 𝔼 i ∈ s, f i⁻¹ := expect_image $ inv_injective.injOn _
+    𝔼 i ∈ s⁻¹, f i = 𝔼 i ∈ s, f i⁻¹ := expect_image inv_injective.injOn
 
 @[simp] lemma expect_neg_index [DecidableEq ι] [InvolutiveNeg ι] (s : Finset ι) (f : ι → α) :
-    𝔼 i ∈ -s, f i = 𝔼 i ∈ s, f (-i) := expect_image $ neg_injective.injOn _
+    𝔼 i ∈ -s, f i = 𝔼 i ∈ s, f (-i) := expect_image neg_injective.injOn
 
 lemma _root_.map_expect {F : Type*} [FunLike F α β] [LinearMapClass F ℚ≥0 α β]
     (g : F) (f : ι → α) (s : Finset ι) :
@@ -423,7 +423,7 @@ variable [AddCommMonoid α] [Module ℚ≥0 α] {f : ι → α}
 See `Function.Bijective.expect_comp` for a version without `h`. -/
 lemma expect_bijective (e : ι → κ) (he : Bijective e) (f : ι → α) (g : κ → α)
     (h : ∀ x, f x = g (e x)) : 𝔼 i, f i = 𝔼 i, g i :=
-  expect_nbij (fun _ ↦ e _) (fun _ _ ↦ mem_univ _) (fun x _ ↦ h x) (he.injective.injOn _) $ by
+  expect_nbij e (fun _ _ ↦ mem_univ _) (fun x _ ↦ h x) he.injective.injOn $ by
     simpa using he.surjective.surjOn _
 
 /-- `Fintype.expect_equiv` is a specialization of `Finset.expect_bij` that automatically fills in

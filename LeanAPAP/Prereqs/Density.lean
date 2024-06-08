@@ -153,8 +153,8 @@ lemma dens_sdiff (h : s ⊆ t) : dens[𝕜] (t \ s) = dens t - dens s := by
 
 lemma le_dens_sdiff (s t : Finset α) : dens[𝕜] t - dens s ≤ dens (t \ s) :=
   calc
-    _ ≤ dens t - dens (s ∩ t) := tsub_le_tsub_left (dens_mono (inter_subset_left s t)) _
-    _ = dens[𝕜] (t \ s) := by rw [← dens_sdiff (inter_subset_right s t), sdiff_inter_self_right t s]
+    _ ≤ dens t - dens (s ∩ t) := tsub_le_tsub_left (dens_mono inter_subset_left) _
+    _ = dens[𝕜] (t \ s) := by rw [← dens_sdiff inter_subset_right, sdiff_inter_self_right t s]
 
 end Lattice
 

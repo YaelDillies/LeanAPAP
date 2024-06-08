@@ -35,8 +35,8 @@ lemma exp_eq_one : expMapCircle r = 1 ↔ ∃ n : ℤ, r = n * (2 * π) := by
 
 noncomputable def e : AddChar ℝ circle where
   toFun r := expMapCircle (2 * π * r)
-  map_zero_one' := by simp
-  map_add_mul' := by simp [mul_add, Complex.exp_add]
+  map_zero_eq_one' := by simp
+  map_add_eq_mul' := by simp [mul_add, Complex.exp_add]
 
 lemma e_apply (r : ℝ) : e r = expMapCircle (2 * π * r) := rfl
 
@@ -44,7 +44,7 @@ lemma e_apply (r : ℝ) : e r = expMapCircle (2 * π * r) := rfl
 
 @[simp] lemma e_int (z : ℤ) : e z = 1 := exp_two_pi_mul_int _
 @[simp] lemma e_one : e 1 = 1 := by simpa using e_int 1
-@[simp] lemma e_add_int {z : ℤ} : e (r + z) = e r := by rw [map_add_mul, e_int, mul_one]
+@[simp] lemma e_add_int {z : ℤ} : e (r + z) = e r := by rw [map_add_eq_mul, e_int, mul_one]
 @[simp] lemma e_sub_int {z : ℤ} : e (r - z) = e r := by rw [map_sub_eq_div, e_int, div_one]
 @[simp] lemma e_fract (r : ℝ) : e (Int.fract r) = e r := by rw [Int.fract, e_sub_int]
 
