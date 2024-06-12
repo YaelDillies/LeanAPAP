@@ -301,12 +301,12 @@ lemma quadruple_bound_right {a b : G} (H : Finset (G × G)) (X : Finset G) (h : 
       (((B ×ˢ B) ×ˢ B ×ˢ B).filter fun ⟨⟨a₁, a₂⟩, a₃, a₄⟩ ↦
         (a₁ - a₂) - (a₃ - a₄) = a - b).card := by
   rw [←h, Nat.cast_le]
-  refine card_le_card_of_inj_on Sigma.snd ?_ ?_
+  refine card_le_card_of_injOn Sigma.snd ?_ ?_
   · simp only [not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter, Sigma.forall]
     intro c a₁ a₂ a₃ a₄ _ _ _ ha₁ ha₂ ha₃ ha₄ h₁ h₂
     simp [*]
-  simp only [not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter, Sigma.forall,
-    Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq]
+  simp only [Set.InjOn, not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter,
+    Sigma.forall, Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq]
   simp (config := {contextual := true})
   aesop
 
