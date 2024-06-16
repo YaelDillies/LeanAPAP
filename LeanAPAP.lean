@@ -4,8 +4,6 @@ import LeanAPAP.Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
-import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
-import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Mathlib.Combinatorics.Additive.AP.Three.Convolution
 import LeanAPAP.Mathlib.Data.Finset.PiAntidiagonal
 import LeanAPAP.Mathlib.Data.Fintype.Pi

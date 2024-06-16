@@ -100,12 +100,12 @@ variable {ι : Type*} {π : ι → Type*} [DecidableEq ι] [∀ i, AddCommGroup 
 
 /-- Direct sum of additive characters. -/
 protected def directSum (ψ : ∀ i, AddChar (π i) R) : AddChar (⨁ i, π i) R :=
-  AddChar.toAddMonoidHomEquiv'.symm
-    (DirectSum.toAddMonoid fun i ↦ toAddMonoidHomEquiv' (ψ i) : (⨁ i, π i) →+ Additive R)
+  AddChar.toAddMonoidHomEquiv.symm
+    (DirectSum.toAddMonoid fun i ↦ toAddMonoidHomEquiv (ψ i) : (⨁ i, π i) →+ Additive R)
 
 lemma directSum_injective :
     Injective (AddChar.directSum : (∀ i, AddChar (π i) R) → AddChar (⨁ i, π i) R) := by
-  refine' AddChar.toAddMonoidHomEquiv'.symm.injective.comp $ DirectSum.toAddMonoid_injective.comp _
+  refine' AddChar.toAddMonoidHomEquiv.symm.injective.comp $ DirectSum.toAddMonoid_injective.comp _
   rintro ψ χ h
   simpa [Function.funext_iff] using h
 

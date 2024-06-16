@@ -33,7 +33,7 @@ lemma zmodAuxAux_apply (n : ℕ) (z : ℤ) : zmodAuxAux n z = Additive.ofMul (e 
 
 /-- The character sending `k : ZMod n` to `e ^ (2 * π * i * k / n)`. -/
 private def zmodAux (n : ℕ) : AddChar (ZMod n) circle :=
-  AddChar.toAddMonoidHomEquiv'.symm $ ZMod.lift n ⟨zmodAuxAux n, by
+  AddChar.toAddMonoidHomEquiv.symm $ ZMod.lift n ⟨zmodAuxAux n, by
     obtain hn | hn := eq_or_ne (n : ℝ) 0 <;> simp [hn, zmodAuxAux]⟩
 
 --TODO: Heavily generalise. Yaël's attempts at generalising failed :(
@@ -105,7 +105,7 @@ lemma mkZModAux_injective {ι : Type} [DecidableEq ι] {n : ι → ℕ} (hn : �
 /-- The circle-valued characters of a finite abelian group are the same as its complex-valued
 characters. -/
 def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
-  toFun ψ := toMonoidHomEquiv'.symm $ circle.subtype.comp ψ.toMonoidHom
+  toFun ψ := toMonoidHomEquiv.symm $ circle.subtype.comp ψ.toMonoidHom
   invFun ψ :=
     { toFun := fun a ↦ (⟨ψ a, mem_circle_iff_abs.2 $ ψ.norm_apply _⟩ : circle)
       map_zero_eq_one' := by simp

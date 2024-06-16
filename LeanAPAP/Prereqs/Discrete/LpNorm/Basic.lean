@@ -1,5 +1,5 @@
-import LeanAPAP.Mathlib.Analysis.InnerProductSpace.PiL2
-import LeanAPAP.Mathlib.Analysis.NormedSpace.PiLp
+import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.Analysis.NormedSpace.PiLp
 import LeanAPAP.Prereqs.Indicator
 
 /-!

@@ -1,6 +1,5 @@
 import Mathlib.Algebra.Group.AddChar
 
-
 open Finset hiding card
 open Fintype (card)
 open Function
@@ -14,56 +13,14 @@ variable [AddMonoid G] [AddMonoid H] [CommMonoid R] {ψ : AddChar G R}
 
 instance instAddCommMonoid : AddCommMonoid (AddChar G R) := Additive.addCommMonoid
 
-attribute [simp, norm_cast] mul_apply one_apply MonoidHom.coe_compAddChar coe_compAddMonoidHom
+@[simp] lemma toMonoidHomEquiv_zero : toMonoidHomEquiv (0 : AddChar G R) = 1 := rfl
+@[simp] lemma toMonoidHomEquiv_symm_one :
+    toMonoidHomEquiv.symm (1 : Multiplicative G →* R) = 0 := rfl
 
--- TODO: Replace `AddChar.toMonoidHomEquiv`
-/-- Interpret an additive character as a monoid homomorphism. -/
-def toMonoidHomEquiv' : AddChar G R ≃ (Multiplicative G →* R) := toMonoidHomEquiv _ _
-
-@[simp, norm_cast] lemma coe_toMonoidHomEquiv' (ψ : AddChar G R) :
-    ⇑(toMonoidHomEquiv' ψ) = ψ ∘ Multiplicative.toAdd := rfl
-
-@[simp, norm_cast] lemma coe_toMonoidHomEquiv'_symm (ψ : Multiplicative G →* R) :
-    ⇑(toMonoidHomEquiv'.symm ψ) = ψ ∘ Multiplicative.ofAdd := rfl
-
-@[simp] lemma toMonoidHomEquiv'_apply (ψ : AddChar G R) (a : Multiplicative G) :
-    toMonoidHomEquiv' ψ a = ψ (Multiplicative.toAdd a) := rfl
-
-@[simp] lemma toMonoidHomEquiv'_symm_apply (ψ : Multiplicative G →* R) (a : G) :
-    toMonoidHomEquiv'.symm ψ a = ψ (Multiplicative.ofAdd a) := rfl
-
-@[simp] lemma toMonoidHomEquiv'_zero : toMonoidHomEquiv' (0 : AddChar G R) = 1 := rfl
-@[simp] lemma toMonoidHomEquiv'_symm_one :
-    toMonoidHomEquiv'.symm (1 : Multiplicative G →* R) = 0 := rfl
-
-@[simp] lemma toMonoidHomEquiv'_add (ψ φ : AddChar G R) :
-    toMonoidHomEquiv' (ψ + φ) = toMonoidHomEquiv' ψ * toMonoidHomEquiv' φ := rfl
-@[simp] lemma toMonoidHomEquiv'_symm_mul (ψ φ : Multiplicative G →* R) :
-  toMonoidHomEquiv'.symm (ψ * φ) = toMonoidHomEquiv'.symm ψ + toMonoidHomEquiv'.symm φ := rfl
-
-/-- Interpret an additive character as a monoid homomorphism. -/
-def toAddMonoidHomEquiv' : AddChar G R ≃ (G →+ Additive R) := toAddMonoidHomEquiv _ _
-
-@[simp, norm_cast]
-lemma coe_toAddMonoidHomEquiv' (ψ : AddChar G R) :
-    ⇑(toAddMonoidHomEquiv' ψ) = Additive.ofMul ∘ ψ := rfl
-
-@[simp, norm_cast] lemma coe_toAddMonoidHomEquiv'_symm (ψ : G →+ Additive R) :
-    ⇑(toAddMonoidHomEquiv'.symm ψ) = Additive.toMul ∘ ψ := rfl
-
-@[simp] lemma toAddMonoidHomEquiv'_apply (ψ : AddChar G R) (a : G) :
-    toAddMonoidHomEquiv' ψ a = Additive.ofMul (ψ a) := rfl
-
-@[simp] lemma toAddMonoidHomEquiv'_symm_apply (ψ : G →+ Additive R) (a : G) :
-    toAddMonoidHomEquiv'.symm ψ a = Additive.toMul (ψ a) := rfl
-
-lemma eq_one_iff : ψ = 0 ↔ ∀ x, ψ x = 1 := DFunLike.ext_iff
-lemma ne_one_iff : ψ ≠ 0 ↔ ∃ x, ψ x ≠ 1 := DFunLike.ne_iff
-
-@[simp, norm_cast] lemma coe_one : ⇑(1 : AddChar G R) = 1 := rfl
-@[simp, norm_cast] lemma coe_mul (ψ χ : AddChar G R) : ⇑(ψ * χ) = ψ * χ := rfl
-
-@[simp, norm_cast] lemma coe_pow (n : ℕ) (ψ : AddChar G R) : ⇑(ψ ^ n) = ψ ^ n := rfl
+@[simp] lemma toMonoidHomEquiv_add (ψ φ : AddChar G R) :
+    toMonoidHomEquiv (ψ + φ) = toMonoidHomEquiv ψ * toMonoidHomEquiv φ := rfl
+@[simp] lemma toMonoidHomEquiv_symm_mul (ψ φ : Multiplicative G →* R) :
+  toMonoidHomEquiv.symm (ψ * φ) = toMonoidHomEquiv.symm ψ + toMonoidHomEquiv.symm φ := rfl
 
 lemma eq_zero_iff : ψ = 0 ↔ ∀ x, ψ x = 1 := DFunLike.ext_iff
 lemma ne_zero_iff : ψ ≠ 0 ↔ ∃ x, ψ x ≠ 1 := DFunLike.ne_iff
@@ -92,21 +49,6 @@ lemma sum_apply (s : Finset ι) (ψ : ι → AddChar G R) (a : G) :
 
 noncomputable instance : DecidableEq (AddChar G R) := Classical.decEq _
 
-@[simp] lemma compAddMonoidHom_apply (ψ : AddChar H R) (f : G →+ H) (a : G) :
-    (ψ.compAddMonoidHom f) a = ψ (f a) := rfl
-
-lemma compAddMonoidHom_injective_left (f : G →+ H) (hf : Surjective f) :
-    Injective fun ψ : AddChar H R ↦ ψ.compAddMonoidHom f := by
-  rintro ψ χ h
-  rw [DFunLike.ext'_iff] at h ⊢
-  exact hf.injective_comp_right h
-
-lemma compAddMonoidHom_injective_right (ψ : AddChar H R) (hψ : Injective ψ) :
-    Injective fun f : G →+ H ↦ ψ.compAddMonoidHom f := by
-  rintro f g h
-  rw [DFunLike.ext'_iff] at h ⊢
-  exact hψ.comp_left h
-
 /-- The double dual embedding. -/
 def doubleDualEmb : G →+ AddChar (AddChar G R) R where
   toFun a := { toFun := fun ψ ↦ ψ a
@@ -121,17 +63,6 @@ end AddMonoid
 
 section AddGroup
 variable [AddGroup G]
-
-section DivisionCommMonoid
-variable [DivisionCommMonoid R]
-
-lemma map_sub_eq_div (ψ : AddChar G R) (x y : G) : ψ (x - y) = ψ x / ψ y :=
-  ψ.toMonoidHom.map_div _ _
-
-lemma injective_iff {ψ : AddChar G R} : Injective ψ ↔ ∀ ⦃x⦄, ψ x = 1 → x = 0 :=
-  ψ.toMonoidHom.ker_eq_bot_iff.symm.trans eq_bot_iff
-
-end DivisionCommMonoid
 
 section CommSemiring
 variable [Fintype G] [CommSemiring R] [IsDomain R] [CharZero R] {ψ : AddChar G R}
