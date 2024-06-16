@@ -1,7 +1,7 @@
+import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
-import LeanAPAP.Prereqs.Discrete.Convolution.Compact
-import LeanAPAP.Prereqs.Discrete.Convolution.Norm
-import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
+import LeanAPAP.Prereqs.LpNorm.Compact
+import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 
 /-!
 # Discrete Fourier transform
@@ -9,17 +9,6 @@ import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
 This file defines the discrete Fourier transform and shows the Parseval-Plancherel identity and
 Fourier inversion formula for it.
 -/
-
-namespace Complex
-variable {ι : Type*} {a b : ℝ}
-
-open scoped BigOperators
-
-lemma le_of_eq_sum_of_eq_sum_norm (f : ι → ℂ) (s : Finset ι) (ha₀ : 0 ≤ a)
-    (ha : a = ∑ i ∈ s, f i) (hb : b = ∑ i ∈ s, (‖f i‖ : ℂ)) : a ≤ b := by
-  norm_cast at hb; rw [← Complex.abs_of_nonneg ha₀, ha, hb]; exact norm_sum_le s f
-
-end Complex
 
 open AddChar Finset Function
 open Fintype (card)
@@ -202,3 +191,4 @@ lemma lpNorm_conv_le_lpNorm_dconv' (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
   simpa only [←Complex.coe_comp_conv, ←Complex.coe_comp_dconv, Complex.lpNorm_coe_comp] using
     lpNorm_conv_le_lpNorm_dconv hn₀ hn ((↑) ∘ f)
+

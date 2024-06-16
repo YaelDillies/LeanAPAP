@@ -1,5 +1,5 @@
-import LeanAPAP.Prereqs.Discrete.Convolution.Compact
-import LeanAPAP.Prereqs.Discrete.DFT.Basic
+import LeanAPAP.Prereqs.Convolution.Compact
+import LeanAPAP.Prereqs.FourierTransform.Discrete
 import LeanAPAP.Prereqs.Expect.Complex
 
 /-!
@@ -13,7 +13,7 @@ noncomputable section
 
 open AddChar Finset Function
 open Fintype (card)
-open scoped BigOperators ComplexConjugate ComplexOrder
+open scoped ComplexConjugate ComplexOrder
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 

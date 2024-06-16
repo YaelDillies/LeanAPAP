@@ -1,4 +1,4 @@
-import LeanAPAP.Prereqs.Discrete.Convolution.Basic
+import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Expect.Complex
 
 /-!
@@ -33,7 +33,7 @@ Multiplicativise? Probably ugly and not very useful.
 -/
 
 open Finset Fintype Function
-open scoped BigOperators ComplexConjugate NNReal Pointwise NNRat
+open scoped BigOperators ComplexConjugate NNReal Pointwise
 
 variable {α β γ : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 

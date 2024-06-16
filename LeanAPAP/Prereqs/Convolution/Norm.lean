@@ -1,5 +1,5 @@
-import LeanAPAP.Prereqs.Discrete.Convolution.Order
-import LeanAPAP.Prereqs.Discrete.LpNorm.Compact
+import LeanAPAP.Prereqs.Convolution.Order
+import LeanAPAP.Prereqs.LpNorm.Compact
 
 /-!
 # Norm of a convolution
@@ -9,7 +9,7 @@ convolution inequality.
 -/
 
 open Finset Function Real
-open scoped BigOperators ComplexConjugate ENNReal NNReal Pointwise
+open scoped ComplexConjugate ENNReal NNReal Pointwise
 
 variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 

@@ -4,7 +4,7 @@ import Mathlib.Data.Finset.Pointwise
 # Wide diagonal
 -/
 
-open scoped BigOperators Pointwise
+open scoped Pointwise
 
 namespace Finset
 variable {α : Type*} [DecidableEq α] {s : Finset α} {k : ℕ}

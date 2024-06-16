@@ -4,8 +4,6 @@ import LeanAPAP.Mathlib.Data.Fintype.Pi
 
 open Finset
 
-open scoped BigOperators
-
 namespace Fintype
 variable {α β : Type*} {δ : α → Type*} [DecidableEq α] [Fintype α] [DecidableEq β]
   [∀ a, DecidableEq (δ a)]

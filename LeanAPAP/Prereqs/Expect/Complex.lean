@@ -1,7 +1,7 @@
 import Mathlib.Data.Complex.Basic
 import LeanAPAP.Prereqs.Expect.Basic
 
-open scoped BigOperators NNReal NNRat
+open scoped BigOperators NNReal
 
 namespace NNReal
 variable {ι : Type*}

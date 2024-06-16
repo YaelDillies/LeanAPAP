@@ -1,11 +1,11 @@
 import LeanAPAP.Prereqs.AddChar.Basic
-import LeanAPAP.Prereqs.Discrete.Convolution.Order
-import LeanAPAP.Prereqs.Discrete.DFT.Compact
+import LeanAPAP.Prereqs.Convolution.Order
+import LeanAPAP.Prereqs.FourierTransform.Compact
 
 noncomputable section
 
 open Finset Fintype Function Real
-open scoped BigOperators Nat
+open scoped Nat
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] {s : Finset G}
 

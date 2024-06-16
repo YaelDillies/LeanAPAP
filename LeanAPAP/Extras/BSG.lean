@@ -1,5 +1,5 @@
 import Mathlib.Combinatorics.Additive.Energy
-import LeanAPAP.Prereqs.Discrete.Convolution.Order
+import LeanAPAP.Prereqs.Convolution.Order
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 variable {β : Type*} [CommSemiring β] [StarRing β]

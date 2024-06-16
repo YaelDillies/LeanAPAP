@@ -1,4 +1,6 @@
-import LeanAPAP.Prereqs.AddChar.Basic
+import Mathlib.Analysis.Complex.Basic
+import LeanAPAP.Mathlib.Algebra.Algebra.Basic
+import LeanAPAP.Prereqs.AddChar.Defs
 
 open AddChar Complex Function
 open scoped NNReal

@@ -1,8 +1,8 @@
 import LeanAPAP.Mathlib.Tactic.Positivity
-import LeanAPAP.Prereqs.Discrete.Convolution.Basic
+import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 
 open Finset Function Real
-open scoped BigOperators ComplexConjugate NNReal Pointwise
+open scoped ComplexConjugate NNReal Pointwise
 
 variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 

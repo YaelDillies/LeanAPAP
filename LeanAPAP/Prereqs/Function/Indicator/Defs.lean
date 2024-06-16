@@ -1,12 +1,9 @@
+import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Data.Complex.Basic
-import Mathlib.Data.Fintype.Lattice
-import Mathlib.Data.Real.NNReal
-import LeanAPAP.Prereqs.Expect.Basic
-import LeanAPAP.Prereqs.Translate
 
 open Finset Function
 open Fintype (card)
-open scoped BigOperators ComplexConjugate Pointwise NNRat
+open scoped ComplexConjugate Pointwise NNRat
 
 /-! ### Indicator -/
 
@@ -58,9 +55,6 @@ lemma sum_indicate [Fintype α] (s : Finset α) : ∑ x, 𝟭_[β] s x = s.card 
 
 lemma card_eq_sum_indicate [Fintype α] (s : Finset α) : s.card = ∑ x, 𝟭_[ℕ] s x :=
   (sum_indicate _ _).symm
-
-lemma translate_indicate [AddCommGroup α] (a : α) (s : Finset α) : τ a (𝟭_[β] s) = 𝟭 (a +ᵥ s) := by
-  ext; simp [indicate_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
 
 section AddGroup
 variable {G : Type*} [AddGroup G] [AddAction G α]
@@ -122,19 +116,7 @@ variable [StarRing β]
 @[simp] lemma conj_indicate [AddCommGroup α] (s : Finset α) : conj (𝟭_[β] s) = 𝟭 s := by
   ext; simp
 
-@[simp] lemma conjneg_indicate [AddCommGroup α] (s : Finset α) : conjneg (𝟭_[β] s) = 𝟭 (-s) := by
-  ext; simp
-
 end CommSemiring
-
-section Semifield
-variable [Fintype ι] [DecidableEq ι] [Semiring β] [Module ℚ≥0 β]
-
-lemma expect_indicate (s : Finset ι) : 𝔼 x, 𝟭_[β] s x = s.card /ℚ Fintype.card ι := by
-  simp only [expect_univ, indicate]
-  rw [← sum_filter, filter_mem_eq_inter, univ_inter, sum_const, Nat.smul_one_eq_cast]
-
-end Semifield
 
 namespace NNReal
 open scoped NNReal
@@ -229,9 +211,6 @@ lemma card_smul_mu_apply [CharZero β] (s : Finset α) (x : α) : s.card • μ_
 lemma sum_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : ∑ x, μ_[β] s x = 1 := by
   simpa [mu_apply] using mul_inv_cancel (Nat.cast_ne_zero.2 hs.card_pos.ne')
 
-lemma translate_mu [AddCommGroup α] (a : α) (s : Finset α) : τ a (μ_[β] s) = μ (a +ᵥ s) := by
-  ext; simp [mu_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
-
 section AddGroup
 variable {G : Type*} [AddGroup G] [AddAction G α]
 
@@ -266,21 +245,11 @@ end Group
 end DivisionSemiring
 
 section Semifield
-variable (β) [Semifield β] {s : Finset α}
+variable (β) [Semifield β] [StarRing β] [AddCommGroup α] {s : Finset α}
 
-lemma expect_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : 𝔼 x, μ_[β] s x = (↑(card α))⁻¹ := by
-  rw [expect, card_univ, sum_mu _ hs, NNRat.smul_one_eq_cast, NNRat.cast_inv, NNRat.cast_natCast]
+@[simp] lemma conj_mu_apply (s : Finset α) (a : α) : conj (μ_[β] s a) = μ s a := by simp [mu]
 
-variable [StarRing β]
-
-@[simp] lemma conj_mu_apply [AddCommGroup α] (s : Finset α) (a : α) :
-    conj (μ_[β] s a) = μ s a := by simp [mu]
-
-@[simp] lemma conj_mu [AddCommGroup α] (s : Finset α) : conj (μ_[β] s) = μ s := by
-  ext; simp
-
-@[simp] lemma conjneg_mu [AddCommGroup α] (s : Finset α) : conjneg (μ_[β] s) = μ (-s) := by
-  ext; simp
+@[simp] lemma conj_mu (s : Finset α) : conj (μ_[β] s) = μ s := by ext; simp
 
 end Semifield
 

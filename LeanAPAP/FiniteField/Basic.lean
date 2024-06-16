@@ -1,6 +1,6 @@
 import LeanAPAP.Physics.Unbalancing
-import LeanAPAP.Prereqs.Discrete.Convolution.Norm
-import LeanAPAP.Prereqs.Discrete.DFT.Compact
+import LeanAPAP.Prereqs.Convolution.Norm
+import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.Curlog
 
 /-!
@@ -8,7 +8,7 @@ import LeanAPAP.Prereqs.Curlog
 -/
 
 open FiniteDimensional Finset Fintype Function Real
-open scoped BigOperators NNReal
+open scoped NNReal
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {γ ε : ℝ}
 

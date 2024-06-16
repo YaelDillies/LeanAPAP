@@ -1,5 +1,5 @@
 import LeanAPAP.Prereqs.Density
-import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
+import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
 
 /-!
 # Normalised Lp norms
@@ -8,7 +8,7 @@ import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
 open Finset hiding card
 open Function Real
 open Fintype (card)
-open scoped BigOperators ComplexConjugate ENNReal NNReal NNRat
+open scoped BigOperators ComplexConjugate ENNReal NNReal
 
 variable {ι 𝕜 : Type*} [Fintype ι]
 

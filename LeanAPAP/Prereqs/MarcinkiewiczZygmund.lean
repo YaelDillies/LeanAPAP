@@ -3,8 +3,6 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Prereqs.Multinomial
 
 open Finset Fintype Nat Real
-open scoped BigOperators
-
 variable {G : Type*} {A : Finset G} {m n : ℕ}
 
 private lemma step_one (hA : A.Nonempty) (f : G → ℝ) (a : Fin n → G)

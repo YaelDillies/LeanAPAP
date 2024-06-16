@@ -1,12 +1,12 @@
-import LeanAPAP.Prereqs.Discrete.Convolution.Norm
-import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
+import LeanAPAP.Prereqs.Convolution.Norm
+import LeanAPAP.Prereqs.LpNorm.Weighted
 
 /-!
 # Dependent Random Choice
 -/
 
 open Real Finset Fintype Function
-open scoped BigOperators NNReal Pointwise
+open scoped NNReal Pointwise
 
 variable {G : Type*} [DecidableEq G] [Fintype G] [AddCommGroup G] {p : ℕ} {B₁ B₂ A : Finset G}
   {ε δ : ℝ}

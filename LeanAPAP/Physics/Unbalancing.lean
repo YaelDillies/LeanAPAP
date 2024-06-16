@@ -1,14 +1,14 @@
 import Mathlib.Algebra.Order.Group.PosPart
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Prereqs.Discrete.Convolution.Basic
-import LeanAPAP.Prereqs.Discrete.LpNorm.Weighted
+import LeanAPAP.Prereqs.Convolution.Discrete.Basic
+import LeanAPAP.Prereqs.LpNorm.Weighted
 
 /-!
 # Unbalancing
 -/
 
 open Finset Real
-open scoped BigOperators ComplexConjugate ComplexOrder NNReal
+open scoped ComplexConjugate ComplexOrder NNReal
 
 variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G] {ν : G → ℝ≥0} {f : G → ℝ}
   {g h : G → ℂ} {ε : ℝ} {p : ℕ}

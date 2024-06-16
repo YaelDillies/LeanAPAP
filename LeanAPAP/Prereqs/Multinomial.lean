@@ -10,7 +10,7 @@ Rename `Nat.multinomial_nil` to `Nat.multinomial_empty`
 
 open Finset Nat
 
-open scoped BigOperators Nat
+open scoped Nat
 
 variable {K : Type*} {s : Finset K} {f f' : K → ℕ}
 

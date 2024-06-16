@@ -1,34 +1,20 @@
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
-import LeanAPAP.Prereqs.Discrete.Convolution.Basic
-import LeanAPAP.Prereqs.Discrete.LpNorm.Basic
+import LeanAPAP.Prereqs.AddChar.Defs
+import LeanAPAP.Prereqs.Expect.Basic
+import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 
 open Finset hiding card
 open Fintype (card)
 open Function
-open scoped BigOperators ComplexConjugate DirectSum NNRat
+open scoped BigOperators ComplexConjugate DirectSum
 
 variable {G H R : Type*}
 
 namespace AddChar
 section AddGroup
 variable [AddGroup G]
-
-section NormedField
-variable [Finite G] [NormedField R]
-
-@[simp] lemma norm_apply (ψ : AddChar G R) (x : G) : ‖ψ x‖ = 1 :=
-  (ψ.toMonoidHom.isOfFinOrder $ isOfFinOrder_of_finite _).norm_eq_one
-
-@[simp] lemma coe_ne_zero (ψ : AddChar G R) : (ψ : G → R) ≠ 0 :=
-  Function.ne_iff.2 ⟨0, fun h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_eq_one ψ⟩
-
-end NormedField
-
 section RCLike
 variable [RCLike R]
-
-lemma inv_apply_eq_conj [Finite G] (ψ : AddChar G R) (x : G) : (ψ x)⁻¹ = conj (ψ x) :=
-  RCLike.inv_eq_conj $ norm_apply _ _
 
 protected lemma l2Inner_self [Fintype G] (ψ : AddChar G R) :
     ⟪(ψ : G → R), ψ⟫_[R] = Fintype.card G := l2Inner_self_of_norm_eq_one ψ.norm_apply
@@ -60,9 +46,6 @@ variable [AddCommGroup G]
 section RCLike
 variable [RCLike R] {ψ₁ ψ₂ : AddChar G R}
 
-lemma map_neg_eq_conj [Finite G] (ψ : AddChar G R) (x : G) : ψ (-x) = conj (ψ x) := by
-  rw [map_neg_eq_inv, RCLike.inv_eq_conj $ norm_apply _ _]
-
 lemma l2Inner_eq [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
     ⟪(ψ₁ : G → R), ψ₂⟫_[R] = if ψ₁ = ψ₂ then ↑(card G) else 0 := by
   split_ifs with h
@@ -92,22 +75,5 @@ noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
     (AddChar.linearIndependent G R).fintype_card_le_finrank
 
 end RCLike
-
 end AddCommGroup
-
-section DirectSum
-variable {ι : Type*} {π : ι → Type*} [DecidableEq ι] [∀ i, AddCommGroup (π i)] [CommMonoid R]
-
-/-- Direct sum of additive characters. -/
-protected def directSum (ψ : ∀ i, AddChar (π i) R) : AddChar (⨁ i, π i) R :=
-  AddChar.toAddMonoidHomEquiv.symm
-    (DirectSum.toAddMonoid fun i ↦ toAddMonoidHomEquiv (ψ i) : (⨁ i, π i) →+ Additive R)
-
-lemma directSum_injective :
-    Injective (AddChar.directSum : (∀ i, AddChar (π i) R) → AddChar (⨁ i, π i) R) := by
-  refine' AddChar.toAddMonoidHomEquiv.symm.injective.comp $ DirectSum.toAddMonoid_injective.comp _
-  rintro ψ χ h
-  simpa [Function.funext_iff] using h
-
-end DirectSum
 end AddChar

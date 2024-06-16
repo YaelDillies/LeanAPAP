@@ -1,4 +1,4 @@
-import LeanAPAP.Prereqs.Discrete.Convolution.Basic
+import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 
 /-!
 # The ring of functions under convolution
@@ -10,7 +10,7 @@ multiplication.
 
 open Finset Function
 
-open scoped BigOperators ComplexConjugate NNReal Pointwise
+open scoped ComplexConjugate NNReal Pointwise
 
 variable {α β γ : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
 

@@ -1,7 +1,7 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Prereqs.Discrete.Convolution.Norm
+import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.WideDiag
@@ -14,8 +14,6 @@ section
 variable {α : Type*} {g : α → ℝ} {c ε : ℝ} {A : Finset α}
 
 open Finset
-open scoped BigOperators
-
 lemma my_markov (hc : 0 < c) (hg : ∀ a ∈ A, 0 ≤ g a) (h : ∑ a in A, g a ≤ ε * c * A.card) :
     (1 - ε) * A.card ≤ (A.filter (g · ≤ c)).card := by
   classical

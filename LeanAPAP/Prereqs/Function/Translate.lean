@@ -8,7 +8,7 @@ import Mathlib.Data.ZMod.Basic
 -/
 
 open Function Set
-open scoped BigOperators ComplexConjugate Pointwise
+open scoped ComplexConjugate Pointwise
 
 /-! ### Translation operator -/
 

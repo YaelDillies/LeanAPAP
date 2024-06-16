@@ -10,7 +10,7 @@ import LeanAPAP.Prereqs.Rudin
 -/
 
 open Finset Fintype Function Real
-open scoped BigOperators ComplexConjugate ComplexOrder NNReal
+open scoped ComplexConjugate ComplexOrder NNReal
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] {f : G → ℂ} {η : ℝ} {ψ : AddChar G ℂ}
   {Δ : Finset (AddChar G ℂ)} {m : ℕ}

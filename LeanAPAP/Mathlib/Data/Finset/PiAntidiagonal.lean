@@ -2,14 +2,6 @@ import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 import Mathlib.Data.Finset.Pointwise
 
-/-!
-### TODO
-
-Rename
-* `piAntidiagonal` to `finsuppAntidiag`
-* `piAntidiagonal_empty_of_zero` to `piAntidiagonal_empty_zero`
--/
-
 noncomputable section
 
 variable {ι α : Type*} [DecidableEq ι]
@@ -17,7 +9,7 @@ variable {ι α : Type*} [DecidableEq ι]
 -- yoinked from archive/100thms/partition
 open Finset
 
-open scoped BigOperators Pointwise
+open scoped Pointwise
 
 /--
 Functions defined only on `s`, which sum to `n`. In other words, a partition of `n` indexed by `s`.

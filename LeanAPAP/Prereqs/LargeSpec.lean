@@ -1,11 +1,11 @@
-import LeanAPAP.Prereqs.Discrete.DFT.Basic
+import LeanAPAP.Prereqs.FourierTransform.Discrete
 
 /-!
 # Large spectrum of a function
 -/
 
 open Finset Fintype
-open scoped BigOperators ComplexConjugate NNReal
+open scoped ComplexConjugate NNReal
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] {f : G → ℂ} {η : ℝ} {ψ : AddChar G ℂ}
   {Δ : Finset (AddChar G ℂ)} {m : ℕ}

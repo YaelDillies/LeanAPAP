@@ -1,12 +1,12 @@
 import Mathlib.Combinatorics.Additive.AP.Three.Defs
-import LeanAPAP.Prereqs.Discrete.Convolution.Norm
+import LeanAPAP.Prereqs.Convolution.Norm
 
 /-!
 # The convolution characterisation of 3AP-free sets
 -/
 
 open Finset Fintype Function
-open scoped BigOperators Pointwise
+open scoped Pointwise
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {s : Finset G}
 
