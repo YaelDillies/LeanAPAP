@@ -5,7 +5,6 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Data.Finset.PiAntidiagonal
 import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas

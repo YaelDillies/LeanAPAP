@@ -1,6 +1,6 @@
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Fintype.Lattice
-import Mathlib.Data.Real.NNReal
+import Mathlib.Data.NNReal.Basic
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.Function.Indicator.Defs

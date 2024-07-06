@@ -1,3 +1,4 @@
+import Mathlib.Data.Real.StarOrdered
 import LeanAPAP.Prereqs.Convolution.Order
 import LeanAPAP.Prereqs.LpNorm.Compact
 

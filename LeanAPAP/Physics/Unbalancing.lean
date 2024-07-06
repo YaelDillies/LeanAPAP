@@ -135,7 +135,6 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ = sqrt (∑ i in T, ν i) * ‖f‖_[2 * ↑p, ν] ^ p := ?_
       _ ≤ _ := mul_le_mul_of_nonneg_left (pow_le_pow_left wlpNorm_nonneg hf₁ _) ?_
     any_goals positivity
-    rotate_left
     rw [wlpNorm_eq_sum hp'.ne', NNReal.coe_mul, mul_inv, rpow_mul, NNReal.coe_natCast,
       rpow_inv_natCast_pow]
     simp only [wlpNorm_eq_sum hp'.ne', sqrt_eq_rpow, Nonneg.coe_one, rpow_two,

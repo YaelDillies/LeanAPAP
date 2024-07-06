@@ -1,4 +1,5 @@
 import Mathlib.Combinatorics.Additive.Energy
+import Mathlib.Data.Real.StarOrdered
 import LeanAPAP.Prereqs.Convolution.Order
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]

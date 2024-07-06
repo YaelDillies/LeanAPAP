@@ -3,7 +3,7 @@ import Mathlib.Algebra.Group.AddChar
 open Finset hiding card
 open Fintype (card)
 open Function
-open scoped ComplexConjugate NNRat
+open scoped NNRat
 
 variable {G H R : Type*}
 

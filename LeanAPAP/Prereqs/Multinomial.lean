@@ -1,12 +1,6 @@
+import Mathlib.Algebra.Order.Antidiag.Finsupp
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
-import LeanAPAP.Mathlib.Data.Finset.PiAntidiagonal
-
-/-!
-## TODO
-
-Rename `Nat.multinomial_nil` to `Nat.multinomial_empty`
--/
 
 open Finset Nat
 
@@ -20,12 +14,11 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
     {x : α → β} {n : ℕ} :
     (∑ i in s, x i) ^ n = ∑ k in piAntidiag s n, multinomial s k * ∏ t in s, x t ^ k t := by
   classical
-  -- maybe make piAntidiag_cons and use cons_induction
-  induction' s using Finset.induction_on with a s has ih generalizing n
+  induction' s using Finset.cons_induction with a s has ih generalizing n
   · cases n <;> simp
-  rw [sum_insert has, piAntidiag_insert _ _ _ has, sum_biUnion (piAntidiag_insert_disjoint_bUnion _ _ _ has)]
-  simp only [sum_map, Function.Embedding.coeFn_mk, Pi.add_apply, multinomial_insert has,
-    Pi.add_apply, eq_self_iff_true, if_true, Nat.cast_mul, prod_insert has, eq_self_iff_true,
+  rw [Finset.sum_cons, piAntidiag_cons, sum_disjiUnion]
+  simp only [sum_map, Function.Embedding.coeFn_mk, Pi.add_apply, multinomial_cons,
+    Pi.add_apply, eq_self_iff_true, if_true, Nat.cast_mul, prod_cons, eq_self_iff_true,
     if_true, sum_add_distrib, sum_ite_eq', has, if_false, add_zero,
       addLeftEmbedding_eq_addRightEmbedding, addRightEmbedding_apply]
   suffices ∀ p : ℕ × ℕ, p ∈ antidiagonal n →
@@ -41,7 +34,7 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
     ac_rfl
   refine' fun p hp ↦ sum_congr rfl fun f hf ↦ _
   rw [mem_piAntidiag] at hf
-  rw [hf.2 _ has, zero_add, hf.1]
+  rw [not_imp_comm.1 (hf.2 _) has, zero_add, hf.1]
   congr 2
   · rw [mem_antidiagonal.1 hp]
   · rw [multinomial_congr]
