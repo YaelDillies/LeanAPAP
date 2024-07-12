@@ -10,7 +10,6 @@ import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.Tactic.Positivity
-import LeanAPAP.Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
@@ -29,7 +28,6 @@ import LeanAPAP.Prereqs.Convolution.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.Convolution.WithConv
 import LeanAPAP.Prereqs.Curlog
-import LeanAPAP.Prereqs.Density
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex

@@ -90,7 +90,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       mul_pow, sum_pow', sum_mul, mul_sum, @sum_comm _ _ G, ←AddChar.inv_apply_eq_conj, ←
       AddChar.neg_apply', prod_mul_prod_comm, ←AddChar.add_apply, ←AddChar.sum_apply,
       mul_left_comm (Algebra.cast (ν _ : ℝ) : ℂ), ←mul_sum, ←sub_eq_add_neg, sum_sub_distrib,
-      Complex.conj_ofReal, mul_comm]
+      Complex.conj_ofReal, mul_comm (Algebra.cast (ν _ : ℝ) : ℂ)]
     rfl
   positivity
 

@@ -1,4 +1,4 @@
-import LeanAPAP.Prereqs.Density
+import Mathlib.Data.Finset.Density
 import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
 
 /-!
