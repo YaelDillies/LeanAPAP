@@ -80,8 +80,8 @@ section one_le
 lemma wlpNorm_add_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : ∀ i, α i) :
     ‖f + g‖_[p, w] ≤ ‖f‖_[p, w] + ‖g‖_[p, w] := by
   unfold wlpNorm
-  refine' (lpNorm_add_le (by exact_mod_cast hp) _ _).trans'
-    (lpNorm_mono (fun i ↦ by dsimp; positivity) fun i ↦ _)
+  refine (lpNorm_add_le (by exact_mod_cast hp) _ _).trans'
+    (lpNorm_mono (fun i ↦ by dsimp; positivity) fun i ↦ ?_)
   dsimp
   rw [←smul_add]
   exact smul_le_smul_of_nonneg_left (norm_add_le _ _) (zero_le _)

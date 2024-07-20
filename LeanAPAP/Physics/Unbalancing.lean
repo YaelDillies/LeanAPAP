@@ -30,7 +30,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
     simp only [mem_filter, mem_univ, true_and_iff]
     rintro _ _ rfl
     rfl
-  refine' (sum_congr rfl fun _ _ ↦ sum_congr rfl $ this _).trans _
+  refine (sum_congr rfl fun _ _ ↦ sum_congr rfl $ this _).trans ?_
   simp_rw [dconv_apply_sub, sum_fiberwise, ←univ_product_univ, sum_product]
   simp only [sum_pow', sum_mul_sum, map_mul, starRingEnd_self_apply, Fintype.piFinset_univ,
     ←Complex.conj_mul', sum_product, map_sum, map_prod,
@@ -84,7 +84,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ = _ := ?_
     rw [wlpNorm_pow_eq_sum hp₁.pos.ne']
     dsimp
-    refine' sum_congr rfl fun i _ ↦ _
+    refine sum_congr rfl fun i _ ↦ ?_
     rw [←abs_of_nonneg ((Nat.Odd.sub_odd hp₁ odd_one).pow_nonneg $ f _), abs_pow,
       pow_sub_one_mul hp₁.pos.ne']
     simp [l2Inner_eq_sum, ←sum_add_distrib, ←mul_add, ←pow_sub_one_mul hp₁.pos.ne' (f _),

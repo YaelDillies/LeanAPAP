@@ -28,7 +28,7 @@ lemma expect_eq_ite (ψ : AddChar G R) : 𝔼 a, ψ a = if ψ = 0 then 1 else 0 
   split_ifs with h
   · simp [h, card_univ, univ_nonempty]
   obtain ⟨x, hx⟩ := ne_one_iff.1 h
-  refine' eq_zero_of_mul_eq_self_left hx _
+  refine eq_zero_of_mul_eq_self_left hx ?_
   rw [Finset.mul_expect]
   exact Fintype.expect_equiv (Equiv.addLeft x) _ _ fun y ↦ (map_add_eq_mul _ _ _).symm
 

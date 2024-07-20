@@ -23,7 +23,7 @@ private lemma lemma_0 (p : ℕ) (B₁ B₂ A : Finset G) (f : G → ℝ) :
     @sum_comm _ _ (Fin p → G), sum_dconv_mul, dconv_apply_sub, Fintype.sum_pow, map_indicate]
   congr with b₁
   congr with b₂
-  refine' Fintype.sum_equiv (Equiv.neg $ Fin p → G) _ _ fun s ↦ _
+  refine Fintype.sum_equiv (Equiv.neg $ Fin p → G) _ _ fun s ↦ ?_
   rw [←smul_mul_assoc, ←smul_mul_smul, card_smul_mu_apply, card_smul_mu_apply, indicate_inter_apply,
     indicate_inter_apply, mul_mul_mul_comm, prod_mul_distrib]
   simp [c, indicate_inf_apply, ←translate_indicate, sub_eq_add_neg, mul_assoc, add_comm]

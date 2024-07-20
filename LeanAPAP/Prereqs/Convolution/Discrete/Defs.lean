@@ -164,9 +164,8 @@ lemma mul_smul_conv_comm [Monoid γ] [DistribMulAction γ β] [IsScalarTower γ 
 lemma conv_assoc (f g h : α → β) : f ∗ g ∗ h = f ∗ (g ∗ h) := by
   ext a
   simp only [sum_mul, mul_sum, conv_apply, sum_sigma']
-  refine' sum_nbij' (fun ⟨(_b, c), (d, e)⟩ ↦ ⟨(d, e + c), (e, c)⟩)
-    (fun ⟨(b, _c), (d, e)⟩ ↦ ⟨(b + d, e), (b, d)⟩) _ _ _ _ _ <;>
-    aesop (add simp [add_assoc, mul_assoc])
+  apply sum_nbij' (fun ⟨(_b, c), (d, e)⟩ ↦ ⟨(d, e + c), (e, c)⟩)
+    (fun ⟨(b, _c), (d, e)⟩ ↦ ⟨(b + d, e), (b, d)⟩) <;> aesop (add simp [add_assoc, mul_assoc])
 
 lemma conv_right_comm (f g h : α → β) : f ∗ g ∗ h = f ∗ h ∗ g := by
   rw [conv_assoc, conv_assoc, conv_comm g]
@@ -200,7 +199,7 @@ lemma map_dconv (f g : α → ℝ≥0) (a : α) : (↑((f ○ g) a) : ℝ) = ((�
     Function.comp_apply]
 
 lemma conv_eq_sum_sub (f g : α → β) (a : α) : (f ∗ g) a = ∑ t, f (a - t) * g t := by
-  rw [conv_apply]; refine' sum_nbij' Prod.snd (fun b ↦ (a - b, b)) _ _ _ _ _ <;> aesop
+  rw [conv_apply]; apply sum_nbij' Prod.snd (fun b ↦ (a - b, b)) <;> aesop
 
 lemma dconv_eq_sum_sub (f g : α → β) (a : α) : (f ○ g) a = ∑ t, f (a - t) * conj (g (-t)) := by
   simp [←conv_conjneg, conv_eq_sum_sub]

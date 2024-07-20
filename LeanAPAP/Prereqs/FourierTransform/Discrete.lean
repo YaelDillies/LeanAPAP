@@ -88,7 +88,7 @@ lemma dft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conj f) ψ = conj (
 
 lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f) ψ = conj (dft f ψ) := by
   simp only [dft_apply, l2Inner_eq_sum, conjneg_apply, map_sum, map_mul, RCLike.conj_conj]
-  refine' Fintype.sum_equiv (Equiv.neg α) _ _ fun i ↦ _
+  refine Fintype.sum_equiv (Equiv.neg α) _ _ fun i ↦ ?_
   simp only [Equiv.neg_apply, ←inv_apply_eq_conj, ←inv_apply', inv_apply]
 
 @[simp]
@@ -166,7 +166,7 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
 --   simp_rw [pow_mul', ←norm_pow _ n, Complex.ofReal_pow, ←Complex.conj_mul', map_pow, map_sum,
 --     map_mul, Fintype.sum_pow, Fintype.sum_mul_sum]
 --   simp only [@sum_comm _ _ α, ←mul_sum, prod_mul_prod_comm]
---   refine' (norm_sum_le _ _).trans_eq (Complex.ofReal_injective _)
+--   refine (norm_sum_le _ _).trans_eq (Complex.ofReal_injective _)
 --   simp only [norm_mul, norm_prod, RCLike.norm_conj, ←pow_mul]
 --   push_cast
 --   have : ∀ f g : Fin n → AddChar α ℂ, 0 ≤ ∑ a, ∏ i, conj (f i a) * g i a := by
@@ -183,7 +183,7 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
 --     ext
 --     rw [←Complex.eq_coe_norm_of_nonneg (this _ _)]
 --   simp only [@sum_comm _ _ α, mul_sum, map_prod, map_mul, RCLike.conj_conj, ←prod_mul_distrib]
---   refine' sum_congr rfl fun x _ ↦ sum_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
+--   refine sum_congr rfl fun x _ ↦ sum_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
 --   ring
 
 --TODO: Can we unify with `lpNorm_conv_le_lpNorm_dconv`?
@@ -191,4 +191,3 @@ lemma lpNorm_conv_le_lpNorm_dconv' (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
   simpa only [←Complex.coe_comp_conv, ←Complex.coe_comp_dconv, Complex.lpNorm_coe_comp] using
     lpNorm_conv_le_lpNorm_dconv hn₀ hn ((↑) ∘ f)
-

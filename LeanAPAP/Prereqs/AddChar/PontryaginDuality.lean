@@ -128,8 +128,8 @@ def circleEquivComplex [Finite α] : AddChar α circle ≃+ AddChar α ℂ where
 /-- `ZMod n` is (noncanonically) isomorphic to its group of characters. -/
 def zmodAddEquiv (hn : n ≠ 0) : ZMod n ≃+ AddChar (ZMod n) ℂ := by
   haveI : NeZero n := ⟨hn⟩
-  refine' AddEquiv.ofBijective
-    (circleEquivComplex.toAddMonoidHom.comp $ AddChar.toAddMonoidHom $ zmodHom n) _
+  refine AddEquiv.ofBijective
+    (circleEquivComplex.toAddMonoidHom.comp $ AddChar.toAddMonoidHom $ zmodHom n) ?_
   rw [Fintype.bijective_iff_injective_and_card, card_eq]
   exact ⟨circleEquivComplex.injective.comp $ zmod_injective hn, rfl⟩
 
@@ -154,7 +154,7 @@ variable {α}
 lemma complexBasis_apply (ψ : AddChar α ℂ) : complexBasis α ψ = ψ := by rw [coe_complexBasis]
 
 lemma exists_apply_ne_zero : (∃ ψ : AddChar α ℂ, ψ a ≠ 1) ↔ a ≠ 0 := by
-  refine' ⟨_, fun ha ↦ _⟩
+  refine ⟨?_, fun ha ↦ ?_⟩
   · rintro ⟨ψ, hψ⟩ rfl
     exact hψ ψ.map_zero_eq_one
   classical

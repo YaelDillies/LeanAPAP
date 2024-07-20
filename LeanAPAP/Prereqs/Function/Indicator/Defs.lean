@@ -177,7 +177,7 @@ variable [Nontrivial β] [CharZero β] {a : α}
 
 @[simp] lemma mu_apply_eq_zero : μ_[β] s a = 0 ↔ a ∉ s := by
   simp only [mu_apply, mul_boole, ite_eq_right_iff, inv_eq_zero, Nat.cast_eq_zero, card_eq_zero]
-  refine' imp_congr_right fun ha ↦ _
+  refine imp_congr_right fun ha ↦ ?_
   simp only [ne_empty_of_mem ha]
 
 lemma mu_apply_ne_zero : μ_[β] s a ≠ 0 ↔ a ∈ s := mu_apply_eq_zero.not_left

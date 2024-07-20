@@ -536,8 +536,8 @@ lemma lpNorm_prod_le {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp 
     simp [←hpq]
   simp_rw [prod_cons]
   rw [sum_cons, ←inv_inv (∑ _ ∈ _, _ : ℝ≥0)] at hpq
-  refine'
-    (lpNorm_mul_le (hp _) (inv_ne_zero (sum_pos (fun _ _ ↦ _) hs).ne') _ hpq _ _).trans
+  refine
+    (lpNorm_mul_le (hp _) (inv_ne_zero (sum_pos (fun _ _ ↦ ?_) hs).ne') _ hpq _ _).trans
       (mul_le_mul_of_nonneg_left (ih hs _ (inv_inv _).symm) lpNorm_nonneg)
   exact pos_iff_ne_zero.2 (inv_ne_zero $ hp _)
 

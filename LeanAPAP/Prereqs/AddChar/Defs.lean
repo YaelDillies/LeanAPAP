@@ -20,7 +20,7 @@ variable [Finite G] [NormedField R]
   (ψ.toMonoidHom.isOfFinOrder $ isOfFinOrder_of_finite _).norm_eq_one
 
 @[simp] lemma coe_ne_zero (ψ : AddChar G R) : (ψ : G → R) ≠ 0 :=
-  Function.ne_iff.2 ⟨0, fun h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_eq_one ψ⟩
+  ne_iff.2 ⟨0, fun h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_eq_one ψ⟩
 
 end NormedField
 
@@ -56,7 +56,7 @@ protected def directSum (ψ : ∀ i, AddChar (π i) R) : AddChar (⨁ i, π i) R
 
 lemma directSum_injective :
     Injective (AddChar.directSum : (∀ i, AddChar (π i) R) → AddChar (⨁ i, π i) R) := by
-  refine' AddChar.toAddMonoidHomEquiv.symm.injective.comp $ DirectSum.toAddMonoid_injective.comp _
+  refine AddChar.toAddMonoidHomEquiv.symm.injective.comp $ DirectSum.toAddMonoid_injective.comp ?_
   rintro ψ χ h
   simpa [Function.funext_iff] using h
 

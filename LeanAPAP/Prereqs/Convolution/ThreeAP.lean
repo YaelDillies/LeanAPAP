@@ -21,7 +21,7 @@ lemma ThreeAPFree.l2Inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
     Finset.sum_eq_zero, Finset.sum_eq_zero, add_zero, add_zero, pow_succ', mul_inv,
     mul_inv_cancel_left₀]
   · exact Nat.cast_ne_zero.2 hs'.card_pos.ne'
-  · refine' fun i hi ↦ not_ne_iff.1 fun h ↦ (mem_offDiag.1 hi).2.2 _
+  · refine fun i hi ↦ not_ne_iff.1 fun h ↦ (mem_offDiag.1 hi).2.2 ?_
     simp_rw [mul_ne_zero_iff, ←mem_support, support_mu, mem_coe, mem_image, two_smul] at h
     obtain ⟨b, hb, hab⟩ := h.2
     obtain rfl := hs h.1.1 hb h.1.2 hab.symm

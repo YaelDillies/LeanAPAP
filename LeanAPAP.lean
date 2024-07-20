@@ -44,4 +44,3 @@ import LeanAPAP.Prereqs.LpNorm.Weighted
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Multinomial
 import LeanAPAP.Prereqs.Rudin
-import LeanAPAP.Prereqs.WideDiag

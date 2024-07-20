@@ -64,7 +64,7 @@ private lemma step_two_aux (A : Finset G) (f : G → ℝ) (ε : Fin n → ℝ)
     exact (h i).symm
   have h₂ : ∀ a ∈ (A^^n) ×ˢ (A^^n), swapper (swapper a) = a := fun a _ ↦ by
     ext <;> simp only <;> split_ifs <;> rfl
-  refine' sum_nbij' swapper swapper h₁ h₁ h₂ h₂ _
+  refine sum_nbij' swapper swapper h₁ h₁ h₂ h₂ ?_
   · rintro ⟨a, b⟩ _
     congr with i : 1
     simp only [Pi.mul_apply, Pi.sub_apply, Function.comp_apply]
@@ -94,10 +94,10 @@ private lemma step_three (f : G → ℝ) :
           (multinomial univ k * ∏ t, (f (a t) - f (b t)) ^ k t) *
             ∑ ε in ({-1, 1} : Finset ℝ)^^n, ∏ t, ε t ^ k t := by
   simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A^^n), ←Complex.abs_pow, multinomial_expansion']
-  refine' sum_congr rfl fun a _ ↦ _
-  refine' sum_congr rfl fun b _ ↦ _
+  refine sum_congr rfl fun a _ ↦ ?_
+  refine sum_congr rfl fun b _ ↦ ?_
   simp only [mul_pow, prod_mul_distrib, @sum_comm _ _ (Fin n → ℝ), ←mul_sum, ←sum_mul]
-  refine' sum_congr rfl fun k _ ↦ _
+  refine sum_congr rfl fun k _ ↦ ?_
   rw [←mul_assoc, mul_right_comm]
 
 private lemma step_four {k : Fin n → ℕ} :
@@ -106,7 +106,7 @@ private lemma step_four {k : Fin n → ℕ} :
   rw [piFinsetConst, this, ←Fintype.prod_boole]
   have : (2 : ℝ) ^ n = ∏ i : Fin n, 2 := by simp
   rw [this, ←prod_mul_distrib]
-  refine' prod_congr rfl fun t _ ↦ _
+  refine prod_congr rfl fun t _ ↦ ?_
   rw [sum_pair, one_pow, mul_boole]
   swap
   · norm_num
@@ -125,23 +125,23 @@ private lemma step_six {f : G → ℝ} {a b : Fin n → G} :
   convert sum_le_sum fun k hk ↦ _
   rw [mem_piAntidiag] at hk
   simp only [←mul_assoc, pow_mul]
-  refine' mul_le_mul_of_nonneg_right _ (prod_nonneg fun i _ ↦ by positivity)
+  refine mul_le_mul_of_nonneg_right ?_ (prod_nonneg fun i _ ↦ by positivity)
   norm_cast
-  refine' double_multinomial.trans _
+  refine double_multinomial.trans ?_
   rw [hk.1]
 
 private lemma step_seven {f : G → ℝ} {a b : Fin n → G} :
     m ^ m * (∑ i : Fin n, (f (a i) - f (b i)) ^ 2 : ℝ) ^ m ≤
       m ^ m * 2 ^ m * (∑ i : Fin n, (f (a i) ^ 2 + f (b i) ^ 2)) ^ m := by
   rw [←mul_pow, ←mul_pow, ←mul_pow]
-  refine' pow_le_pow_left _ _ _
+  refine pow_le_pow_left ?_ ?_ _
   · positivity
   rw [mul_assoc]
-  refine' mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg _)
+  refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
   rw [mul_sum]
-  refine' sum_le_sum fun i _ ↦ _
+  refine sum_le_sum fun i _ ↦ ?_
   rw [sub_eq_add_neg]
-  refine' add_sq_le.trans_eq _
+  refine add_sq_le.trans_eq ?_
   simp
 
 private lemma step_eight {f : G → ℝ} {a b : Fin n → G} :
@@ -149,9 +149,9 @@ private lemma step_eight {f : G → ℝ} {a b : Fin n → G} :
       m ^ m * 2 ^ (m + (m - 1)) *
         ((∑ i : Fin n, f (a i) ^ 2) ^ m + (∑ i : Fin n, f (b i) ^ 2) ^ m) := by
   rw [pow_add, ←mul_assoc _ _ (2 ^ _), mul_assoc _ (2 ^ (m - 1))]
-  refine' mul_le_mul_of_nonneg_left _ (by positivity)
+  refine mul_le_mul_of_nonneg_left ?_ (by positivity)
   rw [sum_add_distrib]
-  refine' add_pow_le _ _ m <;> positivity
+  refine add_pow_le ?_ ?_ m <;> positivity
 
 private lemma end_step {f : G → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
     (∑ a in A^^n, ∑ b in A^^n, ∑ k : Fin n → ℕ in piAntidiag univ m,
@@ -186,7 +186,7 @@ lemma basic_marcinkiewicz_zygmund (f : G → ℝ) (hf : ∀ i : Fin n, ∑ a in 
     · cases m <;> simp
     · rw [piFinsetConst, piFinset_empty, Finset.sum_empty]
       cases m <;> simp
-  refine' (sum_le_sum fun a (_ : a ∈ A^^n) ↦ @step_one' _ _ _ _ hA f hf a).trans _
+  refine (sum_le_sum fun a (_ : a ∈ A^^n) ↦ @step_one' _ _ _ _ hA f hf a).trans ?_
   rw [←sum_div]
   simp only [pow_mul, sq_abs]
   simp only [←pow_mul]
@@ -208,12 +208,12 @@ lemma other_marcinkiewicz_zygmund (f : G → ℝ) (hm : m ≠ 0)
   · simp at hm
   obtain rfl | hn := n.eq_zero_or_pos
   · simp
-  refine' (basic_marcinkiewicz_zygmund f hf).trans _
+  refine (basic_marcinkiewicz_zygmund f hf).trans ?_
   rw [mul_assoc]
-  refine' mul_le_mul_of_nonneg_left _ (by positivity)
+  refine mul_le_mul_of_nonneg_left ?_ (by positivity)
   rw [Nat.succ_sub_one]
   simp only [pow_mul, mul_sum]
-  refine' sum_le_sum fun a _ ↦ _
+  refine sum_le_sum fun a _ ↦ ?_
   rw [←mul_sum, ←div_le_iff']
   have := Real.pow_sum_div_card_le_sum_pow (f := fun i ↦ |f (a i)| ^ 2) univ m fun i _ ↦ ?_
   simpa only [Finset.card_fin] using this
@@ -250,17 +250,17 @@ lemma complex_marcinkiewicz_zygmund (f : G → ℂ) (hm : m ≠ 0)
   · exact sum_le_sum fun a _ ↦ add_pow_le (sq_nonneg _) (sq_nonneg _) m
   · simp only [mul_sum, pow_mul]
   · rw [mul_assoc, mul_assoc, sum_add_distrib]
-    refine' mul_le_mul_of_nonneg_left _ _
+    refine mul_le_mul_of_nonneg_left ?_ ?_
     swap
     · positivity
     simp only [sum_add_distrib, mul_add, ←mul_assoc]
     exact add_le_add h₁ h₂
   simp only [mul_sum]
-  refine' sum_le_sum fun a _ ↦ _
-  refine' sum_le_sum fun i _ ↦ _
+  refine sum_le_sum fun a _ ↦ ?_
+  refine sum_le_sum fun i _ ↦ ?_
   rw [pow_mul, pow_mul]
-  refine' (mul_le_mul_of_nonneg_left (pow_add_pow_le' (sq_nonneg (f (a i)).re) $
-    sq_nonneg (f (a i)).im) _).trans_eq _
+  refine (mul_le_mul_of_nonneg_left (pow_add_pow_le' (sq_nonneg (f (a i)).re) $
+    sq_nonneg (f (a i)).im) ?_).trans_eq ?_
   · positivity
   rw [mul_assoc (2 ^ _ : ℝ), mul_mul_mul_comm, ←_root_.pow_succ, Nat.sub_add_cancel, ←mul_assoc,
     ←mul_assoc, ←mul_pow, ←mul_assoc]

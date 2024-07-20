@@ -16,8 +16,7 @@ lemma filter_piFinset_card_of_mem [∀ a, DecidableEq (δ a)] (t : ∀ a, Finset
   have : (t' a).card = 1 := by simp [t']
   have h₁ : ∏ b in univ.erase a, (t b).card = ∏ b, (t' b).card := by
     rw [← prod_erase (f := fun b ↦ (t' b).card) univ this]
-    refine' Finset.prod_congr rfl _
-    intro b hb
+    refine Finset.prod_congr rfl fun b hb ↦ ?_
     simp only [mem_erase, Ne, mem_univ, and_true_iff] at hb
     simp only [dif_neg (Ne.symm hb), t']
   have h₂ : ∏ b, (t' b).card = ∏ b, ∑ i in t' b, 1 := by simp
@@ -26,14 +25,14 @@ lemma filter_piFinset_card_of_mem [∀ a, DecidableEq (δ a)] (t : ∀ a, Finset
   congr 1
   ext f
   simp only [mem_filter, mem_piFinset, t']
-  refine' ⟨_, fun h ↦ _⟩
+  refine ⟨?_, fun h ↦ ?_⟩
   · rintro ⟨hf, rfl⟩ b
     split_ifs with h₁
     · cases h₁
       simp
     · exact hf _
   have : f a = x := by simpa using h a
-  refine' ⟨fun b ↦ _, this⟩
+  refine ⟨fun b ↦ ?_, this⟩
   obtain rfl | hab := eq_or_ne a b
   · rwa [this]
   · simpa [dif_neg hab] using h b

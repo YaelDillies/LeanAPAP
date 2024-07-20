@@ -495,7 +495,7 @@ lemma nlpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖�
   all_goals positivity
 
 lemma nlpNorm_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖ₙ_[p] = s.dens ^ (p⁻¹ : ℝ) := by
-  refine' (eq_rpow_inv _ _ _).2 (nlpNorm_rpow_indicate _ _) <;> positivity
+  refine (eq_rpow_inv ?_ ?_ ?_).2 (nlpNorm_rpow_indicate ?_ _) <;> positivity
 
 lemma nlpNorm_pow_indicate {p : ℕ} (hp : p ≠ 0) (s : Finset α) :
     ‖𝟭_[β] s‖ₙ_[p] ^ (p : ℝ) = s.dens := by

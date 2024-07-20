@@ -502,9 +502,9 @@ lemma support_iterNConv_subset (f : α → β) : ∀ n, support (f ∗^ₙ n) �
 --   · simp [apply_ite card, eq_comm]
 --   simp_rw [iterNConv_succ, nconv_eq_expect_sub', ih, indicate_apply, boole_mul, expect_ite, filter_univ_mem,
 --     expect_const_zero, add_zero, ←Nat.cast_expect, ←Finset.card_sigma, Nat.cast_inj]
---   refine' Finset.card_bij (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
+--   refine Finset.card_bij (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
 --   · simp only [Fin.expect_cons, eq_sub_iff_add_eq', mem_sigma, mem_filter, mem_piFinset, and_imp]
---     refine' fun bf hb hf ha ↦ ⟨Fin.cases _ _, ha⟩
+--     refine fun bf hb hf ha ↦ ⟨Fin.cases _ _, ha⟩
 --     · exact hb
 --     · simpa only [Fin.cons_succ]
 --   · simp only [Sigma.ext_iff, Fin.cons_eq_cons, heq_iff_eq, imp_self, imp_true_iff, forall_const,

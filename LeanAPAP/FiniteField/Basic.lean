@@ -43,7 +43,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
   · rw [lpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
     rw [le_div_iff, mul_comm] at hγC
-    refine' rpow_le_rpow_of_nonpos _ hγC (neg_nonpos.2 _)
+    refine rpow_le_rpow_of_nonpos ?_ hγC (neg_nonpos.2 ?_)
     all_goals positivity
   · simp_rw [Nat.cast_mul, Nat.cast_two, p]
     rw [wlpNorm_const_right, mul_assoc, mul_left_comm, NNReal.coe_inv, inv_rpow, rpow_neg]
@@ -55,7 +55,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
     push_cast
     norm_num
     rw [← neg_mul, rpow_mul, one_div, rpow_inv_le_iff_of_pos]
-    refine' (rpow_le_rpow_of_exponent_ge hγ hγ₁ $ neg_le_neg $
+    exact (rpow_le_rpow_of_exponent_ge hγ hγ₁ $ neg_le_neg $
       inv_le_inv_of_le (curlog_pos hγ hγ₁) $ Nat.le_ceil _).trans $
         (rpow_neg_inv_curlog_le hγ.le hγ₁).trans $ exp_one_lt_d9.le.trans $ by norm_num
     all_goals positivity
@@ -79,7 +79,7 @@ lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.card / card 
           (1 + ε / 32) * α ≤ ‖𝟭_[ℝ] A * μ V'‖_[⊤] := by
   obtain rfl | hA := A.eq_empty_or_nonempty
   · stop
-    refine' ⟨⊤, univ, _⟩
+    refine ⟨⊤, univ, _⟩
     rw [AffineSubspace.direction_top]
     simp only [AffineSubspace.top_coe, coe_univ, eq_self_iff_true, finrank_top, tsub_self,
       Nat.cast_zero, indicate_empty, zero_mul, lpNorm_zero, true_and_iff,

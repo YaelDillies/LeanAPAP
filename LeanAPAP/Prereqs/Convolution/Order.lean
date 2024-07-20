@@ -22,7 +22,7 @@ variable [StrictOrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f g 
 
 --TODO: Those can probably be generalised to `OrderedCommSemiring` but we don't really care
 @[simp] lemma support_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ∗ g) = support f + support g := by
-  refine' (support_conv_subset _ _).antisymm _
+  refine (support_conv_subset _ _).antisymm ?_
   rintro _ ⟨a, ha, b, hb, rfl⟩
   rw [mem_support, conv_apply_add]
   exact ne_of_gt $ sum_pos' (fun c _ ↦ mul_nonneg (hf _) $ hg _) ⟨0, mem_univ _,
@@ -36,7 +36,7 @@ lemma conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by
   rw [Pi.lt_def] at hf hg ⊢
   obtain ⟨hf, a, ha⟩ := hf
   obtain ⟨hg, b, hb⟩ := hg
-  refine' ⟨conv_nonneg hf hg, a + b, _⟩
+  refine ⟨conv_nonneg hf hg, a + b, ?_⟩
   rw [conv_apply_add]
   exact sum_pos' (fun c _ ↦ mul_nonneg (hf _) $ hg _) ⟨0, by simpa using mul_pos ha hb⟩
 

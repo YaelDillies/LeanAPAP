@@ -88,7 +88,7 @@ lemma lpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖_[p
     sum_boole, this, zero_rpow, filter_mem_eq_inter]
 
 lemma lpNorm_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖_[p] = s.card ^ (p⁻¹ : ℝ) := by
-  refine' (eq_rpow_inv _ _ _).2 (lpNorm_rpow_indicate _ _) <;> positivity
+  refine (eq_rpow_inv ?_ ?_ ?_).2 (lpNorm_rpow_indicate ?_ _) <;> positivity
 
 lemma lpNorm_pow_indicate {p : ℕ} (hp : p ≠ 0) (s : Finset α) :
     ‖𝟭_[β] s‖_[p] ^ (p : ℝ) = s.card := by

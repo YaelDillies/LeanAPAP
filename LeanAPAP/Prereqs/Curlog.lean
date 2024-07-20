@@ -51,11 +51,11 @@ lemma rpow_neg_inv_curlog_le (hx : 0 ≤ x) (hx' : x ≤ 1) : x ^ (-(curlog x)�
   · simp
   have : -1 / log (1 / x) ≤ -1 / curlog x := by
     rw [neg_div, neg_div, neg_le_neg_iff]
-    refine' one_div_le_one_div_of_le _ (log_one_div_le_curlog hx.le)
-    refine' log_pos _
+    refine one_div_le_one_div_of_le ?_ (log_one_div_le_curlog hx.le)
+    refine log_pos ?_
     rwa [lt_div_iff hx, one_mul]
   rw [←one_div, ←neg_div]
-  refine' (rpow_le_rpow_of_exponent_ge hx hx'.le this).trans _
+  refine (rpow_le_rpow_of_exponent_ge hx hx'.le this).trans ?_
   rw [one_div, log_inv, rpow_def_of_pos hx, neg_div_neg_eq, mul_one_div, div_self]
   exact log_ne_zero_of_pos_of_ne_one hx hx'.ne
 

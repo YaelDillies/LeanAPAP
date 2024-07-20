@@ -21,7 +21,7 @@ lemma α_nonneg (f : G → ℂ) : 0 ≤ α f := by unfold α; positivity
 lemma α_pos (hf : f ≠ 0) : 0 < α f := by unfold α; positivity
 
 lemma α_le_one (f : G → ℂ) : α f ≤ 1 := by
-  refine' div_le_one_of_le (div_le_of_nonneg_of_le_mul _ _ _) _
+  refine div_le_one_of_le (div_le_of_nonneg_of_le_mul ?_ ?_ ?_) ?_
   any_goals positivity
   rw [l1Norm_eq_sum, l2Norm_sq_eq_sum]
   exact sq_sum_le_card_mul_sum_sq
@@ -149,12 +149,12 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
   have : 0 < α f := α_pos hf
   set β := ⌈curlog (α f)⌉₊
   have hβ : 0 < β := Nat.ceil_pos.2 (curlog_pos (α_pos hf) $ α_le_one _)
-  refine' le_of_pow_le_pow_left hβ.ne' zero_le' $ Nat.cast_le.1 $ le_of_mul_le_mul_right _
+  refine le_of_pow_le_pow_left hβ.ne' zero_le' $ Nat.cast_le.1 $ le_of_mul_le_mul_right ?_
     (by positivity : 0 < ↑Δ.card ^ β * (η ^ (2 * β) * α f))
   push_cast
   rw [←mul_assoc, ←pow_add, ←two_mul]
-  refine' ((spec_hoelder hη.le hΔη hβ.ne').trans $ hΔ.boringEnergy_le _).trans _
-  refine' le_trans _ $ mul_le_mul_of_nonneg_right (pow_le_pow_left _ (Nat.le_ceil _) _) _
+  refine ((spec_hoelder hη.le hΔη hβ.ne').trans $ hΔ.boringEnergy_le _).trans ?_
+  refine le_trans ?_ $ mul_le_mul_of_nonneg_right (pow_le_pow_left ?_ (Nat.le_ceil _) _) ?_
   rw [mul_right_comm, div_pow, mul_pow, mul_pow, exp_one_pow, ←pow_mul, mul_div_assoc]
   calc
     _ = (changConst * Δ.card * β) ^ β := by ring
@@ -162,7 +162,7 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
     _ ≤ (changConst * Δ.card * β) ^ β * ((η / η) ^ (2 * β) * α f * exp β) := by
         rw [div_self hη.ne', one_pow, one_mul]
     _ = _ := by ring
-  refine' le_mul_of_one_le_right (by positivity) _
+  refine le_mul_of_one_le_right (by positivity) ?_
   rw [←inv_pos_le_iff_one_le_mul']
   exact inv_le_exp_curlog.trans $ exp_monotone $ Nat.le_ceil _
   all_goals positivity

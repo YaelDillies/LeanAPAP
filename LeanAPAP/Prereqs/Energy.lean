@@ -34,7 +34,7 @@ lemma boringEnergy_eq (n : ℕ) (s : Finset G) : boringEnergy n s = ∑ x, (𝟭
   rw [←Finset.sum_fiberwise _ fun f : Fin n → G ↦ ∑ i, f i]
   congr with x
   rw [indicate_iterConv_apply, sq, ←nsmul_eq_mul, ←sum_const]
-  refine' sum_congr rfl fun f hf ↦ _
+  refine sum_congr rfl fun f hf ↦ ?_
   simp_rw [(mem_filter.1 hf).2, eq_comm]
 
 @[simp] lemma boringEnergy_zero (s : Finset G) : boringEnergy 0 s = 1 := by simp [boringEnergy]

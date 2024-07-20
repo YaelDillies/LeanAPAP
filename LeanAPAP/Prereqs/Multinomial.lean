@@ -24,15 +24,15 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
   suffices ∀ p : ℕ × ℕ, p ∈ antidiagonal n →
     ∑ f in piAntidiag s p.2, ((f a + p.1 + s.sum f).choose (f a + p.1) : β) *
       multinomial s (f + fun t ↦ ite (t = a) p.1 0) *
-        (x a ^ (f a + p.1) * ∏ t : α in s, x t ^ (f t + ite (t = a) p.1 0)) =
-      ∑ f in piAntidiag s p.2, n.choose p.1 * multinomial s f * (x a ^ p.1 * ∏ t : α in s, x t ^ f t) by
+        (x a ^ (f a + p.1) * ∏ t in s, x t ^ (f t + ite (t = a) p.1 0)) =
+      ∑ f in piAntidiag s p.2, n.choose p.1 * multinomial s f * (x a ^ p.1 * ∏ t in s, x t ^ f t) by
     rw [sum_congr rfl this]
     simp only [Nat.antidiagonal_eq_map, sum_map, Function.Embedding.coeFn_mk]
     rw [add_pow]
     simp only [ih, sum_mul, mul_sum]
-    refine' sum_congr rfl fun i _ ↦ sum_congr rfl fun f _ ↦ _
+    refine sum_congr rfl fun i _ ↦ sum_congr rfl fun f _ ↦ ?_
     ac_rfl
-  refine' fun p hp ↦ sum_congr rfl fun f hf ↦ _
+  refine fun p hp ↦ sum_congr rfl fun f hf ↦ ?_
   rw [mem_piAntidiag] at hf
   rw [not_imp_comm.1 (hf.2 _) has, zero_add, hf.1]
   congr 2
@@ -41,23 +41,23 @@ lemma multinomial_expansion' {α β : Type*} [DecidableEq α] [CommSemiring β] 
     intro t ht
     rw [Pi.add_apply, if_neg, add_zero]
     exact ne_of_mem_of_not_mem ht has
-  refine' prod_congr rfl fun t ht ↦ _
+  refine prod_congr rfl fun t ht ↦ ?_
   rw [if_neg, add_zero]
   exact ne_of_mem_of_not_mem ht has
 
 lemma double_multinomial :
     (multinomial s fun i ↦ 2 * f i) ≤ ((∑ i in s, f i) ^ ∑ i in s, f i) * multinomial s f := by
   rw [multinomial, multinomial, ←mul_sum]
-  refine' Nat.div_le_of_le_mul' _
+  refine Nat.div_le_of_le_mul' ?_
   rw [←mul_assoc, ←Nat.mul_div_assoc _ (prod_factorial_dvd_factorial_sum _ _),
     Nat.le_div_iff_mul_le]
   swap
   · exact prod_pos fun i _ ↦ by positivity
-  refine' (Nat.mul_le_mul_right _ $ factorial_two_mul_le _).trans _
+  refine (Nat.mul_le_mul_right _ $ factorial_two_mul_le _).trans ?_
   rw [mul_pow, mul_comm, ←mul_assoc, ←mul_assoc]
-  refine' Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ _)
+  refine Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ ?_)
   rw [←Finset.prod_pow_eq_pow_sum, ←prod_mul_distrib]
-  refine' prod_le_prod' fun i _ ↦ _
+  refine prod_le_prod' fun i _ ↦ ?_
   rw [mul_comm, ←doubleFactorial_two_mul]
   exact doubleFactorial_le_factorial _
 

@@ -174,7 +174,7 @@ lemma nlpNorm_nconv_le_nlpNorm_ndconv (hn₀ : n ≠ 0) (hn : Even n) (f : α �
     map_mul, Fintype.sum_pow, Fintype.sum_mul_sum]
   sorry
   -- simp only [@expect_comm _ _ α, ←mul_expect, prod_mul_prod_comm]
-  -- refine' (norm_expect_le _ _).trans_eq (Complex.ofReal_injective _)
+  -- refine (norm_expect_le _ _).trans_eq (Complex.ofReal_injective _)
   -- simp only [norm_mul, norm_prod, RCLike.norm_conj, ←pow_mul]
   -- push_cast
   -- have : ∀ f g : Fin n → AddChar α ℂ, 0 ≤ ∑ a, ∏ i, conj (f i a) * g i a := by
@@ -191,7 +191,7 @@ lemma nlpNorm_nconv_le_nlpNorm_ndconv (hn₀ : n ≠ 0) (hn : Even n) (f : α �
   --   ext
   --   rw [←Complex.eq_coe_norm_of_nonneg (this _ _)]
   -- simp only [@expect_comm _ _ α, mul_expect, map_prod, map_mul, RCLike.conj_conj, ←prod_mul_distrib]
-  -- refine' expect_congr rfl fun x _ ↦ expect_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
+  -- refine expect_congr rfl fun x _ ↦ expect_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
   -- ring
 
 --TODO: Can we unify with `nlpNorm_nconv_le_nlpNorm_ndconv`?
