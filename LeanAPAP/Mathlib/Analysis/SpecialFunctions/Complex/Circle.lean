@@ -1,17 +1,5 @@
-import Mathlib.Analysis.Complex.Circle
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import LeanAPAP.Prereqs.AddChar.Basic
-
-/-!
-## TODO
-
-Rename
-* `exp_map_circle` → `circle.exp`
-* `coe_inv_circle_eq_conj` → `circle.coe_inv_eq_conj`
-* `coe_div_circle` → `circle.coe_div` + `norm_cast`
--/
-
-attribute [norm_cast] coe_div_circle
+import Mathlib.Analysis.SpecialFunctions.Complex.Circle
+import LeanAPAP.Mathlib.Analysis.Complex.Circle
 
 open AddChar Multiplicative Real
 open scoped ComplexConjugate Real
@@ -19,15 +7,13 @@ open scoped ComplexConjugate Real
 namespace Circle
 variable {r s : ℝ}
 
-@[simp, norm_cast] lemma coe_exp (r : ℝ) : ↑(expMapCircle r) = Complex.exp (r * Complex.I) := rfl
-
 lemma exp_int_mul_two_pi (n : ℤ) : expMapCircle (n * (2 * π)) = 1 :=
   Subtype.ext $ by simpa [mul_assoc] using Complex.exp_int_mul_two_pi_mul_I n
 
 lemma exp_two_pi_mul_int (n : ℤ) : expMapCircle (2 * π * n) = 1 := by
   simpa only [mul_comm] using exp_int_mul_two_pi n
 
-lemma exp_two_pi : expMapCircle (2 * π) = 1 := by simpa using exp_int_mul_two_pi 1
+lemma exp_two_pi : expMapCircle (2 * π) = 1 := by simp
 
 lemma exp_eq_one : expMapCircle r = 1 ↔ ∃ n : ℤ, r = n * (2 * π) := by
   simp [Subtype.ext_iff, Complex.exp_eq_one_iff, ←mul_assoc, Complex.I_ne_zero, ←

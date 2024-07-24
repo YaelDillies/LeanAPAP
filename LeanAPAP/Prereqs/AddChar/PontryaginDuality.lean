@@ -1,6 +1,6 @@
 import Mathlib.GroupTheory.FiniteAbelian
-import LeanAPAP.Mathlib.Data.ZMod.Basic
-import LeanAPAP.Prereqs.AddChar.Circle
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Circle
+import LeanAPAP.Prereqs.AddChar.Basic
 
 /-!
 # Pontryagin duality for finite abelian groups
