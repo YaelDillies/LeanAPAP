@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.LpNorm.Compact
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
