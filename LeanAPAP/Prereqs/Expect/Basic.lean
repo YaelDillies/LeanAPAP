@@ -3,7 +3,7 @@ import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
-import LeanAPAP.Mathlib.Data.Fintype.Pi
+import LeanAPAP.Mathlib.Data.Fintype.BigOperators
 
 /-!
 # Average over a finset
@@ -215,14 +215,14 @@ lemma _root_.map_expect {F : Type*} [FunLike F α β] [LinearMapClass F ℚ≥0 
 lemma card_smul_expect (s : Finset ι) (f : ι → α) : s.card • 𝔼 i ∈ s, f i = ∑ i ∈ s, f i := by
   obtain rfl | hs := s.eq_empty_or_nonempty
   · simp
-  · rw [expect, nsmul_eq_smul_cast ℚ≥0, smul_inv_smul₀]
+  · rw [expect, ← Nat.cast_smul_eq_nsmul ℚ≥0, smul_inv_smul₀]
     positivity
 
 @[simp] nonrec lemma _root_.Fintype.card_smul_expect [Fintype ι] (f : ι → α) :
     Fintype.card ι • 𝔼 i, f i = ∑ i, f i := card_smul_expect _ _
 
 @[simp] lemma expect_const (hs : s.Nonempty) (a : α) : 𝔼 _i ∈ s, a = a := by
-  rw [expect, sum_const, nsmul_eq_smul_cast ℚ≥0, inv_smul_smul₀]; positivity
+  rw [expect, sum_const, ← Nat.cast_smul_eq_nsmul ℚ≥0, inv_smul_smul₀]; positivity
 
 lemma smul_expect {G : Type*} [DistribSMul G α] [SMulCommClass G ℚ≥0 α] (a : G)
     (s : Finset ι) (f : ι → α) : a • 𝔼 i ∈ s, f i = 𝔼 i ∈ s, a • f i := by
@@ -297,10 +297,12 @@ end Semiring
 section CommSemiring
 variable [CommSemiring α] [Module ℚ≥0 α] [IsScalarTower ℚ≥0 α α] [SMulCommClass ℚ≥0 α α]
 
+local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
+
 lemma expect_pow (s : Finset ι) (f : ι → α) (n : ℕ) :
     (𝔼 i ∈ s, f i) ^ n = 𝔼 p ∈ s ^^ n, ∏ i, f (p i) := by
   classical
-  rw [expect, smul_pow, sum_pow', expect, Fintype.card_piFinsetConst, inv_pow, Nat.cast_pow]
+  rw [expect, smul_pow, sum_pow', expect, Fintype.card_piFinset_const, inv_pow, Nat.cast_pow]
 
 end CommSemiring
 
@@ -358,11 +360,11 @@ lemma _root_.GCongr.expect_le_expect (h : ∀ i ∈ s, f i ≤ g i) : s.expect f
 
 lemma expect_le (hs : s.Nonempty) (f : ι → α) (a : α) (h : ∀ x ∈ s, f x ≤ a) : 𝔼 i ∈ s, f i ≤ a :=
   (inv_smul_le_iff_of_pos $ by positivity).2 $ by
-    rw [←nsmul_eq_smul_cast]; exact sum_le_card_nsmul _ _ _ h
+    rw [Nat.cast_smul_eq_nsmul]; exact sum_le_card_nsmul _ _ _ h
 
 lemma le_expect (hs : s.Nonempty) (f : ι → α) (a : α) (h : ∀ x ∈ s, a ≤ f x) : a ≤ 𝔼 i ∈ s, f i :=
   (le_inv_smul_iff_of_pos $ by positivity).2 $ by
-    rw [←nsmul_eq_smul_cast]; exact card_nsmul_le_sum _ _ _ h
+    rw [Nat.cast_smul_eq_nsmul]; exact card_nsmul_le_sum _ _ _ h
 
 lemma expect_nonneg (hf : ∀ i ∈ s, 0 ≤ f i) : 0 ≤ 𝔼 i ∈ s, f i :=
   smul_nonneg (by positivity) $ sum_nonneg hf

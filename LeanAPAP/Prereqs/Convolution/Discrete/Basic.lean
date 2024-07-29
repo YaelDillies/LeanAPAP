@@ -1,6 +1,5 @@
 import Mathlib.Algebra.Module.Pi
 import Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Mathlib.Data.Fintype.Pi
 import LeanAPAP.Prereqs.Function.Indicator.Basic
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 
@@ -33,6 +32,8 @@ point in time.
 
 Multiplicativise? Probably ugly and not very useful.
 -/
+
+local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 
 open Finset Fintype Function
 open scoped BigOperators ComplexConjugate NNReal Pointwise
@@ -166,8 +167,8 @@ variable [Semifield β] [CharZero β] [Module ℚ≥0 β] [StarRing β]
 lemma mu_iterConv_conv (s : Finset α) (n : ℕ) (f : α → β) :
     μ s ∗^ n ∗ f = 𝔼 a ∈ piFinset (fun _ : Fin n ↦ s), τ (∑ i, a i) f := by
   simp only [mu, smul_iterConv, inv_pow, smul_conv, indicate_iterConv_conv, expect,
-    card_piFinsetConst, Nat.cast_pow]
-  rw [← nnratCast_smul_eq_nnqsmul β]
+    card_piFinset_const, Nat.cast_pow]
+  rw [← NNRat.cast_smul_eq_nnqsmul β]
   push_cast
   rfl
 

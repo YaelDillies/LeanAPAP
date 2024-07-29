@@ -12,8 +12,10 @@ import LeanAPAP.Prereqs.Rudin
 open Finset Fintype Function Real
 open scoped ComplexConjugate ComplexOrder NNReal
 
-variable {G : Type*} [AddCommGroup G] [Fintype G] {f : G → ℂ} {η : ℝ} {ψ : AddChar G ℂ}
+  variable {G : Type*} [AddCommGroup G] [Fintype G] {f : G → ℂ} {η : ℝ} {ψ : AddChar G ℂ}
   {Δ : Finset (AddChar G ℂ)} {m : ℕ}
+
+local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 
 private noncomputable def α (f : G → ℂ) := ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G
 

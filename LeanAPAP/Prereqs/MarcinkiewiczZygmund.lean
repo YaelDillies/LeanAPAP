@@ -1,12 +1,14 @@
 import Mathlib.Analysis.MeanInequalitiesPow
-import LeanAPAP.Mathlib.Algebra.BigOperators.Pi
+import LeanAPAP.Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Prereqs.Multinomial
 
 open Finset Fintype Nat Real
 variable {G : Type*} {A : Finset G} {m n : ℕ}
 
+local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
+
 private lemma step_one (hA : A.Nonempty) (f : G → ℝ) (a : Fin n → G)
-    (hf : ∀ i : Fin n, ∑ a in A^^n, f (a i) = 0) :
+    (hf : ∀ i : Fin n, ∑ a in A ^^ n, f (a i) = 0) :
     |∑ i, f (a i)| ^ (m + 1) ≤ (∑ b in A^^n, |∑ i, (f (a i) - f (b i))| ^ (m + 1)) / A.card ^ n :=
   calc
     |∑ i, f (a i)| ^ (m + 1)
@@ -14,8 +16,8 @@ private lemma step_one (hA : A.Nonempty) (f : G → ℝ) (a : Fin n → G)
         simp only [hf, sub_zero, zero_div]
     _ = |(∑ b in A^^n, ∑ i, (f (a i) - f (b i))) / (A^^n).card| ^ (m + 1) := by
         simp only [sum_sub_distrib]
-        rw [sum_const, sub_div, sum_comm, sum_div, nsmul_eq_mul, card_piFinsetConst, Nat.cast_pow,
-          mul_div_cancel_left₀]
+        rw [sum_const, sub_div, sum_comm, sum_div, nsmul_eq_mul, card_piFinset, prod_const,
+          card_univ, Fintype.card_fin, Nat.cast_pow, mul_div_cancel_left₀]
         exact pow_ne_zero _ $ Nat.cast_ne_zero.2 hA.card_pos.ne'
     _ = |∑ b in A^^n, ∑ i, (f (a i) - f (b i))| ^ (m + 1) / (A^^n).card ^ (m + 1) := by
       rw [abs_div, div_pow, Nat.abs_cast]
@@ -82,7 +84,7 @@ private lemma step_two (f : G → ℝ) :
     ∑ a in A^^n, ∑ b in A^^n, (∑ i, ε i * (f (a i) - f (b i))) ^ (2 * m) =
       ∑ a in A^^n, ∑ b in A^^n, (∑ i, (f (a i) - f (b i))) ^ (2 * m) :=
     fun ε hε ↦ step_two_aux A f _ hε fun z : Fin n → ℝ ↦ univ.sum z ^ (2 * m)
-  rw [Finset.sum_congr rfl this, sum_const, card_piFinsetConst, card_pair, nsmul_eq_mul,
+  rw [Finset.sum_congr rfl this, sum_const, card_piFinset_const, card_pair, nsmul_eq_mul,
     Nat.cast_pow, Nat.cast_two, inv_pow, inv_mul_cancel_left₀]
   · positivity
   · norm_num
@@ -93,7 +95,7 @@ private lemma step_three (f : G → ℝ) :
       ∑ a in A^^n, ∑ b in A^^n, ∑ k in piAntidiag univ (2 * m),
           (multinomial univ k * ∏ t, (f (a t) - f (b t)) ^ k t) *
             ∑ ε in ({-1, 1} : Finset ℝ)^^n, ∏ t, ε t ^ k t := by
-  simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A^^n), ←Complex.abs_pow, multinomial_expansion']
+  simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A^^n), ←Complex.abs_pow, sum_pow_eq_sum_piAntidiag]
   refine sum_congr rfl fun a _ ↦ ?_
   refine sum_congr rfl fun b _ ↦ ?_
   simp only [mul_pow, prod_mul_distrib, @sum_comm _ _ (Fin n → ℝ), ←mul_sum, ←sum_mul]
@@ -103,7 +105,7 @@ private lemma step_three (f : G → ℝ) :
 private lemma step_four {k : Fin n → ℕ} :
     ∑ ε in ({-1, 1} : Finset ℝ)^^n, ∏ t, ε t ^ k t = 2 ^ n * ite (∀ i, Even (k i)) 1 0 := by
   have := sum_prod_piFinset ({-1, 1} : Finset ℝ) fun i fi ↦ fi ^ k i
-  rw [piFinsetConst, this, ←Fintype.prod_boole]
+  rw [this, ←Fintype.prod_boole]
   have : (2 : ℝ) ^ n = ∏ i : Fin n, 2 := by simp
   rw [this, ←prod_mul_distrib]
   refine prod_congr rfl fun t _ ↦ ?_
@@ -121,7 +123,7 @@ private lemma step_six {f : G → ℝ} {a b : Fin n → G} :
     ∑ k : Fin n → ℕ in piAntidiag univ m,
         (multinomial univ fun a ↦ 2 * k a : ℝ) * ∏ i : Fin n, (f (a i) - f (b i)) ^ (2 * k i) ≤
       m ^ m * (∑ i : Fin n, (f (a i) - f (b i)) ^ 2) ^ m := by
-  rw [multinomial_expansion', mul_sum]
+  rw [sum_pow_eq_sum_piAntidiag, mul_sum]
   convert sum_le_sum fun k hk ↦ _
   rw [mem_piAntidiag] at hk
   simp only [←mul_assoc, pow_mul]
@@ -169,8 +171,8 @@ private lemma end_step {f : G → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
     _ = _ := by
       simp only [mul_add, sum_add_distrib, sum_const, nsmul_eq_mul, ←mul_sum]
       rw [←mul_add, ←two_mul, ←mul_assoc 2, ←mul_assoc 2, mul_right_comm 2, ←_root_.pow_succ',
-        add_assoc, Nat.sub_add_cancel hm, pow_add, ←mul_pow, ←mul_pow, card_piFinsetConst,
-        Nat.cast_pow, mul_div_cancel_left₀]
+        add_assoc, Nat.sub_add_cancel hm, pow_add, ←mul_pow, ←mul_pow, card_piFinset, prod_const,
+        card_univ, Fintype.card_fin, Nat.cast_pow, mul_div_cancel_left₀]
       norm_num
       · have := hA.card_pos
         positivity
@@ -184,7 +186,7 @@ lemma basic_marcinkiewicz_zygmund (f : G → ℝ) (hf : ∀ i : Fin n, ∑ a in 
   rcases A.eq_empty_or_nonempty with (rfl | hA)
   · cases n
     · cases m <;> simp
-    · rw [piFinsetConst, piFinset_empty, Finset.sum_empty]
+    · rw [piFinset_empty, Finset.sum_empty]
       cases m <;> simp
   refine (sum_le_sum fun a (_ : a ∈ A^^n) ↦ @step_one' _ _ _ _ hA f hf a).trans ?_
   rw [←sum_div]

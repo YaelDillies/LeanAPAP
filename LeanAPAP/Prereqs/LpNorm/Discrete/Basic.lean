@@ -25,7 +25,7 @@ lemma lpNorm_expect_le [∀ i, Module ℚ≥0 (α i)] (hp : 1 ≤ p) {κ : Type*
   obtain rfl | hs := s.eq_empty_or_nonempty
   · simp
   refine (le_inv_smul_iff_of_pos $ by positivity).2 ?_
-  rw [← nsmul_eq_smul_cast, ← lpNorm_nsmul hp, card_smul_expect]
+  rw [Nat.cast_smul_eq_nsmul, ← lpNorm_nsmul hp, card_smul_expect]
   exact lpNorm_sum_le hp _ _
 
 end one_le

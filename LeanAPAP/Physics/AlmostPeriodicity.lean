@@ -87,6 +87,8 @@ variable {G : Type*} [DecidableEq G] [Fintype G] [AddCommGroup G] {A S : Finset 
 open Finset Real
 open scoped BigOperators Pointwise NNReal ENNReal
 
+local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
+
 namespace AlmostPeriodicity
 
 def LProp (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : Finset G) (a : Fin k → G) : Prop :=
@@ -102,10 +104,10 @@ lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
         ‖fun x : G ↦ ∑ i : Fin k, f (x - a i) - (k • (mu A ∗ f)) x‖_[2 * m] ^ (2 * m) ≤
       1 / 2 * (k * ε * ‖f‖_[2 * m]) ^ (2 * m) * A.card ^ k) :
     (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
-  rw [←Nat.cast_pow, ←Fintype.card_piFinsetConst] at h
+  rw [←Nat.cast_pow, ←Fintype.card_piFinset_const] at h
   have := my_other_markov (by positivity) (by norm_num) (fun _ _ ↦ by positivity) h
   norm_num1 at this
-  rw [Fintype.card_piFinsetConst, mul_comm, mul_one_div, Nat.cast_pow] at this
+  rw [Fintype.card_piFinset_const, mul_comm, mul_one_div, Nat.cast_pow] at this
   refine this.trans_eq ?_
   rw [l]
   congr with a : 3
@@ -212,7 +214,7 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
         ∑ a in A ^^ k, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
     lemma28_part_two hm hA
   refine this.trans ?_
-  simp only [sum_const, Fintype.card_piFinsetConst, nsmul_eq_mul, Nat.cast_pow]
+  simp only [sum_const, Fintype.card_piFinset_const, nsmul_eq_mul, Nat.cast_pow]
   refine (lemma28_end hε hm hk).trans_eq' ?_
   simp only [mul_assoc, card_fin]
 
@@ -304,7 +306,7 @@ lemma big_shifts (S : Finset G) (L : Finset (Fin k → G)) (hk : k ≠ 0)
   have hS' : 0 < S.card := by rwa [card_pos]
   have : (L + S.piDiag (Fin k)).card ≤ (A + S).card ^ k := by
     refine (card_le_card (add_subset_add_right hL)).trans ?_
-    rw [←Fintype.card_piFinsetConst]
+    rw [←Fintype.card_piFinset_const]
     refine card_le_card fun i hi ↦ ?_
     simp only [mem_add, mem_piDiag, Fintype.mem_piFinset, exists_prop, exists_and_left,
       exists_exists_and_eq_and] at hi ⊢
@@ -482,10 +484,10 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
   calc
     ‖μ T ∗^ k ∗ F - F‖_[∞]
       = ‖𝔼 a ∈ T ^^ k, (τ (∑ i, a i) F - F)‖_[∞] := by
-        rw [mu_iterConv_conv, expect_sub_distrib, expect_const hT'.piFinsetConst]
+        rw [mu_iterConv_conv, expect_sub_distrib, expect_const hT'.piFinset_const]
     _ ≤ 𝔼 a ∈ T ^^ k, ‖τ (∑ i, a i) F - F‖_[∞] := lpNorm_expect_le le_top _ _
     _ ≤ 𝔼 _a ∈ T ^^ k, ε := expect_le_expect fun x hx ↦ ?_
-    _ = ε := by rw [expect_const hT'.piFinsetConst]
+    _ = ε := by rw [expect_const hT'.piFinset_const]
   calc
     ‖τ (∑ i, x i) F - F‖_[⊤]
     _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := lpNorm_translate_sum_sub_le le_top _ _ _

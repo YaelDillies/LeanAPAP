@@ -127,7 +127,7 @@ variable [∀ i, NormedSpace ℝ (α i)]
 
 lemma wlpNorm_nsmul (hp : 1 ≤ p) (n : ℕ) (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖n • f‖_[p, w] = n • ‖f‖_[p, w] := by
-  rw [nsmul_eq_smul_cast ℝ, wlpNorm_smul hp, RCLike.norm_natCast, nsmul_eq_mul]
+  rw [← Nat.cast_smul_eq_nsmul ℝ, wlpNorm_smul hp, RCLike.norm_natCast, nsmul_eq_mul]
 
 end one_le
 
