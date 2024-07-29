@@ -1,4 +1,8 @@
 import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.MeasureTheory.Function.LpSeminorm.TriangleInequality
+import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+import LeanAPAP.Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
+import LeanAPAP.Mathlib.Algebra.Algebra.Basic
 
 /-!
 # Lp norms
@@ -7,152 +11,118 @@ import Mathlib.Analysis.InnerProductSpace.PiL2
 open Finset Function Real
 open scoped ComplexConjugate ENNReal NNReal NNRat
 
-variable {ι 𝕜 : Type*} [Fintype ι]
+variable {ι 𝕜 : Type*} [Fintype ι] [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
 
 /-! ### Lp norm -/
 
-section NormedAddCommGroup
-variable {α : ι → Type*} [∀ i, NormedAddCommGroup (α i)] {p q : ℝ≥0∞} {f g h : ∀ i, α i}
+namespace MeasureTheory
+variable {E : Type*} [ NormedAddCommGroup E] {p q : ℝ≥0∞} {f g h : ι → E}
 
-/-- The Lp norm of a function. -/
-noncomputable def lpNorm (p : ℝ≥0∞) (f : ∀ i, α i) : ℝ := ‖(WithLp.equiv p _).symm f‖
+notation "‖" f "‖_[" p "]" => snorm f p Measure.count
 
-notation "‖" f "‖_[" p "]" => lpNorm p f
+lemma lpNorm_eq_sum' (hp₀ : p ≠ 0) (hp : p ≠ ∞) (f : ι → E) :
+    ‖f‖_[p] = (∑ i, ‖f i‖₊ ^ p.toReal : ℝ≥0∞) ^ p.toReal⁻¹ := by
+  simp [snorm_eq_lintegral_rpow_nnnorm hp₀ hp, one_div, lintegral_count,
+    tsum_eq_sum' (s := univ) (by simp), ENNReal.coe_rpow_of_nonneg]
 
-lemma lpNorm_eq_sum' (hp : p.toReal ≠ 0) (f : ∀ i, α i) :
-    ‖f‖_[p] = (∑ i, ‖f i‖ ^ p.toReal) ^ p.toReal⁻¹ := by
-  rw [←one_div]; exact PiLp.norm_eq_sum (hp.lt_of_le' ENNReal.toReal_nonneg) _
+lemma lpNorm_toNNReal_eq_sum {p : ℝ} (hp : 0 < p) (f : ι → E) :
+    ‖f‖_[p.toNNReal] = (∑ i, ‖f i‖₊ ^ p : ℝ≥0∞) ^ p⁻¹ := by
+  rw [lpNorm_eq_sum'] <;> simp [hp.ne', hp.le, hp]
 
-lemma lpNorm_eq_sum'' {p : ℝ} (hp : 0 < p) (f : ∀ i, α i) :
-    ‖f‖_[p.toNNReal] = (∑ i, ‖f i‖ ^ p) ^ p⁻¹ := by rw [lpNorm_eq_sum'] <;>  simp [hp.ne', hp.le]
+lemma lpNorm_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (f : ι → E) :
+    ‖f‖_[p] = (∑ i, ‖f i‖₊ ^ (p : ℝ) : ℝ≥0∞) ^ (p⁻¹ : ℝ) := lpNorm_eq_sum' (by simpa using hp) (by simp) _
 
-lemma lpNorm_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (f : ∀ i, α i) :
-    ‖f‖_[p] = (∑ i, ‖f i‖ ^ (p : ℝ)) ^ (p⁻¹ : ℝ) := lpNorm_eq_sum' (by simpa using hp) _
+lemma lpNorm_rpow_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (f : ι → E) :
+    ‖f‖_[p] ^ (p : ℝ) = ∑ i, (‖f i‖₊ : ℝ≥0∞) ^ (p : ℝ) := by
+  rw [lpNorm_eq_sum hp, ENNReal.rpow_inv_rpow (mod_cast hp)]
 
-lemma lpNorm_rpow_eq_sum {p : ℝ≥0} (hp : p ≠ 0) (f : ∀ i, α i) :
-    ‖f‖_[p] ^ (p : ℝ) = ∑ i, ‖f i‖ ^ (p : ℝ) := by
-  rw [lpNorm_eq_sum hp, rpow_inv_rpow (sum_nonneg fun i _ ↦ ?_)] <;> positivity
-
-lemma lpNorm_pow_eq_sum {p : ℕ} (hp : p ≠ 0) (f : ∀ i, α i) : ‖f‖_[p] ^ p = ∑ i, ‖f i‖ ^ p := by
+lemma lpNorm_pow_eq_sum {p : ℕ} (hp : p ≠ 0) (f : ι → E) :
+    ‖f‖_[p] ^ p = ∑ i, (‖f i‖₊ : ℝ≥0∞) ^ p := by
   simpa using lpNorm_rpow_eq_sum (Nat.cast_ne_zero.2 hp) f
 
-lemma l2Norm_sq_eq_sum (f : ∀ i, α i) : ‖f‖_[2] ^ 2 = ∑ i, ‖f i‖ ^ 2 := by
+lemma l2Norm_sq_eq_sum (f : ι → E) : ‖f‖_[2] ^ 2 = ∑ i, ‖f i‖₊ ^ 2 := by
   simpa using lpNorm_pow_eq_sum two_ne_zero _
 
-lemma l2Norm_eq_sum (f : ∀ i, α i) : ‖f‖_[2] = sqrt (∑ i, ‖f i‖ ^ 2) := by
+lemma l2Norm_eq_sum (f : ι → E) : ‖f‖_[2] = (∑ i, ‖f i‖₊ ^ 2) ^ (2⁻¹ : ℝ) := by
   simpa [sqrt_eq_rpow] using lpNorm_eq_sum two_ne_zero _
 
-lemma l1Norm_eq_sum (f : ∀ i, α i) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp [lpNorm_eq_sum']
+lemma l1Norm_eq_sum (f : ι → E) : ‖f‖_[1] = ∑ i, ‖f i‖₊ := by simp [lpNorm_eq_sum']
 
-lemma l0Norm_eq_card (f : ∀ i, α i) : ‖f‖_[0] = {i | f i ≠ 0}.toFinite.toFinset.card :=
-  (PiLp.norm_eq_card _).trans $ by simp
+lemma l0Norm_eq_zero (f : ι → E) : ‖f‖_[0] = 0 := snorm_exponent_zero
 
-lemma linftyNorm_eq_ciSup (f : ∀ i, α i) : ‖f‖_[∞] = ⨆ i, ‖f i‖ := PiLp.norm_eq_ciSup _
+lemma linftyNorm_eq_iSup (f : ι → E) : ‖f‖_[∞] = ⨆ i, ↑‖f i‖₊ := by simp
 
-@[simp] lemma lpNorm_zero : ‖(0 : ∀ i, α i)‖_[p] = 0 := by
+@[simp] lemma lpNorm_zero : ‖(0 : ι → E)‖_[p] = 0 := by
   obtain p | p := p; swap
   obtain rfl | hp := @eq_zero_or_pos _ _ p
-  all_goals simp [linftyNorm_eq_ciSup, l0Norm_eq_card, lpNorm_eq_sum, *, ne_of_gt]
+  all_goals simp [linftyNorm_eq_iSup, l0Norm_eq_zero, lpNorm_eq_sum, *, ne_of_gt]
 
-@[simp] lemma lpNorm_of_isEmpty [IsEmpty ι] (p : ℝ≥0∞) (f : ∀ i, α i) : ‖f‖_[p] = 0 := by
+@[simp] lemma lpNorm_of_isEmpty [IsEmpty ι] (p : ℝ≥0∞) (f : ι → E) : ‖f‖_[p] = 0 := by
   simp [Subsingleton.elim f 0]
 
-@[simp] lemma lpNorm_norm (p : ℝ≥0∞) (f : ∀ i, α i) : ‖fun i ↦ ‖f i‖‖_[p] = ‖f‖_[p] := by
+@[simp] lemma lpNorm_norm (p : ℝ≥0∞) (f : ι → E) : ‖fun i ↦ ‖f i‖‖_[p] = ‖f‖_[p] := by
   obtain p | p := p; swap
   obtain rfl | hp := @eq_zero_or_pos _ _ p
-  all_goals simp [linftyNorm_eq_ciSup, l0Norm_eq_card, lpNorm_eq_sum, *, ne_of_gt]
+  all_goals simp [linftyNorm_eq_iSup, l0Norm_eq_zero, lpNorm_eq_sum, *, ne_of_gt]
 
-@[simp] lemma lpNorm_neg (f : ∀ i, α i) : ‖-f‖_[p] = ‖f‖_[p] := by simp [←lpNorm_norm _ (-f)]
+@[simp] lemma lpNorm_neg (f : ι → E) : ‖-f‖_[p] = ‖f‖_[p] := by simp [←lpNorm_norm _ (-f)]
 
-lemma lpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖_[p] = ‖g - f‖_[p] := by
-  simp [←lpNorm_neg (f - g)]
+lemma lpNorm_sub_comm (f g : ι → E) : ‖f - g‖_[p] = ‖g - f‖_[p] := by simp [←lpNorm_neg (f - g)]
 
-@[simp] lemma lpNorm_nonneg : 0 ≤ ‖f‖_[p] := by
+@[simp] lemma lpNorm_eq_zero (hp : p ≠ 0) : ‖f‖_[p] = 0 ↔ f = 0 := by
   obtain p | p := p
-  · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top]
-    exact Real.iSup_nonneg fun i ↦ norm_nonneg _
-  obtain rfl | hp := eq_or_ne p 0
-  · simp only [l0Norm_eq_card, lpNorm_eq_sum, ENNReal.some_eq_coe, ENNReal.coe_zero, *]
-    exact Nat.cast_nonneg _
-  · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe]
-    positivity
+  · simp [Function.funext_iff]
+  · have hp' : p ≠ 0 := by simpa [pos_iff_ne_zero] using hp
+    replace hp : 0 < (p : ℝ) := by simpa [pos_iff_ne_zero] using hp
+    rw [← ENNReal.rpow_eq_zero_iff_of_pos hp, ENNReal.some_eq_coe, lpNorm_rpow_eq_sum hp']
+    simp [lpNorm_rpow_eq_sum, sum_eq_zero_iff_of_nonneg, rpow_nonneg, Function.funext_iff,
+      ENNReal.rpow_eq_zero_iff_of_pos hp, hp']
 
-@[simp] lemma lpNorm_eq_zero : ‖f‖_[p] = 0 ↔ f = 0 := by
-  obtain p | p := p
-  · cases isEmpty_or_nonempty ι <;>
-      simp [linftyNorm_eq_ciSup, ENNReal.none_eq_top, ←sup'_univ_eq_ciSup, le_antisymm_iff,
-        Function.funext_iff]
-  obtain rfl | hp := eq_or_ne p 0
-  · simp [l0Norm_eq_card, eq_empty_iff_forall_not_mem, Function.funext_iff]
-  · rw [←rpow_eq_zero lpNorm_nonneg (NNReal.coe_ne_zero.2 hp)]
-    simp [lpNorm_rpow_eq_sum hp, sum_eq_zero_iff_of_nonneg, rpow_nonneg, Function.funext_iff,
-      rpow_eq_zero _ (NNReal.coe_ne_zero.2 hp)]
+@[simp] lemma lpNorm_pos (hp : p ≠ 0) : 0 < ‖f‖_[p] ↔ f ≠ 0 :=
+  pos_iff_ne_zero.trans (lpNorm_eq_zero hp).not
 
-@[simp] lemma lpNorm_pos : 0 < ‖f‖_[p] ↔ f ≠ 0 := lpNorm_nonneg.gt_iff_ne.trans lpNorm_eq_zero.not
-
-lemma lpNorm_mono_right (hpq : p ≤ q) (f : ∀ i, α i) : ‖f‖_[p] ≤ ‖f‖_[q] := sorry
+lemma lpNorm_mono_right (hpq : p ≤ q) (f : ι → E) : ‖f‖_[p] ≤ ‖f‖_[q] := sorry
 
 section one_le
 
-lemma lpNorm_add_le (hp : 1 ≤ p) (f g : ∀ i, α i) : ‖f + g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
-  haveI := Fact.mk hp
-  norm_add_le _ _
+lemma lpNorm_add_le (hp : 1 ≤ p) (f g : ι → E) : ‖f + g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
+  snorm_add_le .of_discrete .of_discrete hp
 
-lemma lpNorm_sum_le (hp : 1 ≤ p) {κ : Type*} (s : Finset κ) (f : κ → ∀ i, α i) :
+lemma lpNorm_sum_le (hp : 1 ≤ p) {κ : Type*} (s : Finset κ) (f : κ → ι → E) :
     ‖∑ i ∈ s, f i‖_[p] ≤ ∑ i ∈ s, ‖f i‖_[p] :=
-  haveI := Fact.mk hp
-  norm_sum_le _ _
+  snorm_sum_le (fun _ _ ↦ .of_discrete) hp
 
-lemma lpNorm_sub_le (hp : 1 ≤ p) (f g : ∀ i, α i) : ‖f - g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
-  haveI := Fact.mk hp
-  norm_sub_le _ _
+lemma lpNorm_sub_le (hp : 1 ≤ p) (f g : ι → E) : ‖f - g‖_[p] ≤ ‖f‖_[p] + ‖g‖_[p] :=
+  snorm_sub_le .of_discrete .of_discrete hp
 
-lemma lpNorm_le_lpNorm_add_lpNorm_sub' (hp : 1 ≤ p) (f g : ∀ i, α i) :
-    ‖f‖_[p] ≤ ‖g‖_[p] + ‖f - g‖_[p] :=
-  haveI := Fact.mk hp
-  norm_le_norm_add_norm_sub' _ _
+lemma lpNorm_le_lpNorm_add_lpNorm_sub' (hp : 1 ≤ p) (f g : ι → E) :
+    ‖f‖_[p] ≤ ‖g‖_[p] + ‖f - g‖_[p] := by simpa using lpNorm_add_le hp g (f - g)
 
-lemma lpNorm_le_lpNorm_add_lpNorm_sub (hp : 1 ≤ p) (f g : ∀ i, α i) :
-    ‖f‖_[p] ≤ ‖g‖_[p] + ‖g - f‖_[p] :=
-  haveI := Fact.mk hp
-  norm_le_norm_add_norm_sub _ _
+lemma lpNorm_le_lpNorm_add_lpNorm_sub (hp : 1 ≤ p) (f g : ι → E) :
+    ‖f‖_[p] ≤ ‖g‖_[p] + ‖g - f‖_[p] := by
+  simpa [neg_add_eq_sub] using lpNorm_add_le hp (-g) (g - f)
 
-lemma lpNorm_le_add_lpNorm_add (hp : 1 ≤ p) (f g : ∀ i, α i) : ‖f‖_[p] ≤ ‖f + g‖_[p] + ‖g‖_[p] :=
-  haveI := Fact.mk hp
-  norm_le_add_norm_add _ _
+lemma lpNorm_le_add_lpNorm_add (hp : 1 ≤ p) (f g : ι → E) : ‖f‖_[p] ≤ ‖f + g‖_[p] + ‖g‖_[p] := by
+  simpa using lpNorm_add_le hp (f + g) (-g)
 
-lemma lpNorm_sub_le_lpNorm_sub_add_lpNorm_sub (hp : 1 ≤ p) (f g : ∀ i, α i) :
-    ‖f - h‖_[p] ≤ ‖f - g‖_[p] + ‖g - h‖_[p] :=
-  haveI := Fact.mk hp
-  norm_sub_le_norm_sub_add_norm_sub _ _ _
-
-variable [NormedField 𝕜] [∀ i, NormedSpace 𝕜 (α i)]
-
--- TODO: `p ≠ 0` is enough
-lemma lpNorm_smul (hp : 1 ≤ p) (c : 𝕜) (f : ∀ i, α i) : ‖c • f‖_[p] = ‖c‖ * ‖f‖_[p] :=
-  haveI := Fact.mk hp
-  norm_smul c _
-
-variable [∀ i, NormedSpace ℝ (α i)]
-
-lemma lpNorm_nsmul (hp : 1 ≤ p) (n : ℕ) (f : ∀ i, α i) : ‖n • f‖_[p] = n • ‖f‖_[p] :=
-  haveI := Fact.mk hp
-  RCLike.norm_nsmul ℝ _ _
+lemma lpNorm_sub_le_lpNorm_sub_add_lpNorm_sub (hp : 1 ≤ p) (f g : ι → E) :
+    ‖f - h‖_[p] ≤ ‖f - g‖_[p] + ‖g - h‖_[p] := by
+  simpa using lpNorm_add_le hp (f - g) (g - h)
 
 end one_le
-end NormedAddCommGroup
 
-section NormedAddCommGroup
-variable {α : Type*} [NormedAddCommGroup α] {p : ℝ≥0}
+lemma lpNorm_smul [NormedField 𝕜] [NormedSpace 𝕜 E] (p : ℝ≥0∞) (c : 𝕜) (f : ι → E) :
+    ‖c • f‖_[p] = ‖c‖₊ * ‖f‖_[p] := snorm_const_smul _ _
+
+lemma lpNorm_nsmul [NormedSpace ℝ E] (p : ℝ≥0∞) (n : ℕ) (f : ι → E) :
+    ‖n • f‖_[p] = n • ‖f‖_[p] := by simpa [natCast_smul] using lpNorm_smul p (n : ℝ) f
 
 @[simp]
-lemma lpNorm_const (hp : p ≠ 0) (a : α) :
-    ‖const ι a‖_[p] = (Fintype.card ι : ℝ) ^ (p⁻¹ : ℝ) * ‖a‖ := by
-  simp only [lpNorm_eq_sum hp, card_univ, mul_rpow, norm_nonneg, rpow_nonneg,
-    NNReal.coe_ne_zero.2 hp, rpow_rpow_inv, const_apply, sum_const, nsmul_eq_mul, Nat.cast_nonneg,
-    Ne, not_false_iff]
-
-end NormedAddCommGroup
+lemma lpNorm_const {p : ℝ≥0} (hp : p ≠ 0) (a : E) :
+    ‖const ι a‖_[p] = Fintype.card ι ^ (p⁻¹ : ℝ) * ‖a‖₊ := by
+  simp only [lpNorm_eq_sum hp, const_apply, sum_const, card_univ, nsmul_eq_mul, ENNReal.coe_mul,
+    ENNReal.coe_natCast, inv_nonneg, NNReal.zero_le_coe, ENNReal.mul_rpow_of_nonneg,
+    ← ENNReal.coe_rpow_of_nonneg, ENNReal.rpow_rpow_inv (NNReal.coe_ne_zero.2 hp)]
 
 section RCLike
 variable [RCLike 𝕜] {p : ℝ≥0} {f g : ι → 𝕜}
@@ -160,44 +130,32 @@ variable [RCLike 𝕜] {p : ℝ≥0} {f g : ι → 𝕜}
 @[simp] lemma lpNorm_one (hp : p ≠ 0) : ‖(1 : ι → 𝕜)‖_[p] = Fintype.card ι ^ (p⁻¹ : ℝ) :=
   (lpNorm_const hp 1).trans $ by simp
 
-lemma lpNorm_natCast_mul {p : ℝ≥0∞} (hp : 1 ≤ p) (n : ℕ) (f : ι → 𝕜) :
-    ‖(n : ι → 𝕜) * f‖_[p] = n * ‖f‖_[p] := by simpa only [nsmul_eq_mul] using lpNorm_nsmul hp n f
+lemma lpNorm_natCast_mul (p : ℝ≥0∞) (n : ℕ) (f : ι → 𝕜) :
+    ‖(n : ι → 𝕜) * f‖_[p] = n * ‖f‖_[p] := by simpa only [nsmul_eq_mul] using lpNorm_nsmul p n f
 
-lemma lpNorm_natCast_mul' {p : ℝ≥0∞} (hp : 1 ≤ p) (n : ℕ) (f : ι → 𝕜) :
-    ‖(n * f ·)‖_[p] = n * ‖f‖_[p] := lpNorm_natCast_mul hp _ _
+lemma lpNorm_natCast_mul' (p : ℝ≥0∞) (n : ℕ) (f : ι → 𝕜) :
+    ‖(n * f ·)‖_[p] = n * ‖f‖_[p] := lpNorm_natCast_mul p _ _
 
-lemma lpNorm_mul_natCast {p : ℝ≥0∞} (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
-    ‖f * (n : ι → 𝕜)‖_[p] = ‖f‖_[p] * n := by simpa only [mul_comm] using lpNorm_natCast_mul hp n f
+lemma lpNorm_mul_natCast (p : ℝ≥0∞) (f : ι → 𝕜) (n : ℕ) :
+    ‖f * (n : ι → 𝕜)‖_[p] = ‖f‖_[p] * n := by simpa only [mul_comm] using lpNorm_natCast_mul p n f
 
-lemma lpNorm_mul_natCast' {p : ℝ≥0∞} (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
-    ‖(f · * n)‖_[p] = ‖f‖_[p] * n := lpNorm_mul_natCast hp _ _
+lemma lpNorm_mul_natCast' (p : ℝ≥0∞) (f : ι → 𝕜) (n : ℕ) :
+    ‖(f · * n)‖_[p] = ‖f‖_[p] * n := lpNorm_mul_natCast p _ _
 
-lemma lpNorm_div_natCast {p : ℝ≥0∞} (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
+lemma lpNorm_div_natCast (p : ℝ≥0∞) (f : ι → 𝕜) {n : ℕ} (hn : n ≠ 0) :
     ‖f / (n : ι → 𝕜)‖_[p] = ‖f‖_[p] / n := by
-  obtain rfl | hn := n.eq_zero_or_pos
-  · simp [Function.funext_iff]
-  · rw [eq_div_iff (by positivity), ← lpNorm_mul_natCast hp]
-    simp [Pi.mul_def, hn.ne']
+  rw [ENNReal.eq_div_iff (by positivity), mul_comm, ← lpNorm_mul_natCast] <;> simp [Pi.mul_def, hn]
 
-lemma lpNorm_div_natCast' {p : ℝ≥0∞} (hp : 1 ≤ p) (f : ι → 𝕜) (n : ℕ) :
-    ‖(f · / n)‖_[p] = ‖f‖_[p] / n := lpNorm_div_natCast hp _ _
+lemma lpNorm_div_natCast' (p : ℝ≥0∞) (f : ι → 𝕜) {n : ℕ} (hn : n ≠ 0) :
+    ‖(f · / n)‖_[p] = ‖f‖_[p] / n := lpNorm_div_natCast p _ hn
 
 end RCLike
 
 section Real
 variable {p : ℝ≥0} {f g : ι → ℝ}
 
-lemma lpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p] ≤ ‖g‖_[p] := by
-  obtain rfl | hp := eq_or_ne p 0
-  · simp only [l0Norm_eq_card, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_le]
-    exact
-      card_mono
-        (Set.Finite.toFinset_mono fun i ↦ mt fun hi ↦ ((hfg i).trans_eq hi).antisymm $ hf i)
-  have hp' := hp
-  rw [←pos_iff_ne_zero, ←NNReal.coe_pos] at hp
-  simp_rw [←rpow_le_rpow_iff lpNorm_nonneg lpNorm_nonneg hp, lpNorm_rpow_eq_sum hp',
-    norm_of_nonneg (hf _), norm_of_nonneg (hf.trans hfg _)]
-  exact sum_le_sum fun i _ ↦ rpow_le_rpow (hf _) (hfg _) hp.le
+lemma lpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p] ≤ ‖g‖_[p] :=
+  snorm_mono_real fun i ↦ by simpa [norm_of_nonneg (hf i)] using hfg i
 
 end Real
 
@@ -296,7 +254,7 @@ lemma inner_eq_l2Inner (f g : PiLp 2 fun _i : ι ↦ 𝕜) :
   simp_rw [←algebraMap.coe_pow, l2Norm_sq_eq_sum, l2Inner_eq_sum, algebraMap.coe_sum,
     RCLike.ofReal_pow, RCLike.conj_mul]
 
-lemma l2Inner_self_of_norm_eq_one (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫_[𝕜] = Fintype.card ι := by
+lemma l2Inner_self_of_norm_eq_one (hf : ∀ x, ‖f x‖₊ = 1) : ⟪f, f⟫_[𝕜] = Fintype.card ι := by
   simp [-l2Inner_self, l2Inner_eq_sum, RCLike.conj_mul, hf, card_univ]
 
 lemma linearIndependent_of_ne_zero_of_l2Inner_eq_zero {v : κ → ι → 𝕜} (hz : ∀ k, v k ≠ 0)
@@ -308,12 +266,13 @@ lemma linearIndependent_of_ne_zero_of_l2Inner_eq_zero {v : κ → ι → 𝕜} (
 end RCLike
 
 section lpNorm
-variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0∞}
+variable {α β : Type*} [AddCommGroup α] [Fintype α] [MeasurableSpace α] [DiscreteMeasurableSpace α]
+  {p : ℝ≥0∞}
 
 @[simp] lemma lpNorm_conj [RCLike β] (f : α → β) : ‖conj f‖_[p] = ‖f‖_[p] := by
   obtain p | p := p; swap; obtain rfl | hp := eq_or_ne p 0
   all_goals
-    simp only [linftyNorm_eq_ciSup, lpNorm_eq_sum, l0Norm_eq_card, ENNReal.some_eq_coe,
+    simp only [linftyNorm_eq_iSup, lpNorm_eq_sum, l0Norm_eq_zero, ENNReal.some_eq_coe,
       ENNReal.none_eq_top, ENNReal.coe_zero, Pi.conj_apply, RCLike.norm_conj, map_ne_zero, *]
   · simp only [lpNorm_eq_sum hp, Pi.conj_apply, RCLike.norm_conj]
 
@@ -336,8 +295,8 @@ open Lean Meta Qq Function
 
 private alias ⟨_, lpNorm_pos_of_ne_zero⟩ := lpNorm_pos
 
-private lemma lpNorm_pos_of_pos {α : ι → Type*} [∀ i, NormedAddCommGroup (α i)]
-    [∀ i, Preorder (α i)] {p : ℝ≥0∞} {f : ∀ i, α i} (hf : 0 < f) : 0 < ‖f‖_[p] :=
+private lemma lpNorm_pos_of_pos {α : ι → Type*} [NormedAddCommGroup E]
+    [Preorder E] {p : ℝ≥0∞} {f : ι → E} (hf : 0 < f) : 0 < ‖f‖_[p] :=
   lpNorm_pos_of_ne_zero hf.ne'
 
 section OrderedCommSemiring
@@ -397,7 +356,7 @@ end OrderedCommSemiring
 
 section Examples
 section NormedAddCommGroup
-variable {α : ι → Type*} [∀ i, NormedAddCommGroup (α i)] {w : ι → ℝ≥0} {f : ∀ i, α i}
+variable {α : ι → Type*} [∀ i, NormedAddCommGroup E] {w : ι → ℝ≥0} {f : ι → E}
 
 example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
 example {p : ℝ≥0∞} (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
@@ -480,7 +439,7 @@ section Hoelder
 variable {α : Type*} [Fintype α] [RCLike 𝕜] {p q : ℝ≥0} {f g : α → 𝕜}
 
 lemma lpNorm_eq_l1Norm_rpow (hp : p ≠ 0) (f : α → 𝕜) :
-    ‖f‖_[p] = ‖fun a ↦ ‖f a‖ ^ (p : ℝ)‖_[1] ^ (p⁻¹ : ℝ) := by
+    ‖f‖_[p] = ‖fun a ↦ ‖f a‖₊ ^ (p : ℝ)‖_[1] ^ (p⁻¹ : ℝ) := by
   simp [lpNorm_eq_sum hp, l1Norm_eq_sum, abs_rpow_of_nonneg]
 
 lemma lpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → 𝕜) :
@@ -488,12 +447,12 @@ lemma lpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → 𝕜) :
   rw [←ENNReal.coe_div hq, lpNorm_rpow (div_ne_zero hp hq) hq (fun _ ↦ norm_nonneg _), lpNorm_norm,
     ← ENNReal.coe_mul, div_mul_cancel₀ _ hq]
 
-lemma norm_l2Inner_le (f g : α → 𝕜) : ‖⟪f, g⟫_[𝕜]‖ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] :=
+lemma norm_l2Inner_le (f g : α → 𝕜) : ‖⟪f, g⟫_[𝕜]‖₊ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] :=
   (norm_sum_le _ _).trans $ by simp [l2Inner]
 
 /-- **Hölder's inequality**, binary case. -/
 lemma norm_l2Inner_le_lpNorm_mul_lpNorm (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
-    ‖⟪f, g⟫_[𝕜]‖ ≤ ‖f‖_[p] * ‖g‖_[q] :=
+    ‖⟪f, g⟫_[𝕜]‖₊ ≤ ‖f‖_[p] * ‖g‖_[q] :=
   calc
     _ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] := norm_l2Inner_le _ _
     _ ≤ ‖fun a ↦ ‖f a‖‖_[p] * ‖fun a ↦ ‖g a‖‖_[q] := l2Inner_le_lpNorm_mul_lpNorm hpq _ _
@@ -505,7 +464,7 @@ lemma lpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ +
   have hr : r ≠ 0 := by
     rintro rfl
     simp [hp] at hpqr
-  have : (‖(f * g) ·‖ ^ (r : ℝ)) = (‖f ·‖ ^ (r : ℝ)) * (‖g ·‖ ^ (r : ℝ)) := by
+  have : (‖(f * g) ·‖₊ ^ (r : ℝ)) = (‖f ·‖₊ ^ (r : ℝ)) * (‖g ·‖₊ ^ (r : ℝ)) := by
     ext; simp [mul_rpow, abs_mul]
   rw [lpNorm_eq_l1Norm_rpow, rpow_inv_le_iff_of_pos, this, l1Norm_mul_of_nonneg,
     mul_rpow lpNorm_nonneg lpNorm_nonneg, lpNorm_rpow', lpNorm_rpow', ←ENNReal.coe_div, ←

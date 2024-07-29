@@ -19,11 +19,11 @@ variable [RCLike β]
 
 @[simp] lemma lpNorm_trivChar (p : ℝ≥0∞) : ‖(trivChar : α → β)‖_[p] = 1 := by
   obtain _ | p := p
-  · simp only [ENNReal.none_eq_top, linftyNorm_eq_ciSup, trivChar_apply, apply_ite, norm_one,
+  · simp only [ENNReal.none_eq_top, linftyNorm_eq_iSup, trivChar_apply, apply_ite, norm_one,
       norm_zero]
     exact IsLUB.ciSup_eq ⟨by aesop (add simp mem_upperBounds), fun x hx ↦ hx ⟨0, if_pos rfl⟩⟩
   obtain rfl | hp := eq_or_ne p 0
-  · simp [l0Norm_eq_card]
+  · simp [l0Norm_eq_zero]
   · simp [lpNorm_eq_sum hp, apply_ite, hp]
 
 lemma conv_eq_inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a fun x ↦ g (-x)⟫_[β] := by

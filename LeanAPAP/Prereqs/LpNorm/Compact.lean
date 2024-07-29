@@ -49,11 +49,11 @@ lemma nl2Norm_eq_expect (f : ∀ i, α i) : ‖f‖ₙ_[2] = sqrt (𝔼 i, ‖f 
 
 lemma nl1Norm_eq_expect (f : ∀ i, α i) : ‖f‖ₙ_[1] = 𝔼 i, ‖f i‖ := by simp [nlpNorm_eq_expect']
 
-lemma nl0Norm_eq_card (f : ∀ i, α i) : ‖f‖ₙ_[0] = {i | f i ≠ 0}.toFinite.toFinset.card := by
-  simp [l0Norm_eq_card, nlpNorm]
+lemma nl0Norm_eq_zero (f : ∀ i, α i) : ‖f‖ₙ_[0] = {i | f i ≠ 0}.toFinite.toFinset.card := by
+  simp [l0Norm_eq_zero, nlpNorm]
 
-lemma nlinftyNorm_eq_ciSup (f : ∀ i, α i) : ‖f‖ₙ_[∞] = ⨆ i, ‖f i‖ := by
-  simp [nlpNorm, linftyNorm_eq_ciSup]
+lemma nlinftyNorm_eq_iSup (f : ∀ i, α i) : ‖f‖ₙ_[∞] = ⨆ i, ‖f i‖ := by
+  simp [nlpNorm, linftyNorm_eq_iSup]
 
 @[simp] lemma nlpNorm_zero : ‖(0 : ∀ i, α i)‖ₙ_[p] = 0 := by simp [nlpNorm]
 
@@ -72,10 +72,10 @@ lemma nlpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖ₙ_[p] = ‖g - f‖ₙ
 
 @[simp] lemma nlpNorm_eq_zero [Nonempty ι] : ‖f‖ₙ_[p] = 0 ↔ f = 0 := by
   obtain p | p := p
-  · simp [nlinftyNorm_eq_ciSup, ENNReal.none_eq_top, ←sup'_univ_eq_ciSup, le_antisymm_iff,
+  · simp [nlinftyNorm_eq_iSup, ENNReal.none_eq_top, ←sup'_univ_eq_ciSup, le_antisymm_iff,
       Function.funext_iff]
   obtain rfl | hp := eq_or_ne p 0
-  · simp [nl0Norm_eq_card, eq_empty_iff_forall_not_mem, Function.funext_iff]
+  · simp [nl0Norm_eq_zero, eq_empty_iff_forall_not_mem, Function.funext_iff]
   · rw [←rpow_eq_zero nlpNorm_nonneg (NNReal.coe_ne_zero.2 hp)]
     simp [nlpNorm_rpow_eq_expect hp, Fintype.expect_eq_zero_iff_of_nonneg, rpow_nonneg,
       Function.funext_iff, rpow_eq_zero _ (NNReal.coe_ne_zero.2 hp), Pi.le_def]
@@ -135,7 +135,7 @@ variable {α : Type*} [NormedAddCommGroup α] {p : ℝ≥0∞}
 @[simp]
 lemma nlpNorm_const [Nonempty ι] (hp : p ≠ 0) (a : α) : ‖const ι a‖ₙ_[p] = ‖a‖ := by
   obtain _ | p := p
-  · simp [nlinftyNorm_eq_ciSup]
+  · simp [nlinftyNorm_eq_iSup]
   have : (card ι : ℝ) ^ (p : ℝ)⁻¹ ≠ 0 := by positivity
   simp [nlpNorm, ENNReal.coe_ne_coe.1 hp, mul_div_cancel_left₀ _ this]
 

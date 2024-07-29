@@ -39,10 +39,10 @@ variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0∞}
 @[simp]
 lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ a f‖_[p] = ‖f‖_[p] := by
   obtain p | p := p
-  · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top, translate_apply]
+  · simp only [linftyNorm_eq_iSup, ENNReal.none_eq_top, translate_apply]
     exact (Equiv.subRight _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [l0Norm_eq_card, translate_apply, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero,
+  · simp only [l0Norm_eq_zero, translate_apply, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero,
       Nat.cast_inj]
     exact card_equiv (Equiv.subRight a) (by simp)
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe, translate_apply]
@@ -52,10 +52,10 @@ lemma lpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ 
 @[simp] lemma lpNorm_conjneg [RCLike β] (f : α → β) : ‖conjneg f‖_[p] = ‖f‖_[p] := by
   simp only [conjneg, lpNorm_conj]
   obtain p | p := p
-  · simp only [linftyNorm_eq_ciSup, ENNReal.none_eq_top, conjneg, RCLike.norm_conj]
+  · simp only [linftyNorm_eq_iSup, ENNReal.none_eq_top, conjneg, RCLike.norm_conj]
     exact (Equiv.neg _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [l0Norm_eq_card, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
+  · simp only [l0Norm_eq_zero, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
     exact card_equiv (Equiv.neg _) (by simp)
   · simp only [lpNorm_eq_sum hp, ENNReal.some_eq_coe]
     congr 1

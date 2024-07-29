@@ -23,7 +23,7 @@ notation "‖" f "‖_[" p ", " w "]" => wlpNorm p w f
 
 @[simp]
 lemma wlpNorm_one_eq_lpNorm (p : ℝ≥0) (f : ∀ i, α i) : ‖f‖_[p, 1] = ‖f‖_[p] := by
-  simp [wlpNorm, l0Norm_eq_card, lpNorm_eq_sum, *]
+  simp [wlpNorm, l0Norm_eq_zero, lpNorm_eq_sum, *]
 
 @[simp]
 lemma wlpNorm_const_right (hp : 1 ≤ p) (w : ℝ≥0) (f : ∀ i, α i) :
@@ -55,14 +55,14 @@ lemma wlpNorm_pow_eq_sum {p : ℕ} (hp : p ≠ 0) (w : ι → ℝ≥0) (f : ∀ 
 lemma wl1Norm_eq_sum (w : ι → ℝ≥0) (f : ∀ i, α i) : ‖f‖_[1, w] = ∑ i, w i • ‖f i‖ := by
   simp [wlpNorm_eq_sum]
 
-lemma wl0Norm_eq_card (w : ι → ℝ≥0) (f : ∀ i, α i) :
-    ‖f‖_[0, w] = {i | f i ≠ 0}.toFinite.toFinset.card := by simp [wlpNorm, l0Norm_eq_card]
+lemma wl0Norm_eq_zero (w : ι → ℝ≥0) (f : ∀ i, α i) :
+    ‖f‖_[0, w] = {i | f i ≠ 0}.toFinite.toFinset.card := by simp [wlpNorm, l0Norm_eq_zero]
 
 @[simp]
 lemma wlpNorm_zero (w : ι → ℝ≥0) : ‖(0 : ∀ i, α i)‖_[p, w] = 0 := by simp [wlpNorm, ←Pi.zero_def]
 
 @[simp] lemma wlpNorm_norm (w : ι → ℝ≥0) (f : ∀ i, α i) : ‖fun i ↦ ‖f i‖‖_[p, w] = ‖f‖_[p, w] := by
-  obtain rfl | hp := @eq_zero_or_pos _ _ p <;> simp [wl0Norm_eq_card, wlpNorm_eq_sum, *, ne_of_gt]
+  obtain rfl | hp := @eq_zero_or_pos _ _ p <;> simp [wl0Norm_eq_zero, wlpNorm_eq_sum, *, ne_of_gt]
 
 @[simp]lemma wlpNorm_neg (w : ι → ℝ≥0) (f : ∀ i, α i) : ‖-f‖_[p, w] = ‖f‖_[p, w] := by
   simp [←wlpNorm_norm _ (-f)]

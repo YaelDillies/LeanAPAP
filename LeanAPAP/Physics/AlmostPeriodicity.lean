@@ -440,7 +440,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
         = (F ∗ μ C) x := by simp [sub_conv, F]
       _ = ∑ y, F y * μ C (x - y) := conv_eq_sum_sub' ..
       _ = ∑ y, F y * μ (x +ᵥ -C) y := by simp [neg_add_eq_sub]
-  rw [linftyNorm_eq_ciSup]
+  rw [linftyNorm_eq_iSup]
   refine ciSup_le fun x ↦ ?_
   calc
     ‖(τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℂ) x‖
