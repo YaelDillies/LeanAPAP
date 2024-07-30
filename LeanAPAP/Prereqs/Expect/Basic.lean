@@ -1,8 +1,8 @@
 import Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.Order.Module.Rat
 import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.Algebra.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
 import LeanAPAP.Mathlib.Data.Fintype.BigOperators
 
 /-!

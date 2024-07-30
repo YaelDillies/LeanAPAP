@@ -3,7 +3,6 @@ import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
-import LeanAPAP.Mathlib.Algebra.Order.Module.Defs
 import LeanAPAP.Mathlib.Analysis.Complex.Circle
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Circle
 import LeanAPAP.Mathlib.Data.Fintype.BigOperators
