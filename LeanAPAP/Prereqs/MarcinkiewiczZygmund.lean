@@ -1,5 +1,4 @@
 import Mathlib.Analysis.MeanInequalitiesPow
-import LeanAPAP.Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Prereqs.Multinomial
 
 open Finset Fintype Nat Real

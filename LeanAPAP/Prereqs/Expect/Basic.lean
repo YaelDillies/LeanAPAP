@@ -3,7 +3,6 @@ import Mathlib.Algebra.Order.Module.Rat
 import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.Algebra.Basic
-import LeanAPAP.Mathlib.Data.Fintype.BigOperators
 
 /-!
 # Average over a finset

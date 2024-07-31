@@ -5,7 +5,6 @@ import LeanAPAP.Mathlib.Algebra.BigOperators.Ring
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Analysis.Complex.Circle
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Circle
-import LeanAPAP.Mathlib.Data.Fintype.BigOperators
 import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
