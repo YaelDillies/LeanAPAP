@@ -1,5 +1,5 @@
 import Mathlib.Analysis.MeanInequalitiesPow
-import LeanAPAP.Prereqs.Multinomial
+import Mathlib.Data.Nat.Choose.Multinomial
 
 open Finset Fintype Nat Real
 variable {G : Type*} {A : Finset G} {m n : ℕ}
@@ -128,7 +128,7 @@ private lemma step_six {f : G → ℝ} {a b : Fin n → G} :
   simp only [←mul_assoc, pow_mul]
   refine mul_le_mul_of_nonneg_right ?_ (prod_nonneg fun i _ ↦ by positivity)
   norm_cast
-  refine double_multinomial.trans ?_
+  refine multinomial_two_mul_le_mul_multinomial.trans ?_
   rw [hk.1]
 
 private lemma step_seven {f : G → ℝ} {a b : Fin n → G} :

@@ -1,5 +1,5 @@
 import Mathlib.GroupTheory.FiniteAbelian
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Circle
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Prereqs.AddChar.Basic
 
 /-!
