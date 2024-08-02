@@ -4,7 +4,7 @@
 
 \begin{lemma}[Marcinkiewicz-Zygmund inequality]
 \label{mzi}
-\lean{other_marcinkiewicz_zygmund'}
+\lean{Real.marcinkiewicz_zygmund', Real.marcinkiewicz_zygmund}
 \leanok
 Let $m\geq 1$. If $f:G\to\bbr$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
 \[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (4mn)^{m}.\]
@@ -33,9 +33,9 @@ This can be seen, for example, by writing both sides out using factorials, yield
 \begin{lemma}[Complex-valued Marcinkiewicz-Zygmund inequality]
 \label{mzi_complex}
 \leanok
-\lean{complex_marcinkiewicz_zygmund}
+\lean{RCLike.marcinkiewicz_zygmund}
 Let $m\geq 1$. If $f:G\to\bbc$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 2$ for all $x$ then
-\[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (16mn)^{m}.\]
+\[\bbe_{x_1,\ldots,x_n} \abs{\sum_{i=1}^n f(x_i)}^{2m} \leq (8mn)^{m}.\]
 \end{lemma}
 
 \begin{proof}

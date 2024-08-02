@@ -118,7 +118,7 @@ lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
       (8 * m) ^ m * k ^ (m - 1) *
         ∑ a in A ^^ k, ∑ i, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) := by
   let f' : G → ℂ := fun a ↦ f (x - a) - (mu A ∗ f) x
-  refine (complex_marcinkiewicz_zygmund f' (by linarith only [hm]) ?_).trans_eq' ?_
+  refine (RCLike.marcinkiewicz_zygmund (by linarith only [hm]) f' ?_).trans_eq' ?_
   · intro i
     rw [Fintype.sum_piFinset_apply, sum_sub_distrib]
     simp only [sub_eq_zero, sum_const, indicate_apply]
