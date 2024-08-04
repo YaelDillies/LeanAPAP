@@ -9,6 +9,7 @@ __pycache__
 *.fls
 *.out
 *.synctex.gz
+*.synctex(busy)
 *.xdv
 *.maf
 *.mtc
