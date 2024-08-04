@@ -1,5 +1,4 @@
 import LeanAPAP.Extras.BSG
-import LeanAPAP.Extras.DoublingConst
 import LeanAPAP.Extras.FreimanRuzsa
 import LeanAPAP.Extras.FreimanRuzsa.VerySmall
 import LeanAPAP.FiniteField.Basic
