@@ -129,11 +129,8 @@ lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
   simp only [sum_sub_distrib, Pi.smul_apply, sum_const, card_fin]
 
 lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
-    (8 * m : ℝ) ^ m * k ^ (m - 1) *
-        ∑ a in A ^^ k,
-          ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
-      (8 * m : ℝ) ^ m * k ^ (m - 1) *
-        ∑ a in A ^^ k, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
+    (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
+      (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
   -- lots of the equalities about m can be automated but it's *way* slower
   have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
   have hm' : 1 < 2 * m := (Nat.mul_le_mul_left 2 hm).trans_lt' $ by norm_num1
@@ -150,8 +147,8 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
   refine (lpNorm_conv_le this.le _ _).trans ?_
   rw [l1Norm_mu hA, mul_one]
 
-lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m)  (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :
-    (8 * m : ℝ) ^ m * k ^ (m - 1) * A.card ^ k * k * (2 * ‖f‖_[2 * m]) ^ (2 * m) ≤
+lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m)  (hk : 64 * m / ε ^ 2 ≤ k) :
+    (8 * m) ^ m * k ^ (m - 1) * A.card ^ k * k * (2 * ‖f‖_[2 * m]) ^ (2 * m) ≤
       1 / 2 * ((k * ε) ^ (2 * m) * ∑ i : G, ‖f i‖ ^ (2 * m)) * ↑A.card ^ k := by
   have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
   have hm' : 2 * m ≠ 0 := by
@@ -208,10 +205,8 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
     simp only [Pi.sub_apply, translate_apply]
   simp only [this]
   have :
-    (8 * m : ℝ) ^ m * k ^ (m - 1) *
-        ∑ a in A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
-      (8 * m : ℝ) ^ m * k ^ (m - 1) *
-        ∑ a in A ^^ k, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
+    (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
+      (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
     lemma28_part_two hm hA
   refine this.trans ?_
   simp only [sum_const, Fintype.card_piFinset_const, nsmul_eq_mul, Nat.cast_pow]
@@ -478,7 +473,6 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
   refine ⟨T, by simpa only [div_pow, div_div_eq_mul_div] using hKT, ?_⟩
   set F := μ_[ℂ] A ∗ 𝟭 B ∗ μ C
   have hT' : T.Nonempty := by
-    have := hS.card_pos -- TODO: positivity
     have : (0 : ℝ) < T.card := hKT.trans_lt' $ by positivity
     simpa [card_pos] using this
   calc

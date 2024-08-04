@@ -152,7 +152,7 @@ private lemma step_seven {f : ι → ℝ} {a b : Fin n → ι} :
   exact add_sq_le.trans_eq (by simp)
 
 private lemma step_eight {f : ι → ℝ} {a b : Fin n → ι} :
-    m ^ m * 2 ^ m * (∑ i, (f (a i) ^ 2 + f (b i) ^ 2) : ℝ) ^ m ≤
+    m ^ m * 2 ^ m * (∑ i, (f (a i) ^ 2 + f (b i) ^ 2)) ^ m ≤
       m ^ m * 2 ^ (m + (m - 1)) *
         ((∑ i, f (a i) ^ 2) ^ m + (∑ i, f (b i) ^ 2) ^ m) := by
   rw [pow_add, ← mul_assoc _ _ (2 ^ _), mul_assoc _ (2 ^ (m - 1)), sum_add_distrib]

@@ -1,3 +1,4 @@
+import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.LpNorm.Weighted
 
@@ -229,15 +230,15 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
     (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hA : A.Nonempty)
     (hf : ∃ x, x ∈ A - A ∧ (𝟭 A ○ 𝟭 A) x ≤ (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ]) :
     ∃ A₁ A₂, 1 - δ ≤ ∑ x in s p ε univ univ A, (μ A₁ ○ μ A₂) x ∧
-        (4 : ℝ)⁻¹ * (A.card / card G : ℝ) ^ (2 * p) ≤ A₁.card / card G ∧
-          (4 : ℝ)⁻¹ * (A.card / card G : ℝ) ^ (2 * p) ≤ A₂.card / card G := by
+        (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤ A₁.dens ∧
+          (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤ A₂.dens := by
   have hp₀ : p ≠ 0 := by positivity
   have :
-    (4 : ℝ)⁻¹ * (A.card / card G) ^ (2 * p) ≤
+    (4 : ℝ)⁻¹ * (A.dens) ^ (2 * p) ≤
       4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / A.card ^ (2 * p) := by
     rw [mul_div_assoc, ←div_pow]
     refine mul_le_mul_of_nonneg_left (pow_le_pow_left (by positivity) ?_ _) (by norm_num)
-    rw [le_div_iff, ←mul_div_right_comm]
+    rw [cast_dens, le_div_iff, ←mul_div_right_comm]
     calc
       _ = ‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] := by
         simp [mu, wlpNorm_smul_right, hp₀, l1Norm_dconv, card_univ, inv_mul_eq_div]

@@ -18,7 +18,7 @@ section NormedAddCommGroup
 variable {α : ι → Type*} [∀ i, NormedAddCommGroup (α i)] {p q : ℝ≥0∞} {f g h : ∀ i, α i}
 
 /-- The Lp norm of a function with the compact normalisation. -/
-noncomputable def nlpNorm (p : ℝ≥0∞) (f : ∀ i, α i) : ℝ := ‖f‖_[p] / (card ι : ℝ) ^ p.toReal⁻¹
+noncomputable def nlpNorm (p : ℝ≥0∞) (f : ∀ i, α i) : ℝ := ‖f‖_[p] / card ι ^ p.toReal⁻¹
 
 notation "‖" f "‖ₙ_[" p "]" => nlpNorm p f
 

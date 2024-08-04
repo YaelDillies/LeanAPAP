@@ -1,3 +1,4 @@
+import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.FourierTransform.Compact
@@ -12,7 +13,7 @@ open scoped NNReal
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {γ ε : ℝ}
 
-lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 0 < γ)
+lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ε / (2 * card G) ≤
       ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈γ.curlog⌉₊), const _ (card G)⁻¹] := by
@@ -20,7 +21,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
     rw [nonempty_iff_ne_empty]
     rintro rfl
     simp [hγ.not_le] at hγC
-  have hγ₁ : γ ≤ 1 := hγC.trans (div_le_one_of_le (Nat.cast_le.2 C.card_le_univ) $ by positivity)
+  have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
   set p := 2 * ⌈γ.curlog⌉₊
   have hp : 1 < p :=
     Nat.succ_le_iff.1 (le_mul_of_one_le_right zero_le' $ Nat.ceil_pos.2 $ curlog_pos hγ hγ₁)
@@ -42,7 +43,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel, ← mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
   · rw [lpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
-    rw [le_div_iff, mul_comm] at hγC
+    rw [cast_dens, le_div_iff, mul_comm] at hγC
     refine rpow_le_rpow_of_nonpos ?_ hγC (neg_nonpos.2 ?_)
     all_goals positivity
   · simp_rw [Nat.cast_mul, Nat.cast_two, p]
@@ -62,7 +63,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.card / card G) (hγ : 
 
 variable {q n : ℕ} [Module (ZMod q) G] {A₁ A₂ : Finset G} (S : Finset G) {α : ℝ}
 
-lemma ap_in_ff (hA₁ : α ≤ A₁.card / card G) (hA₂ : α ≤ A₂.card / card G) :
+lemma ap_in_ff (hA₁ : α ≤ A₁.dens) (hA₂ : α ≤ A₂.dens) :
     ∃ (V : Submodule (ZMod q) G) (V' : Finset G),
       (V : Set G) = V' ∧
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
@@ -70,7 +71,7 @@ lemma ap_in_ff (hA₁ : α ≤ A₁.card / card G) (hA₂ : α ≤ A₂.card / c
           |∑ x in S, (μ V' ∗ μ A₁ ∗ μ A₂) x - ∑ x in S, (μ A₁ ∗ μ A₂) x| ≤ ε :=
   sorry
 
-lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.card / card G) (hγC : γ ≤ C.card / card G)
+lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens) (hγC : γ ≤ C.dens)
     (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ∃ (V : Submodule (ZMod q) G) (V' : Finset G),
       (V : Set G) = V' ∧
@@ -85,7 +86,7 @@ lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.card / card 
       Nat.cast_zero, indicate_empty, zero_mul, lpNorm_zero, true_and_iff,
       Finset.card_empty, zero_div] at hαA ⊢
     exact ⟨by positivity, mul_nonpos_of_nonneg_of_nonpos (by positivity) hαA⟩
-  have hγ₁ : γ ≤ 1 := hγC.trans (div_le_one_of_le (Nat.cast_le.2 C.card_le_univ) $ by positivity)
+  have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
   have hG : (card G : ℝ) ≠ 0 := by positivity
   have := unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ hγ₁).ne') (ε / 2)
     (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)

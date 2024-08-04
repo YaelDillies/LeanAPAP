@@ -146,8 +146,7 @@ section NormedAddCommGroup
 variable {α : Type*} [NormedAddCommGroup α] {p : ℝ≥0}
 
 @[simp]
-lemma lpNorm_const (hp : p ≠ 0) (a : α) :
-    ‖const ι a‖_[p] = (Fintype.card ι : ℝ) ^ (p⁻¹ : ℝ) * ‖a‖ := by
+lemma lpNorm_const (hp : p ≠ 0) (a : α) : ‖const ι a‖_[p] = Fintype.card ι ^ (p⁻¹ : ℝ) * ‖a‖ := by
   simp only [lpNorm_eq_sum hp, card_univ, mul_rpow, norm_nonneg, rpow_nonneg,
     NNReal.coe_ne_zero.2 hp, rpow_rpow_inv, const_apply, sum_const, nsmul_eq_mul, Nat.cast_nonneg,
     Ne, not_false_iff]

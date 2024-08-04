@@ -83,7 +83,7 @@ variable {α β : Type*} [RCLike β] [Fintype α] [DecidableEq α] {s : Finset �
 
 lemma lpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset α) : ‖𝟭_[β] s‖_[p] ^ (p : ℝ) = s.card := by
   have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) =
-    ite (x ∈ s) ((1 : ℝ) ^ (p : ℝ) : ℝ) ((0 : ℝ) ^ (p : ℝ)) := fun x ↦ by split_ifs <;> simp
+    ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := fun x ↦ by split_ifs <;> simp
   simp [lpNorm_rpow_eq_sum, hp, indicate_apply, apply_ite Norm.norm, -sum_const, card_eq_sum_ones,
     sum_boole, this, zero_rpow, filter_mem_eq_inter]
 

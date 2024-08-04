@@ -33,7 +33,7 @@ lemma claim_one : ∑ s, (𝟭_[β] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card = 
   simp only [←thing_three, ←thing_one_right, sq]
 
 lemma claim_two :
-    (E[A, B] : ℝ) ^ 2 / (A.card * B.card) ≤ ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card ^ 2 := by
+    (E[A, B]) ^ 2 / (A.card * B.card) ≤ ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card ^ 2 := by
   let f := fun s ↦ ((𝟭_[ℝ] A ○ 𝟭 B) s).sqrt
   have hf : ∀ s, f s ^ 2 = (𝟭_[ℝ] A ○ 𝟭 B) s := by
     intro s
@@ -204,7 +204,7 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
   rw [mul_assoc]
   gcongr _ * ?_
   field_simp [hA, hB, hK, le_div_iff, div_le_iff] at hE ⊢
-  convert_to ((A.card : ℝ) ^ 2 * B.card) ^ 2 ≤ (E[A, B] * K) ^ 2
+  convert_to (A.card ^ 2 * B.card) ^ 2 ≤ (E[A, B] * K) ^ 2
   · ring_nf
   · ring_nf
   gcongr
