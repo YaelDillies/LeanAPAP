@@ -44,8 +44,7 @@ private lemma sum_cast_c (p : ℕ) (B A : Finset G) :
 private lemma lpNorm_conv_pos (hp : p ≠ 0) (hB : (B₁ ∩ B₂).Nonempty) (hA : A.Nonempty) :
     0 < ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p := by
   rw [wlpNorm_pow_eq_sum]
-  refine sum_pos' (fun x _ ↦ smul_nonneg zero_le' $ by positivity)
-      ⟨0, mem_univ _, smul_pos ?_ $ pow_pos ?_ _⟩
+  refine sum_pos' (fun x _ ↦ by positivity) ⟨0, mem_univ _, smul_pos ?_ $ pow_pos ?_ _⟩
   · rwa [pos_iff_ne_zero, ← Function.mem_support, support_dconv, support_mu, support_mu, ← coe_sub,
       mem_coe, zero_mem_sub_iff, not_disjoint_iff_nonempty_inter] <;> exact mu_nonneg
   · rw [norm_pos_iff, ←Function.mem_support, support_dconv, support_indicate]
@@ -246,4 +245,5 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
     · exact Nat.cast_pos.2 hA.card_pos
   obtain ⟨A₁, -, A₂, -, h, hcard₁, hcard₂⟩ :=
     sifting univ univ hε hε₁ hδ hp hp₂ hpε (by simp [univ_nonempty]) hA (by simpa)
-  exact ⟨A₁, A₂, h, this.trans $ by simpa using hcard₁, this.trans $ by simpa using hcard₂⟩
+  exact ⟨A₁, A₂, h, this.trans $ by simpa [cast_dens] using hcard₁,
+    this.trans $ by simpa [cast_dens] using hcard₂⟩

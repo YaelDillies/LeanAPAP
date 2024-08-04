@@ -212,7 +212,10 @@ notation "⟪" f ", " g "⟫_[" 𝕜 "]" => @l2Inner _ 𝕜 _ _ _ f g
 
 lemma l2Inner_eq_sum (f g : ι → 𝕜) : ⟪f, g⟫_[𝕜] = ∑ i, conj (f i) * g i := rfl
 
-@[simp] lemma conj_l2Inner (f g : ι → 𝕜) : conj ⟪f, g⟫_[𝕜] = ⟪g, f⟫_[𝕜] := by
+@[simp] lemma conj_l2Inner (f g : ι → 𝕜) : conj ⟪f, g⟫_[𝕜] = ⟪conj f, conj g⟫_[𝕜] := by
+  simp [l2Inner_eq_sum, map_sum]
+
+lemma l2Inner_anticomm (f g : ι → 𝕜) : ⟪f, g⟫_[𝕜] = ⟪conj g, conj f⟫_[𝕜] := by
   simp [l2Inner_eq_sum, map_sum, mul_comm]
 
 @[simp] lemma l2Inner_zero_left (g : ι → 𝕜) : ⟪0, g⟫_[𝕜] = 0 := by simp [l2Inner_eq_sum]

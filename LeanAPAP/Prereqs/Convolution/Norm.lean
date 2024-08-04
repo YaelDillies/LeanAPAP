@@ -26,11 +26,32 @@ variable [RCLike β]
   · simp [l0Norm_eq_card]
   · simp [lpNorm_eq_sum hp, apply_ite, hp]
 
-lemma conv_eq_inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a fun x ↦ g (-x)⟫_[β] := by
+lemma conv_eq_l2Inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a fun x ↦ g (-x)⟫_[β] := by
   simp [l2Inner_eq_sum, conv_eq_sum_sub', map_sum]
 
-lemma dconv_eq_inner (f g : α → β) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[β] := by
+lemma dconv_eq_l2Inner (f g : α → β) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[β] := by
   simp [l2Inner_eq_sum, dconv_eq_sum_sub', map_sum]
+
+lemma l2Inner_dconv (f g h : α → β) : ⟪f, g ○ h⟫_[β] = ⟪conj g, conj f ∗ conj h⟫_[β] := by
+  calc
+    _ = ∑ b, ∑ a, g a * conj (h b) * conj (f (a - b)) := by
+      simp_rw [l2Inner, mul_comm _ ((_ ○ _) _), sum_dconv_mul]; exact sum_comm
+    _ = ∑ b, ∑ a, conj (f a) * conj (h b) * g (a + b) := by
+      simp_rw [← Fintype.sum_prod_type']
+      exact Fintype.sum_equiv ((Equiv.refl _).prodShear Equiv.subRight) _ _
+        (by simp [mul_rotate, mul_right_comm])
+    _ = _ := by
+      simp_rw [l2Inner, mul_comm _ ((_ ∗ _) _), sum_conv_mul, Pi.conj_apply, RCLike.conj_conj]
+      exact sum_comm
+
+lemma l2Inner_conv (f g h : α → β) : ⟪f, g ∗ h⟫_[β] = ⟪conj g, conj f ○ conj h⟫_[β] := by
+  simp_rw [l2Inner_dconv, RCLike.conj_conj]
+
+lemma dconv_l2Inner (f g h : α → β) : ⟪f ○ g, h⟫_[β] = ⟪conj h ∗ conj g, conj f⟫_[β] := by
+  rw [l2Inner_anticomm, l2Inner_anticomm (_ ∗ _), conj_dconv, l2Inner_dconv]; simp
+
+lemma conv_l2Inner (f g h : α → β) : ⟪f ∗ g, h⟫_[β] = ⟪conj h ○ conj g, conj f⟫_[β] := by
+  rw [l2Inner_anticomm, l2Inner_anticomm (_ ○ _), conj_conv, l2Inner_conv]; simp
 
 -- TODO: This proof would feel much less painful if we had `ℝ≥0`-valued Lp-norms.
 /-- A special case of **Young's convolution inequality**. -/

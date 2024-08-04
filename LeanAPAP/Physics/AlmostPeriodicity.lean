@@ -2,14 +2,15 @@ import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Prereqs.Convolution.Norm
-import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Curlog
+import LeanAPAP.Prereqs.DoublingConst
+import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 
 /-!
 # Almost-periodicity
 -/
 
-open scoped Pointwise
+open scoped Pointwise Combinatorics.Additive
 
 namespace Finset
 variable {α : Type*} [DecidableEq α] {s : Finset α} {k : ℕ}
@@ -366,7 +367,7 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
 
 -- trivially true for other reasons for big ε
 lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (hm : 1 ≤ m) (f : G → ℂ)
-    (hK' : 2 ≤ K) (hK : ((A + S).card : ℝ) ≤ K * A.card) :
+    (hK' : 2 ≤ K) (hK : σ[A, S] ≤ K) :
     ∃ T : Finset G,
       K ^ (-512 * m / ε ^ 2 : ℝ) * S.card ≤ T.card ∧
         ∀ t ∈ T, ‖τ t (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ ε * ‖f‖_[2 * m] := by
@@ -391,14 +392,15 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
   obtain ⟨a, ha, hL'⟩ := big_shifts S _ hk hL (filter_subset _ _)
   refine ⟨univ.filter fun t : G ↦ (a + fun _ ↦ -t) ∈ L, ?_, ?_⟩
   · simp_rw [sub_eq_add_neg] at hL'
-    exact T_bound hK' L.card S.card A.card (A + S).card _ rfl hL' this hK hA.card_pos hε hε' hm
+    exact T_bound hK' L.card S.card A.card (A + S).card _ rfl hL' this
+      (by rw [← cast_addConst_mul_card]; gcongr) hA.card_pos hε hε' hm
   intro t ht
   simp only [exists_prop, exists_eq_right, mem_filter, mem_univ, true_and_iff] at ht
   have := just_the_triangle_inequality ha ht hk.bot_lt hm
   rwa [neg_neg, mul_div_cancel₀ _ (two_ne_zero' ℝ)] at this
 
 theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hK₂ : 2 ≤ K)
-    (hK : (A + S).card ≤ K * A.card) (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
+    (hK : σ[A, S] ≤ K) (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
     ∃ T : Finset G,
       K ^ (-4096 * ⌈curlog (min 1 (C.card / B.card))⌉ / ε ^ 2) * S.card ≤ T.card ∧
       ∀ t ∈ T, ‖τ t (μ_[ℂ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
@@ -462,7 +464,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
     _ ≤ exp 1 := rpow_neg_inv_curlog_le (by positivity) inf_le_left
 
 theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (k : ℕ) (hk : k ≠ 0)
-    (hK₂ : 2 ≤ K) (hK : (A + S).card ≤ K * A.card) (hS : S.Nonempty)
+    (hK₂ : 2 ≤ K) (hK : σ[A, S] ≤ K) (hS : S.Nonempty)
     (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
     ∃ T : Finset G,
       K ^ (-4096 * ⌈curlog (min 1 (C.card / B.card))⌉ * k ^ 2/ ε ^ 2) * S.card ≤ T.card ∧

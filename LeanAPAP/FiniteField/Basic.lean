@@ -1,15 +1,16 @@
 import LeanAPAP.Mathlib.Data.Finset.Density
-import LeanAPAP.Physics.Unbalancing
-import LeanAPAP.Prereqs.Convolution.Norm
+import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.FourierTransform.Compact
-import LeanAPAP.Prereqs.Curlog
+import LeanAPAP.Prereqs.LargeSpec
+import LeanAPAP.Physics.AlmostPeriodicity
+import LeanAPAP.Physics.Unbalancing
 
 /-!
 # Finite field case
 -/
 
 open FiniteDimensional Finset Fintype Function Real
-open scoped NNReal
+open scoped NNReal BigOperators Combinatorics.Additive
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {γ ε : ℝ}
 
@@ -63,12 +64,34 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
 
 variable {q n : ℕ} [Module (ZMod q) G] {A₁ A₂ : Finset G} (S : Finset G) {α : ℝ}
 
-lemma ap_in_ff (hA₁ : α ≤ A₁.dens) (hA₂ : α ≤ A₂.dens) :
+lemma ap_in_ff (hS : S.Nonempty) (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens)
+    (hαA₂ : α ≤ A₂.dens) :
     ∃ (V : Submodule (ZMod q) G) (V' : Finset G),
       (V : Set G) = V' ∧
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
             2 ^ 27 * α.curlog ^ 2 * (ε * α).curlog ^ 2 / ε ^ 2 ∧
-          |∑ x in S, (μ V' ∗ μ A₁ ∗ μ A₂) x - ∑ x in S, (μ A₁ ∗ μ A₂) x| ≤ ε :=
+          |∑ x in S, (μ V' ∗ μ A₁ ∗ μ A₂) x - ∑ x in S, (μ A₁ ∗ μ A₂) x| ≤ ε := by
+  classical
+  have hA₁ : A₁.Nonempty := by simpa using hα₀.trans_le hαA₁
+  have hA₂ : A₂.Nonempty := by simpa using hα₀.trans_le hαA₂
+  have hA₁ : σ[A₁, univ] ≤ α⁻¹ :=
+    calc
+      _ ≤ (A₁.dens⁻¹ : ℝ) := by norm_cast; exact addConst_le_inv_dens
+      _ ≤ α⁻¹ := by gcongr
+  obtain ⟨T, hST, hT⟩ := AlmostPeriodicity.linfty_almost_periodicity_boosted ε hε₀ hε₁
+    ⌈(ε * α / 4).curlog⌉₊ (Nat.ceil_pos.2 $ curlog_pos (by positivity) sorry).ne' sorry hA₁
+    univ_nonempty S A₂ hS hA₂
+  let Δ := largeSpec (μ T) 2⁻¹
+  let V : AddSubgroup G := ⨅ γ ∈ Δ, γ.toAddMonoidHom.ker
+  let V' : Finset G := Set.toFinset V
+  have : ⟪μ V' ∗ μ A₁ ∗ μ A₂, 𝟭 S⟫_[ℝ] = 𝔼 v ∈ V', (μ A₁ ∗ μ A₂ ○ 𝟭 S) v := by
+    calc
+      _ = ⟪μ V', μ A₁ ∗ μ A₂ ○ 𝟭 S⟫_[ℝ] := by
+        sorry
+        -- rw [conv_assoc, conv_l2Inner, ← conj_l2Inner]
+        -- simp
+
+      _ = _ := sorry
   sorry
 
 lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens) (hγC : γ ≤ C.dens)

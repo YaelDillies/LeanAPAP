@@ -7,6 +7,7 @@ import Mathlib.Combinatorics.Additive.PluenneckeRuzsa
 import Mathlib.Data.Finset.Density
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Positivity.Finset
+import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 
 /-!
 # Doubling and difference constants
@@ -65,23 +66,23 @@ scoped[Combinatorics.Additive] notation3:max "δ[" A "]" => Finset.subConst A A
 
 open scoped Combinatorics.Additive
 
-@[to_additive (attr := simp)]
+@[to_additive (attr := simp) addConst_mul_card]
 lemma mulConst_mul_card (A B : Finset G) : σₘ[A, B] * A.card = (A * B).card := by
   obtain rfl | hA := A.eq_empty_or_nonempty
   · simp
   · exact div_mul_cancel₀ _ (by positivity)
 
-@[to_additive (attr := simp)]
-lemma card_mul_mulConst (A B : Finset G) : A.card * σₘ[A, B] = (A * B).card := by
-  rw [mul_comm, mulConst_mul_card]
-
-@[to_additive (attr := simp)]
+@[to_additive (attr := simp) subConst_mul_card]
 lemma divConst_mul_card (A B : Finset G) : δₘ[A, B] * A.card = (A / B).card := by
   obtain rfl | hA := A.eq_empty_or_nonempty
   · simp
   · exact div_mul_cancel₀ _ (by positivity)
 
-@[to_additive (attr := simp)]
+@[to_additive (attr := simp) card_mul_addConst]
+lemma card_mul_mulConst (A B : Finset G) : A.card * σₘ[A, B] = (A * B).card := by
+  rw [mul_comm, mulConst_mul_card]
+
+@[to_additive (attr := simp) card_mul_subConst]
 lemma card_mul_divConst (A B : Finset G) : A.card * δₘ[A, B] = (A / B).card := by
   rw [mul_comm, divConst_mul_card]
 
@@ -108,14 +109,56 @@ lemma divConst_inv_right (A B : Finset G) : δₘ[A, B⁻¹] = σₘ[A, B] := by
 variable [Fintype G]
 
 /-- Dense sets have small doubling. -/
-@[to_additive "Dense sets have small doubling."]
+@[to_additive addConst_le_inv_dens "Dense sets have small doubling."]
 lemma mulConst_le_inv_dens : σₘ[A, B] ≤ A.dens⁻¹ := by
   rw [dens, inv_div, mulConst]; gcongr; exact card_le_univ _
 
 /-- Dense sets have small difference constant. -/
-@[to_additive "Dense sets have small difference constant."]
+@[to_additive subConst_le_inv_dens "Dense sets have small difference constant."]
 lemma divConst_le_inv_dens : δₘ[A, B] ≤ A.dens⁻¹ := by
   rw [dens, inv_div, divConst]; gcongr; exact card_le_univ _
+
+variable {𝕜 : Type*} [Semifield 𝕜] [CharZero 𝕜]
+
+lemma cast_addConst [AddGroup G] (A B : Finset G) : (σ[A, B] : 𝕜) = (A + B).card / A.card := by
+  simp [addConst]
+
+lemma cast_subConst [AddGroup G] (A B : Finset G) : (δ[A, B] : 𝕜) = (A - B).card / A.card := by
+  simp [subConst]
+
+@[to_additive existing]
+lemma cast_mulConst (A B : Finset G) : (σₘ[A, B] : 𝕜) = (A * B).card / A.card := by simp [mulConst]
+
+@[to_additive existing]
+lemma cast_divConst (A B : Finset G) : (δₘ[A, B] : 𝕜) = (A / B).card / A.card := by simp [divConst]
+
+lemma cast_addConst_mul_card [AddGroup G] (A B : Finset G) :
+    (σ[A, B] * A.card : 𝕜) = (A + B).card := by norm_cast; exact addConst_mul_card _ _
+
+lemma cast_subConst_mul_card [AddGroup G] (A B : Finset G) :
+    (δ[A, B] * A.card : 𝕜) = (A - B).card := by norm_cast; exact subConst_mul_card _ _
+
+lemma card_mul_cast_addConst [AddGroup G] (A B : Finset G) :
+    (A.card * σ[A, B] : 𝕜) = (A + B).card := by norm_cast; exact card_mul_addConst _ _
+
+lemma card_mul_cast_subConst [AddGroup G] (A B : Finset G) :
+    (A.card * δ[A, B] : 𝕜) = (A - B).card := by norm_cast; exact card_mul_subConst _ _
+
+@[to_additive (attr := simp) existing cast_addConst_mul_card]
+lemma cast_mulConst_mul_card (A B : Finset G) : (σₘ[A, B] * A.card : 𝕜) = (A * B).card := by
+  norm_cast; exact mulConst_mul_card _ _
+
+@[to_additive (attr := simp) existing cast_subConst_mul_card]
+lemma cast_divConst_mul_card (A B : Finset G) : (δₘ[A, B] * A.card : 𝕜) = (A / B).card := by
+  norm_cast; exact divConst_mul_card _ _
+
+@[to_additive (attr := simp) existing card_mul_cast_addConst]
+lemma card_mul_cast_mulConst (A B : Finset G) : (A.card * σₘ[A, B] : 𝕜) = (A * B).card := by
+  norm_cast; exact card_mul_mulConst _ _
+
+@[to_additive (attr := simp) existing card_mul_cast_subConst]
+lemma card_mul_cast_divConst (A B : Finset G) : (A.card * δₘ[A, B] : 𝕜) = (A / B).card := by
+  norm_cast; exact card_mul_divConst _ _
 
 end Group
 
