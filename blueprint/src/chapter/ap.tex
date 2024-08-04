@@ -13,7 +13,13 @@ Let $m\geq 1$. If $f:G\to\bbr$ is such that $\bbe_x f(x)=0$ and $\abs{f(x)}\leq 
 \begin{proof}
 \leanok
 Let $S$ be the left-hand side. Since $0=\bbe_y f(y)$ we have, by the triangle inequality, and H\"{o}lder's inequality,
-\[S=\bbe_{x_1,\ldots,x_n}\left\lvert \sum_i f(x_i) - \bbe_{y_i} f(y_i)\right\rvert^{2m} = \bbe_{x_1,\ldots,x_n} \left\lvert\bbe_{y_i}\brac{\sum_i f(x_i)-f(y_i)}\right\rvert^{2m}\leq \bbe_{x_1,\dots,y_n} \left\lvert \sum_i f(x_i)-f(y_i)\right\rvert^{2m}.\]
+\begin{align}
+  S
+  & = \bbe_{x_1, \dots, x_n}\left\lvert \sum_i f(x_i) - \bbe_{y_i} f(y_i)\right\rvert^{2m} \\
+  & = \bbe_{x_1, \dots, x_n} \left\lvert\bbe_{y_i}\brac{\sum_i f(x_i) - f(y_i)}\right\rvert^{2m} \\
+  & \le \bbe_{x_1,\dots,y_n} \left\lvert \sum_i f(x_i) - f(y_i)\right\rvert^{2m}
+\end{align}
+
 Changing the role of $x_i$ and $y_i$ makes no difference here, but multiplies the $i$ summand by $\{-1,+1\}$, and therefore for any $\epsilon_i\in\{-1,+1\}$,
 \[ S \leq\bbe_{x_1,\ldots,y_n}\left\lvert \sum_i \epsilon_i(f(x_i)-f(y_i))\right\rvert^{2m}.\]
 In particular, if we sample $\epsilon_i\in\{-1,+1\}$ uniformly at random, then
