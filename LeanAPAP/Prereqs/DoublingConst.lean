@@ -51,16 +51,16 @@ scoped[Combinatorics.Additive] notation3:max "σ[" A ", " B "]" => Finset.addCon
 /-- The doubling constant `σ[A]` of a finset `A` in a group is `|A + A| / |A|`. -/
 scoped[Combinatorics.Additive] notation3:max "σ[" A "]" => Finset.addConst A A
 
-/-- The doubling constant `σₘ[A, B]` of two finsets `A` and `B` in a group is `|A / B| / |A|`. -/
+/-- The difference constant `σₘ[A, B]` of two finsets `A` and `B` in a group is `|A / B| / |A|`. -/
 scoped[Combinatorics.Additive] notation3:max "δₘ[" A ", " B "]" => Finset.divConst A B
 
-/-- The doubling constant `σₘ[A]` of a finset `A` in a group is `|A / A| / |A|`. -/
+/-- The difference constant `σₘ[A]` of a finset `A` in a group is `|A / A| / |A|`. -/
 scoped[Combinatorics.Additive] notation3:max "δₘ[" A "]" => Finset.divConst A A
 
-/-- The doubling constant `σ[A, B]` of two finsets `A` and `B` in a group is `|A - B| / |A|`. -/
+/-- The difference constant `σ[A, B]` of two finsets `A` and `B` in a group is `|A - B| / |A|`. -/
 scoped[Combinatorics.Additive] notation3:max "δ[" A ", " B "]" => Finset.subConst A B
 
-/-- The doubling constant `σ[A]` of a finset `A` in a group is `|A - A| / |A|`. -/
+/-- The difference constant `σ[A]` of a finset `A` in a group is `|A - A| / |A|`. -/
 scoped[Combinatorics.Additive] notation3:max "δ[" A "]" => Finset.subConst A A
 
 open scoped Combinatorics.Additive
@@ -104,6 +104,18 @@ lemma mulConst_inv_right (A B : Finset G) : σₘ[A, B⁻¹] = δₘ[A, B] := by
 @[to_additive (attr := simp)]
 lemma divConst_inv_right (A B : Finset G) : δₘ[A, B⁻¹] = σₘ[A, B] := by
   rw [mulConst, divConst, div_inv_eq_mul]
+
+variable [Fintype G]
+
+/-- Dense sets have small doubling. -/
+@[to_additive "Dense sets have small doubling."]
+lemma mulConst_le_inv_dens : σₘ[A, B] ≤ A.dens⁻¹ := by
+  rw [dens, inv_div, mulConst]; gcongr; exact card_le_univ _
+
+/-- Dense sets have small difference constant. -/
+@[to_additive "Dense sets have small difference constant."]
+lemma divConst_le_inv_dens : δₘ[A, B] ≤ A.dens⁻¹ := by
+  rw [dens, inv_div, divConst]; gcongr; exact card_le_univ _
 
 end Group
 
