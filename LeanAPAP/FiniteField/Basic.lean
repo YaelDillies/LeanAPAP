@@ -1,7 +1,12 @@
+import LeanAPAP.Mathlib.Algebra.Module.Defs
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.Finset.Density
+import LeanAPAP.Mathlib.Data.Rat.Cast.Order
+import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.LargeSpec
+import LeanAPAP.Prereqs.ZMod
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.Unbalancing
 
@@ -9,8 +14,10 @@ import LeanAPAP.Physics.Unbalancing
 # Finite field case
 -/
 
+@[gcongr] protected alias ⟨_, GCongr.cast_lt_cast⟩ := Nat.cast_lt
+
 open FiniteDimensional Finset Fintype Function Real
-open scoped NNReal BigOperators Combinatorics.Additive
+open scoped NNReal BigOperators Combinatorics.Additive Pointwise
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {γ ε : ℝ}
 
@@ -18,10 +25,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ε / (2 * card G) ≤
       ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈γ.curlog⌉₊), const _ (card G)⁻¹] := by
-  have hC : C.Nonempty := by
-    rw [nonempty_iff_ne_empty]
-    rintro rfl
-    simp [hγ.not_le] at hγC
+  have hC : C.Nonempty := by simpa using hγ.trans_le hγC
   have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
   set p := 2 * ⌈γ.curlog⌉₊
   have hp : 1 < p :=
@@ -129,4 +133,42 @@ lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens) (hγC 
     sorry
     -- simpa [wlpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity), ←
     --   div_div, *] using global_dichotomy hA hγC hγ hAC
+  sorry
+
+theorem ff {A : Finset G} (hA₀ : A.Nonempty) (hA : ThreeAPFree (α := G) A) :
+    finrank (ZMod q) G ≤ curlog A.dens := by
+  have ind i :
+    ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)) (B : Finset V) (x : G),
+      finrank (ZMod q) G ≤ finrank (ZMod q) V + curlog A.dens ∧
+      B.map ⟨_, Subtype.coe_injective⟩ ⊆ x +ᵥ A ∧
+      (B.dens < (65 / 64 : ℝ) ^ i * A.dens →
+        2⁻¹ ≤ card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
+    induction' i with i ih hi
+    · exact ⟨⊤, Classical.decPred _, A.map (Equiv.subtypeUnivEquiv (by simp)).symm.toEmbedding, 0,
+        by simpa using curlog_nonneg (by positivity) (mod_cast A.dens_le_one),
+        by simp [cast_dens, Fintype.card_subtype, subset_iff]⟩
+    obtain ⟨V, _, B, x, hV, hBA, hB⟩ := ih
+    obtain hB' | hB' := le_or_lt 2⁻¹ (card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
+    · exact ⟨V, inferInstance, B, x, hV, hBA, fun _ ↦ hB'⟩
+    sorry
+    -- have := di_in_ff (by positivity) one_half_lt_one _ _ _ _
+  obtain ⟨V, _, B, x, hV, hBA, hB⟩ := ind ⌊curlog A.dens / log (65 / 64)⌋₊
+  specialize hB $ by
+    calc
+      _ ≤ (1 : ℝ) := mod_cast dens_le_one
+      _ < _ := ?_
+    rw [← inv_pos_lt_iff_one_lt_mul, lt_pow_iff_log_lt, ← div_lt_iff]
+    calc
+      log A.dens⁻¹ / log (65 / 64)
+        < ⌊log A.dens⁻¹ / log (65 / 64)⌋₊ + 1 := Nat.lt_floor_add_one _
+      _ = ⌊log A.dens⁻¹ / log (65 / 64) + 1⌋₊ := by
+        rw [Nat.floor_add_one, Nat.cast_succ]
+        exact div_nonneg (log_nonneg $ one_le_inv (by positivity) (by simp))
+          (log_nonneg (by norm_num))
+      _ < _ := by
+        gcongr
+        sorry
+    sorry
+    sorry
+    all_goals positivity
   sorry

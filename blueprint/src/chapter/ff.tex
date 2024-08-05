@@ -185,37 +185,43 @@ Expand out using definitions.
 
 
 \begin{theorem}
-\label{ff}
-Let $q$ be an odd prime power. If $A\subseteq \mathbb{F}_q^n$ with $\alpha=\abs{A}/q^n$ has no non-trivial three-term arithmetic progressions then
-\[n \ll \lo(\alpha)^9.\]
+  \label{ff}
+  \uses{}
+  \lean{ff}
+  \leanok
+
+  Let $q$ be an odd prime power. If $A\subseteq \mathbb{F}_q^n$ with $\alpha=\abs{A}/q^n$ has no non-trivial three-term arithmetic progressions then
+  \[n \ll \lo(\alpha)^9.\]
 \end{theorem}
 \begin{proof}
-\uses{no3aps_inner_prod, di_in_ff}
-Let $t\geq 0$ be maximal such that there is a sequence of subspaces $\bbf_q^n=V_0\geq \cdots \geq V_t$ and associated $A_i\subseteq V_i$ with $A_0=A$ such that
-\begin{enumerate}
-\item for $0\leq i\leq t$ there exists $x_i$ such that $A_i\subseteq A-x_i$,
-\item with $\alpha_i=\abs{A_i}/\abs{V_i}$ we have
-\[\alpha_{i+1}\geq \frac{65}{64}\alpha_i\]
-for $0\leq i<t$, and
-\item \[\mathrm{codim} (V_{i+1}) \leq \mathrm{codim}(V_i)+O(\lo(\alpha)^8)\]
-for $0\leq i<t$. (here the second summand should be replaced with whatever explicit codimension bound we get from the above).
-\end{enumerate}
+  \uses{no3aps_inner_prod, di_in_ff}
+  % \leanok
 
-Note this is well-defined since $t=0$ meets the requirements, and this process is finite and $t \ll \lo(\alpha)$, since $\alpha_i\leq 1$ for all $i$. Therefore
-\[\mathrm{codim}(V_t) \ll \lo(\alpha)^9.\]
+  Let $t\geq 0$ be maximal such that there is a sequence of subspaces $\bbf_q^n=V_0\geq \cdots \geq V_t$ and associated $A_i\subseteq V_i$ with $A_0=A$ such that
+  \begin{enumerate}
+  \item for $0\leq i\leq t$ there exists $x_i$ such that $A_i\subseteq A-x_i$,
+  \item with $\alpha_i=\abs{A_i}/\abs{V_i}$ we have
+  \[\alpha_{i+1}\geq \frac{65}{64}\alpha_i\]
+  for $0\leq i<t$, and
+  \item \[\mathrm{codim} (V_{i+1}) \leq \mathrm{codim}(V_i)+O(\lo(\alpha)^8)\]
+  for $0\leq i<t$. (here the second summand should be replaced with whatever explicit codimension bound we get from the above).
+  \end{enumerate}
 
-Suppose first that
-\[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle<1/2.\]
-In this case we now apply Proposition~\ref{di_in_ff} to $A_t\subseteq V_t$ with $\epsilon=1/2$ (note that $N=\lvert V_t\rvert$ and all inner product, $\mu$ etc, are relative to the ambient group $V_t$ now). Therefore there is a subspace $V\leq V_t$ of codimension (relative to $V_t$) of $\ll \lo(\alpha)^8$ such that there exists some $x\in V_t$ with
-\[\frac{\lvert (A_t-x)\cap V\rvert}{\lvert V\rvert}=1_{A_t}\ast \mu_V(x)=\| 1_{A_t}\ast \mu_V\|_\infty \geq (1+1/64)\alpha_t,\]
-which contradicts the maximality of $t$, letting $V_{t+1}=V$ and $A_{t+1}=(A_t-x)\cap V_t$.
+  Note this is well-defined since $t=0$ meets the requirements, and this process is finite and $t \ll \lo(\alpha)$, since $\alpha_i\leq 1$ for all $i$. Therefore
+  \[\mathrm{codim}(V_t) \ll \lo(\alpha)^9.\]
 
-Therefore
+  Suppose first that
+  \[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle<1/2.\]
+  In this case we now apply Proposition~\ref{di_in_ff} to $A_t\subseteq V_t$ with $\epsilon=1/2$ (note that $N=\lvert V_t\rvert$ and all inner product, $\mu$ etc, are relative to the ambient group $V_t$ now). Therefore there is a subspace $V\leq V_t$ of codimension (relative to $V_t$) $\ll \lo(\alpha)^8$ such that there exists some $x\in V_t$ with
+  \[\frac{\lvert (A_t-x)\cap V\rvert}{\lvert V\rvert}=1_{A_t}\ast \mu_V(x)=\| 1_{A_t}\ast \mu_V\|_\infty \geq (1+1/64)\alpha_t,\]
+  which contradicts the maximality of $t$, letting $V_{t+1}=V$ and $A_{t+1}=(A_t-x)\cap V_t$.
 
-\[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle\geq 1/2.\]
-By Lemma~\ref{no3aps_inner_prod} the left-hand side is equal to $\lvert V_t\rvert/\lvert A_t\rvert^2$, and therefore
-\[\alpha^2 \leq \alpha_t^2 \leq 2/\lvert V_t\rvert.\]
-By the codimension bound the right-hand side is at most
-\[2q^{O(\lo(\alpha)^9)-n}.\]
-If $\alpha^2 \leq 2q^{-n/2}$ we are done, otherwise we deduce that $\lo(\alpha)^9 \gg n$ as required.
+  Therefore
+
+  \[\lvert V_t\rvert\langle \mu_{A_t}\ast \mu_{A_t},\mu_{2\cdot A_t}\rangle\geq 1/2.\]
+  By Lemma~\ref{no3aps_inner_prod} the left-hand side is equal to $\lvert V_t\rvert/\lvert A_t\rvert^2$, and therefore
+  \[\alpha^2 \leq \alpha_t^2 \leq 2/\lvert V_t\rvert.\]
+  By the codimension bound the right-hand side is at most
+  \[2q^{O(\lo(\alpha)^9)-n}.\]
+  If $\alpha^2 \leq 2q^{-n/2}$ we are done, otherwise we deduce that $\lo(\alpha)^9 \gg n$ as required.
 \end{proof}

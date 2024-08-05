@@ -2,12 +2,16 @@ import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.Algebra.Basic
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
+import LeanAPAP.Mathlib.Algebra.Module.Defs
 import LeanAPAP.Mathlib.Analysis.Complex.Circle
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Circle
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
+import LeanAPAP.Mathlib.Data.Rat.Cast.Order
+import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import LeanAPAP.Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
@@ -49,3 +53,4 @@ import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 import LeanAPAP.Prereqs.LpNorm.Weighted
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Rudin
+import LeanAPAP.Prereqs.ZMod
