@@ -4,7 +4,7 @@ import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 open Fintype
 
 namespace Finset
-variable {α 𝕜 : Type*} [Fintype α] {s : Finset α}
+variable {α β 𝕜 : Type*} [Fintype α][Fintype β] {s : Finset α}
 
 @[simp] lemma dens_le_one : s.dens ≤ 1 := by
   cases isEmpty_or_nonempty α
@@ -13,5 +13,8 @@ variable {α 𝕜 : Type*} [Fintype α] {s : Finset α}
 
 lemma cast_dens [Semifield 𝕜] [CharZero 𝕜] (s : Finset α) :
     (s.dens : 𝕜) = s.card / Fintype.card α := by simp [dens]
+
+@[simp] lemma dens_map_equiv (e : α ≃ β) : (Finset.map e.toEmbedding s).dens = s.dens := by
+  simp [dens, Fintype.card_congr e]
 
 end Finset
