@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.Module.Defs
 import LeanAPAP.Mathlib.Data.ZMod.Basic
 
 variable {S G : Type*} [AddCommGroup G] {N : ℕ} [Module (ZMod N) G] [SetLike S G]
