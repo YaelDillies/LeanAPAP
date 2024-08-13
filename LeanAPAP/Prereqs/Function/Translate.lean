@@ -99,10 +99,10 @@ lemma conjneg_ne_conjneg : conjneg f ≠ conjneg g ↔ f ≠ g := conjneg_inject
   ext; simp only [map_prod, conjneg_apply, Finset.prod_apply]
 
 @[simp] lemma conjneg_eq_zero : conjneg f = 0 ↔ f = 0 := by
-  rw [←conjneg_inj, conjneg_conjneg, conjneg_zero]
+  rw [← conjneg_inj, conjneg_conjneg, conjneg_zero]
 
 @[simp]
-lemma conjneg_eq_one : conjneg f = 1 ↔ f = 1 := by rw [←conjneg_inj, conjneg_conjneg, conjneg_one]
+lemma conjneg_eq_one : conjneg f = 1 ↔ f = 1 := by rw [← conjneg_inj, conjneg_conjneg, conjneg_one]
 
 lemma conjneg_ne_zero : conjneg f ≠ 0 ↔ f ≠ 0 := conjneg_eq_zero.not
 lemma conjneg_ne_one : conjneg f ≠ 1 ↔ f ≠ 1 := conjneg_eq_one.not
@@ -138,10 +138,10 @@ section OrderedCommRing
 variable [OrderedCommRing β] [StarRing β] [StarOrderedRing β] {f : α → β}
 
 @[simp] lemma conjneg_nonpos : conjneg f ≤ 0 ↔ f ≤ 0 := by
-  simp_rw [←neg_nonneg, ←conjneg_neg, conjneg_nonneg]
+  simp_rw [← neg_nonneg, ← conjneg_neg, conjneg_nonneg]
 
 @[simp]
-lemma conjneg_neg' : conjneg f < 0 ↔ f < 0 := by simp_rw [←neg_pos, ←conjneg_neg, conjneg_pos]
+lemma conjneg_neg' : conjneg f < 0 ↔ f < 0 := by simp_rw [← neg_pos, ← conjneg_neg, conjneg_pos]
 
 end OrderedCommRing
 

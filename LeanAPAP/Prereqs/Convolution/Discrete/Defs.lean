@@ -113,7 +113,7 @@ lemma conv_right_comm (f g h : G → R) : f ∗ g ∗ h = f ∗ h ∗ g := by
   rw [conv_assoc, conv_assoc, conv_comm g]
 
 lemma conv_left_comm (f g h : G → R) : f ∗ (g ∗ h) = g ∗ (f ∗ h) := by
-  rw [←conv_assoc, ←conv_assoc, conv_comm g]
+  rw [← conv_assoc, ← conv_assoc, conv_comm g]
 
 lemma conv_conv_conv_comm (f g h i : G → R) : f ∗ g ∗ (h ∗ i) = f ∗ h ∗ (g ∗ i) := by
   rw [conv_assoc, conv_assoc, conv_left_comm g]
@@ -139,7 +139,7 @@ lemma conv_eq_sum_add' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (-t) * g
 
 lemma conv_apply_add (f g : G → R) (a b : G) : (f ∗ g) (a + b) = ∑ t, f (a + t) * g (b - t) :=
   (conv_eq_sum_sub _ _ _).trans $ Fintype.sum_equiv (Equiv.subLeft b) _ _ fun t ↦ by
-    simp [add_sub_assoc, ←sub_add]
+    simp [add_sub_assoc, ← sub_add]
 
 lemma sum_conv_mul (f g h : G → R) : ∑ a, (f ∗ g) a * h a = ∑ a, ∑ b, f a * g b * h (a + b) := by
   simp_rw [conv_eq_sum_sub', sum_mul]
@@ -203,7 +203,7 @@ lemma dconv_smul [Star H] [DistribSMul H R] [SMulCommClass H R R] [StarModule H 
   funext fun a ↦ sum_equiv ((Equiv.refl _).prodCongr $ Equiv.neg _) (by simp) (by simp)
 
 @[simp] lemma dconv_conjneg (f g : G → R) : f ○ conjneg g = f ∗ g := by
-  rw [←conv_conjneg, conjneg_conjneg]
+  rw [← conv_conjneg, conjneg_conjneg]
 
 @[simp] lemma conj_conv (f g : G → R) : conj (f ∗ g) = conj f ∗ conj g :=
   funext fun a ↦ by simp only [Pi.conj_apply, conv_apply, map_sum, map_mul]
@@ -223,18 +223,18 @@ lemma IsSelfAdjoint.dconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelf
   exact sum_equiv (Equiv.neg _) (by simp [← neg_eq_iff_eq_neg, add_comm]) (by simp)
 
 @[simp] lemma conjneg_dconv (f g : G → R) : conjneg (f ○ g) = g ○ f := by
-  simp_rw [←conv_conjneg, conjneg_conv, conjneg_conjneg, conv_comm]
+  simp_rw [← conv_conjneg, conjneg_conv, conjneg_conjneg, conv_comm]
 alias smul_dconv_assoc := smul_dconv
 alias smul_dconv_left_comm := dconv_smul
 
 lemma conv_dconv_conv_comm (f g h i : G → R) : f ∗ g ○ (h ∗ i) = f ○ h ∗ (g ○ i) := by
-  simp_rw [←conv_conjneg, conjneg_conv, conv_conv_conv_comm]
+  simp_rw [← conv_conjneg, conjneg_conv, conv_conv_conv_comm]
 
 lemma dconv_conv_dconv_comm (f g h i : G → R) : f ○ g ∗ (h ○ i) = f ∗ h ○ (g ∗ i) := by
-  simp_rw [←conv_conjneg, conjneg_conv, conv_conv_conv_comm]
+  simp_rw [← conv_conjneg, conjneg_conv, conv_conv_conv_comm]
 
 lemma dconv_dconv_dconv_comm (f g h i : G → R) : f ○ g ○ (h ○ i) = f ○ h ○ (g ○ i) := by
-  simp_rw [←conv_conjneg, conjneg_conv, conv_conv_conv_comm]
+  simp_rw [← conv_conjneg, conjneg_conv, conv_conv_conv_comm]
 
 --TODO: Can we generalise to star ring homs?
 lemma map_dconv (f g : G → ℝ≥0) (a : G) : (↑((f ○ g) a) : ℝ) = ((↑) ∘ f ○ (↑) ∘ g) a := by
@@ -245,23 +245,23 @@ lemma comp_dconv (f g : G → ℝ≥0) : ((↑) ∘ (f ○ g) : G → ℝ) = (�
   funext $ map_dconv _ _
 
 lemma dconv_eq_sum_sub (f g : G → R) (a : G) : (f ○ g) a = ∑ t, f (a - t) * conj (g (-t)) := by
-  simp [←conv_conjneg, conv_eq_sum_sub]
+  simp [← conv_conjneg, conv_eq_sum_sub]
 
 lemma dconv_eq_sum_add (f g : G → R) (a : G) : (f ○ g) a = ∑ t, f (a + t) * conj (g t) := by
-  simp [←conv_conjneg, conv_eq_sum_add]
+  simp [← conv_conjneg, conv_eq_sum_add]
 
 lemma dconv_eq_sum_sub' (f g : G → R) (a : G) : (f ○ g) a = ∑ t, f t * conj (g (t - a)) := by
-  simp [←conv_conjneg, conv_eq_sum_sub']
+  simp [← conv_conjneg, conv_eq_sum_sub']
 
 lemma dconv_eq_sum_add' (f g : G → R) (a : G) : (f ○ g) a = ∑ t, f (-t) * conj g (-(a + t)) := by
-  simp [←conv_conjneg, conv_eq_sum_add']
+  simp [← conv_conjneg, conv_eq_sum_add']
 
 lemma dconv_apply_neg (f g : G → R) (a : G) : (f ○ g) (-a) = conj ((g ○ f) a) := by
-  rw [←conjneg_dconv f, conjneg_apply, Complex.conj_conj]
+  rw [← conjneg_dconv f, conjneg_apply, Complex.conj_conj]
 
 lemma dconv_apply_sub (f g : G → R) (a b : G) :
     (f ○ g) (a - b) = ∑ t, f (a + t) * conj (g (b + t)) := by
-  simp [←conv_conjneg, sub_eq_add_neg, conv_apply_add, add_comm]
+  simp [← conv_conjneg, sub_eq_add_neg, conv_apply_add, add_comm]
 
 lemma sum_dconv_mul (f g h : G → R) :
     ∑ a, (f ○ g) a * h a = ∑ a, ∑ b, f a * conj (g b) * h (a - b) := by
@@ -280,7 +280,7 @@ lemma sum_dconv (f g : G → R) : ∑ a, (f ○ g) a = (∑ a, f a) * ∑ a, con
 
 @[simp] lemma dconv_trivChar (f : G → R) : f ○ trivChar = f := by ext a; simp [dconv_eq_sum_add]
 @[simp] lemma trivChar_dconv (f : G → R) : trivChar ○ f = conjneg f := by
-  rw [←conv_conjneg, trivChar_conv]
+  rw [← conv_conjneg, trivChar_conv]
 
 lemma support_dconv_subset (f g : G → R) : support (f ○ g) ⊆ support f - support g := by
   simpa [sub_eq_add_neg] using support_conv_subset f (conjneg g)
@@ -375,7 +375,7 @@ lemma iterConv_succ' (f : G → R) (n : ℕ) : f ∗^ (n + 1) = f ∗ f ∗^ n :
 
 lemma iterConv_add (f : G → R) (m : ℕ) : ∀ n, f ∗^ (m + n) = f ∗^ m ∗ f ∗^ n
   | 0 => by simp
-  | n + 1 => by simp [←add_assoc, iterConv_succ', iterConv_add, conv_left_comm]
+  | n + 1 => by simp [← add_assoc, iterConv_succ', iterConv_add, conv_left_comm]
 
 lemma iterConv_mul (f : G → R) (m : ℕ) : ∀ n, f ∗^ (m * n) = f ∗^ m ∗^ n
   | 0 => rfl

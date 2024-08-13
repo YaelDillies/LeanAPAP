@@ -24,7 +24,7 @@ lemma indicate_apply (x : α) : 𝟭_[β] s x = ite (x ∈ s) 1 0 := rfl
 @[simp] lemma indicate_univ [Fintype α] : (𝟭 Finset.univ : α → β) = 1 := by ext; simp [indicate]
 
 lemma indicate_inter_apply (s t : Finset α) (x : α) : 𝟭_[β] (s ∩ t) x = 𝟭 s x * 𝟭 t x := by
-  simp [indicate_apply, ←ite_and, and_comm]
+  simp [indicate_apply, ← ite_and, and_comm]
 
 lemma indicate_inter (s t : Finset α) : 𝟭_[β] (s ∩ t) = 𝟭 s * 𝟭 t :=
   funext $ indicate_inter_apply _ _
@@ -36,7 +36,7 @@ variable (β)
 
 @[simp] lemma indicate_image {α' : Type*} [DecidableEq α'] (e : α ≃ α') (s : Finset α) (a : α') :
     𝟭_[β] (s.image e) a = 𝟭 s (e.symm a) := by
-  simp only [indicate, ←e.injective.mem_finset_image, Equiv.apply_symm_apply]
+  simp only [indicate, ← e.injective.mem_finset_image, Equiv.apply_symm_apply]
 
 section Nontrivial
 variable {β} [Nontrivial β] {a : α}
@@ -327,13 +327,13 @@ open Lean Meta Qq Function
 -- unsafe def positivity_indicate : expr → tactic strictness
 --   | e@q(@indicate $(α) $(β) $(hα) $(hβ) $(s)) ↦
 --     (do
---         let p ←to_expr ``(Finset.Nonempty $(s)) >>= find_assumption
+--         let p ← to_expr ``(Finset.Nonempty $(s)) >>= find_assumption
 --         positive <$> mk_mapp `` indicate_pos_of_nonempty [α, β, none, none, none, none, p]) $>
 --       do
 --       nonnegative <$> mk_mapp `` indicate_nonneg [α, β, none, none, s]
 --   | e@q(@mu $(α) $(β) $(hβ) $(hα) $(s)) ↦
 --     (do
---         let p ←to_expr ``(Finset.Nonempty $(s)) >>= find_assumption
+--         let p ← to_expr ``(Finset.Nonempty $(s)) >>= find_assumption
 --         positive <$> mk_app `` mu_pos_of_nonempty [p]) $>
 --       nonnegative <$> mk_mapp `` mu_nonneg [α, β, none, none, s]
 --   | e ↦ pp e >>= fail ∘ format.bracket "The expression `"

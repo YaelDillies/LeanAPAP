@@ -51,7 +51,7 @@ lemma l2Inner_eq [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
   split_ifs with h
   · rw [h, AddChar.l2Inner_self]
   have : ψ₁⁻¹ * ψ₂ ≠ 1 := by rwa [Ne, inv_mul_eq_one]
-  simp_rw [l2Inner_eq_sum, ←inv_apply_eq_conj]
+  simp_rw [l2Inner_eq_sum, ← inv_apply_eq_conj]
   simpa [map_neg_eq_inv] using sum_eq_zero_iff_ne_zero.2 this
 
 lemma l2Inner_eq_zero_iff_ne [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫_[R] = 0 ↔ ψ₁ ≠ ψ₂ := by

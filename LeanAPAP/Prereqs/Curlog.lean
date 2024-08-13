@@ -30,7 +30,7 @@ lemma curlog_nonneg (hx₀ : 0 ≤ x) (hx : x ≤ 1) : 0 ≤ x.curlog := by
 lemma inv_le_exp_curlog : x⁻¹ ≤ exp (curlog x) := by
   obtain hx | hx := le_or_lt x 0
   · exact (inv_nonpos.2 hx).trans (exp_pos _).le
-  rw [curlog, exp_log, ←one_div, div_le_div_right hx]
+  rw [curlog, exp_log, ← one_div, div_le_div_right hx]
   · norm_num
   · positivity
 
@@ -53,7 +53,7 @@ lemma rpow_neg_inv_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x ^ (-(curlog
     gcongr
     · exact log_pos $ one_lt_inv hx₀ hx₁
     · exact log_inv_le_curlog
-  rw [←one_div, ←neg_div]
+  rw [← one_div, ← neg_div]
   refine (rpow_le_rpow_of_exponent_ge hx₀ hx₁.le this).trans ?_
   rw [log_inv, rpow_def_of_pos hx₀, neg_div_neg_eq, mul_one_div, div_self]
   exact log_ne_zero_of_pos_of_ne_one hx₀ hx₁.ne

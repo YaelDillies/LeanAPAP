@@ -45,7 +45,7 @@ lemma support_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ○ g) = support 
   simpa [sub_eq_add_neg] using support_conv hf (conjneg_nonneg.2 hg)
 
 lemma dconv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by
-  rw [←conv_conjneg]; exact conv_pos hf (conjneg_pos.2 hg)
+  rw [← conv_conjneg]; exact conv_pos hf (conjneg_pos.2 hg)
 
 end StrictOrderedCommSemiring
 

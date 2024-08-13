@@ -111,7 +111,7 @@ lemma expect_sum_comm (s : Finset ι) (t : Finset κ) (f : ι → κ → α) :
 
 lemma expect_comm (s : Finset ι) (t : Finset κ) (f : ι → κ → α) :
     𝔼 i ∈ s, 𝔼 j ∈ t, f i j = 𝔼 j ∈ t, 𝔼 i ∈ s, f i j := by
-  rw [expect, expect, ←expect_sum_comm, ←expect_sum_comm, expect, expect, smul_comm, sum_comm]
+  rw [expect, expect, ← expect_sum_comm, ← expect_sum_comm, expect, expect, smul_comm, sum_comm]
 
 lemma expect_eq_zero (h : ∀ i ∈ s, f i = 0) : 𝔼 i ∈ s, f i = 0 :=
   (expect_congr rfl h).trans s.expect_const_zero
@@ -274,7 +274,7 @@ section Semiring
 variable [Semiring α] [Module ℚ≥0 α] {s : Finset ι} {f g : ι → α} {m : β → α}
 
 @[simp] lemma card_mul_expect (s : Finset ι) (f : ι → α) :
-    s.card * 𝔼 i ∈ s, f i = ∑ i ∈ s, f i := by rw [←nsmul_eq_mul, card_smul_expect]
+    s.card * 𝔼 i ∈ s, f i = ∑ i ∈ s, f i := by rw [← nsmul_eq_mul, card_smul_expect]
 
 @[simp] nonrec lemma _root_.Fintype.card_mul_expect [Fintype ι] (f : ι → α) :
     Fintype.card ι * 𝔼 i, f i = ∑ i, f i := card_mul_expect _ _
@@ -311,7 +311,7 @@ variable [Semifield α] [CharZero α] {s : Finset ι} {f g : ι → α} {m : β 
 lemma expect_indicate_eq [Fintype ι] [Nonempty ι] [DecidableEq ι] (f : ι → α) (x : ι) :
     𝔼 i, ite (x = i) (Fintype.card ι : α) 0 * f i = f x := by
   simp_rw [expect_univ, ite_mul, zero_mul, sum_ite_eq, if_pos (mem_univ _)]
-  rw [←@NNRat.cast_natCast α, ←NNRat.smul_def, inv_smul_smul₀]
+  rw [← @NNRat.cast_natCast α, ← NNRat.smul_def, inv_smul_smul₀]
   simp [Fintype.card_ne_zero]
 
 lemma expect_indicate_eq' [Fintype ι] [Nonempty ι] [DecidableEq ι] (f : ι → α) (x : ι) :

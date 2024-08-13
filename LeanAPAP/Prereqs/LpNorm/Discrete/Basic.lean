@@ -110,7 +110,7 @@ variable {α β : Type*} [RCLike β] [Fintype α] [DecidableEq α] {s : Finset �
 
 lemma lpNorm_mu (hp : 1 ≤ p) (hs : s.Nonempty) : ‖μ_[β] s‖_[p] = s.card ^ ((p : ℝ)⁻¹ - 1) := by
   rw [mu, lpNorm_smul (ENNReal.one_le_coe_iff.2 hp) (s.card⁻¹ : β) (𝟭_[β] s), lpNorm_indicate,
-      norm_inv, RCLike.norm_natCast, inv_mul_eq_div, ←rpow_sub_one] <;> positivity
+      norm_inv, RCLike.norm_natCast, inv_mul_eq_div, ← rpow_sub_one] <;> positivity
 
 lemma lpNorm_mu_le (hp : 1 ≤ p) : ‖μ_[β] s‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) := by
   obtain rfl | hs := s.eq_empty_or_nonempty

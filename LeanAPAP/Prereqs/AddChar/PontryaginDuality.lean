@@ -26,7 +26,7 @@ namespace AddChar
 private def zmodAuxAux (n : ℕ) : ℤ →+ Additive Circle where
   toFun x := Additive.ofMul (e $ x / n)
   map_zero' := by dsimp; rw [Int.cast_zero, zero_div, ofMul_eq_zero, map_zero_eq_one]
-  map_add' x y := by rw [←ofMul_mul, Equiv.apply_eq_iff_eq, Int.cast_add, add_div, map_add_eq_mul]
+  map_add' x y := by rw [← ofMul_mul, Equiv.apply_eq_iff_eq, Int.cast_add, add_div, map_add_eq_mul]
 
 @[simp]
 lemma zmodAuxAux_apply (n : ℕ) (z : ℤ) : zmodAuxAux n z = Additive.ofMul (e $ z / n) := rfl
@@ -60,7 +60,7 @@ def zmod (n : ℕ) (x : ZMod n) : AddChar (ZMod n) Circle :=
 
 @[simp] lemma zmod_apply (n : ℕ) (x y : ℤ) :
     (zmod n x) (y : ZMod n) = e (x * y / n) := by
-  simp [zmod, ←Int.cast_mul x y, -Int.cast_mul]
+  simp [zmod, ← Int.cast_mul x y, -Int.cast_mul]
 
 @[simp] lemma zmod_zero (n : ℕ) : zmod n 0 = 1 := by
   refine DFunLike.ext _ _ ?_
@@ -69,7 +69,7 @@ def zmod (n : ℕ) (x : ZMod n) : AddChar (ZMod n) Circle :=
   simpa using zmod_apply n 0 y
 
 @[simp] lemma zmod_add (n : ℕ) : ∀ x y : ZMod n, zmod n (x + y) = zmod n x * zmod n y := by
-  simp only [DFunLike.ext_iff, ZMod.intCast_surjective.forall, ←Int.cast_add, AddChar.mul_apply,
+  simp only [DFunLike.ext_iff, ZMod.intCast_surjective.forall, ← Int.cast_add, AddChar.mul_apply,
     zmod_apply]
   simp [add_mul, add_div, map_add_eq_mul]
 
@@ -182,7 +182,7 @@ lemma doubleDualEmb_inj : (doubleDualEmb a : AddChar (AddChar α ℂ) ℂ) = dou
   doubleDualEmb_injective.eq_iff
 
 @[simp] lemma doubleDualEmb_eq_zero : (doubleDualEmb a : AddChar (AddChar α ℂ) ℂ) = 0 ↔ a = 0 := by
-  rw [←map_zero doubleDualEmb, doubleDualEmb_inj]
+  rw [← map_zero doubleDualEmb, doubleDualEmb_inj]
 
 lemma doubleDualEmb_ne_zero : (doubleDualEmb a : AddChar (AddChar α ℂ) ℂ) ≠ 0 ↔ a ≠ 0 :=
   doubleDualEmb_eq_zero.not

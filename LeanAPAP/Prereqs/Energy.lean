@@ -35,9 +35,9 @@ lemma boringEnergy_eq (n : ℕ) (s : Finset G) : boringEnergy n s = ∑ x, (𝟭
   classical
   simp only [boringEnergy, energy, apply_ite norm, trivChar_apply, norm_one, norm_zero, sum_boole,
     sub_eq_zero]
-  rw [←Finset.sum_fiberwise _ fun f : Fin n → G ↦ ∑ i, f i]
+  rw [← Finset.sum_fiberwise _ fun f : Fin n → G ↦ ∑ i, f i]
   congr with x
-  rw [indicate_iterConv_apply, sq, ←nsmul_eq_mul, ←sum_const]
+  rw [indicate_iterConv_apply, sq, ← nsmul_eq_mul, ← sum_const]
   refine sum_congr rfl fun f hf ↦ ?_
   simp_rw [(mem_filter.1 hf).2, eq_comm]
 
@@ -54,8 +54,8 @@ lemma nlpNorm_dft_indicate_pow (n : ℕ) (s : Finset G) :
     _ = ⟪𝟭 s ∗^ n, 𝟭 s ∗^ n⟫_[ℂ] := nl2Inner_dft _ _
     _ = _ := ?_
   · rw [nlpNorm_pow_eq_expect]
-    simp_rw [pow_mul', ←norm_pow _ n, Complex.ofReal_expect, Complex.ofReal_pow, ←Complex.conj_mul',
-      nl2Inner_eq_expect, dft_iterConv_apply]
+    simp_rw [pow_mul', ← norm_pow _ n, Complex.ofReal_expect, Complex.ofReal_pow,
+      ← Complex.conj_mul', nl2Inner_eq_expect, dft_iterConv_apply]
     positivity
   · simp only [l2Inner_eq_sum, boringEnergy_eq, Complex.ofReal_mul, Complex.ofReal_natCast,
       Complex.ofReal_sum, Complex.ofReal_pow, mul_eq_mul_left_iff, Nat.cast_eq_zero,

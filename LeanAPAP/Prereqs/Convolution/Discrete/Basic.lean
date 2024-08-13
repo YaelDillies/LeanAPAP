@@ -52,8 +52,8 @@ variable [CommSemiring R] {f g : G → R}
 
 lemma indicate_conv_indicate_apply (s t : Finset G) (a : G) :
     (𝟭_[R] s ∗ 𝟭 t) a = ((s ×ˢ t).filter fun x : G × G ↦ x.1 + x.2 = a).card := by
-  simp only [conv_apply, indicate_apply, ←ite_and, filter_comm, boole_mul, sum_boole]
-  simp_rw [←mem_product, filter_univ_mem]
+  simp only [conv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, sum_boole]
+  simp_rw [← mem_product, filter_univ_mem]
 
 lemma indicate_conv (s : Finset G) (f : G → R) : 𝟭 s ∗ f = ∑ a ∈ s, τ a f := by
   ext; simp [conv_eq_sum_sub', indicate_apply]
@@ -65,9 +65,9 @@ variable [StarRing R]
 
 lemma indicate_dconv_indicate_apply (s t : Finset G) (a : G) :
     (𝟭_[R] s ○ 𝟭 t) a = ((s ×ˢ t).filter fun x : G × G ↦ x.1 - x.2 = a).card := by
-  simp only [dconv_apply, indicate_apply, ←ite_and, filter_comm, boole_mul, sum_boole,
+  simp only [dconv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, sum_boole,
     apply_ite conj, map_one, map_zero, Pi.conj_apply]
-  simp_rw [←mem_product, filter_univ_mem]
+  simp_rw [← mem_product, filter_univ_mem]
 
 lemma indicate_dconv (s : Finset G) (f : G → R) : 𝟭 s ○ f = ∑ a ∈ s, τ a (conjneg f) := by
   ext; simp [dconv_eq_sum_sub', indicate_apply]
@@ -147,7 +147,7 @@ lemma indicate_iterConv_apply (s : Finset G) (n : ℕ) (a : G) :
   induction' n with n ih generalizing a
   · simp [apply_ite card, eq_comm]
   simp_rw [iterConv_succ', conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite,
-    filter_univ_mem, sum_const_zero, add_zero, ←Nat.cast_sum, ←Finset.card_sigma]
+    filter_univ_mem, sum_const_zero, add_zero, ← Nat.cast_sum, ← Finset.card_sigma]
   congr 1
   refine card_equiv ((Equiv.sigmaEquivProd ..).trans (Equiv.piFinSucc ..).symm) ?_
   aesop (add simp [Fin.sum_cons, Fin.forall_fin_succ])

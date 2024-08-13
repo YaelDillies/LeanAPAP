@@ -59,16 +59,16 @@ lemma wl0Norm_eq_card (w : ι → ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[0, w] = {i | f i ≠ 0}.toFinite.toFinset.card := by simp [wlpNorm, l0Norm_eq_card]
 
 @[simp]
-lemma wlpNorm_zero (w : ι → ℝ≥0) : ‖(0 : ∀ i, α i)‖_[p, w] = 0 := by simp [wlpNorm, ←Pi.zero_def]
+lemma wlpNorm_zero (w : ι → ℝ≥0) : ‖(0 : ∀ i, α i)‖_[p, w] = 0 := by simp [wlpNorm, ← Pi.zero_def]
 
 @[simp] lemma wlpNorm_norm (w : ι → ℝ≥0) (f : ∀ i, α i) : ‖fun i ↦ ‖f i‖‖_[p, w] = ‖f‖_[p, w] := by
   obtain rfl | hp := @eq_zero_or_pos _ _ p <;> simp [wl0Norm_eq_card, wlpNorm_eq_sum, *, ne_of_gt]
 
 @[simp]lemma wlpNorm_neg (w : ι → ℝ≥0) (f : ∀ i, α i) : ‖-f‖_[p, w] = ‖f‖_[p, w] := by
-  simp [←wlpNorm_norm _ (-f)]
+  simp [← wlpNorm_norm _ (-f)]
 
 lemma wlpNorm_sub_comm (w : ι → ℝ≥0) (f g : ∀ i, α i) : ‖f - g‖_[p, w] = ‖g - f‖_[p, w] := by
-  simp [←wlpNorm_neg _ (f - g)]
+  simp [← wlpNorm_neg _ (f - g)]
 
 @[simp] lemma wlpNorm_nonneg : 0 ≤ ‖f‖_[p, w] := lpNorm_nonneg
 
@@ -83,7 +83,7 @@ lemma wlpNorm_add_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : ∀ i, α i) :
   refine (lpNorm_add_le (by exact_mod_cast hp) _ _).trans'
     (lpNorm_mono (fun i ↦ by dsimp; positivity) fun i ↦ ?_)
   dsimp
-  rw [←smul_add]
+  rw [← smul_add]
   exact smul_le_smul_of_nonneg_left (norm_add_le _ _) (zero_le _)
 
 lemma wlpNorm_sub_le (hp : 1 ≤ p) (w : ι → ℝ≥0) (f g : ∀ i, α i) :
@@ -112,7 +112,7 @@ lemma wlpNorm_smul (hp : 1 ≤ p) (c : 𝕜) (f : ∀ i, α i) : ‖c • f‖_[
   have : (1 : ℝ≥0∞) ≤ p := by exact_mod_cast hp
   have := lpNorm_smul this ‖c‖ fun i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖
   rw [norm_norm] at this
-  rw [←this]
+  rw [← this]
   congr with i : 1
   simp only [Pi.smul_apply, Algebra.id.smul_eq_mul, Algebra.mul_smul_comm, norm_smul]
 
@@ -120,7 +120,7 @@ lemma wlpNorm_smul (hp : 1 ≤ p) (c : 𝕜) (f : ∀ i, α i) : ‖c • f‖_[
 lemma wlpNorm_smul_right (hp : p ≠ 0) (c : ℝ≥0) (f : ∀ i, α i) :
     ‖f‖_[p, c • w] = c ^ (p⁻¹ : ℝ) * ‖f‖_[p, w] := by
   simp only [wlpNorm_eq_sum hp, NNReal.smul_def, Pi.smul_apply, Algebra.id.smul_eq_mul,
-    NNReal.coe_mul, mul_assoc, ←mul_sum]
+    NNReal.coe_mul, mul_assoc, ← mul_sum]
   exact mul_rpow (by positivity) (sum_nonneg fun _ _ ↦ by positivity) -- positivity
 
 variable [∀ i, NormedSpace ℝ (α i)]

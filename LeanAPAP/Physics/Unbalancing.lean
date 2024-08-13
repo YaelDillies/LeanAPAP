@@ -31,10 +31,10 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
     rintro _ _ rfl
     rfl
   refine (sum_congr rfl fun _ _ ↦ sum_congr rfl $ this _).trans ?_
-  simp_rw [dconv_apply_sub, sum_fiberwise, ←univ_product_univ, sum_product]
+  simp_rw [dconv_apply_sub, sum_fiberwise, ← univ_product_univ, sum_product]
   simp only [sum_pow', sum_mul_sum, map_mul, starRingEnd_self_apply, Fintype.piFinset_univ,
-    ←Complex.conj_mul', sum_product, map_sum, map_prod,
-    mul_mul_mul_comm (g _), ←prod_mul_distrib]
+    ← Complex.conj_mul', sum_product, map_sum, map_prod,
+    mul_mul_mul_comm (g _), ← prod_mul_distrib]
   simp only [sum_mul, @sum_comm _ _ (Fin k → G), mul_comm (conj _)]
   sorry
   -- exact sum_comm
@@ -43,7 +43,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
 lemma pow_inner_nonneg {f : G → ℝ} (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
     (0 : ℝ) ≤ ⟪(↑) ∘ ν, f ^ k⟫_[ℝ] := by
   sorry
-  -- simpa [←Complex.zero_le_real, starRingEnd_apply, l2Inner_eq_sum]
+  -- simpa [← Complex.zero_le_real, starRingEnd_apply, l2Inner_eq_sum]
   --   using pow_inner_nonneg' hf hν k
 
 private lemma log_ε_pos (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < log (3 / ε) :=
@@ -85,9 +85,9 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
     rw [wlpNorm_pow_eq_sum hp₁.pos.ne']
     dsimp
     refine sum_congr rfl fun i _ ↦ ?_
-    rw [←abs_of_nonneg ((Nat.Odd.sub_odd hp₁ odd_one).pow_nonneg $ f _), abs_pow,
+    rw [← abs_of_nonneg ((Nat.Odd.sub_odd hp₁ odd_one).pow_nonneg $ f _), abs_pow,
       pow_sub_one_mul hp₁.pos.ne']
-    simp [l2Inner_eq_sum, ←sum_add_distrib, ←mul_add, ←pow_sub_one_mul hp₁.pos.ne' (f _),
+    simp [l2Inner_eq_sum, ← sum_add_distrib, ← mul_add, ← pow_sub_one_mul hp₁.pos.ne' (f _),
       mul_sum, mul_left_comm (2 : ℝ), add_abs_eq_two_nsmul_posPart]
   set P := univ.filter fun i ↦ 0 ≤ f i
   set T := univ.filter fun i ↦ 3 / 4 * ε ≤ f i
@@ -104,7 +104,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
   have : ∑ i in P \ T, ↑(ν i) * (f ^ p) i ≤ 4⁻¹ * ε ^ p := by
     calc
       _ ≤ ∑ i in P \ T, ↑(ν i) * (3 / 4 * ε) ^ p := sum_le_sum fun i hi ↦ ?_
-      _ = (3 / 4) ^ p * ε ^ p * ∑ i in P \ T, (ν i : ℝ) := by rw [←sum_mul, mul_comm, mul_pow]
+      _ = (3 / 4) ^ p * ε ^ p * ∑ i in P \ T, (ν i : ℝ) := by rw [← sum_mul, mul_comm, mul_pow]
       _ ≤ 4⁻¹ * ε ^ p * ∑ i, (ν i : ℝ) := ?_
       _ = 4⁻¹ * ε ^ p := by rw [hν₁, mul_one]
     · simp only [mem_sdiff, mem_filter, mem_univ, true_and_iff, not_le, P, T] at hi
@@ -122,12 +122,12 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
   replace hp' := zero_lt_one.trans_le hp'
   have : 4⁻¹ * ε ^ p ≤ sqrt (∑ i in T, ν i) * 3 ^ p := by
     calc
-      4⁻¹ * ε ^ p = 2⁻¹ * ε ^ p - 4⁻¹ * ε ^ p := by rw [←sub_mul]; norm_num
+      4⁻¹ * ε ^ p = 2⁻¹ * ε ^ p - 4⁻¹ * ε ^ p := by rw [← sub_mul]; norm_num
       _ ≤ _ := (sub_le_sub ‹_› ‹_›)
       _ = ∑ i in T, ν i * (f ^ p) i := by rw [sum_sdiff_eq_sub hTP, sub_sub_cancel]
       _ ≤ ∑ i in T, ν i * |(f ^ p) i| :=
         (sum_le_sum fun i _ ↦ mul_le_mul_of_nonneg_left (le_abs_self _) ?_)
-      _ = ∑ i in T, sqrt (ν i) * sqrt (ν i * |(f ^ (2 * p)) i|) := by simp [←mul_assoc, pow_mul']
+      _ = ∑ i in T, sqrt (ν i) * sqrt (ν i * |(f ^ (2 * p)) i|) := by simp [← mul_assoc, pow_mul']
       _ ≤ sqrt (∑ i in T, ν i) * sqrt (∑ i in T, ν i * |(f ^ (2 * p)) i|) :=
         (sum_sqrt_mul_sqrt_le _ (fun i ↦ ?_) fun i ↦ ?_)
       _ ≤ sqrt (∑ i in T, ν i) * sqrt (∑ i, ν i * |(f ^ (2 * p)) i|) :=
@@ -144,13 +144,13 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
   set p' := 24 / ε * log (3 / ε) * p
   have hp' : 0 < p' := p'_pos hp hε₀ hε₁
   have : 1 - 8⁻¹ * ε ≤ (∑ i in T, ↑(ν i)) ^ p'⁻¹ := by
-    rw [←div_le_iff, mul_div_assoc, ←div_pow, le_sqrt, mul_pow, ←pow_mul'] at this
+    rw [← div_le_iff, mul_div_assoc, ← div_pow, le_sqrt, mul_pow, ← pow_mul'] at this
     calc
       _ ≤ exp (-(8⁻¹ * ε)) := one_sub_le_exp_neg _
       _ = ((ε / 3) ^ p * (ε / 3) ^ (2 * p)) ^ p'⁻¹ := ?_
       _ ≤ _ := rpow_le_rpow ?_ ((mul_le_mul_of_nonneg_right ?_ ?_).trans this) ?_
-    · rw [←pow_add, ←one_add_mul _ p, ←rpow_natCast, Nat.cast_mul, ←rpow_mul, ←div_eq_mul_inv,
-        mul_div_mul_right, ←exp_log (_ : 0 < ε / 3), ←exp_mul, ←inv_div, log_inv, neg_mul,
+    · rw [← pow_add, ← one_add_mul _ p, ← rpow_natCast, Nat.cast_mul, ← rpow_mul, ← div_eq_mul_inv,
+        mul_div_mul_right, ← exp_log (_ : 0 < ε / 3), ← exp_mul, ← inv_div, log_inv, neg_mul,
         mul_div_left_comm, div_mul_cancel_right₀ (log_ε_pos hε₀ hε₁).ne']
       field_simp
       ring
@@ -170,7 +170,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
     _ = (1 - 8⁻¹ * ε) * (1 + 3 / 4 * ε) := by ring
     _ ≤ (∑ i in T, ↑(ν i)) ^ p'⁻¹ * (1 + 3 / 4 * ε) := (mul_le_mul_of_nonneg_right ‹_› ?_)
     _ = (∑ i in T, ↑(ν i) * |3 / 4 * ε + 1| ^ p') ^ p'⁻¹ := by
-      rw [←sum_mul, mul_rpow, rpow_rpow_inv, abs_of_nonneg, add_comm] <;> positivity
+      rw [← sum_mul, mul_rpow, rpow_rpow_inv, abs_of_nonneg, add_comm] <;> positivity
     _ ≤ (∑ i in T, ↑(ν i) * |f i + 1| ^ p') ^ p'⁻¹ :=
         rpow_le_rpow ?_ (sum_le_sum fun i hi ↦ mul_le_mul_of_nonneg_left (rpow_le_rpow ?_
           (abs_le_abs_of_nonneg ?_ $ add_le_add_right (mem_filter.1 hi).2 _) ?_) ?_) ?_

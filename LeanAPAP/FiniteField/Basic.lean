@@ -130,8 +130,8 @@ lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens) (hγC 
     --   mul_inv_cancel₀ (show (card G : ℝ) ≠ 0 by positivity)]
   · have hγ' : (1 : ℝ≥0) ≤ 2 * ⌈γ.curlog⌉₊ := sorry
     sorry
-    -- simpa [wlpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity), ←
-    --   div_div, *] using global_dichotomy hA hγC hγ hAC
+    -- simpa [wlpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity),
+    --   ← div_div, *] using global_dichotomy hA hγC hγ hAC
   sorry
 
 theorem ff (hq : 3 ≤ q) {A : Finset G} (hA₀ : A.Nonempty) (hA : ThreeAPFree (α := G) A) :

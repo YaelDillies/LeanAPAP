@@ -25,19 +25,19 @@ private lemma lemma_0 (p : ℕ) (B₁ B₂ A : Finset G) (f : G → ℝ) :
   congr with b₁
   congr with b₂
   refine Fintype.sum_equiv (Equiv.neg $ Fin p → G) _ _ fun s ↦ ?_
-  rw [←smul_mul_assoc, ←smul_mul_smul, card_smul_mu_apply, card_smul_mu_apply, indicate_inter_apply,
-    indicate_inter_apply, mul_mul_mul_comm, prod_mul_distrib]
-  simp [c, indicate_inf_apply, ←translate_indicate, sub_eq_add_neg, mul_assoc, add_comm]
+  rw [← smul_mul_assoc, ← smul_mul_smul, card_smul_mu_apply, card_smul_mu_apply,
+    indicate_inter_apply, indicate_inter_apply, mul_mul_mul_comm, prod_mul_distrib]
+  simp [c, indicate_inf_apply, ← translate_indicate, sub_eq_add_neg, mul_assoc, add_comm]
 
 private lemma sum_c (p : ℕ) (B A : Finset G) : ∑ s, (B ∩ c p A s).card = A.card ^ p * B.card := by
   simp only [card_eq_sum_indicate, indicate_inter_apply, c, indicate_inf_apply, mul_sum, sum_mul,
-    sum_pow', @sum_comm G, Fintype.piFinset_univ, ←translate_indicate, translate_apply]
+    sum_pow', @sum_comm G, Fintype.piFinset_univ, ← translate_indicate, translate_apply]
   congr with x
   exact Fintype.sum_equiv (Equiv.subLeft fun _ ↦ x) _ _ fun s ↦ mul_comm _ _
 
 private lemma sum_cast_c (p : ℕ) (B A : Finset G) :
     ∑ s, ((B ∩ c p A s).card : ℝ) = A.card ^ p * B.card := by
-  rw [←Nat.cast_sum, sum_c]; norm_cast
+  rw [← Nat.cast_sum, sum_c]; norm_cast
 
 /-- If `A` is nonempty, and `B₁` and `B₂` intersect, then the `μ B₁ ○ μ B₂`-weighted Lp norm of
 `𝟭 A ○ 𝟭 A` is positive. -/
@@ -47,7 +47,7 @@ private lemma lpNorm_conv_pos (hp : p ≠ 0) (hB : (B₁ ∩ B₂).Nonempty) (hA
   refine sum_pos' (fun x _ ↦ by positivity) ⟨0, mem_univ _, smul_pos ?_ $ pow_pos ?_ _⟩
   · rwa [pos_iff_ne_zero, ← Function.mem_support, support_dconv, support_mu, support_mu, ← coe_sub,
       mem_coe, zero_mem_sub_iff, not_disjoint_iff_nonempty_inter] <;> exact mu_nonneg
-  · rw [norm_pos_iff, ←Function.mem_support, support_dconv, support_indicate]
+  · rw [norm_pos_iff, ← Function.mem_support, support_dconv, support_indicate]
     exact hA.to_set.zero_mem_sub
     all_goals exact indicate_nonneg -- positivity
   · positivity
@@ -76,7 +76,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     refine Fintype.sum_pos $ this.gt_iff_ne.2 $ support_nonempty_iff.1 ?_
     simp only [support_comp_eq, Set.Nonempty, and_assoc, support_mul', support_dconv,
       indicate_nonneg, mu_nonneg, support_indicate, support_mu, NNReal.coe_eq_zero, iff_self_iff,
-      forall_const, Set.mem_inter_iff, ←coe_sub, mem_coe, support_pow' _ hp₀, hf]
+      forall_const, Set.mem_inter_iff, ← coe_sub, mem_coe, support_pow' _ hp₀, hf]
   set A₁ := fun s ↦ B₁ ∩ c p A s
   set A₂ := fun s ↦ B₂ ∩ c p A s
   set g : (Fin p → G) → ℝ := fun s ↦ (A₁ s).card * (A₂ s).card with hg_def
@@ -85,7 +85,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     have hAdconv : 0 ≤ 𝟭_[ℝ] A ○ 𝟭 A := dconv_nonneg indicate_nonneg indicate_nonneg
     simpa only [wlpNorm_pow_eq_sum hp₀, l2Inner_eq_sum, sum_dconv, sum_indicate, Pi.one_apply,
       RCLike.inner_apply, RCLike.conj_to_real, norm_of_nonneg (hAdconv _), mul_one, nsmul_eq_mul,
-      Nat.cast_mul, ←hg_def, NNReal.smul_def, NNReal.coe_dconv, NNReal.coe_comp_mu]
+      Nat.cast_mul, ← hg_def, NNReal.smul_def, NNReal.coe_dconv, NNReal.coe_comp_mu]
         using lemma_0 p B₁ B₂ A 1
   suffices ∑ s, ⟪𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s), (↑) ∘ f⟫_[ℝ] * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p
     < ∑ s, 𝟭 (univ.filter fun s ↦ M ^ 2 ≤ g s) s * g s *
@@ -108,31 +108,31 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
       positivity
     refine ⟨(lt_of_mul_lt_mul_left (hs.trans_eq' ?_) $ hg s).le, this.trans $ mul_le_of_le_one_right
       ?_ $ div_le_one_of_le ?_ ?_, this.trans $ mul_le_of_le_one_left ?_ $ div_le_one_of_le ?_ ?_⟩
-    · simp_rw [A₁, A₂, g, ←card_smul_mu, smul_dconv, dconv_smul, l2Inner_smul_left, star_trivial,
+    · simp_rw [A₁, A₂, g, ← card_smul_mu, smul_dconv, dconv_smul, l2Inner_smul_left, star_trivial,
         nsmul_eq_mul, mul_assoc]
     any_goals positivity
     all_goals exact Nat.cast_le.2 $ card_mono inter_subset_left
-  rw [←sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ←sum_mul, mul_right_comm, ←hgB, mul_left_comm,
-    ←mul_assoc]
-  simp only [indicate_apply, boole_mul, mem_filter, mem_univ, true_and_iff, ←sum_filter,
+  rw [← sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ← sum_mul, mul_right_comm, ← hgB,
+    mul_left_comm, ← mul_assoc]
+  simp only [indicate_apply, boole_mul, mem_filter, mem_univ, true_and_iff, ← sum_filter,
     mul_lt_mul_right hf, Function.comp_apply]
   by_cases h : ∀ s, g s ≠ 0 → M ^ 2 ≤ g s
-  · rw [←sum_filter_ne_zero (s := filter _ _), Finset.filter_comm,
-      filter_true_of_mem fun s hs ↦ h s (mem_filter.1 hs).2, ←sum_filter_ne_zero]
+  · rw [← sum_filter_ne_zero (s := filter _ _), Finset.filter_comm,
+      filter_true_of_mem fun s hs ↦ h s (mem_filter.1 hs).2, ← sum_filter_ne_zero]
     refine lt_mul_of_one_lt_left (sum_pos (fun s hs ↦ (h _ (mem_filter.1 hs).2).trans_lt' $
       by positivity) ?_) one_lt_two
-    rw [←sum_filter_ne_zero] at hgB
+    rw [← sum_filter_ne_zero] at hgB
     exact nonempty_of_sum_ne_zero $ hgB.trans_ne $ by positivity
   push_neg at h
   obtain ⟨s, hs⟩ := h
   suffices h : (2 : ℝ) * ∑ s with g s < M ^ 2, g s < ∑ s, g s by
     refine (le_or_lt_of_add_le_add ?_).resolve_left h.not_le
-    simp_rw [←not_le, ←compl_filter, ←two_mul, ←mul_add, sum_compl_add_sum]
+    simp_rw [← not_le, ← compl_filter, ← two_mul, ← mul_add, sum_compl_add_sum]
     rfl
-  rw [←lt_div_iff' (zero_lt_two' ℝ), div_eq_inv_mul]
+  rw [← lt_div_iff' (zero_lt_two' ℝ), div_eq_inv_mul]
   calc
     ∑ s with g s < M ^ 2, g s = ∑ s with g s < M ^ 2 ∧ g s ≠ 0, sqrt (g s) * sqrt (g s)
-          := by simp_rw [mul_self_sqrt (hg _), ←filter_filter, sum_filter_ne_zero]
+          := by simp_rw [mul_self_sqrt (hg _), ← filter_filter, sum_filter_ne_zero]
       _ < ∑ s with g s < M ^ 2 ∧ g s ≠ 0, M * sqrt (g s)
           := sum_lt_sum_of_nonempty ⟨s, mem_filter.2 ⟨mem_univ _, hs.symm⟩⟩ ?_
       _ ≤ ∑ s, M * sqrt (g s) := sum_le_univ_sum_of_nonneg fun s ↦ by positivity
@@ -146,7 +146,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     exact fun s hsM hs ↦ mul_lt_mul_of_pos_right ((sqrt_lt' hM).2 hsM) $
       sqrt_pos.2 $ (hg _).lt_of_ne' hs
   rw [sum_cast_c, sum_cast_c, sqrt_mul', sqrt_mul', mul_mul_mul_comm (sqrt _), mul_self_sqrt,
-    ←mul_assoc, hM_def, div_mul_cancel₀, ←sqrt_mul, mul_assoc, mul_self_sqrt, hgB, mul_right_comm,
+    ← mul_assoc, hM_def, div_mul_cancel₀, ← sqrt_mul, mul_assoc, mul_self_sqrt, hgB, mul_right_comm,
     mul_assoc]
   all_goals positivity
 
@@ -193,7 +193,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
     _ ≤ _ := ?_
   · simp_rw [sub_eq_iff_eq_add', sum_add_sum_compl, sum_dconv, map_mu]
     rw [sum_mu _ hA₁, sum_mu _ hA₂, one_mul]
-  rw [div_le_iff (lpNorm_conv_pos hp₀.ne' hB hA), ←le_div_iff' (zero_lt_two' ℝ)]
+  rw [div_le_iff (lpNorm_conv_pos hp₀.ne' hB hA), ← le_div_iff' (zero_lt_two' ℝ)]
   simp only [apply_ite NNReal.toReal, indicate_apply, NNReal.coe_one, NNReal.coe_zero, mul_boole,
     sum_ite_mem, univ_inter, mul_div_right_comm]
   calc
@@ -214,11 +214,11 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
         mul_le_one l1Norm_mu_le_one lpNorm_nonneg l1Norm_mu_le_one)
     _ ≤ _ := mul_le_mul_of_nonneg_right ?_ $ hp.pow_nonneg _
   · have : 0 ≤ μ_[ℝ] B₁ ○ μ B₂ := dconv_nonneg mu_nonneg mu_nonneg
-    simp_rw [←l1Norm_dconv mu_nonneg mu_nonneg, l1Norm_eq_sum, norm_of_nonneg (this _), sum_mul,
+    simp_rw [← l1Norm_dconv mu_nonneg mu_nonneg, l1Norm_eq_sum, norm_of_nonneg (this _), sum_mul,
       mul_pow]
   calc
     (1 - ε) ^ p ≤ exp (-ε) ^ p := pow_le_pow_left (sub_nonneg.2 hε₁) (one_sub_le_exp_neg _) _
-    _ = exp (-(ε * p)) := by rw [←neg_mul, exp_mul, rpow_natCast]
+    _ = exp (-(ε * p)) := by rw [← neg_mul, exp_mul, rpow_natCast]
     _ ≤ exp (-log (2 / δ)) :=
       (exp_monotone $ neg_le_neg $ (inv_mul_le_iff $ by positivity).1 hpε)
     _ = δ / 2 := by rw [exp_neg, exp_log, inv_div]; positivity
@@ -235,9 +235,9 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
   have :
     (4 : ℝ)⁻¹ * (A.dens) ^ (2 * p) ≤
       4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / A.card ^ (2 * p) := by
-    rw [mul_div_assoc, ←div_pow]
+    rw [mul_div_assoc, ← div_pow]
     refine mul_le_mul_of_nonneg_left (pow_le_pow_left (by positivity) ?_ _) (by norm_num)
-    rw [cast_dens, le_div_iff, ←mul_div_right_comm]
+    rw [cast_dens, le_div_iff, ← mul_div_right_comm]
     calc
       _ = ‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] := by
         simp [mu, wlpNorm_smul_right, hp₀, l1Norm_dconv, card_univ, inv_mul_eq_div]

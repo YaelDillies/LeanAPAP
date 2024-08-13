@@ -39,7 +39,7 @@ lemma cast_smul_eq_nnqsmul [Module α β] (q : ℚ≥0) (a : β) : (q : α) • 
   refine MulAction.injective₀ (G₀ := ℚ≥0) (Nat.cast_ne_zero.2 q.den_pos.ne') ?_
   dsimp
   rw [← mul_smul, den_mul_eq_num, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul, ← smul_assoc,
-    nsmul_eq_mul q.den, ← cast_natCast, ←cast_mul, den_mul_eq_num, cast_natCast,
+    nsmul_eq_mul q.den, ← cast_natCast, ← cast_mul, den_mul_eq_num, cast_natCast,
     Nat.cast_smul_eq_nsmul]
 
 end Semifield

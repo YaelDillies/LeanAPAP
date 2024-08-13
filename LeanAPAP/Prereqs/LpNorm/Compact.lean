@@ -63,20 +63,20 @@ lemma nlinftyNorm_eq_ciSup (f : ∀ i, α i) : ‖f‖ₙ_[∞] = ⨆ i, ‖f i�
 @[simp] lemma nlpNorm_norm (p : ℝ≥0∞) (f : ∀ i, α i) : ‖fun i ↦ ‖f i‖‖ₙ_[p] = ‖f‖ₙ_[p] := by
   simp [nlpNorm]
 
-@[simp] lemma nlpNorm_neg (f : ∀ i, α i) : ‖-f‖ₙ_[p] = ‖f‖ₙ_[p] := by simp [←nlpNorm_norm _ (-f)]
+@[simp] lemma nlpNorm_neg (f : ∀ i, α i) : ‖-f‖ₙ_[p] = ‖f‖ₙ_[p] := by simp [← nlpNorm_norm _ (-f)]
 
 lemma nlpNorm_sub_comm (f g : ∀ i, α i) : ‖f - g‖ₙ_[p] = ‖g - f‖ₙ_[p] := by
-  simp [←nlpNorm_neg (f - g)]
+  simp [← nlpNorm_neg (f - g)]
 
 @[simp] lemma nlpNorm_nonneg : 0 ≤ ‖f‖ₙ_[p] := by unfold nlpNorm; positivity
 
 @[simp] lemma nlpNorm_eq_zero [Nonempty ι] : ‖f‖ₙ_[p] = 0 ↔ f = 0 := by
   obtain p | p := p
-  · simp [nlinftyNorm_eq_ciSup, ENNReal.none_eq_top, ←sup'_univ_eq_ciSup, le_antisymm_iff,
+  · simp [nlinftyNorm_eq_ciSup, ENNReal.none_eq_top, ← sup'_univ_eq_ciSup, le_antisymm_iff,
       Function.funext_iff]
   obtain rfl | hp := eq_or_ne p 0
   · simp [nl0Norm_eq_card, eq_empty_iff_forall_not_mem, Function.funext_iff]
-  · rw [←rpow_eq_zero nlpNorm_nonneg (NNReal.coe_ne_zero.2 hp)]
+  · rw [← rpow_eq_zero nlpNorm_nonneg (NNReal.coe_ne_zero.2 hp)]
     simp [nlpNorm_rpow_eq_expect hp, Fintype.expect_eq_zero_iff_of_nonneg, rpow_nonneg,
       Function.funext_iff, rpow_eq_zero _ (NNReal.coe_ne_zero.2 hp), Pi.le_def]
 
@@ -267,7 +267,7 @@ section RCLike
 variable {κ : Type*} [RCLike 𝕜] {f : ι → 𝕜}
 
 @[simp] lemma nl2Inner_self (f : ι → 𝕜) : ⟪f, f⟫ₙ_[𝕜] = (‖f‖ₙ_[2] : 𝕜) ^ 2 := by
-  simp_rw [←algebraMap.coe_pow, nl2Norm_sq_eq_expect, nl2Inner,
+  simp_rw [← algebraMap.coe_pow, nl2Norm_sq_eq_expect, nl2Inner,
     algebraMap.coe_expect _ (α := ℝ) (β := 𝕜), RCLike.ofReal_pow, RCLike.conj_mul]
 
 lemma nl2Inner_self_of_norm_eq_one [Nonempty ι] (hf : ∀ x, ‖f x‖ = 1) : ⟪f, f⟫ₙ_[𝕜] = 1 := by
@@ -431,9 +431,9 @@ lemma nlpNorm_rpow (hp : p ≠ 0) (hq : q ≠ 0) (hf : 0 ≤ f) :
     ‖f ^ (q : ℝ)‖ₙ_[p] = ‖f‖ₙ_[p * q] ^ (q : ℝ) := by
   refine rpow_left_injOn (NNReal.coe_ne_zero.2 hp) nlpNorm_nonneg (by dsimp; positivity) ?_
   dsimp
-  rw [←rpow_mul nlpNorm_nonneg, ←mul_comm, ←ENNReal.coe_mul, ←NNReal.coe_mul,
+  rw [← rpow_mul nlpNorm_nonneg, ← mul_comm, ← ENNReal.coe_mul, ← NNReal.coe_mul,
     nlpNorm_rpow_eq_expect hp, nlpNorm_rpow_eq_expect (mul_ne_zero hq hp)]
-  simp [abs_rpow_of_nonneg (hf _), ←rpow_mul]
+  simp [abs_rpow_of_nonneg (hf _), ← rpow_mul]
 
 lemma nl1Norm_rpow (hq : q ≠ 0) (hf : 0 ≤ f) : ‖f ^ (q : ℝ)‖ₙ_[1] = ‖f‖ₙ_[q] ^ (q : ℝ) := by
   simpa only [ENNReal.coe_one, one_mul] using nlpNorm_rpow one_ne_zero hq hf
@@ -444,7 +444,7 @@ lemma nlpNorm_eq_l1Norm_rpow (hp : p ≠ 0) (f : α → ℝ) :
 
 lemma nlpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → ℝ) :
     ‖f‖ₙ_[p] ^ (q : ℝ) = ‖|f| ^ (q : ℝ)‖ₙ_[p / q] := by
-  rw [←ENNReal.coe_div hq, nlpNorm_rpow (div_ne_zero hp hq) hq (abs_nonneg f), nlpNorm_abs,
+  rw [← ENNReal.coe_div hq, nlpNorm_rpow (div_ne_zero hp hq) hq (abs_nonneg f), nlpNorm_abs,
     ← ENNReal.coe_mul, div_mul_cancel₀ _ hq]
 
 --TODO: Generalise the following four to include `f g : α → ℂ`
@@ -532,7 +532,7 @@ variable {α : Type*} [Fintype α]
 @[simp]
 lemma RCLike.nlpNorm_coe_comp {𝕜 : Type*} [RCLike 𝕜] (p) (f : α → ℝ) :
     ‖((↑) : ℝ → 𝕜) ∘ f‖ₙ_[p] = ‖f‖ₙ_[p] := by
-  simp only [←nlpNorm_norm _ (((↑) : ℝ → 𝕜) ∘ f), ←nlpNorm_norm _ f, Function.comp_apply,
+  simp only [← nlpNorm_norm _ (((↑) : ℝ → 𝕜) ∘ f), ← nlpNorm_norm _ f, Function.comp_apply,
     RCLike.norm_ofReal, Real.norm_eq_abs]
 
 @[simp] lemma Complex.nlpNorm_coe_comp (p) (f : α → ℝ) : ‖((↑) : ℝ → ℂ) ∘ f‖ₙ_[p] = ‖f‖ₙ_[p] :=

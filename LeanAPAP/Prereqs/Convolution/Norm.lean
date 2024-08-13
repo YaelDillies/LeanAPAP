@@ -66,7 +66,7 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
     simp_rw [norm_mul]
     exact sum_congr rfl fun x _ ↦ Fintype.sum_equiv (Equiv.subRight x) _ _ fun _ ↦ rfl
   have hp₀ := zero_lt_one.trans hp
-  rw [←rpow_le_rpow_iff _ (mul_nonneg _ _) hp₀, mul_rpow]
+  rw [← rpow_le_rpow_iff _ (mul_nonneg _ _) hp₀, mul_rpow]
   any_goals exact lpNorm_nonneg
   dsimp
   simp_rw [lpNorm_rpow_eq_sum hp₀.ne', conv_eq_sum_sub']
@@ -74,7 +74,8 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
     ⟨hp, by simp_rw [inv_inv, add_sub_cancel]⟩
   have (x) : ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
       (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ) := by
-    rw [←le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ←rpow_mul, sub_one_mul, mul_inv_cancel₀]
+    rw [← le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ← rpow_mul, sub_one_mul,
+      mul_inv_cancel₀]
     any_goals positivity
     calc
       _ ≤ ∑ y, ‖f y * g (x - y)‖ := norm_sum_le _ _
@@ -82,7 +83,7 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
       _ ≤ _ := inner_le_Lp_mul_Lq _ _ _ hpconj
       _ = _ := ?_
     · congr with t
-      rw [norm_mul, mul_assoc, ←rpow_add' (norm_nonneg _), add_sub_cancel, rpow_one]
+      rw [norm_mul, mul_assoc, ← rpow_add' (norm_nonneg _), add_sub_cancel, rpow_one]
       simp
     · have : 1 - (p : ℝ)⁻¹ ≠ 0 := sub_ne_zero.2 (inv_ne_one.2 $ NNReal.coe_ne_one.2 hp.ne').symm
       simp only [abs_mul, abs_rpow_of_nonneg, mul_rpow, rpow_nonneg, hp₀.ne', this,
@@ -100,9 +101,9 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
     simp_rw [l1Norm_eq_sum]
     exact fun x ↦ Fintype.sum_equiv (Equiv.subRight _) _ _ fun _ ↦ rfl
   simp_rw [hg]
-  rw [←sum_mul, sum_comm]
-  simp_rw [←mul_sum, hg']
-  rw [←sum_mul, mul_assoc, ←rpow_one_add' lpNorm_nonneg, add_sub_cancel]
+  rw [← sum_mul, sum_comm]
+  simp_rw [← mul_sum, hg']
+  rw [← sum_mul, mul_assoc, ← rpow_one_add' lpNorm_nonneg, add_sub_cancel]
   · rw [add_sub_cancel]
     positivity
 
@@ -118,7 +119,7 @@ variable {f g : α → ℝ} {n : ℕ}
 --TODO: Include `f : α → ℂ`
 lemma l1Norm_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ∗ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] := by
   have : ∀ x, 0 ≤ ∑ y, f y * g (x - y) := fun x ↦ sum_nonneg fun y _ ↦ mul_nonneg (hf _) (hg _)
-  simp only [l1Norm_eq_sum, ←sum_conv, conv_eq_sum_sub', norm_of_nonneg (this _),
+  simp only [l1Norm_eq_sum, ← sum_conv, conv_eq_sum_sub', norm_of_nonneg (this _),
     norm_of_nonneg (hf _), norm_of_nonneg (hg _)]
 
 lemma l1Norm_dconv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ○ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] := by

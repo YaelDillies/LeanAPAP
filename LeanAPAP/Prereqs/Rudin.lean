@@ -93,7 +93,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
     specialize H hp ((sqrt p / ‖f‖ₙ_[2]) • f) ?_
     · rwa [cft_smul, support_const_smul_of_ne_zero]
       positivity
-    simp_rw [Function.comp_def, Pi.smul_apply, Complex.smul_re, ←Pi.smul_def] at H
+    simp_rw [Function.comp_def, Pi.smul_apply, Complex.smul_re, ← Pi.smul_def] at H
     rw [nlpNorm_smul, nlpNorm_smul, norm_div, norm_of_nonneg, norm_of_nonneg, mul_left_comm,
       mul_le_mul_left] at H
     refine H ?_
@@ -127,8 +127,8 @@ lemma rudin_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support 
     _ ≤ ‖fun a ↦ ((f a).re : ℂ)‖ₙ_[p] + ‖I • (fun a ↦ ((f a).im : ℂ))‖ₙ_[p]
       := nlpNorm_add_le hp₁ _ _
     _ = ‖re ∘ f‖ₙ_[p] + ‖re ∘ ((-I) • f)‖ₙ_[p] := by
-        rw [nlpNorm_smul hp₁, Complex.norm_I, one_mul, ←Complex.nlpNorm_coe_comp,
-          ←Complex.nlpNorm_coe_comp]
+        rw [nlpNorm_smul hp₁, Complex.norm_I, one_mul, ← Complex.nlpNorm_coe_comp,
+          ← Complex.nlpNorm_coe_comp]
         congr
         ext a : 1
         simp

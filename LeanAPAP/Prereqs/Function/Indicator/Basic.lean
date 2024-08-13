@@ -19,7 +19,7 @@ variable [Semiring β] [Semiring γ] {s : Finset α}
 variable (β)
 
 lemma translate_indicate [AddCommGroup α] (a : α) (s : Finset α) : τ a (𝟭_[β] s) = 𝟭 (a +ᵥ s) := by
-  ext; simp [indicate_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
+  ext; simp [indicate_apply, ← neg_vadd_mem_iff, sub_eq_neg_add]
 
 end Semiring
 
@@ -47,7 +47,7 @@ variable [DivisionSemiring β] [DivisionSemiring γ] {s : Finset α}
 variable (β)
 
 lemma translate_mu [AddCommGroup α] (a : α) (s : Finset α) : τ a (μ_[β] s) = μ (a +ᵥ s) := by
-  ext; simp [mu_apply, ←neg_vadd_mem_iff, sub_eq_neg_add]
+  ext; simp [mu_apply, ← neg_vadd_mem_iff, sub_eq_neg_add]
 
 end DivisionSemiring
 

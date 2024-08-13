@@ -209,7 +209,8 @@ theorem marcinkiewicz_zygmund' (m : ℕ) (f : ι → ℝ) (hf : ∀ i, ∑ a in 
 /-- The **Marcinkiewicz-Zygmund inequality** for real-valued functions, with a slightly easier to
 bound constant than `Real.marcinkiewicz_zygmund'`.
 
-Note that `RCLike.marcinkiewicz_zygmund` is another  -/
+Note that `RCLike.marcinkiewicz_zygmund` is another version that works for both `ℝ` and `ℂ` at the
+expense of a slightly worse constant. -/
 theorem marcinkiewicz_zygmund (hm : m ≠ 0) (f : ι → ℝ) (hf : ∀ i, ∑ a in A ^^ n, f (a i) = 0) :
     ∑ a in A ^^ n, (∑ i, f (a i)) ^ (2 * m) ≤
       (4 * m) ^ m * n ^ (m - 1) * ∑ a in A ^^ n, ∑ i, f (a i) ^ (2 * m) := by
