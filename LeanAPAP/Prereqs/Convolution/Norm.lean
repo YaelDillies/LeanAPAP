@@ -74,7 +74,7 @@ lemma lpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g
     ⟨hp, by simp_rw [inv_inv, add_sub_cancel]⟩
   have (x) : ‖∑ y, f y * g (x - y)‖ ^ (p : ℝ) ≤
       (∑ y, ‖f y‖ ^ (p : ℝ) * ‖g (x - y)‖) * (∑ y, ‖g (x - y)‖) ^ (p - 1 : ℝ) := by
-    rw [←le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ←rpow_mul, sub_one_mul, mul_inv_cancel]
+    rw [←le_rpow_inv_iff_of_pos (norm_nonneg _), mul_rpow, ←rpow_mul, sub_one_mul, mul_inv_cancel₀]
     any_goals positivity
     calc
       _ ≤ ∑ y, ‖f y * g (x - y)‖ := norm_sum_le _ _

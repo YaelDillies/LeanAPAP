@@ -8,12 +8,12 @@ open scoped ComplexConjugate Real
 namespace Circle
 variable {r s : ℝ}
 
-noncomputable def e : AddChar ℝ circle where
-  toFun r := expMapCircle (2 * π * r)
+noncomputable def e : AddChar ℝ Circle where
+  toFun r := exp (2 * π * r)
   map_zero_eq_one' := by simp
   map_add_eq_mul' := by simp [mul_add, Complex.exp_add]
 
-lemma e_apply (r : ℝ) : e r = expMapCircle (2 * π * r) := rfl
+lemma e_apply (r : ℝ) : e r = exp (2 * π * r) := rfl
 
 @[simp, norm_cast] lemma coe_e (r : ℝ) : ↑(e r) = Complex.exp ((2 * π * r : ℝ) * Complex.I) := rfl
 

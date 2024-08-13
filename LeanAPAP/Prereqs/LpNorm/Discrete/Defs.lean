@@ -276,7 +276,7 @@ lemma l2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫_[𝕜] :=
 end OrderedCommSemiring
 
 section LinearOrderedCommRing
-variable [LinearOrderedCommRing 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] [TrivialStar 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedCommRing 𝕜] [StarRing 𝕜] [TrivialStar 𝕜] {f g : ι → 𝕜}
 
 --TODO: Can we remove the `TrivialStar` assumption?
 lemma abs_l2Inner_le_l2Inner_abs : |⟪f, g⟫_[𝕜]| ≤ ⟪|f|, |g|⟫_[𝕜] :=
@@ -310,7 +310,7 @@ lemma linearIndependent_of_ne_zero_of_l2Inner_eq_zero {v : κ → ι → 𝕜} (
 end RCLike
 
 section lpNorm
-variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0∞}
+variable {α β : Type*} [Fintype α] {p : ℝ≥0∞}
 
 @[simp] lemma lpNorm_conj [RCLike β] (f : α → β) : ‖conj f‖_[p] = ‖f‖_[p] := by
   obtain p | p := p; swap; obtain rfl | hp := eq_or_ne p 0
@@ -514,7 +514,7 @@ lemma lpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ +
     ENNReal.coe_div]
   refine l2Inner_le_lpNorm_mul_lpNorm ⟨?_, ?_⟩ _ _
   · norm_cast
-    rw [div_eq_mul_inv, ←hpqr, mul_add, mul_inv_cancel hp]
+    rw [div_eq_mul_inv, ←hpqr, mul_add, mul_inv_cancel₀ hp]
     exact lt_add_of_pos_right _ (by positivity)
   · norm_cast
     simp [div_eq_mul_inv, hpqr, ←mul_add, hr]
@@ -528,7 +528,8 @@ lemma l1Norm_mul_le (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
     (by simpa using hpq.inv_add_inv_conj) _ _
 
 /-- **Hölder's inequality**, finitary case. -/
-lemma lpNorm_prod_le {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp : ∀ i, p i ≠ 0) (q : ℝ≥0)
+lemma lpNorm_prod_le {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0}
+    (hp : ∀ i, p i ≠ 0) (q : ℝ≥0)
     (hpq : ∑ i in s, (p i)⁻¹ = q⁻¹) (f : ι → α → 𝕜) :
     ‖∏ i in s, f i‖_[q] ≤ ∏ i in s, ‖f i‖_[p i] := by
   induction' s using Finset.cons_induction with i s hi ih generalizing q

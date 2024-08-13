@@ -56,7 +56,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
   replace this := pow_le_pow_left (by positivity) this m
   simp_rw [mul_pow] at this
   rw [rpow_inv_natCast_pow _ hm, ←rpow_mul_natCast, one_sub_mul,
-    inv_mul_cancel, ←Nat.cast_pred, rpow_natCast, mul_assoc, mul_left_comm, ←pow_sub_one_mul,
+    inv_mul_cancel₀, ←Nat.cast_pred, rpow_natCast, mul_assoc, mul_left_comm, ←pow_sub_one_mul,
     mul_assoc, mul_le_mul_left] at this
   any_goals positivity
   replace hfν : ∀ x, ‖f x‖ ≤ ‖f x‖ * sqrt (ν x) := by

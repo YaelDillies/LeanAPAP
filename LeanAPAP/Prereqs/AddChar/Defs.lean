@@ -14,13 +14,15 @@ section AddGroup
 variable [AddGroup G]
 
 section NormedField
-variable [Finite G] [NormedField R]
-
-@[simp] lemma norm_apply (ψ : AddChar G R) (x : G) : ‖ψ x‖ = 1 :=
-  (ψ.toMonoidHom.isOfFinOrder $ isOfFinOrder_of_finite _).norm_eq_one
+variable [NormedField R]
 
 @[simp] lemma coe_ne_zero (ψ : AddChar G R) : (ψ : G → R) ≠ 0 :=
   ne_iff.2 ⟨0, fun h ↦ by simpa only [h, Pi.zero_apply, zero_ne_one] using map_zero_eq_one ψ⟩
+
+variable [Finite G]
+
+@[simp] lemma norm_apply (ψ : AddChar G R) (x : G) : ‖ψ x‖ = 1 :=
+  (ψ.toMonoidHom.isOfFinOrder $ isOfFinOrder_of_finite _).norm_eq_one
 
 end NormedField
 

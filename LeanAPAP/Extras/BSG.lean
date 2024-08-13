@@ -2,25 +2,108 @@ import Mathlib.Combinatorics.Additive.Energy
 import Mathlib.Data.Real.StarOrdered
 import LeanAPAP.Prereqs.Convolution.Order
 
-variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
-variable {β : Type*} [CommSemiring β] [StarRing β]
-variable {A B : Finset G} {x : G}
-
 open BigOperators Finset
 open scoped ComplexConjugate Pointwise Combinatorics.Additive
 
-lemma thing_one : (𝟭_[β] B ○ 𝟭 A) x = ∑ y, 𝟭 A y * 𝟭 B (x + y) := by
+section
+variable {α : Type*} [DecidableEq α] {H : Finset (α × α)} {A B X : Finset α} {x : α}
+
+private noncomputable def oneOfPair (H : Finset (α × α)) (X : Finset α) : Finset α :=
+  X.filter fun x ↦ (3 / 4 : ℝ) * X.card ≤ (H.filter fun yz ↦ yz.1 = x).card
+
+private lemma oneOfPair_mem :
+    x ∈ oneOfPair H X ↔ x ∈ X ∧ (3 / 4 : ℝ) * X.card ≤ (H.filter fun yz ↦ yz.1 = x).card :=
+  mem_filter
+
+private lemma oneOfPair_mem' (hH : H ⊆ X ×ˢ X) :
+    (H.filter fun yz ↦ yz.1 = x).card = (X.filter fun c ↦ (x, c) ∈ H).card := by
+  refine card_nbij' Prod.snd (fun c ↦ (x, c)) ?_ (by simp) (by aesop) (by simp)
+  simp (config := { contextual := true }) only [eq_comm, Prod.forall, mem_filter, and_imp, and_true]
+  exact fun a b hab _ ↦ (mem_product.1 (hH hab)).2
+
+private lemma oneOfPair_bound_one :
+    ∑ x in X \ oneOfPair H X, ((H.filter (fun xy ↦ xy.1 = x)).card : ℝ) ≤ (3 / 4) * X.card ^ 2 :=
+  calc _ ≤ ∑ _x in X \ oneOfPair H X, (3 / 4 : ℝ) * X.card := sum_le_sum fun i hi ↦ by
+          simp only [oneOfPair, ←filter_not, Prod.forall, not_le, not_lt, mem_filter] at hi
+          exact hi.2.le
+       _ = (X \ oneOfPair H X).card * ((3 / 4 : ℝ) * X.card) := by simp
+       _ ≤ X.card * ((3 / 4 : ℝ) * X.card) := by gcongr; exact sdiff_subset
+       _ = _ := by ring
+
+private lemma oneOfPair_bound_two (hH : H ⊆ X ×ˢ X) (Hcard : (7 / 8 : ℝ) * X.card ^ 2 ≤ H.card) :
+    (1 / 8 : ℝ) * X.card ^ 2 ≤ X.card * (oneOfPair H X).card :=
+  calc _ = (7 / 8 : ℝ) * X.card ^ 2 - 3 / 4 * X.card ^ 2 := by ring
+       _ ≤ H.card - (3 / 4 : ℝ) * X.card ^ 2 := by linarith
+       _ ≤ H.card - ∑ x in X \ oneOfPair H X, ↑(H.filter (fun xy ↦ xy.1 = x)).card :=
+          sub_le_sub_left oneOfPair_bound_one _
+       _ = (H.card - ∑ x in X, ↑(H.filter (fun xy ↦ xy.1 = x)).card) +
+              ∑ x in oneOfPair H X, ↑(H.filter (fun xy ↦ xy.1 = x)).card := by
+          rw [sum_sdiff_eq_sub, sub_add]
+          exact filter_subset _ _
+       _ = ∑ x in oneOfPair H X, ↑(H.filter (fun xy ↦ xy.1 = x)).card := by
+          rw [add_left_eq_self, sub_eq_zero, ←Nat.cast_sum, Nat.cast_inj,
+            ←card_eq_sum_card_fiberwise]
+          intro x hx
+          exact (mem_product.1 (hH hx)).1
+       _ ≤ ∑ _x in oneOfPair H X, ↑X.card := sum_le_sum <| fun i hi ↦ Nat.cast_le.2 <| by
+          rw [oneOfPair_mem' hH]
+          exact card_le_card (filter_subset _ _)
+       _ = X.card * (oneOfPair H X).card := by simp [mul_comm]
+
+private lemma oneOfPair_bound {K : ℝ} (hH : H ⊆ X ×ˢ X) (hX : (0 : ℝ) < X.card)
+    (Hcard : (7 / 8 : ℝ) * X.card ^ 2 ≤ H.card) (h : A.card / (2 * K) ≤ X.card) :
+    A.card / (2 ^ 4 * K) ≤ (oneOfPair H X).card := -- by
+  calc _ = (A.card / (2 * K)) / 8 := by ring
+       _ ≤ (X.card / 8 : ℝ) := by gcongr
+       _ ≤ (oneOfPair H X).card :=
+            le_of_mul_le_mul_left ((oneOfPair_bound_two hH Hcard).trans_eq' (by ring)) hX
+
+lemma quadruple_bound_c {a b : α} {H : Finset (α × α)} (ha : a ∈ oneOfPair H X)
+    (hb : b ∈ oneOfPair H X) (hH : H ⊆ X ×ˢ X) :
+    (X.card : ℝ) / 2 ≤ (X.filter fun c ↦ (a, c) ∈ H ∧ (b, c) ∈ H).card := by
+  rw [oneOfPair_mem, oneOfPair_mem' hH] at ha hb
+  rw [filter_and, cast_card_inter, ←filter_or]
+  have : ((X.filter fun c ↦ (a, c) ∈ H ∨ (b, c) ∈ H).card : ℝ) ≤ X.card := by
+    rw [Nat.cast_le]
+    exact card_le_card (filter_subset _ _)
+  linarith [ha.2, hb.2, this]
+
+variable [AddCommGroup α]
+
+lemma quadruple_bound_right {a b : α} (H : Finset (α × α)) (X : Finset α) (h : x = a - b) :
+    (((X.filter fun c ↦ (a, c) ∈ H ∧ (b, c) ∈ H).sigma fun c ↦
+      ((B ×ˢ B) ×ˢ B ×ˢ B).filter fun ⟨⟨a₁, a₂⟩, a₃, a₄⟩ ↦
+        a₁ - a₂ = a - c ∧ a₃ - a₄ = b - c).card : ℝ) ≤
+      (((B ×ˢ B) ×ˢ B ×ˢ B).filter fun ⟨⟨a₁, a₂⟩, a₃, a₄⟩ ↦
+        (a₁ - a₂) - (a₃ - a₄) = a - b).card := by
+  rw [←h, Nat.cast_le]
+  refine card_le_card_of_injOn Sigma.snd ?_ ?_
+  · simp only [not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter, Sigma.forall]
+    intro c a₁ a₂ a₃ a₄ _ _ _ ha₁ ha₂ ha₃ ha₄ h₁ h₂
+    simp [*]
+  simp only [Set.InjOn, not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter,
+    Sigma.forall, Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq]
+  simp (config := {contextual := true})
+  aesop
+
+end
+
+variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+variable {R : Type*} [CommSemiring R] [StarRing R]
+variable {A B : Finset G} {x : G}
+
+lemma thing_one : (𝟭_[R] B ○ 𝟭 A) x = ∑ y, 𝟭 A y * 𝟭 B (x + y) := by
   simp only [dconv_eq_sum_add, conj_indicate_apply, mul_comm]
 
-lemma thing_one_right : (𝟭_[β] A ○ 𝟭 B) x = (A ∩ (x +ᵥ B)).card := by
+lemma thing_one_right : (𝟭_[R] A ○ 𝟭 B) x = (A ∩ (x +ᵥ B)).card := by
   rw [indicate_dconv_indicate_apply]
   congr 1
   apply card_nbij' Prod.fst (fun a ↦ (a, a - x)) <;> aesop (add simp [mem_vadd_finset])
 
-lemma thing_two : ∑ s, (𝟭_[β] A ○ 𝟭 B) s = A.card * B.card := by
+lemma thing_two : ∑ s, (𝟭_[R] A ○ 𝟭 B) s = A.card * B.card := by
   simp only [sum_dconv, conj_indicate_apply, sum_indicate]
 
-lemma thing_three : ∑ s, ((𝟭 A ○ 𝟭 B) s ^ 2 : β) = E[A, B] := by
+lemma thing_three : ∑ s, ((𝟭 A ○ 𝟭 B) s ^ 2 : R) = E[A, B] := by
   simp only [indicate_dconv_indicate_apply, card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_mul,
     sum_filter, Nat.cast_ite, Nat.cast_zero, sum_product, sq, addEnergy, mul_sum]
   simp only [mul_boole, sum_comm (s := univ), sum_ite_eq, mem_univ, ite_true]
@@ -29,7 +112,7 @@ lemma thing_three : ∑ s, ((𝟭 A ○ 𝟭 B) s ^ 2 : β) = E[A, B] := by
 
 section lemma1
 
-lemma claim_one : ∑ s, (𝟭_[β] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card = E[A, B] := by
+lemma claim_one : ∑ s, (𝟭_[R] A ○ 𝟭 B) s * (A ∩ (s +ᵥ B)).card = E[A, B] := by
   simp only [←thing_three, ←thing_one_right, sq]
 
 lemma claim_two :
@@ -38,7 +121,7 @@ lemma claim_two :
   have hf : ∀ s, f s ^ 2 = (𝟭_[ℝ] A ○ 𝟭 B) s := by
     intro s
     rw [Real.sq_sqrt]
-    exact dconv_nonneg (β := ℝ) indicate_nonneg indicate_nonneg s -- why do I need the annotation??
+    exact dconv_nonneg (R := ℝ) indicate_nonneg indicate_nonneg s -- why do I need the annotation??
   have := sum_mul_sq_le_sq_mul_sq univ f (fun s ↦ f s * (A ∩ (s +ᵥ B)).card)
   refine div_le_of_nonneg_of_le_mul (by positivity) ?_ ?_
   · refine sum_nonneg fun i _ ↦ ?_
@@ -236,90 +319,12 @@ lemma many_pairs {K : ℝ} {x : G}
        _ ≤ ((B ×ˢ B).filter (fun ⟨c, d⟩ ↦ c - d = x)).card := by
           rw [indicate_dconv_indicate_apply _ _ _]
 
--- A'
-noncomputable def oneOfPair (H : Finset (G × G)) (X : Finset G) : Finset G :=
-  X.filter fun x ↦ (3 / 4 : ℝ) * X.card ≤ (H.filter fun yz ↦ yz.1 = x).card
-
 variable {H : Finset (G × G)} {X : Finset G}
-
-lemma oneOfPair_mem :
-    x ∈ oneOfPair H X ↔ x ∈ X ∧ (3 / 4 : ℝ) * X.card ≤ (H.filter fun yz ↦ yz.1 = x).card :=
-  mem_filter
-
-lemma oneOfPair_mem' (hH : H ⊆ X ×ˢ X) :
-    (H.filter fun yz ↦ yz.1 = x).card = (X.filter fun c ↦ (x, c) ∈ H).card := by
-  refine card_nbij' Prod.snd (fun c ↦ (x, c)) ?_ (by simp) (by aesop) (by simp)
-  simp (config := { contextual := true }) only [eq_comm, Prod.forall, mem_filter, and_imp, and_true]
-  exact fun a b hab _ ↦ (mem_product.1 (hH hab)).2
-
-lemma oneOfPair_bound_one :
-    ∑ x in X \ oneOfPair H X, ((H.filter (fun xy ↦ xy.1 = x)).card : ℝ) ≤
-      (3 / 4 : ℝ) * X.card ^ 2 :=
-  calc _ ≤ ∑ _x in X \ oneOfPair H X, (3 / 4 : ℝ) * X.card := sum_le_sum fun i hi ↦ by
-          simp only [oneOfPair, ←filter_not, Prod.forall, not_le, not_lt, mem_filter] at hi
-          exact hi.2.le
-       _ = (X \ oneOfPair H X).card * ((3 / 4 : ℝ) * X.card) := by simp
-       _ ≤ X.card * ((3 / 4 : ℝ) * X.card) := by gcongr; exact sdiff_subset
-       _ = _ := by ring
-
-lemma oneOfPair_bound_two (hH : H ⊆ X ×ˢ X) (Hcard : (7 / 8 : ℝ) * X.card ^ 2 ≤ H.card) :
-    (1 / 8 : ℝ) * X.card ^ 2 ≤ X.card * (oneOfPair H X).card :=
-  calc _ = (7 / 8 : ℝ) * X.card ^ 2 - 3 / 4 * X.card ^ 2 := by ring
-       _ ≤ H.card - (3 / 4 : ℝ) * X.card ^ 2 := by linarith
-       _ ≤ H.card - ∑ x in X \ oneOfPair H X, ↑(H.filter (fun xy ↦ xy.1 = x)).card :=
-          sub_le_sub_left oneOfPair_bound_one _
-       _ = (H.card - ∑ x in X, ↑(H.filter (fun xy ↦ xy.1 = x)).card) +
-              ∑ x in oneOfPair H X, ↑(H.filter (fun xy ↦ xy.1 = x)).card := by
-          rw [sum_sdiff_eq_sub, sub_add]
-          exact filter_subset _ _
-       _ = ∑ x in oneOfPair H X, ↑(H.filter (fun xy ↦ xy.1 = x)).card := by
-          rw [add_left_eq_self, sub_eq_zero, ←Nat.cast_sum, Nat.cast_inj,
-            ←card_eq_sum_card_fiberwise]
-          intro x hx
-          exact (mem_product.1 (hH hx)).1
-       _ ≤ ∑ _x in oneOfPair H X, ↑X.card := sum_le_sum <| fun i hi ↦ Nat.cast_le.2 <| by
-          rw [oneOfPair_mem' hH]
-          exact card_le_card (filter_subset _ _)
-       _ = X.card * (oneOfPair H X).card := by simp [mul_comm]
-
-lemma oneOfPair_bound {K : ℝ} (hH : H ⊆ X ×ˢ X) (hX : (0 : ℝ) < X.card)
-    (Hcard : (7 / 8 : ℝ) * X.card ^ 2 ≤ H.card) (h : A.card / (2 * K) ≤ X.card) :
-    A.card / (2 ^ 4 * K) ≤ (oneOfPair H X).card := -- by
-  calc _ = (A.card / (2 * K)) / 8 := by ring
-       _ ≤ (X.card / 8 : ℝ) := by gcongr
-       _ ≤ (oneOfPair H X).card :=
-            le_of_mul_le_mul_left ((oneOfPair_bound_two hH Hcard).trans_eq' (by ring)) hX
 
 lemma quadruple_bound_part {K : ℝ} (a c : G)
     (hac : (1 / 8 : ℝ) / 2 * (K ^ 2)⁻¹ * A.card ≤ (𝟭 B ○ 𝟭 B) (a - c)) :
     A.card / (2 ^ 4 * K ^ 2) ≤ ((B ×ˢ B).filter fun ⟨a₁, a₂⟩ ↦ a₁ - a₂ = a - c).card :=
   many_pairs hac
-
-lemma quadruple_bound_right {a b : G} (H : Finset (G × G)) (X : Finset G) (h : x = a - b) :
-    (((X.filter fun c ↦ (a, c) ∈ H ∧ (b, c) ∈ H).sigma fun c ↦
-      ((B ×ˢ B) ×ˢ B ×ˢ B).filter fun ⟨⟨a₁, a₂⟩, a₃, a₄⟩ ↦
-        a₁ - a₂ = a - c ∧ a₃ - a₄ = b - c).card : ℝ) ≤
-      (((B ×ˢ B) ×ˢ B ×ˢ B).filter fun ⟨⟨a₁, a₂⟩, a₃, a₄⟩ ↦
-        (a₁ - a₂) - (a₃ - a₄) = a - b).card := by
-  rw [←h, Nat.cast_le]
-  refine card_le_card_of_injOn Sigma.snd ?_ ?_
-  · simp only [not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter, Sigma.forall]
-    intro c a₁ a₂ a₃ a₄ _ _ _ ha₁ ha₂ ha₃ ha₄ h₁ h₂
-    simp [*]
-  simp only [Set.InjOn, not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter,
-    Sigma.forall, Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq]
-  simp (config := {contextual := true})
-  aesop
-
-lemma quadruple_bound_c {a b : G} {H : Finset (G × G)} (ha : a ∈ oneOfPair H X)
-    (hb : b ∈ oneOfPair H X) (hH : H ⊆ X ×ˢ X) :
-    (X.card : ℝ) / 2 ≤ (X.filter fun c ↦ (a, c) ∈ H ∧ (b, c) ∈ H).card := by
-  rw [oneOfPair_mem, oneOfPair_mem' hH] at ha hb
-  rw [filter_and, cast_card_inter, ←filter_or]
-  have : ((X.filter fun c ↦ (a, c) ∈ H ∨ (b, c) ∈ H).card : ℝ) ≤ X.card := by
-    rw [Nat.cast_le]
-    exact card_le_card (filter_subset _ _)
-  linarith [ha.2, hb.2, this]
 
 lemma quadruple_bound_other {a b c : G} {K : ℝ} {H : Finset (G × G)}
     (hac : (a, c) ∈ H) (hbc : (b, c) ∈ H)

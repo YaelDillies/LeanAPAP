@@ -22,7 +22,7 @@ structure BohrSet (G : Type*) [AddCommGroup G] where
   width : frequencies → ℝ≥0
 
 namespace BohrSet
-variable {G : Type*} [AddCommGroup G] [Finite G] {B : BohrSet G} {x : G}
+variable {G : Type*} [AddCommGroup G] {B : BohrSet G} {x : G}
 
 /-! ### Coercion, membership -/
 
@@ -48,7 +48,7 @@ lemma mem_def : x ∈ B ↔ ∀ ψ, ‖1 - ψ.1 x‖ ≤ B.width ψ := Iff.rfl
 @[simp, norm_cast] lemma coeSort_coe (B : BohrSet G) : ↥(B : Set G) = B := rfl
 
 @[simp] lemma zero_mem : 0 ∈ B := by simp [mem_def]
-@[simp] lemma neg_mem : -x ∈ B ↔ x ∈ B :=
+@[simp] lemma neg_mem [Finite G] : -x ∈ B ↔ x ∈ B :=
   forall_congr' fun ψ ↦ by rw [Iff.comm, ← RCLike.norm_conj, map_sub, map_one, map_neg_eq_conj]
 
 /-! ### Width, frequencies, rank -/

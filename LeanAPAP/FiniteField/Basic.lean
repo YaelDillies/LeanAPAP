@@ -44,7 +44,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
           γ ^ (-(p : ℝ)⁻¹) := ?_
     _ ≤ _ := mul_le_mul_of_nonneg_left ?_ $ by positivity
   · rw [← balance_conv, balance, l2Inner_sub_left, l2Inner_const_left, expect_conv, sum_mu ℝ hA,
-      expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel, ← mul_sub,
+      expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel₀, ← mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
   · rw [lpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
     rw [cast_dens, le_div_iff, mul_comm] at hγC
@@ -127,7 +127,7 @@ lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens) (hγC 
     rw [← ENNReal.coe_one, lpNorm_const one_ne_zero]
     sorry
     -- simp only [Nonneg.coe_one, inv_one, rpow_one, norm_inv, norm_coe_nat,
-    --   mul_inv_cancel (show (card G : ℝ) ≠ 0 by positivity)]
+    --   mul_inv_cancel₀ (show (card G : ℝ) ≠ 0 by positivity)]
   · have hγ' : (1 : ℝ≥0) ≤ 2 * ⌈γ.curlog⌉₊ := sorry
     sorry
     -- simpa [wlpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity), ←

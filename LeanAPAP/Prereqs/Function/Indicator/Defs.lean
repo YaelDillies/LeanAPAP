@@ -173,7 +173,7 @@ lemma map_mu (f : β →+* γ) (s : Finset α) (x : α) : f (μ s x) = μ s x :=
   simp_rw [mu, Pi.smul_apply, smul_eq_mul, map_mul, map_indicate, map_inv₀, map_natCast]
 
 section Nontrivial
-variable [Nontrivial β] [CharZero β] {a : α}
+variable [CharZero β] {a : α}
 
 @[simp] lemma mu_apply_eq_zero : μ_[β] s a = 0 ↔ a ∉ s := by
   simp only [mu_apply, mul_boole, ite_eq_right_iff, inv_eq_zero, Nat.cast_eq_zero, card_eq_zero]
@@ -200,8 +200,8 @@ lemma card_smul_mu [CharZero β] (s : Finset α) : s.card • μ_[β] s = 𝟭 s
   ext x : 1
   rw [Pi.smul_apply, mu_apply, indicate_apply, nsmul_eq_mul]
   split_ifs with h
-  · rw [mul_one, mul_inv_cancel]
-    rw [Nat.cast_ne_zero, ←pos_iff_ne_zero, Finset.card_pos]
+  · rw [mul_one, mul_inv_cancel₀]
+    rw [Nat.cast_ne_zero, ← pos_iff_ne_zero, Finset.card_pos]
     exact ⟨_, h⟩
   · rw [mul_zero, mul_zero]
 
@@ -209,7 +209,7 @@ lemma card_smul_mu_apply [CharZero β] (s : Finset α) (x : α) : s.card • μ_
   congr_fun (card_smul_mu β _) _
 
 lemma sum_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : ∑ x, μ_[β] s x = 1 := by
-  simpa [mu_apply] using mul_inv_cancel (Nat.cast_ne_zero.2 hs.card_pos.ne')
+  simpa [mu_apply] using mul_inv_cancel₀ (Nat.cast_ne_zero.2 hs.card_pos.ne')
 
 section AddGroup
 variable {G : Type*} [AddGroup G] [AddAction G α]
@@ -254,7 +254,7 @@ variable (β) [Semifield β] [StarRing β] [AddCommGroup α] {s : Finset α}
 end Semifield
 
 namespace RCLike
-variable {𝕜 : Type*} [RCLike 𝕜] [Fintype α] (s : Finset α) (a : α)
+variable {𝕜 : Type*} [RCLike 𝕜] (s : Finset α) (a : α)
 
 @[simp, norm_cast] lemma coe_mu : ↑(μ_[ℝ] s a) = μ_[𝕜] s a := map_mu (algebraMap ℝ 𝕜) _ _
 @[simp] lemma coe_comp_mu : (↑) ∘ μ_[ℝ] s = μ_[𝕜] s := funext $ coe_mu _

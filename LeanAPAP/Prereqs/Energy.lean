@@ -7,7 +7,7 @@ noncomputable section
 open Finset Fintype Function Real
 open scoped Nat
 
-variable {G : Type*} [AddCommGroup G] [Fintype G] {s : Finset G}
+variable {G : Type*} [AddCommGroup G] {s : Finset G}
 
 def energy (n : ℕ) (s : Finset G) (ν : G → ℂ) : ℝ :=
   ∑ γ in piFinset fun _ : Fin n ↦ s, ∑ δ in piFinset fun _ : Fin n ↦ s, ‖ν (∑ i, γ i - ∑ i, δ i)‖
@@ -27,6 +27,10 @@ variable [DecidableEq G]
 
 def boringEnergy (n : ℕ) (s : Finset G) : ℝ := energy n s trivChar
 
+@[simp] lemma boringEnergy_zero (s : Finset G) : boringEnergy 0 s = 1 := by simp [boringEnergy]
+
+variable [Fintype G]
+
 lemma boringEnergy_eq (n : ℕ) (s : Finset G) : boringEnergy n s = ∑ x, (𝟭 s ∗^ n) x ^ 2 := by
   classical
   simp only [boringEnergy, energy, apply_ite norm, trivChar_apply, norm_one, norm_zero, sum_boole,
@@ -37,7 +41,6 @@ lemma boringEnergy_eq (n : ℕ) (s : Finset G) : boringEnergy n s = ∑ x, (𝟭
   refine sum_congr rfl fun f hf ↦ ?_
   simp_rw [(mem_filter.1 hf).2, eq_comm]
 
-@[simp] lemma boringEnergy_zero (s : Finset G) : boringEnergy 0 s = 1 := by simp [boringEnergy]
 @[simp] lemma boringEnergy_one (s : Finset G) : boringEnergy 1 s = s.card := by
   simp [boringEnergy_eq, indicate_apply]
 

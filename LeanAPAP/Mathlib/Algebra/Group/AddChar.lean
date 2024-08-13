@@ -65,7 +65,7 @@ section AddGroup
 variable [AddGroup G]
 
 section CommSemiring
-variable [Fintype G] [CommSemiring R] [IsDomain R] [CharZero R] {ψ : AddChar G R}
+variable [Fintype G] [CommSemiring R] [IsDomain R] {ψ : AddChar G R}
 
 lemma sum_eq_ite (ψ : AddChar G R) : ∑ a, ψ a = if ψ = 0 then ↑(card G) else 0 := by
   split_ifs with h
@@ -74,6 +74,8 @@ lemma sum_eq_ite (ψ : AddChar G R) : ∑ a, ψ a = if ψ = 0 then ↑(card G) e
   refine eq_zero_of_mul_eq_self_left hx ?_
   rw [Finset.mul_sum]
   exact Fintype.sum_equiv (Equiv.addLeft x) _ _ fun y ↦ (map_add_eq_mul ..).symm
+
+variable [CharZero R] 
 
 lemma sum_eq_zero_iff_ne_zero : ∑ x, ψ x = 0 ↔ ψ ≠ 0 := by
   rw [sum_eq_ite, Ne.ite_eq_right_iff]

@@ -306,8 +306,7 @@ lemma expect_pow (s : Finset ι) (f : ι → α) (n : ℕ) :
 end CommSemiring
 
 section Semifield
-variable [Semifield α] [CharZero α] [SMul ℚ≥0 α] {s : Finset ι} {f g : ι → α}
-  {m : β → α}
+variable [Semifield α] [CharZero α] {s : Finset ι} {f g : ι → α} {m : β → α}
 
 lemma expect_indicate_eq [Fintype ι] [Nonempty ι] [DecidableEq ι] (f : ι → α) (x : ι) :
     𝔼 i, ite (x = i) (Fintype.card ι : α) 0 * f i = f x := by
@@ -346,7 +345,7 @@ lemma expect_eq_zero_iff_of_nonpos (hs : s.Nonempty) (hf : ∀ i ∈ s, f i ≤ 
   simp [expect, sum_eq_zero_iff_of_nonpos hf, hs.ne_empty]
 
 section PosSMulMono
-variable [PosSMulMono ℚ≥0 α] [PosSMulMono ℚ≥0 β]
+variable [PosSMulMono ℚ≥0 α]
 
 lemma expect_le_expect (hfg : ∀ i ∈ s, f i ≤ g i) : 𝔼 i ∈ s, f i ≤ 𝔼 i ∈ s, g i :=
   smul_le_smul_of_nonneg_left (sum_le_sum hfg) $ by positivity
@@ -367,6 +366,11 @@ lemma le_expect (hs : s.Nonempty) (f : ι → α) (a : α) (h : ∀ x ∈ s, a �
 
 lemma expect_nonneg (hf : ∀ i ∈ s, 0 ≤ f i) : 0 ≤ 𝔼 i ∈ s, f i :=
   smul_nonneg (by positivity) $ sum_nonneg hf
+
+end PosSMulMono
+
+section PosSMulMono
+variable [PosSMulMono ℚ≥0 β]
 
 -- TODO: Contribute back better docstring to `le_prod_of_submultiplicative`
 /-- If `m` is a subadditive function (`m (x + y) ≤ m x + m y`, `f 1 = 1`), and `f i`,
@@ -401,8 +405,7 @@ end LinearOrderedAddCommGroup
 end Finset
 
 namespace algebraMap
-variable [Semifield α] [CharZero α] [SMul ℚ≥0 α] [Semifield β] [CharZero β]
-  [SMul ℚ≥0 β] [Algebra α β]
+variable [Semifield α] [CharZero α] [Semifield β] [CharZero β] [Algebra α β]
 
 @[simp, norm_cast]
 lemma coe_expect (s : Finset ι) (f : ι → α) : 𝔼 i ∈ s, f i = 𝔼 i ∈ s, (f i : β) :=

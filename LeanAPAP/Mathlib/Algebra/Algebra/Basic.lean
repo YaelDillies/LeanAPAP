@@ -31,12 +31,12 @@ instance instSMulCommClass' [SMulCommClass β α β] : SMulCommClass α ℚ≥0 
 end Semifield
 
 section Semifield
-variable [Semifield α] [CharZero α] [Semiring β] [CharZero β] [NNRatCast β] [Module ℚ≥0 β]
+variable [Semifield α] [CharZero α] [Semiring β] [Module ℚ≥0 β]
 
 variable (α) in
 /-- `nnqsmul` is equal to any other module structure via a cast. -/
 lemma cast_smul_eq_nnqsmul [Module α β] (q : ℚ≥0) (a : β) : (q : α) • a = q • a := by
-  refine MulAction.injective₀ (α := ℚ≥0) (Nat.cast_ne_zero.2 q.den_pos.ne') ?_
+  refine MulAction.injective₀ (G₀ := ℚ≥0) (Nat.cast_ne_zero.2 q.den_pos.ne') ?_
   dsimp
   rw [← mul_smul, den_mul_eq_num, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul, ← smul_assoc,
     nsmul_eq_mul q.den, ← cast_natCast, ←cast_mul, den_mul_eq_num, cast_natCast,

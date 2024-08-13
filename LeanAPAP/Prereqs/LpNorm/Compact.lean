@@ -254,7 +254,7 @@ lemma nl2Inner_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ ⟪f, g⟫ₙ_[𝕜]
 end LinearOrderedSemifield
 
 section LinearOrderedField
-variable [LinearOrderedField 𝕜] [StarRing 𝕜] [StarOrderedRing 𝕜] [TrivialStar 𝕜] {f g : ι → 𝕜}
+variable [LinearOrderedField 𝕜] [StarRing 𝕜] [TrivialStar 𝕜] {f g : ι → 𝕜}
 
 --TODO: Can we remove the `TrivialStar` assumption?
 lemma abs_nl2Inner_le_nl2Inner_abs : |⟪f, g⟫ₙ_[𝕜]| ≤ ⟪|f|, |g|⟫ₙ_[𝕜] :=
@@ -284,13 +284,15 @@ lemma linearIndependent_of_ne_zero_of_nl2Inner_eq_zero {v : κ → ι → 𝕜} 
 end RCLike
 
 section nlpNorm
-variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0∞}
+variable {α β : Type*}  [Fintype α] {p : ℝ≥0∞}
+
+@[simp] lemma nlpNorm_conj [RCLike β] (f : α → β) : ‖conj f‖ₙ_[p] = ‖f‖ₙ_[p] := by simp [nlpNorm]
+
+variable [AddCommGroup α]
 
 @[simp]
 lemma nlpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) : ‖τ a f‖ₙ_[p] = ‖f‖ₙ_[p] := by
   simp [nlpNorm]
-
-@[simp] lemma nlpNorm_conj [RCLike β] (f : α → β) : ‖conj f‖ₙ_[p] = ‖f‖ₙ_[p] := by simp [nlpNorm]
 
 @[simp] lemma nlpNorm_conjneg [RCLike β] (f : α → β) : ‖conjneg f‖ₙ_[p] = ‖f‖ₙ_[p] := by
   simp [nlpNorm]
@@ -472,8 +474,8 @@ lemma nlpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ 
   exact div_le_div_of_nonneg_right (lpNorm_mul_le hp hq _ hpqr _ _) $ by positivity
 
 /-- **Hölder's inequality**, finitary case. -/
-lemma nlpNorm_prod_le {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp : ∀ i, p i ≠ 0) (q : ℝ≥0)
-    (hpq : ∑ i ∈ s, (p i)⁻¹ = q⁻¹) (f : ι → α → ℝ) :
+lemma nlpNorm_prod_le {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp : ∀ i, p i ≠ 0)
+    (q : ℝ≥0) (hpq : ∑ i ∈ s, (p i)⁻¹ = q⁻¹) (f : ι → α → ℝ) :
     ‖∏ i ∈ s, f i‖ₙ_[q] ≤ ∏ i ∈ s, ‖f i‖ₙ_[p i] := by
   cases isEmpty_or_nonempty α
   · simp

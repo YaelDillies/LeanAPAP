@@ -148,14 +148,16 @@ lemma wlpNorm_mono (hf : 0 ≤ f) (hfg : f ≤ g) : ‖f‖_[p, w] ≤ ‖g‖_[
 end Real
 
 section wlpNorm
-variable {α β : Type*} [AddCommGroup α] [Fintype α] {p : ℝ≥0} {w : α → ℝ≥0}
+variable {α β : Type*} [Fintype α] {p : ℝ≥0} {w : α → ℝ≥0}
+
+@[simp]
+lemma wlpNorm_conj [RCLike β] (f : α → β) : ‖conj f‖_[p, w] = ‖f‖_[p, w] := by simp [wlpNorm]
+
+variable [AddCommGroup α]
 
 @[simp] lemma wlpNorm_translate [NormedAddCommGroup β] (a : α) (f : α → β) :
     ‖τ a f‖_[p, τ a w] = ‖f‖_[p, w] :=
   (lpNorm_translate a fun i ↦ w i ^ (p⁻¹ : ℝ) • ‖f i‖ : _)
-
-@[simp]
-lemma wlpNorm_conj [RCLike β] (f : α → β) : ‖conj f‖_[p, w] = ‖f‖_[p, w] := by simp [wlpNorm]
 
 @[simp]
 lemma wlpNorm_conjneg [RCLike β] (f : α → β) : ‖conjneg f‖_[p] = ‖f‖_[p] := by simp [wlpNorm]

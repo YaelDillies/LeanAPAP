@@ -201,7 +201,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
         ∑ x in (s p ε B₁ B₂ A)ᶜ,
           (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p := by
       gcongr with x hx
-      · exact dconv_nonneg (β := ℝ) mu_nonneg mu_nonneg _
+      · exact Pi.le_def.1 (dconv_nonneg (R := ℝ) mu_nonneg mu_nonneg) x
       · exact dconv_nonneg indicate_nonneg indicate_nonneg _
       · simpa using hx
     _ ≤ ∑ x, (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p :=

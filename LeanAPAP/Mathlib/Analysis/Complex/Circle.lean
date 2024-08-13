@@ -1,21 +1,17 @@
 import Mathlib.Analysis.Complex.Circle
 
-/-!
-## TODO
-
-Rename
-* `expMapCircle` → `circle.exp`
-* `coe_inv_circle_eq_conj` → `circle.coe_inv_eq_conj`
-* `coe_div_circle` → `circle.coe_div` + `norm_cast`
--/
-
-attribute [norm_cast] coe_div_circle
-
-open Multiplicative Real
-open scoped ComplexConjugate Real
+open Function
 
 namespace Circle
+variable {x y : Circle}
 
-@[simp, norm_cast] lemma coe_exp (r : ℝ) : ↑(expMapCircle r) = Complex.exp (r * Complex.I) := rfl
+@[simp, norm_cast] lemma coe_exp (r : ℝ) : ↑(exp r) = Complex.exp (r * Complex.I) := rfl
+
+@[ext] lemma ext : (x : ℂ) = y → x = y := Subtype.ext
+
+lemma coe_injective : Injective ((↑) : Circle → ℂ) := fun _ _ ↦ ext
+
+@[simp] lemma coe_inj : (x : ℂ) = y ↔ x = y := coe_injective.eq_iff
+@[simp] lemma coe_eq_one : (x : ℂ) = 1 ↔ x = 1 := by rw [← coe_inj, coe_one]
 
 end Circle
