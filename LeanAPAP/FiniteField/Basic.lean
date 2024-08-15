@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Nat.Cast.Order.Basic
