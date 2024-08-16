@@ -1,17 +1,13 @@
-import Mathlib.Combinatorics.Additive.PluenneckeRuzsa
-import Mathlib.Data.Finset.Pointwise
-import Mathlib.Data.Real.Basic
-import Mathlib.Data.Set.Card
+import Mathlib.Algebra.Group.Subgroup.Basic
+import Mathlib.Data.Finset.Pointwise.Basic
+import Mathlib.SetTheory.Cardinal.Finite
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Tactic.Rify
-import LeanAPAP.Mathlib.Algebra.Group.Subgroup.Basic
 import LeanAPAP.Mathlib.Combinatorics.Enumerative.DoubleCounting
 
 open Finset
 open scoped Pointwise
-
-attribute [norm_cast] Subgroup.coe_set_mk
 
 variable {G : Type*} [CommGroup G] [DecidableEq G] {K L : ℝ} {A B : Finset G} {a : G}
 
