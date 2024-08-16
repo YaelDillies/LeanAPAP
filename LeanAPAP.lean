@@ -15,12 +15,7 @@ import LeanAPAP.Mathlib.Data.Rat.Cast.Defs
 import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 import LeanAPAP.Mathlib.Data.Rat.Cast.Order
 import LeanAPAP.Mathlib.Data.ZMod.Basic
-import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
-import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
 import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
-import LeanAPAP.Mathlib.MeasureTheory.OuterMeasure.AE
-import LeanAPAP.Mathlib.Order.LiminfLimsup
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
@@ -41,7 +36,6 @@ import LeanAPAP.Prereqs.Convolution.WithConv
 import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.DoublingConst
 import LeanAPAP.Prereqs.Energy
-import LeanAPAP.Prereqs.EssSupCount
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.FourierTransform.Compact
