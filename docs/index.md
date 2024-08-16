@@ -28,12 +28,6 @@ constant `c > 0`. This is an amazing improvement over previous bounds, which wer
 The formal system which we are using as a target system is Lean's dependent type theory. Lean is a
 project being developed at AWS and Microsoft Research by Leonardo de Moura and his team.
 
-At this stage, mathlib4 contains all the background material that we need. However, not all
-quality-of-life improvements that we know from Lean 3 have made it to Lean 4 (yet) and Lean 4
-suffers from its own problems that currently make it unsuitable for new formalisation of
-research-level mathematics. As a consequence, we are sticking to Lean 3 until the project is
-complete. Then we will port it to Lean 4 in order to upstream our basic results.
-
 ## Content of this project
 
 This project currently contains about 3k lines of Lean code about the discrete (difference)
@@ -74,7 +68,7 @@ how many 'sorries' (unproven statements) remain in each file.
 
 Almost periodicity is nowadays a standard tool in additive combinatorics. The version we formalised is sufficient for many applications. In particular, it gives one of the best known bounds on Freiman's theorem. As a side goal, we might tackle Freiman's theorem.
 
-The discrete convolution/Lp norm/Fourier transform material belongs in mathlib and we hope to PR it there once the transition to Lean 4 has completed. Almost periodicity should similarly be upstreamed to mathlib given the numerous applications. The rest of the material might forever live in this repository.
+The discrete convolution/Lp norm/Fourier transform material belongs in mathlib and we hope to PR it there soon. Almost periodicity should similarly be upstreamed to mathlib given the numerous applications. The rest of the material might forever live in this repository.
 
 On top of the new developments, there are many basic lemmas needed for this project that are currently missing from mathlib.
 
@@ -94,19 +88,7 @@ In either case, run `lake exe cache get` and then `lake build` to build the proj
 
 ## Build the blueprint
 
-To build the web version of the blueprint, you need a working LaTeX installation.
-Furthermore, you need some packages:
-```
-sudo apt install graphviz libgraphviz-dev
-pip install -r blueprint/requirements.txt
-```
-
-To actually build the blueprint, run
-```
-lake exe cache get
-lake build
-inv all
-```
+See instructions at https://github.com/PatrickMassot/leanblueprint/.
 
 ## Acknowledgements
 

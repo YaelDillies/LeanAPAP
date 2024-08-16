@@ -57,7 +57,7 @@ The Lean code is contained in the directory `src/`. The subdirectories are:
 
 Almost periodicity is nowadays a standard tool in additive combinatorics. The version we formalised is sufficient for many applications. In particular, it gives one of the best known bounds on Freiman's theorem. As a side goal, we might tackle Freiman's theorem.
 
-The discrete convolution/Lp norm/Fourier transform material belongs in mathlib and we hope to PR it there once the transition to Lean 4 has completed. Almost periodicity should similarly be upstreamed to mathlib given the numerous applications. The rest of the material might forever live in this repository.
+The discrete convolution/Lp norm/Fourier transform material belongs in mathlib and we hope to PR it there soon. Almost periodicity should similarly be upstreamed to mathlib given the numerous applications. The rest of the material might forever live in this repository.
 
 On top of the new developments, there are many basic lemmas needed for this project that are currently missing from mathlib.
 
@@ -73,19 +73,7 @@ In either case, run `lake exe cache get` and then `lake build` to build the proj
 
 ## Build the blueprint
 
-To build the web version of the blueprint, you need a working LaTeX installation.
-Furthermore, you need some packages:
-```
-sudo apt install graphviz libgraphviz-dev
-pip install -r blueprint/requirements.txt
-```
-
-To actually build the blueprint, run
-```
-lake exe cache get
-lake build
-inv all
-```
+See instructions at https://github.com/PatrickMassot/leanblueprint/.
 
 ## Acknowledgements
 
