@@ -1,5 +1,4 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import LeanAPAP.Mathlib.Algebra.GroupWithZero.Invertible
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 
 namespace Mathlib.Meta.Positivity
@@ -28,14 +27,14 @@ private lemma lt_one_of_isRat {n : ℤ} {d : ℕ} [LinearOrderedRing R] :
 private lemma le_one_of_isRat {n : ℤ} {d : ℕ} [LinearOrderedRing R] :
     IsRat e n d → decide (d ≤ n) → 1 ≤ e := by
   rintro ⟨inv, rfl⟩ h
-  refine one_le_of_le_mul_right₀ (d.cast_nonneg.lt_of_ne' inv.ne_zero') ?_
+  refine one_le_of_le_mul_right₀ (d.cast_nonneg.lt_of_ne' inv.ne_zero) ?_
   rw [mul_assoc, invOf_mul_self, mul_one]
   exact mod_cast of_decide_eq_true h
 
 private lemma ne_one_of_isRat {n : ℤ} {d : ℕ} [LinearOrderedRing R] :
     IsRat e n d → decide (n ≠ d) → e ≠ 1 := by
   rintro ⟨inv, rfl⟩ h
-  refine (mul_eq_right₀ inv.ne_zero').ne.1 ?_
+  refine (mul_eq_right₀ inv.ne_zero).ne.1 ?_
   rw [mul_assoc, invOf_mul_self, mul_one]
   exact mod_cast of_decide_eq_true h
 
