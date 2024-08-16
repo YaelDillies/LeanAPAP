@@ -29,7 +29,6 @@ import LeanAPAP.Prereqs.Convolution.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.Convolution.WithConv
 import LeanAPAP.Prereqs.Curlog
-import LeanAPAP.Prereqs.DoublingConst
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex

@@ -1,9 +1,9 @@
 import Mathlib.Algebra.Order.Chebyshev
+import Mathlib.Combinatorics.Additive.DoublingConst
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Curlog
-import LeanAPAP.Prereqs.DoublingConst
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 
 /-!
