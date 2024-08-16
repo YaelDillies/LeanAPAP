@@ -1,5 +1,5 @@
 import Mathlib.Data.Finset.Density
-import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
+import Mathlib.Data.Rat.Cast.CharZero
 
 open Fintype
 

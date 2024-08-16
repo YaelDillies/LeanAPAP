@@ -8,7 +8,6 @@ import Mathlib.Data.Finset.Density
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Positivity.Finset
-import LeanAPAP.Mathlib.Data.Rat.Cast.Lemmas
 
 /-!
 # Doubling and difference constants

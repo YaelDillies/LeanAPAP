@@ -82,11 +82,40 @@ lemma my_other_markov (hc : 0 ≤ c) (hε : 0 ≤ ε) (hg : ∀ a ∈ A, 0 ≤ g
 
 end
 
-variable {G : Type*} [DecidableEq G] [Fintype G] [AddCommGroup G] {A S : Finset G} {f : G → ℂ}
-  {ε K : ℝ} {k m : ℕ}
-
 open Finset Real
 open scoped BigOperators Pointwise NNReal ENNReal
+
+variable {G : Type*} [Fintype G] {A S : Finset G} {f : G → ℂ} {ε K : ℝ} {k m : ℕ}
+
+lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hk : 64 * m / ε ^ 2 ≤ k) :
+    (8 * m) ^ m * k ^ (m - 1) * A.card ^ k * k * (2 * ‖f‖_[2 * m]) ^ (2 * m) ≤
+      1 / 2 * ((k * ε) ^ (2 * m) * ∑ i : G, ‖f i‖ ^ (2 * m)) * ↑A.card ^ k := by
+  have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
+  have hm' : 2 * m ≠ 0 := by
+    refine mul_ne_zero two_pos.ne' ?_
+    rw [← pos_iff_ne_zero, ← Nat.succ_le_iff]
+    exact hm
+  rw [mul_pow (2 : ℝ), ← hmeq, ← lpNorm_pow_eq_sum hm' f, ← mul_assoc, ← mul_assoc,
+    mul_right_comm _ (A.card ^ k : ℝ), mul_right_comm _ (A.card ^ k : ℝ),
+    mul_right_comm _ (A.card ^ k : ℝ)]
+  gcongr ?_ * _ * _
+  rw [mul_assoc (_ ^ m : ℝ), ← pow_succ, Nat.sub_add_cancel hm, pow_mul, pow_mul, ← mul_pow,
+    ← mul_pow]
+  have : (1 / 2 : ℝ) ^ m ≤ 1 / 2 := by
+    have :=
+      pow_le_pow_of_le_one (show (0 : ℝ) ≤ 1 / 2 by norm_num) (show (1 / 2 : ℝ) ≤ 1 by norm_num) hm
+    rwa [pow_one] at this
+  refine (mul_le_mul_of_nonneg_right this (by positivity)).trans' ?_
+  rw [← mul_pow]
+  refine pow_le_pow_left (by positivity) ?_ _
+  rw [mul_right_comm, mul_comm _ ε, mul_pow, ← mul_assoc, sq (k : ℝ), ← mul_assoc]
+  refine mul_le_mul_of_nonneg_right ?_ (Nat.cast_nonneg k)
+  rw [mul_right_comm, div_mul_eq_mul_div, one_mul, div_mul_eq_mul_div, le_div_iff' (zero_lt_two' ℝ),
+    ← div_le_iff', ← mul_assoc]
+  · norm_num1; exact hk
+  positivity
+
+variable [DecidableEq G] [AddCommGroup G]
 
 local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 
@@ -147,34 +176,6 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
   rw [← hmeq', conv_comm]
   refine (lpNorm_conv_le this.le _ _).trans ?_
   rw [l1Norm_mu hA, mul_one]
-
-lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hk : 64 * m / ε ^ 2 ≤ k) :
-    (8 * m) ^ m * k ^ (m - 1) * A.card ^ k * k * (2 * ‖f‖_[2 * m]) ^ (2 * m) ≤
-      1 / 2 * ((k * ε) ^ (2 * m) * ∑ i : G, ‖f i‖ ^ (2 * m)) * ↑A.card ^ k := by
-  have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
-  have hm' : 2 * m ≠ 0 := by
-    refine mul_ne_zero two_pos.ne' ?_
-    rw [← pos_iff_ne_zero, ← Nat.succ_le_iff]
-    exact hm
-  rw [mul_pow (2 : ℝ), ← hmeq, ← lpNorm_pow_eq_sum hm' f, ← mul_assoc, ← mul_assoc,
-    mul_right_comm _ (A.card ^ k : ℝ), mul_right_comm _ (A.card ^ k : ℝ),
-    mul_right_comm _ (A.card ^ k : ℝ)]
-  gcongr ?_ * _ * _
-  rw [mul_assoc (_ ^ m : ℝ), ← pow_succ, Nat.sub_add_cancel hm, pow_mul, pow_mul, ← mul_pow,
-    ← mul_pow]
-  have : (1 / 2 : ℝ) ^ m ≤ 1 / 2 := by
-    have :=
-      pow_le_pow_of_le_one (show (0 : ℝ) ≤ 1 / 2 by norm_num) (show (1 / 2 : ℝ) ≤ 1 by norm_num) hm
-    rwa [pow_one] at this
-  refine (mul_le_mul_of_nonneg_right this (by positivity)).trans' ?_
-  rw [← mul_pow]
-  refine pow_le_pow_left (by positivity) ?_ _
-  rw [mul_right_comm, mul_comm _ ε, mul_pow, ← mul_assoc, sq (k : ℝ), ← mul_assoc]
-  refine mul_le_mul_of_nonneg_right ?_ (Nat.cast_nonneg k)
-  rw [mul_right_comm, div_mul_eq_mul_div, one_mul, div_mul_eq_mul_div, le_div_iff' (zero_lt_two' ℝ),
-    ← div_le_iff', ← mul_assoc]
-  · norm_num1; exact hk
-  positivity
 
 lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :
     (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
