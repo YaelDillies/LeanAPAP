@@ -6,7 +6,6 @@ import LeanAPAP.Mathlib.Data.ZMod.Basic
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.LargeSpec
-import LeanAPAP.Prereqs.ZMod
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.Unbalancing
 
