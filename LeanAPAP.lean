@@ -4,13 +4,9 @@ import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.GroupWithZero.Units.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
-import LeanAPAP.Mathlib.Analysis.Complex.Circle
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Circle
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
-import LeanAPAP.Mathlib.Combinatorics.Enumerative.DoubleCounting
-import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Nat.Cast.Order.Basic
 import LeanAPAP.Mathlib.Data.Rat.Cast.Order
 import LeanAPAP.Mathlib.Tactic.Positivity

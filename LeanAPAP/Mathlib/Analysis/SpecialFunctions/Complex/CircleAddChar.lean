@@ -1,6 +1,4 @@
 import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import LeanAPAP.Mathlib.Analysis.Complex.Circle
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.Circle
 
 open AddChar Multiplicative Real
 open scoped ComplexConjugate Real

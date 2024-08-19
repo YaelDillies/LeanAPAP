@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.LpNorm.Weighted
 

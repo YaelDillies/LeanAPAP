@@ -1,7 +1,6 @@
 import LeanAPAP.Mathlib.Algebra.GroupWithZero.Units.Basic
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
-import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Nat.Cast.Order.Basic
 import LeanAPAP.Mathlib.Data.Rat.Cast.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
