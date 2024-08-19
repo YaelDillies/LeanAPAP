@@ -1,6 +1,16 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 
+namespace Real
+variable {x : ℝ}
+
+lemma le_log_one_add_inv (hx : 0 < x) : (1 + x)⁻¹ ≤ log (1 + x⁻¹) := by
+  have' := log_le_sub_one_of_pos (x := (1 + x⁻¹)⁻¹) (by positivity)
+  rw [log_inv, neg_le] at this
+  exact this.trans' (by field_simp [add_comm])
+
+end Real
+
 namespace Mathlib.Meta.Positivity
 open Lean Meta Qq Function Real NormNum Nat Sum3
 
