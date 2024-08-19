@@ -237,7 +237,7 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
       4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / A.card ^ (2 * p) := by
     rw [mul_div_assoc, ← div_pow]
     refine mul_le_mul_of_nonneg_left (pow_le_pow_left (by positivity) ?_ _) (by norm_num)
-    rw [cast_dens, le_div_iff, ← mul_div_right_comm]
+    rw [nnratCast_dens, le_div_iff, ← mul_div_right_comm]
     calc
       _ = ‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] := by
         simp [mu, wlpNorm_smul_right, hp₀, l1Norm_dconv, card_univ, inv_mul_eq_div]
@@ -245,5 +245,5 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
     · exact Nat.cast_pos.2 hA.card_pos
   obtain ⟨A₁, -, A₂, -, h, hcard₁, hcard₂⟩ :=
     sifting univ univ hε hε₁ hδ hp hp₂ hpε (by simp [univ_nonempty]) hA (by simpa)
-  exact ⟨A₁, A₂, h, this.trans $ by simpa [cast_dens] using hcard₁,
-    this.trans $ by simpa [cast_dens] using hcard₂⟩
+  exact ⟨A₁, A₂, h, this.trans $ by simpa [nnratCast_dens] using hcard₁,
+    this.trans $ by simpa [nnratCast_dens] using hcard₂⟩
