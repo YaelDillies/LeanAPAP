@@ -2,6 +2,7 @@ import LeanAPAP.Mathlib.Algebra.GroupWithZero.Units.Basic
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
+import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Nat.Cast.Order.Basic
 import LeanAPAP.Mathlib.Data.Rat.Cast.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
@@ -18,7 +19,8 @@ open FiniteDimensional Fintype Function Real
 open Finset hiding card
 open scoped NNReal BigOperators Combinatorics.Additive Pointwise
 
-variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {γ ε : ℝ}
+universe u
+variable {G : Type u} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {γ ε : ℝ}
 
 lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
@@ -97,13 +99,12 @@ lemma ap_in_ff (hS : S.Nonempty) (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : �
       _ = _ := sorry
   sorry
 
-lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens) (hγC : γ ≤ C.dens)
-    (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
-    ∃ (V : Submodule (ZMod q) G) (V' : Finset G),
-      (V : Set G) = V' ∧
+lemma di_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens)
+    (hγC : γ ≤ C.dens) (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
+    ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
             2 ^ 171 * α.curlog ^ 4 * γ.curlog ^ 4 / ε ^ 24 ∧
-          (1 + ε / 32) * α ≤ ‖𝟭_[ℝ] A * μ V'‖_[⊤] := by
+          (1 + ε / 32) * α ≤ ‖𝟭_[ℝ] A * μ (Set.toFinset V)‖_[⊤] := by
   obtain rfl | hA := A.eq_empty_or_nonempty
   · stop
     refine ⟨⊤, univ, _⟩
@@ -144,6 +145,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
   have : Fact q.Prime := ⟨hq⟩
   have hq' : Odd q := hq.odd_of_ne_two $ by rintro rfl; simp at hq₃
   have : 1 ≤ α⁻¹ := one_le_inv (by positivity) (by simp [α])
+  have hα₀ : 0 < α := by positivity
   have : 0 ≤ log α⁻¹ := log_nonneg ‹_›
   have : 0 ≤ curlog α := curlog_nonneg (by positivity) (by simp [α])
   have : 0 < log q := log_pos ‹_›
@@ -168,24 +170,27 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
         rw [curlog_eq_log_inv_add_two, pow_succ _ 8, mul_assoc]; positivity
     all_goals positivity
   have ind (i : ℕ) :
-    ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)) (B : Finset V) (x : G),
-      n ≤ finrank (ZMod q) V + i * curlog α ^ 8 ∧ ThreeAPFree (B : Set V) ∧
+    ∃ (V : Type u) (_ : AddCommGroup V) (_ : Fintype V) (_ : DecidableEq V) (_ : Module (ZMod q) V)
+      (B : Finset V), n ≤ finrank (ZMod q) V + i * curlog α ^ 8 ∧ ThreeAPFree (B : Set V) ∧
       α ≤ B.dens ∧
       (B.dens < (65 / 64 : ℝ) ^ i * α →
         2⁻¹ ≤ card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
     induction' i with i ih hi
-    · refine ⟨⊤, Classical.decPred _, A.map (Equiv.subtypeUnivEquiv (by simp)).symm.toEmbedding, 0,
-        by simp, ?_, by simp,
-        by simp [α, nnratCast_dens, Fintype.card_subtype, subset_iff]⟩
-      simp only [Submodule.top_toAddSubmonoid, coe_map, Equiv.coe_toEmbedding,
-        Equiv.subtypeUnivEquiv_symm_apply]
-      exact hA.image (AddEquivClass.isAddFreimanIso (AddSubmonoid.topEquiv (M := G)).symm
-        AddSubmonoid.topEquiv.symm.bijective.bijOn_univ) (Set.subset_univ _)
-    obtain ⟨V, _, B, x, hV, hB, hαβ, hBV⟩ := ih
+    · exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp, hA,
+        by simp, by simp [α, nnratCast_dens, Fintype.card_subtype, subset_iff]⟩
+    obtain ⟨V, _, _, _, _, B, hV, hB, hαβ, hBV⟩ := ih
     obtain hB' | hB' := le_or_lt 2⁻¹ (card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
-    · exact ⟨V, inferInstance, B, x, hV.trans (by gcongr; exact i.le_succ), hB, hαβ, fun _ ↦ hB'⟩
+    · exact ⟨V, inferInstance, inferInstance, inferInstance, inferInstance, B,
+        hV.trans (by gcongr; exact i.le_succ), hB, hαβ, fun _ ↦ hB'⟩
+    have : 2⁻¹ ≤ |card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ] - 1| := by
+      rw [abs_sub_comm, le_abs, le_sub_comm]
+      norm_num at hB' ⊢
+      exact .inl hB'.le
+    obtain ⟨V', _, hVV', hv'⟩ := di_in_ff hq₃ hq (by positivity) two_inv_lt_one hαβ (by
+      rwa [Finset.dens_image (Nat.Coprime.nsmul_right_bijective _)]
+      simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow) hα₀ this
+    refine ⟨V', inferInstance, inferInstance, inferInstance, inferInstance, ?_⟩
     sorry
-    -- have := di_in_ff (by positivity) one_half_lt_one _ _ _ _
   obtain ⟨V, _, B, x, hV, hB, hαβ, hBV⟩ := ind ⌊curlog α / log (65 / 64)⌋₊
   let β : ℝ := B.dens
   have aux : 0 < log (65 / 64) := log_pos (by norm_num)
