@@ -134,12 +134,15 @@ lemma di_in_ff (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens) (hγC 
     --   ← div_div, *] using global_dichotomy hA hγC hγ hAC
   sorry
 
-theorem ff (hq₃ : 3 ≤ q) (hq : Odd q) {A : Finset G} (hA₀ : A.Nonempty)
+theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
     (hA : ThreeAPFree (α := G) A) : finrank (ZMod q) G ≤ 130 * curlog A.dens ^ 9 := by
   let n : ℝ := finrank (ZMod q) G
   let α : ℝ := A.dens
   have : 1 < (q : ℝ) := mod_cast hq₃.trans_lt' (by norm_num)
   have : 1 ≤ (q : ℝ) := this.le
+  have : NeZero q := ⟨by positivity⟩
+  have : Fact q.Prime := ⟨hq⟩
+  have hq' : Odd q := hq.odd_of_ne_two $ by rintro rfl; simp at hq₃
   have : 1 ≤ α⁻¹ := one_le_inv (by positivity) (by simp [α])
   have : 0 ≤ log α⁻¹ := log_nonneg ‹_›
   have : 0 ≤ curlog α := curlog_nonneg (by positivity) (by simp [α])
@@ -171,9 +174,13 @@ theorem ff (hq₃ : 3 ≤ q) (hq : Odd q) {A : Finset G} (hA₀ : A.Nonempty)
       (B.dens < (65 / 64 : ℝ) ^ i * α →
         2⁻¹ ≤ card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
     induction' i with i ih hi
-    · exact ⟨⊤, Classical.decPred _, A.map (Equiv.subtypeUnivEquiv (by simp)).symm.toEmbedding, 0,
-        by simp, sorry, by simp,
+    · refine ⟨⊤, Classical.decPred _, A.map (Equiv.subtypeUnivEquiv (by simp)).symm.toEmbedding, 0,
+        by simp, ?_, by simp,
         by simp [α, nnratCast_dens, Fintype.card_subtype, subset_iff]⟩
+      simp only [Submodule.top_toAddSubmonoid, coe_map, Equiv.coe_toEmbedding,
+        Equiv.subtypeUnivEquiv_symm_apply]
+      exact hA.image (AddEquivClass.isAddFreimanIso (AddSubmonoid.topEquiv (M := G)).symm
+        AddSubmonoid.topEquiv.symm.bijective.bijOn_univ) (Set.subset_univ _)
     obtain ⟨V, _, B, x, hV, hB, hαβ, hBV⟩ := ih
     obtain hB' | hB' := le_or_lt 2⁻¹ (card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
     · exact ⟨V, inferInstance, B, x, hV.trans (by gcongr; exact i.le_succ), hB, hαβ, fun _ ↦ hB'⟩
@@ -225,7 +232,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : Odd q) {A : Finset G} (hA₀ : A.Nonempty)
             65⁻¹ = (1 + 64)⁻¹ := by norm_num
             _ ≤ log (1 + 64⁻¹) := le_log_one_add_inv (by norm_num)
             _ = log (65 / 64) := by norm_num
-    _ = ↑(card V) := sorry
+    _ = ↑(card V) := by simp [card_eq_pow_finrank (K := ZMod q) (V := V)]
     _ ≤ 2 * β⁻¹ ^ 2 := by
       rw [← natCast_card_mul_nnratCast_dens, mul_pow, mul_inv, ← mul_assoc,
         ← div_eq_mul_inv (card V : ℝ), ← zpow_one_sub_natCast₀ (by positivity)] at hBV
@@ -233,4 +240,4 @@ theorem ff (hq₃ : 3 ≤ q) (hq : Odd q) {A : Finset G} (hA₀ : A.Nonempty)
       simpa [le_mul_inv_iff₀', inv_mul_le_iff₀', this, zero_lt_two, mul_comm] using hBV
     _ ≤ 2 * α⁻¹ ^ 2 := by gcongr
     _ ≤ _ := hα
-  sorry
+  simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow
