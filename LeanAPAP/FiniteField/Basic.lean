@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.GroupWithZero.Units.Basic
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -191,7 +190,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
       simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow) hα₀ this
     refine ⟨V', inferInstance, inferInstance, inferInstance, inferInstance, ?_⟩
     sorry
-  obtain ⟨V, _, B, x, hV, hB, hαβ, hBV⟩ := ind ⌊curlog α / log (65 / 64)⌋₊
+  obtain ⟨V, _, _, _, _, B, hV, hB, hαβ, hBV⟩ := ind ⌊curlog α / log (65 / 64)⌋₊
   let β : ℝ := B.dens
   have aux : 0 < log (65 / 64) := log_pos (by norm_num)
   specialize hBV $ by
@@ -242,7 +241,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
       rw [← natCast_card_mul_nnratCast_dens, mul_pow, mul_inv, ← mul_assoc,
         ← div_eq_mul_inv (card V : ℝ), ← zpow_one_sub_natCast₀ (by positivity)] at hBV
       have : 0 < (card V : ℝ) := by positivity
-      simpa [le_mul_inv_iff₀', inv_mul_le_iff₀', this, zero_lt_two, mul_comm] using hBV
+      simpa [le_inv_mul_iff₀', mul_inv_le_iff₀', this, zero_lt_two, mul_comm] using hBV
     _ ≤ 2 * α⁻¹ ^ 2 := by gcongr
     _ ≤ _ := hα
   simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow
