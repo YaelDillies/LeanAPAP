@@ -38,20 +38,26 @@ lemma translate_comm (a b : α) (f : α → β) : τ a (τ b f) = τ b (τ a f) 
 @[simp]
 lemma translate_smul_right [SMul γ β] (a : α) (f : α → β) (c : γ) : τ a (c • f) = c • τ a f := rfl
 
-section AddCommGroup
-variable [AddCommGroup β]
+section AddCommMonoid
+variable [AddCommMonoid β]
 
 @[simp] lemma translate_zero_right (a : α) : τ a (0 : α → β) = 0 := rfl
 
 lemma translate_add_right (a : α) (f g : α → β) : τ a (f + g) = τ a f + τ a g := rfl
-lemma translate_sub_right (a : α) (f g : α → β) : τ a (f - g) = τ a f - τ a g := rfl
-lemma translate_neg_right (a : α) (f : α → β) : τ a (-f) = -τ a f := rfl
 
 lemma translate_sum_right (a : α) (f : ι → α → β) (s : Finset ι) :
     τ a (∑ i in s, f i) = ∑ i in s, τ a (f i) := by ext; simp
 
 lemma sum_translate [Fintype α] (a : α) (f : α → β) : ∑ b, τ a f b = ∑ b, f b :=
   Fintype.sum_equiv (Equiv.subRight _) _ _ fun _ ↦ rfl
+
+end AddCommMonoid
+
+section AddCommGroup
+variable [AddCommGroup β]
+
+lemma translate_sub_right (a : α) (f g : α → β) : τ a (f - g) = τ a f - τ a g := rfl
+lemma translate_neg_right (a : α) (f : α → β) : τ a (-f) = -τ a f := rfl
 
 @[simp] lemma support_translate (a : α) (f : α → β) : support (τ a f) = a +ᵥ support f := by
   ext; simp [mem_vadd_set_iff_neg_vadd_mem, sub_eq_neg_add]

@@ -10,6 +10,7 @@ import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Operations
+import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Fintype.Order
 import LeanAPAP.Mathlib.Data.NNReal.Basic
@@ -23,6 +24,8 @@ import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
 import LeanAPAP.Mathlib.MeasureTheory.Measure.Dirac
 import LeanAPAP.Mathlib.MeasureTheory.Measure.MeasureSpace
 import LeanAPAP.Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import LeanAPAP.Mathlib.MeasureTheory.Measure.Typeclasses
+import LeanAPAP.Mathlib.Order.Filter.Basic
 import LeanAPAP.Mathlib.Order.LiminfLimsup
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity

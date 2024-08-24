@@ -1,10 +1,24 @@
-import LeanAPAP.Mathlib.Order.LiminfLimsup
 import Mathlib.MeasureTheory.Function.EssSup
+import LeanAPAP.Mathlib.MeasureTheory.Measure.MeasureSpace
+import LeanAPAP.Mathlib.Order.LiminfLimsup
 
 open Filter MeasureTheory
+open scoped ENNReal
 
-variable {α β : Type*} [Nonempty α] {m : MeasurableSpace α} [ConditionallyCompleteLattice β]
+variable {α β : Type*} {m : MeasurableSpace α} [ConditionallyCompleteLattice β]
   {μ : Measure α} {f : α → β}
+
+section SMul
+variable {R : Type*} [Zero R] [SMulWithZero R ℝ≥0∞] [IsScalarTower R ℝ≥0∞ ℝ≥0∞]
+  [NoZeroSMulDivisors R ℝ≥0∞] {c : ℝ≥0∞}
+
+-- TODO: Replace in mathlib
+@[simp] lemma essSup_smul_measure' {f : α → β} {c : ℝ≥0∞} (hc : c ≠ 0) :
+    essSup f (c • μ) = essSup f μ := by simp_rw [essSup, Measure.ae_smul_measure_eq hc]
+
+end SMul
+
+variable [Nonempty α]
 
 lemma essSup_eq_ciSup (hμ : ∀ a, μ {a} ≠ 0) (hf : BddAbove (Set.range f)) :
     essSup f μ = ⨆ a, f a := by rw [essSup, ae_eq_top.2 hμ, limsup_top_eq_ciSup hf]
