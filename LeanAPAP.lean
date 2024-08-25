@@ -11,18 +11,12 @@ import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Operations
 import LeanAPAP.Mathlib.Data.ENNReal.Real
-import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Fintype.Order
 import LeanAPAP.Mathlib.Data.NNReal.Basic
-import LeanAPAP.Mathlib.Data.Nat.Cast.Order.Basic
 import LeanAPAP.Mathlib.Data.Rat.Cast.Order
-import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import LeanAPAP.Mathlib.MeasureTheory.MeasurableSpace.Defs
-import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
-import LeanAPAP.Mathlib.MeasureTheory.Measure.Dirac
-import LeanAPAP.Mathlib.MeasureTheory.Measure.MeasureSpace
 import LeanAPAP.Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 import LeanAPAP.Mathlib.MeasureTheory.Measure.Typeclasses
 import LeanAPAP.Mathlib.Order.Filter.Basic
@@ -32,7 +26,6 @@ import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.AddChar.Basic
-import LeanAPAP.Prereqs.AddChar.Defs
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular

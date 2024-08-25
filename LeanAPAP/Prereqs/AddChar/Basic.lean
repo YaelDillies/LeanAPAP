@@ -1,5 +1,4 @@
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
-import LeanAPAP.Prereqs.AddChar.Defs
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 

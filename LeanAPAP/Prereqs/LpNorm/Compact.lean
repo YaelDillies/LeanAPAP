@@ -507,7 +507,7 @@ lemma nl2Norm_sq_indicate (s : Finset α) : ‖𝟭_[β] s‖ₙ_[2] ^ 2 = s.den
   simpa using nlpNorm_pow_indicate two_ne_zero s
 
 lemma nl2Norm_indicate (s : Finset α) : ‖𝟭_[β] s‖ₙ_[2] = Real.sqrt s.dens := by
-  rw [eq_comm, sqrt_eq_iff_sq_eq, nl2Norm_sq_indicate] <;> positivity
+  rw [eq_comm, sqrt_eq_iff_eq_sq, nl2Norm_sq_indicate] <;> positivity
 
 @[simp] lemma nl1Norm_indicate (s : Finset α) : ‖𝟭_[β] s‖ₙ_[1] = s.dens := by
   simpa using nlpNorm_pow_indicate one_ne_zero s

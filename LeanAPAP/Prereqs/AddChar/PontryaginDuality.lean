@@ -1,3 +1,4 @@
+import Mathlib.Algebra.DirectSum.AddChar
 import Mathlib.GroupTheory.FiniteAbelian
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Prereqs.AddChar.Basic

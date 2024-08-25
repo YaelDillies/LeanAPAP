@@ -1,5 +1,5 @@
 import Mathlib.MeasureTheory.Function.EssSup
-import LeanAPAP.Mathlib.MeasureTheory.Measure.MeasureSpace
+import Mathlib.MeasureTheory.Measure.MeasureSpace
 import LeanAPAP.Mathlib.Order.LiminfLimsup
 
 open Filter MeasureTheory

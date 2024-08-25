@@ -127,7 +127,7 @@ private lemma step_four {k : Fin n → ℕ} :
   · norm_num
   split_ifs with h
   · rw [h.neg_one_pow, one_add_one_eq_two]
-  rw [← Nat.odd_iff_not_even] at h
+  rw [Nat.not_even_iff_odd] at h
   simp [h.neg_one_pow]
 
 -- double_multinomial

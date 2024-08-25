@@ -63,6 +63,6 @@ lemma nlpNorm_dft_indicate_pow (n : ℕ) (s : Finset G) :
       Complex.coe_iterConv, Complex.ofReal_comp_indicate]
 
 lemma nl2Norm_dft_indicate (s : Finset G) : ‖dft (𝟭 s)‖ₙ_[2] = sqrt s.card := by
-  rw [eq_comm, sqrt_eq_iff_sq_eq]
-  simpa using nlpNorm_dft_indicate_pow 1 s
+  rw [eq_comm, sqrt_eq_iff_eq_sq]
+  simpa [eq_comm] using nlpNorm_dft_indicate_pow 1 s
   all_goals positivity

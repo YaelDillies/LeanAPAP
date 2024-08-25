@@ -98,7 +98,7 @@ lemma l2Norm_sq_indicate (s : Finset α) : ‖𝟭_[β] s‖_[2] ^ 2 = s.card :=
   simpa using lpNorm_pow_indicate two_ne_zero s
 
 lemma l2Norm_indicate (s : Finset α) : ‖𝟭_[β] s‖_[2] = Real.sqrt s.card := by
-  rw [eq_comm, sqrt_eq_iff_sq_eq, l2Norm_sq_indicate] <;> positivity
+  rw [eq_comm, sqrt_eq_iff_eq_sq, l2Norm_sq_indicate] <;> positivity
 
 @[simp] lemma l1Norm_indicate (s : Finset α) : ‖𝟭_[β] s‖_[1] = s.card := by
   simpa using lpNorm_pow_indicate one_ne_zero s
