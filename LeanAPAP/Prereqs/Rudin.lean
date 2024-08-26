@@ -114,7 +114,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
       _ = (2 * exp 2⁻¹) ^ p := by
           rw [hfp, sq_sqrt, mul_pow, ← exp_nsmul, nsmul_eq_mul, div_eq_mul_inv]; positivity
   refine le_of_pow_le_pow_left hp₀ (by positivity) ?_
-  rwa [hfp, mul_assoc, mul_self_sqrt, mul_pow, ← div_le_iff, ← div_pow]
+  rwa [hfp, mul_assoc, mul_self_sqrt, mul_pow, ← div_le_iff₀, ← div_pow]
   all_goals positivity
 
 /-- **Rudin's inequality**, usual form. -/

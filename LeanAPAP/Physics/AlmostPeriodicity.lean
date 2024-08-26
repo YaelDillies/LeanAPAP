@@ -110,8 +110,8 @@ lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hk : 64 * m / ε ^ 2 ≤ k) :
   refine pow_le_pow_left (by positivity) ?_ _
   rw [mul_right_comm, mul_comm _ ε, mul_pow, ← mul_assoc, sq (k : ℝ), ← mul_assoc]
   refine mul_le_mul_of_nonneg_right ?_ (Nat.cast_nonneg k)
-  rw [mul_right_comm, div_mul_eq_mul_div, one_mul, div_mul_eq_mul_div, le_div_iff' (zero_lt_two' ℝ),
-    ← div_le_iff', ← mul_assoc]
+  rw [mul_right_comm, div_mul_eq_mul_div, one_mul, div_mul_eq_mul_div, le_div_iff₀' (zero_lt_two' ℝ),
+    ← div_le_iff₀', ← mul_assoc]
   · norm_num1; exact hk
   positivity
 
@@ -337,7 +337,7 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
   have : (0 : ℝ) < Ac ^ k := by positivity
   refine le_of_mul_le_mul_left ?_ this
   have : (Ac : ℝ) ^ k ≤ K * Lc := by
-    rw [div_le_iff'] at h₂
+    rw [div_le_iff₀'] at h₂
     refine h₂.trans (mul_le_mul_of_nonneg_right hK' (Nat.cast_nonneg _))
     exact zero_lt_two
   rw [neg_mul, neg_div, Real.rpow_neg hK.le, mul_left_comm,

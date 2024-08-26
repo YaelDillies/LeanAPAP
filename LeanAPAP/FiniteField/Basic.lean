@@ -1,6 +1,4 @@
-import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.Rat.Cast.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.FourierTransform.Compact
@@ -30,7 +28,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     Nat.succ_le_iff.1 (le_mul_of_one_le_right zero_le' $ Nat.ceil_pos.2 $ curlog_pos hγ hγ₁)
   have hp' : (p⁻¹ : ℝ≥0) < 1 := inv_lt_one $ mod_cast hp
   have hp'' : (p : ℝ≥0).IsConjExponent _ := .conjExponent $ mod_cast hp
-  rw [mul_comm, ← div_div, div_le_iff (zero_lt_two' ℝ)]
+  rw [mul_comm, ← div_div, div_le_iff₀ (zero_lt_two' ℝ)]
   calc
     _ ≤ _ := div_le_div_of_nonneg_right hAC (card G).cast_nonneg
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
@@ -46,7 +44,7 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel₀, ← mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
   · rw [lpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
-    rw [nnratCast_dens, le_div_iff, mul_comm] at hγC
+    rw [nnratCast_dens, le_div_iff₀, mul_comm] at hγC
     refine rpow_le_rpow_of_nonpos ?_ hγC (neg_nonpos.2 ?_)
     all_goals positivity
   · simp_rw [Nat.cast_mul, Nat.cast_two, p]
@@ -128,7 +126,7 @@ lemma di_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hε₀ : 0 < ε) (hε₁ : ε <
     --   mul_inv_cancel₀ (show (card G : ℝ) ≠ 0 by positivity)]
   · have hγ' : (1 : ℝ≥0) ≤ 2 * ⌈γ.curlog⌉₊ := sorry
     sorry
-    -- simpa [wlpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity),
+    -- simpa [wlpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff₀' (show (0 : ℝ) < card G by positivity),
     --   ← div_div, *] using global_dichotomy hA hγC hγ hAC
   sorry
 
@@ -148,7 +146,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
   have : 0 < log q := log_pos ‹_›
   obtain hα | hα := le_total (q ^ (n / 2) : ℝ) (2 * α⁻¹ ^ 2)
   · rw [rpow_le_iff_le_log, log_mul, log_pow, Nat.cast_two, ← mul_div_right_comm,
-      mul_div_assoc, ← le_div_iff] at hα
+      mul_div_assoc, ← le_div_iff₀] at hα
     calc
       _ ≤ (log 2 + 2 * log α⁻¹) / (log q / 2) := hα
       _ = 4 / log q * (log α⁻¹ + log 2 / 2) := by ring
@@ -213,7 +211,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
     all_goals positivity
   rw [hB.l2Inner_mu_conv_mu_mu_two_smul_mu] at hBV
   suffices h : (q ^ (n - 65 * curlog α ^ 9) : ℝ) ≤ q ^ (n / 2) by
-    rw [rpow_le_rpow_left_iff ‹_›, sub_le_comm, sub_half, div_le_iff' zero_lt_two, ← mul_assoc] at h
+    rw [rpow_le_rpow_left_iff ‹_›, sub_le_comm, sub_half, div_le_iff₀' zero_lt_two, ← mul_assoc] at h
     norm_num at h
     exact h
   calc
@@ -239,7 +237,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
       rw [← natCast_card_mul_nnratCast_dens, mul_pow, mul_inv, ← mul_assoc,
         ← div_eq_mul_inv (card V : ℝ), ← zpow_one_sub_natCast₀ (by positivity)] at hBV
       have : 0 < (card V : ℝ) := by positivity
-      simpa [le_inv_mul_iff₀', mul_inv_le_iff₀', this, zero_lt_two, mul_comm] using hBV
+      simpa [le_inv_mul_iff₀, mul_inv_le_iff₀, this, zero_lt_two, mul_comm] using hBV
     _ ≤ 2 * α⁻¹ ^ 2 := by gcongr
     _ ≤ _ := hα
   simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow

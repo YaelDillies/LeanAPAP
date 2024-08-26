@@ -226,7 +226,7 @@ theorem marcinkiewicz_zygmund (hm : m ≠ 0) (f : ι → ℝ) (hf : ∀ i, ∑ a
     _ ≤ (4 * ↑(m + 1)) ^ (m + 1) * n ^ m * ∑ a in A ^^ n, ∑ i, f (a i) ^ (2 * (m + 1)) := by
       simp_rw [mul_assoc, mul_sum]; rfl
   gcongr with a
-  rw [← div_le_iff']
+  rw [← div_le_iff₀']
   have := Real.pow_sum_div_card_le_sum_pow (f := fun i ↦ f (a i) ^ 2) univ m fun i _ ↦ ?_
   simpa only [Finset.card_fin, pow_mul] using this
   all_goals { positivity }

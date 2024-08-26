@@ -76,7 +76,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
         sum_mul_sq_le_sq_mul_sq _ _ _
       _ ≤ ‖f‖_[2] ^ 2 * ∑ x, ν x * (‖∑ γ in Δ, c γ * conj (γ x)‖ ^ 2) ^ m := by
         simp_rw [l2Norm_sq_eq_sum, mul_pow, sq_sqrt (NNReal.coe_nonneg _), pow_right_comm]; rfl
-  rw [mul_rotate', mul_left_comm, mul_pow, mul_pow, ← pow_mul', ← pow_mul', ← div_le_iff',
+  rw [mul_rotate', mul_left_comm, mul_pow, mul_pow, ← pow_mul', ← pow_mul', ← div_le_iff₀',
     mul_div_assoc, mul_div_assoc] at this
   calc
     _ ≤ _ := this
@@ -100,7 +100,7 @@ lemma spec_hoelder (hη : 0 ≤ η) (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0)
     ↑Δ.card ^ (2 * m) * (η ^ (2 * m) * α f) ≤ boringEnergy m Δ := by
   have hG : (0 : ℝ) < card G := by positivity
   simpa [boringEnergy, α, mul_assoc, ← Pi.one_def, ← mul_div_right_comm, ← mul_div_assoc,
-    div_le_iff hG, energy_nsmul, -nsmul_eq_mul, ← nsmul_eq_mul'] using
+    div_le_iff₀ hG, energy_nsmul, -nsmul_eq_mul, ← nsmul_eq_mul'] using
     general_hoelder hη 1 (fun (_ : G) _ ↦ le_rfl) hΔ hm
 
 noncomputable def changConst : ℝ := 32 * exp 1

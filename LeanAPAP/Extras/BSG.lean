@@ -286,7 +286,7 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
   refine h.le.trans ?_
   rw [mul_assoc]
   gcongr _ * ?_
-  field_simp [hA, hB, hK, le_div_iff, div_le_iff] at hE ⊢
+  field_simp [hA, hB, hK, le_div_iff₀, div_le_iff₀] at hE ⊢
   convert_to (A.card ^ 2 * B.card) ^ 2 ≤ (E[A, B] * K) ^ 2
   · ring_nf
   · ring_nf
@@ -407,8 +407,8 @@ theorem BSG_aux {K : ℝ} (hK : 0 < K) (hA : (0 : ℝ) < A.card) (hB : (0 : ℝ)
   · rw [← mul_inv, inv_mul_eq_div]
     exact oneOfPair_bound (filter_subset _ _) this (hX₃.trans_eq' (by norm_num)) hX₂
   have := big_quadruple_bound (H := H) (fun x hx ↦ (mem_filter.1 hx).2) (filter_subset _ _) hX₂
-  rw [le_div_iff (by positivity)]
-  rw [mul_div_assoc', div_le_iff (by positivity)] at this
+  rw [le_div_iff₀ (by positivity)]
+  rw [mul_div_assoc', div_le_iff₀ (by positivity)] at this
   exact this.trans_eq (by ring)
 
 theorem BSG {K : ℝ} (hK : 0 ≤ K) (hB : B.Nonempty) (hAB : K⁻¹ * (A.card ^ 2 * B.card) ≤ E[A, B]) :

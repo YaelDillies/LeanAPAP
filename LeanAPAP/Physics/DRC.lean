@@ -101,7 +101,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         positivity
     have : (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
       ≤ (A₁ s).card / B₁.card * ((A₂ s).card / B₂.card) := by
-      rw [div_mul_div_comm, le_div_iff]
+      rw [div_mul_div_comm, le_div_iff₀]
       simpa [hg_def, hM_def, mul_pow, pow_mul', show (2 : ℝ) ^ 2 = 4 by norm_num,
         mul_div_right_comm] using h
       positivity
@@ -188,11 +188,11 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
     _ = ∑ x in (s p ε B₁ B₂ A)ᶜ, (μ A₁ ○ μ A₂) x := ?_
     _ = ⟪μ_[ℝ] A₁ ○ μ A₂, (↑) ∘ 𝟭_[ℝ≥0] ((s (↑p) ε B₁ B₂ A)ᶜ)⟫_[ℝ] := by
       simp [l2Inner_eq_sum, -mem_compl, -mem_s, apply_ite NNReal.toReal, indicate_apply]
-    _ ≤ _ := (le_div_iff $ lpNorm_conv_pos hp₀.ne' hB hA).2 h
+    _ ≤ _ := (le_div_iff₀ $ lpNorm_conv_pos hp₀.ne' hB hA).2 h
     _ ≤ _ := ?_
   · simp_rw [sub_eq_iff_eq_add', sum_add_sum_compl, sum_dconv, map_mu]
     rw [sum_mu _ hA₁, sum_mu _ hA₂, one_mul]
-  rw [div_le_iff (lpNorm_conv_pos hp₀.ne' hB hA), ← le_div_iff' (zero_lt_two' ℝ)]
+  rw [div_le_iff₀ (lpNorm_conv_pos hp₀.ne' hB hA), ← le_div_iff₀' (zero_lt_two' ℝ)]
   simp only [apply_ite NNReal.toReal, indicate_apply, NNReal.coe_one, NNReal.coe_zero, mul_boole,
     sum_ite_mem, univ_inter, mul_div_right_comm]
   calc
@@ -236,7 +236,7 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
       4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / A.card ^ (2 * p) := by
     rw [mul_div_assoc, ← div_pow]
     refine mul_le_mul_of_nonneg_left (pow_le_pow_left (by positivity) ?_ _) (by norm_num)
-    rw [nnratCast_dens, le_div_iff, ← mul_div_right_comm]
+    rw [nnratCast_dens, le_div_iff₀, ← mul_div_right_comm]
     calc
       _ = ‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] := by
         simp [mu, wlpNorm_smul_right, hp₀, l1Norm_dconv, card_univ, inv_mul_eq_div]
