@@ -149,7 +149,7 @@ lemma indicate_iterConv_apply (s : Finset G) (n : ℕ) (a : G) :
   simp_rw [iterConv_succ', conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite,
     filter_univ_mem, sum_const_zero, add_zero, ← Nat.cast_sum, ← Finset.card_sigma]
   congr 1
-  refine card_equiv ((Equiv.sigmaEquivProd ..).trans (Equiv.piFinSucc ..).symm) ?_
+  refine card_equiv ((Equiv.sigmaEquivProd ..).trans <| Fin.consEquiv fun _ ↦ G) ?_
   aesop (add simp [Fin.sum_cons, Fin.forall_fin_succ])
 
 lemma indicate_iterConv_conv (s : Finset G) (n : ℕ) (f : G → R) :

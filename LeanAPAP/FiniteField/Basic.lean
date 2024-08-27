@@ -1,5 +1,4 @@
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
-import LeanAPAP.Mathlib.Data.Rat.Cast.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.LargeSpec
