@@ -1,5 +1,8 @@
 import Mathlib.Combinatorics.Additive.AP.Three.Defs
-import LeanAPAP.Prereqs.Convolution.Norm
+import Mathlib.Data.Real.StarOrdered
+import LeanAPAP.Prereqs.Convolution.Discrete.Defs
+import LeanAPAP.Prereqs.Function.Indicator.Defs
+import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 
 /-!
 # The convolution characterisation of 3AP-free sets

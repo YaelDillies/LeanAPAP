@@ -1,4 +1,7 @@
+import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
+import LeanAPAP.Prereqs.Convolution.Order
+import LeanAPAP.Prereqs.Function.Indicator.Basic
 import LeanAPAP.Prereqs.LpNorm.Weighted
 
 /-!

@@ -1,5 +1,5 @@
 import LeanAPAP.Mathlib.Tactic.Positivity
-import LeanAPAP.Prereqs.Convolution.Discrete.Basic
+import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 
 open Finset Function Real
 open scoped ComplexConjugate NNReal Pointwise

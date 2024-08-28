@@ -1,5 +1,6 @@
 import Mathlib.Combinatorics.Additive.Energy
 import Mathlib.Data.Real.StarOrdered
+import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Order
 
 open BigOperators Finset

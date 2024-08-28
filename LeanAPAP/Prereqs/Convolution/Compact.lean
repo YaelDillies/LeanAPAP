@@ -1,5 +1,6 @@
-import LeanAPAP.Prereqs.Convolution.Discrete.Basic
+import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Expect.Complex
+import LeanAPAP.Prereqs.Function.Indicator.Defs
 
 /-!
 # Convolution in the compact normalisation

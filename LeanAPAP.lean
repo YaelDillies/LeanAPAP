@@ -5,14 +5,12 @@ import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
 import LeanAPAP.Mathlib.Analysis.RCLike.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Mathlib.Data.Fintype.Order
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import LeanAPAP.Mathlib.MeasureTheory.MeasurableSpace.Defs
 import LeanAPAP.Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-import LeanAPAP.Mathlib.MeasureTheory.Measure.Typeclasses
 import LeanAPAP.Mathlib.Order.Filter.Basic
 import LeanAPAP.Mathlib.Order.LiminfLimsup
 import LeanAPAP.Mathlib.Tactic.Positivity

@@ -1,6 +1,7 @@
 import LeanAPAP.Prereqs.AddChar.Basic
-import LeanAPAP.Prereqs.Convolution.Order
-import LeanAPAP.Prereqs.FourierTransform.Compact
+import LeanAPAP.Prereqs.Convolution.Discrete.Basic
+import LeanAPAP.Prereqs.Expect.Complex
+import LeanAPAP.Prereqs.FourierTransform.Discrete
 
 noncomputable section
 

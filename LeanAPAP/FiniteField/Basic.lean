@@ -1,5 +1,5 @@
+import Mathlib.FieldTheory.Finite.Basic
 import LeanAPAP.Prereqs.Convolution.ThreeAP
-import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.Unbalancing
