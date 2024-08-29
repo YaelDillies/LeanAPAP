@@ -93,6 +93,9 @@ lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f)
 @[simp]
 lemma dft_conjneg (f : α → ℂ) : dft (conjneg f) = conj (dft f) := funext $ dft_conjneg_apply _
 
+lemma dft_comp_neg_apply (f : α → ℂ) (ψ : AddChar α ℂ) :
+    dft (fun x ↦ f (-x)) ψ = dft f (-ψ) := Fintype.sum_equiv (Equiv.neg _) _ _ (by simp)
+
 @[simp] lemma dft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : dft (balance f) ψ = dft f ψ := by
   simp only [balance, Pi.sub_apply, dft_sub, dft_const _ hψ, sub_zero]
 

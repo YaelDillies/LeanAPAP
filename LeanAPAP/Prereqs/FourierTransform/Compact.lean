@@ -1,6 +1,7 @@
 import LeanAPAP.Prereqs.Convolution.Compact
-import LeanAPAP.Prereqs.FourierTransform.Discrete
 import LeanAPAP.Prereqs.Expect.Complex
+import LeanAPAP.Prereqs.FourierTransform.Discrete
+import LeanAPAP.Prereqs.Function.Indicator.Basic
 
 /-!
 # Discrete Fourier transform in the compact normalisation

@@ -1,5 +1,4 @@
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Mathlib.Data.ENNReal.Real
 
 noncomputable section
 

@@ -1,4 +1,6 @@
-import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+import Mathlib.Algebra.EuclideanDomain.Basic
+import Mathlib.Algebra.EuclideanDomain.Field
+import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 
 open AddChar Multiplicative Real
 open scoped ComplexConjugate Real

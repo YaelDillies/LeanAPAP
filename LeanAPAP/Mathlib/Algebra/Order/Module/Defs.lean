@@ -1,0 +1,4 @@
+import Mathlib.Algebra.Order.Module.Defs
+
+attribute [gcongr] smul_le_smul_of_nonneg_left smul_le_smul_of_nonneg_right
+  smul_lt_smul_of_pos_left smul_lt_smul_of_pos_right

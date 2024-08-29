@@ -1,5 +1,4 @@
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # TODO

@@ -1,7 +1,5 @@
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
-import LeanAPAP.Mathlib.Data.Rat.Cast.Order
+import Mathlib.FieldTheory.Finite.Basic
 import LeanAPAP.Prereqs.Convolution.ThreeAP
-import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.Unbalancing
@@ -229,9 +227,8 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
           gcongr
           rw [inv_le ‹_› (by positivity)]
           calc
-            65⁻¹ = (1 + 64)⁻¹ := by norm_num
-            _ ≤ log (1 + 64⁻¹) := le_log_one_add_inv (by norm_num)
-            _ = log (65 / 64) := by norm_num
+            65⁻¹ = 1 - (65 / 64)⁻¹ := by norm_num
+            _ ≤ log (65 / 64) := one_sub_inv_le_log_of_pos (by positivity)
     _ = ↑(card V) := by simp [card_eq_pow_finrank (K := ZMod q) (V := V)]
     _ ≤ 2 * β⁻¹ ^ 2 := by
       rw [← natCast_card_mul_nnratCast_dens, mul_pow, mul_inv, ← mul_assoc,
