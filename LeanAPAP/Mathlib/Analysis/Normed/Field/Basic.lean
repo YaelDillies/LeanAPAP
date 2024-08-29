@@ -10,7 +10,7 @@ lemma norm_one_sub_mul (ha : ‖a‖ ≤ 1) : ‖c - a * b‖ ≤ ‖c - a‖ + 
     _ ≤ ‖c - a‖ + 1 * ‖1 - b‖ := by gcongr
     _ = ‖c - a‖ + ‖1 - b‖ := by simp
 
-lemma norm_one_sub_mpul' (hb : ‖b‖ ≤ 1) : ‖c - a * b‖ ≤ ‖1 - a‖ + ‖c - b‖ := by
+lemma norm_one_sub_mul' (hb : ‖b‖ ≤ 1) : ‖c - a * b‖ ≤ ‖1 - a‖ + ‖c - b‖ := by
   rw [add_comm]; exact norm_one_sub_mul (R := Rᵐᵒᵖ) hb
 
 lemma nnnorm_one_sub_mul (ha : ‖a‖₊ ≤ 1) : ‖c - a * b‖₊ ≤ ‖c - a‖₊ + ‖1 - b‖₊ := norm_one_sub_mul ha
