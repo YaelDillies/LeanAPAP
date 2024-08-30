@@ -369,14 +369,15 @@ lemma expect_nonneg (hf : ∀ i ∈ s, 0 ≤ f i) : 0 ≤ 𝔼 i ∈ s, f i :=
 end PosSMulMono
 
 section PosSMulMono
-variable [PosSMulMono ℚ≥0 β]
+variable {M N : Type*} [AddCommMonoid M] [Module ℚ≥0 M] [OrderedAddCommMonoid N] [Module ℚ≥0 N]
+  [PosSMulMono ℚ≥0 N]
 
 -- TODO: Contribute back better docstring to `le_prod_of_submultiplicative`
 /-- If `m` is a subadditive function (`m (x + y) ≤ m x + m y`, `f 1 = 1`), and `f i`,
 `i ∈ s`, is a finite family of elements, then `m (𝔼 i in s, f i) ≤ 𝔼 i in s, m (f i)`. -/
-lemma le_expect_of_subadditive (m : α → β) (h_zero : m 0 = 0)
+lemma le_expect_of_subadditive (m : M → N) (h_zero : m 0 = 0)
     (h_add : ∀ a b, m (a + b) ≤ m a + m b) (h_div : ∀ a (n : ℕ), m (a /ℚ n) = m a /ℚ n)
-    (s : Finset ι) (f : ι → α) : m (𝔼 i ∈ s, f i) ≤ 𝔼 i ∈ s, m (f i) := by
+    (s : Finset ι) (f : ι → M) : m (𝔼 i ∈ s, f i) ≤ 𝔼 i ∈ s, m (f i) := by
   simp only [expect, h_div]
   exact smul_le_smul_of_nonneg_left (le_sum_of_subadditive _ h_zero h_add _ _) $ by positivity
 
@@ -489,6 +490,16 @@ lemma coe_balance : (↑(balance f a) : α) = balance ((↑) ∘ f) a := map_bal
   funext $ coe_balance _
 
 end RCLike
+
+section
+variable {ι K E : Type*} [RCLike K] [NormedField E] [CharZero E] [NormedSpace K E]
+
+include K in
+@[bound]
+lemma norm_expect_le {s : Finset ι} {f : ι → E} : ‖𝔼 i ∈ s, f i‖ ≤ 𝔼 i ∈ s, ‖f i‖ :=
+  s.le_expect_of_subadditive norm norm_zero norm_add_le (fun _ _ ↦ by rw [RCLike.norm_nnqsmul K]) f
+
+end
 
 open Finset
 

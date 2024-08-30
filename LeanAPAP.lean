@@ -5,10 +5,13 @@ import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Rat
+import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.Data.ENNReal.Operations
+import LeanAPAP.Mathlib.Data.NNReal.Basic
+import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Basic
