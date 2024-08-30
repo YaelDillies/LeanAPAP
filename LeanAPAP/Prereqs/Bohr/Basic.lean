@@ -369,37 +369,6 @@ lemma smul_add_smul_subset [Finite G] {B : BohrSet G} {ρ₁ ρ₂ : ℝ} (hρ�
   add_subset_of_ewidth fun ψ => by
     simp only [Pi.add_apply, ewidth_smul]; split <;> simp [add_nonneg, add_mul, *]
 
-/- ### Arc Bohr sets -/
-
-def arcSet : Set G := {x | ∀ ψ, ‖(ψ x).arg‖₊ ≤ B.ewidth ψ}
-
-lemma mem_arcSet_iff_nnnorm_ewidth : x ∈ B.arcSet ↔ ∀ ψ, ‖(ψ x).arg‖₊ ≤ B.ewidth ψ := Iff.rfl
-
-lemma mem_arcSet_iff_nnnorm_width :
-    x ∈ B.arcSet ↔ ∀ ⦃ψ⦄, ψ ∈ B.frequencies → ‖(ψ x).arg‖₊ ≤ B.width ψ := by
-  refine forall_congr' fun ψ => ?_
-  constructor
-  case mpr =>
-    intro h
-    rcases eq_top_or_lt_top (B.ewidth ψ) with h₁ | h₁
-    case inl => simp [h₁]
-    case inr =>
-      have : ψ ∈ B.frequencies := by simp [mem_frequencies, h₁]
-      specialize h this
-      rwa [←ENNReal.coe_le_coe, coe_width this] at h
-  case mp =>
-    intro h₁ h₂
-    rwa [←ENNReal.coe_le_coe, coe_width h₂]
-
-lemma mem_arcSet_iff_norm_width :
-    x ∈ B.arcSet ↔ ∀ ⦃ψ⦄, ψ ∈ B.frequencies → ‖(ψ x).arg‖ ≤ B.width ψ :=
-  mem_arcSet_iff_nnnorm_width
-
-lemma arcSet_subset_chordSet :
-    B.arcSet ⊆ B.chordSet := fun x hx ψ => by
-  refine (hx ψ).trans' ?_
-  simp only [ENNReal.coe_le_coe]
-  sorry
 
 end BohrSet
 
