@@ -1,17 +1,18 @@
 import Mathlib.Algebra.Order.Group.PosPart
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Prereqs.Convolution.Discrete.Defs
+import LeanAPAP.Prereqs.Convolution.Discrete.Basic
+import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
 import LeanAPAP.Prereqs.LpNorm.Weighted
 
 /-!
 # Unbalancing
 -/
 
-open Finset Real
-open scoped ComplexConjugate ComplexOrder NNReal
+open Finset Real MeasureTheory
+open scoped ComplexConjugate ComplexOrder NNReal ENNReal
 
-variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G] {ν : G → ℝ≥0} {f : G → ℝ}
-  {g h : G → ℂ} {ε : ℝ} {p : ℕ}
+variable {G : Type*} [Fintype G] [MeasurableSpace G] [DiscreteMeasurableSpace G] [DecidableEq G]
+  [AddCommGroup G] {ν : G → ℝ≥0} {f : G → ℝ} {g h : G → ℂ} {ε : ℝ} {p : ℕ}
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
@@ -20,7 +21,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
     ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] = ∑ z : Fin k → G, (‖∑ x, (∏ i, conj (g (x + z i))) * h x‖ : ℂ) ^ 2 by
     rw [this]
     positivity
-  rw [hf, hν, l2Inner_eq_sum]
+  rw [hf, hν, dL2Inner_eq_sum]
   simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
   simp_rw [dconv_apply h, mul_sum]
   --TODO: Please make `conv` work here :(
@@ -43,7 +44,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
 lemma pow_inner_nonneg {f : G → ℝ} (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
     (0 : ℝ) ≤ ⟪(↑) ∘ ν, f ^ k⟫_[ℝ] := by
   sorry
-  -- simpa [← Complex.zero_le_real, starRingEnd_apply, l2Inner_eq_sum]
+  -- simpa [← Complex.zero_le_real, starRingEnd_apply, dL2Inner_eq_sum]
   --   using pow_inner_nonneg' hf hν k
 
 private lemma log_ε_pos (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < log (3 / ε) :=
@@ -56,16 +57,18 @@ private lemma p'_pos (hp : 5 ≤ p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < 
 private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1)
     (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1)
     (hε : ε ≤ ‖f‖_[p, ν]) :
-    1 + ε / 2 ≤ ‖f + 1‖_[(⟨24 / ε * log (3 / ε) * p, (p'_pos hp hε₀ hε₁).le⟩ : ℝ≥0), ν] := by
-  simp only [l1Norm_eq_sum, NNReal.norm_eq, Function.comp_apply] at hν₁
+    1 + ε / 2 ≤ ‖f + 1‖_[.ofReal (24 / ε * log (3 / ε) * p), ν] := by
+  simp only [dL1Norm_eq_sum_nnnorm, NNReal.nnnorm_eq, Function.comp_apply] at hν₁
   obtain hf₁ | hf₁ := le_total 2 ‖f + 1‖_[2 * p, ν]
   · calc
       1 + ε / 2 ≤ 1 + 1 / 2 := add_le_add_left (div_le_div_of_nonneg_right hε₁ zero_le_two) _
       _ ≤ 2 := by norm_num
       _ ≤ ‖f + 1‖_[2 * p, ν] := hf₁
-      _ ≤ _ := wlpNorm_mono_right (NNReal.coe_le_coe.1 ?_) _ _
+      _ ≤ _ := wLpNorm_mono_right ?_ _ _
+    norm_cast
+    rw [ENNReal.natCast_le_ofReal (by positivity)]
     push_cast
-    refine mul_le_mul_of_nonneg_right ?_ ?_
+    gcongr
     calc
       2 ≤ 24 / 1 * 0.6931471803 := by norm_num
       _ ≤ 24 / ε * log (3 / ε) :=
@@ -82,13 +85,15 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ ≤ ⟪((↑) ∘ ν : G → ℝ), f ^ p⟫_[ℝ] + ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * |f| i) :=
         (le_add_of_nonneg_left $ pow_inner_nonneg hf hν _)
       _ = _ := ?_
-    rw [wlpNorm_pow_eq_sum hp₁.pos.ne']
-    dsimp
-    refine sum_congr rfl fun i _ ↦ ?_
-    rw [← abs_of_nonneg ((Nat.Odd.sub_odd hp₁ odd_one).pow_nonneg $ f _), abs_pow,
-      pow_sub_one_mul hp₁.pos.ne']
-    simp [l2Inner_eq_sum, ← sum_add_distrib, ← mul_add, ← pow_sub_one_mul hp₁.pos.ne' (f _),
-      mul_sum, mul_left_comm (2 : ℝ), add_abs_eq_two_nsmul_posPart]
+    · norm_cast
+      rw [wLpNorm_pow_eq_sum_nnnorm hp₁.pos.ne']
+      push_cast
+      dsimp
+      refine sum_congr rfl fun i _ ↦ ?_
+      rw [← abs_of_nonneg ((Nat.Odd.sub_odd hp₁ odd_one).pow_nonneg $ f _), abs_pow,
+        pow_sub_one_mul hp₁.pos.ne', NNReal.smul_def, smul_eq_mul]
+    · simp [dL2Inner_eq_sum, ← sum_add_distrib, ← mul_add, ← pow_sub_one_mul hp₁.pos.ne' (f _),
+        mul_sum, mul_left_comm (2 : ℝ), add_abs_eq_two_nsmul_posPart]
   set P := univ.filter fun i ↦ 0 ≤ f i
   set T := univ.filter fun i ↦ 3 / 4 * ε ≤ f i
   have hTP : T ⊆ P := monotone_filter_right _ fun i ↦ le_trans $ by positivity
@@ -106,7 +111,7 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ ≤ ∑ i in P \ T, ↑(ν i) * (3 / 4 * ε) ^ p := sum_le_sum fun i hi ↦ ?_
       _ = (3 / 4) ^ p * ε ^ p * ∑ i in P \ T, (ν i : ℝ) := by rw [← sum_mul, mul_comm, mul_pow]
       _ ≤ 4⁻¹ * ε ^ p * ∑ i, (ν i : ℝ) := ?_
-      _ = 4⁻¹ * ε ^ p := by rw [hν₁, mul_one]
+      _ = 4⁻¹ * ε ^ p := by norm_cast; simp [hν₁]
     · simp only [mem_sdiff, mem_filter, mem_univ, true_and_iff, not_le, P, T] at hi
       exact mul_le_mul_of_nonneg_left (pow_le_pow_left hi.1 hi.2.le _) (by positivity)
     · refine mul_le_mul (mul_le_mul_of_nonneg_right (le_trans (pow_le_pow_of_le_one ?_ ?_ hp) ?_)
@@ -116,8 +121,12 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
         | norm_num
   replace hf₁ : ‖f‖_[2 * p, ν] ≤ 3 := by
     calc
-      _ ≤ ‖f + 1‖_[2 * p, ν] + ‖(1 : G → ℝ)‖_[2 * p, ν] := wlpNorm_le_add_wlpNorm_add hp' _ _ _
-      _ ≤ (2 + 1 : ℝ) := (add_le_add hf₁ (by rw [wlpNorm_one, hν₁, one_rpow]; positivity))
+      _ ≤ ‖f + 1‖_[2 * p, ν] + ‖(1 : G → ℝ)‖_[2 * p, ν] :=
+        wLpNorm_le_add_wLpNorm_add (mod_cast hp') _ _ _
+      _ ≤ 2 + 1 := by
+        gcongr
+        have : 2 * (p : ℝ≥0∞) ≠ 0 := mul_ne_zero two_ne_zero (by positivity)
+        simp [wLpNorm_one, ENNReal.mul_ne_top, *]
       _ = 3 := by norm_num
   replace hp' := zero_lt_one.trans_le hp'
   have : 4⁻¹ * ε ^ p ≤ sqrt (∑ i in T, ν i) * 3 ^ p := by
@@ -130,17 +139,16 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
       _ = ∑ i in T, sqrt (ν i) * sqrt (ν i * |(f ^ (2 * p)) i|) := by simp [← mul_assoc, pow_mul']
       _ ≤ sqrt (∑ i in T, ν i) * sqrt (∑ i in T, ν i * |(f ^ (2 * p)) i|) :=
         (sum_sqrt_mul_sqrt_le _ (fun i ↦ ?_) fun i ↦ ?_)
-      _ ≤ sqrt (∑ i in T, ν i) * sqrt (∑ i, ν i * |(f ^ (2 * p)) i|) :=
-        (mul_le_mul_of_nonneg_left (sqrt_le_sqrt $ sum_le_univ_sum_of_nonneg fun i ↦ ?_) ?_)
+      _ ≤ sqrt (∑ i in T, ν i) * sqrt (∑ i, ν i * |(f ^ (2 * p)) i|) := by
+        gcongr; exact sum_le_univ_sum_of_nonneg fun i ↦ by positivity
       _ = sqrt (∑ i in T, ν i) * ‖f‖_[2 * ↑p, ν] ^ p := ?_
-      _ ≤ _ := mul_le_mul_of_nonneg_left (pow_le_pow_left wlpNorm_nonneg hf₁ _) ?_
+      _ ≤ _ := by gcongr; exact mod_cast hf₁
     any_goals positivity
-    rw [wlpNorm_eq_sum hp'.ne', NNReal.coe_mul, mul_inv, rpow_mul, NNReal.coe_natCast,
-      rpow_inv_natCast_pow]
-    simp only [wlpNorm_eq_sum hp'.ne', sqrt_eq_rpow, Nonneg.coe_one, rpow_two,
-      abs_nonneg, NNReal.smul_def, rpow_mul, Pi.pow_apply, abs_pow, norm_eq_abs, mul_pow,
-      rpow_natCast, smul_eq_mul, pow_mul, one_div, NNReal.coe_two]
-    all_goals positivity
+    rw [wLpNorm_eq_sum_nnnorm (mod_cast hp'.ne') (by simp [ENNReal.mul_ne_top])]
+    norm_cast
+    rw [← NNReal.rpow_mul_natCast]
+    have : (p : ℝ) ≠ 0 := by positivity
+    simp [mul_comm, this, Real.sqrt_eq_rpow]
   set p' := 24 / ε * log (3 / ε) * p
   have hp' : 0 < p' := p'_pos hp hε₀ hε₁
   have : 1 - 8⁻¹ * ε ≤ (∑ i in T, ↑(ν i)) ^ p'⁻¹ := by
@@ -177,10 +185,10 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
     _ ≤ (∑ i, ↑(ν i) * |f i + 1| ^ p') ^ p'⁻¹ :=
         rpow_le_rpow ?_ (sum_le_sum_of_subset_of_nonneg (subset_univ _) fun i _ _ ↦ ?_) ?_
     _ = _ := by
-        rw [wlpNorm_eq_sum (NNReal.coe_ne_zero.1 _)]
-        simp [NNReal.smul_def, hp'.ne', p']
-        dsimp
+        rw [wLpNorm_eq_sum_nnnorm]
+        simp [NNReal.smul_def, hp'.ne', p', (p'_pos hp hε₀ hε₁).le]
         positivity
+        simp
   all_goals positivity
 
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier
@@ -188,8 +196,7 @@ transform. -/
 lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (ν : G → ℝ≥0)
     (f : G → ℝ) (g h : G → ℂ) (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h)
     (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1) (hε : ε ≤ ‖f‖_[p, ν]) :
-    1 + ε / 2 ≤‖f + 1‖_[(⟨120 / ε * log (3 / ε) * p, by
-      have := log_ε_pos hε₀ hε₁; positivity⟩ : ℝ≥0), ν] := by
+    1 + ε / 2 ≤‖f + 1‖_[.ofReal (120 / ε * log (3 / ε) * p), ν] := by
   have := log_ε_pos hε₀ hε₁
   have :=
     calc
@@ -197,15 +204,15 @@ lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ 
       _ ≤ 2 * p + 3
         := add_le_add_right (mul_le_mul_left' (Nat.one_le_iff_ne_zero.2 hp) _) _
   calc
-    _ ≤ ‖f + 1‖_[(⟨_, (p'_pos this hε₀ hε₁).le⟩ : ℝ≥0), ν] :=
+    _ ≤ ↑‖f + 1‖_[.ofReal (24 / ε * log (3 / ε) * ↑(2 * p + 3)), ν] :=
       unbalancing' (2 * p + 3) this ((even_two_mul _).add_odd $ by decide) hε₀ hε₁ hf hν hν₁ $
         hε.trans $
-          wlpNorm_mono_right
+          wLpNorm_mono_right
             (Nat.cast_le.2 $ le_add_of_le_left $ le_mul_of_one_le_left' one_le_two) _ _
-    _ ≤ _ := wlpNorm_mono_right ?_ _ _
+    _ ≤ _ := wLpNorm_mono_right ?_ _ _
+  rw [← Nat.one_le_iff_ne_zero] at hp
+  gcongr ENNReal.ofReal ?_
   calc
-    _ ≤ 24 / ε * log (3 / ε) * ↑(2 * p + 3 * p) :=
-      mul_le_mul_of_nonneg_left (Nat.cast_le.2 $ add_le_add_left
-        (le_mul_of_one_le_right ?_ $ Nat.one_le_iff_ne_zero.2 hp) _) ?_
+    _ = 24 / ε * log (3 / ε) * ↑(2 * p + 3 * 1) := by simp
+    _ ≤ 24 / ε * log (3 / ε) * ↑(2 * p + 3 * p) := by gcongr
     _ = _ := by push_cast; ring
-  all_goals positivity

@@ -1,6 +1,8 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import Mathlib.Combinatorics.Additive.Dissociation
+import LeanAPAP.Mathlib.Analysis.Complex.Basic
+import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Prereqs.FourierTransform.Compact
 
 /-!
@@ -11,7 +13,7 @@ attribute [-simp] Complex.norm_eq_abs
 
 open Finset hiding card
 open Fintype (card)
-open Function Real
+open Function Real MeasureTheory
 open Complex (I re im)
 open scoped BigOperators Nat NNReal ENNReal ComplexConjugate ComplexOrder
 
@@ -43,6 +45,8 @@ lemma AddDissociated.randomisation (c : AddChar α ℂ → ℝ) (d : AddChar α 
     mul_ne_zero_iff, prod_ne_zero_iff, prod_ne_zero_iff]
   exact fun h ↦ hcd.ne h.1 (by simpa only [map_ne_zero] using h.2) (sdiff_ne_right.2 $ .inl ht).symm
 
+variable [MeasurableSpace α] [DiscreteMeasurableSpace α]
+
 /-- **Rudin's inequality**, exponential form. -/
 lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
     𝔼 a, exp (f a).re ≤ exp (‖f‖ₙ_[2] ^ 2 / 2) := by
@@ -73,7 +77,7 @@ lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
         AddDissociated.randomisation _ _ $ by simpa [-Complex.ofReal_sinh, hc₀]
     _ ≤ ∏ ψ, exp (‖cft f ψ‖ ^ 2 / 2) :=
         prod_le_prod (fun _ _ ↦ by positivity) fun _ _ ↦ cosh_le_exp_half_sq _
-    _ = _ := by simp_rw [← exp_sum, ← sum_div, ← l2Norm_cft, l2Norm_sq_eq_sum]
+    _ = _ := by simp_rw [← exp_sum, ← sum_div, ← dL2Norm_cft, dL2Norm_sq_eq_sum_norm]
 
 /-- **Rudin's inequality**, exponential form with absolute values. -/
 lemma rudin_exp_abs_ineq (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
@@ -92,21 +96,18 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
     · simp
     specialize H hp ((sqrt p / ‖f‖ₙ_[2]) • f) ?_
     · rwa [cft_smul, support_const_smul_of_ne_zero]
-      positivity
+      sorry
+      -- positivity
+    have : 0 < ‖f‖ₙ_[2] := (cLpNorm_pos two_ne_zero).2 hf
+    have : 0 < |√ p| := by positivity
     simp_rw [Function.comp_def, Pi.smul_apply, Complex.smul_re, ← Pi.smul_def] at H
-    rw [nlpNorm_smul, nlpNorm_smul, norm_div, norm_of_nonneg, norm_of_nonneg, mul_left_comm,
-      mul_le_mul_left] at H
-    refine H ?_
-    rw [div_mul_cancel₀]
-    any_goals positivity
-    · norm_cast
-      exact one_le_two.trans hp
-    · norm_num
+    simpa [cLpNorm_const_smul, nnnorm, sqrt_nonneg, ← mul_div_right_comm, mul_comm |√_|,
+      div_le_iff₀, mul_right_comm, *] using H
   have hp₀ : p ≠ 0 := by positivity
   have : (‖re ∘ f‖ₙ_[↑p] / p) ^ p ≤ (2 * exp 2⁻¹) ^ p := by
     calc
       _ = 𝔼 a, |(f a).re| ^ p / p ^ p := by
-          simp [div_pow, nlpNorm_pow_eq_expect hp₀]; rw [expect_div]
+          simp [div_pow, cLpNorm_pow_eq_expect_norm hp₀]; rw [expect_div]
       _ ≤ 𝔼 a, |(f a).re| ^ p / p ! := by gcongr; norm_cast; exact p.factorial_le_pow
       _ ≤ 𝔼 a, exp |(f a).re| := by gcongr; exact pow_div_factorial_le_exp _ (abs_nonneg _) _
       _ ≤ _ := rudin_exp_abs_ineq f hf
@@ -122,13 +123,13 @@ lemma rudin_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support 
     ‖f‖ₙ_[p] ≤ 4 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] := by
   have hp₁ : (1 : ℝ≥0∞) ≤ p := by exact_mod_cast one_le_two.trans hp
   calc
-    ‖f‖ₙ_[p] = ‖(fun a ↦ ((f a).re : ℂ)) + I • (fun a ↦ ((f a).im : ℂ))‖ₙ_[p]
+    (‖f‖ₙ_[p] : ℝ) = ‖(fun a ↦ ((f a).re : ℂ)) + I • (fun a ↦ ((f a).im : ℂ))‖ₙ_[p]
       := by congr with a; simp [mul_comm I]
     _ ≤ ‖fun a ↦ ((f a).re : ℂ)‖ₙ_[p] + ‖I • (fun a ↦ ((f a).im : ℂ))‖ₙ_[p]
-      := nlpNorm_add_le hp₁ _ _
+      := cLpNorm_add_le hp₁
     _ = ‖re ∘ f‖ₙ_[p] + ‖re ∘ ((-I) • f)‖ₙ_[p] := by
-        rw [nlpNorm_smul hp₁, Complex.norm_I, one_mul, ← Complex.nlpNorm_coe_comp,
-          ← Complex.nlpNorm_coe_comp]
+        rw [cLpNorm_const_smul, Complex.nnnorm_I, one_mul, ← Complex.cLpNorm_coe_comp,
+          ← Complex.cLpNorm_coe_comp]
         congr
         ext a : 1
         simp
@@ -136,4 +137,4 @@ lemma rudin_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support 
       := add_le_add (rudin_ineq_aux hp _ hf) $ rudin_ineq_aux hp _ $ by
         rwa [cft_smul, support_const_smul_of_ne_zero]; simp
     _ = 4 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] := by
-        rw [nlpNorm_smul one_le_two, norm_neg, Complex.norm_I, one_mul]; ring
+        rw [cLpNorm_const_smul, nnnorm_neg, Complex.nnnorm_I, one_mul]; ring

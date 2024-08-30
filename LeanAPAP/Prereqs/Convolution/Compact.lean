@@ -11,7 +11,7 @@ normalisation.
 ## Main declarations
 
 * `nconv`: Discrete convolution of two functions in the compact normalisation
-* `ndconv`: Discrete difference convolution of two functions in the compact normalisation
+* `cdconv`: Discrete difference convolution of two functions in the compact normalisation
 * `iterNConv`: Iterated convolution of a function in the compact normalisation
 
 ## Notation
@@ -193,49 +193,49 @@ lemma support_nconv_subset (f g : G → R) : support (f ∗ₙ g) ⊆ support f 
 variable [StarRing R]
 
 /-- Difference convolution -/
-def ndconv (f g : G → R) : G → R := fun a ↦ 𝔼 x : G × G with x.1 - x.2 = a, f x.1 * conj g x.2
+def cdconv (f g : G → R) : G → R := fun a ↦ 𝔼 x : G × G with x.1 - x.2 = a, f x.1 * conj g x.2
 
-infixl:71 " ○ₙ " => ndconv
+infixl:71 " ○ₙ " => cdconv
 
-lemma ndconv_apply (f g : G → R) (a : G) :
+lemma cdconv_apply (f g : G → R) (a : G) :
     (f ○ₙ g) a = 𝔼 x : G × G with x.1 - x.2 = a , f x.1 * conj g x.2 := rfl
 
-lemma ndconv_apply_eq_smul_dconv (f g : G → R) (a : G) :
+lemma cdconv_apply_eq_smul_dconv (f g : G → R) (a : G) :
     (f ○ₙ g) a = (f ○ g) a /ℚ Fintype.card G := by
-  rw [ndconv_apply, expect, eq_comm]
+  rw [cdconv_apply, expect, eq_comm]
   congr 3
   refine card_nbij' (fun b ↦ (a + b, b)) Prod.snd ?_ ?_ ?_ ?_ <;> simp [eq_sub_iff_add_eq, eq_comm]
 
-lemma ndconv_eq_smul_dconv (f g : G → R) : (f ○ₙ g) = (f ○ g) /ℚ Fintype.card G :=
-  funext $ ndconv_apply_eq_smul_dconv _ _
+lemma cdconv_eq_smul_dconv (f g : G → R) : (f ○ₙ g) = (f ○ g) /ℚ Fintype.card G :=
+  funext $ cdconv_apply_eq_smul_dconv _ _
 
 @[simp] lemma nconv_conjneg (f g : G → R) : f ∗ₙ conjneg g = f ○ₙ g :=
   funext fun a ↦ expect_bij (fun x _ ↦ (x.1, -x.2)) (fun x hx ↦ by simpa using hx) (fun x _ ↦ rfl)
     (fun x y _ _ h ↦ by simpa [Prod.ext_iff] using h) fun x hx ↦
       ⟨(x.1, -x.2), by simpa [sub_eq_add_neg] using hx, by simp⟩
 
-@[simp] lemma ndconv_conjneg (f g : G → R) : f ○ₙ conjneg g = f ∗ₙ g := by
+@[simp] lemma cdconv_conjneg (f g : G → R) : f ○ₙ conjneg g = f ∗ₙ g := by
   rw [← nconv_conjneg, conjneg_conjneg]
 
-@[simp] lemma translate_ndconv (a : G) (f g : G → R) : τ a f ○ₙ g = τ a (f ○ₙ g) :=
+@[simp] lemma translate_cdconv (a : G) (f g : G → R) : τ a f ○ₙ g = τ a (f ○ₙ g) :=
   funext fun b ↦ expect_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
     (by simp [sub_right_comm _ a]) (by simp)
 
-@[simp] lemma ndconv_translate (a : G) (f g : G → R) : f ○ₙ τ a g = τ (-a) (f ○ₙ g) :=
+@[simp] lemma cdconv_translate (a : G) (f g : G → R) : f ○ₙ τ a g = τ (-a) (f ○ₙ g) :=
   funext fun b ↦ expect_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
     (by simp [sub_sub_eq_add_sub, ← sub_add_eq_add_sub]) (by simp)
 
 @[simp] lemma conj_nconv (f g : G → R) : conj (f ∗ₙ g) = conj f ∗ₙ conj g :=
   funext fun a ↦ by simp only [Pi.conj_apply, nconv_apply, map_expect, map_mul]
 
-@[simp] lemma conj_ndconv (f g : G → R) : conj (f ○ₙ g) = conj f ○ₙ conj g := by
+@[simp] lemma conj_cdconv (f g : G → R) : conj (f ○ₙ g) = conj f ○ₙ conj g := by
   simp_rw [← nconv_conjneg, conj_nconv, conjneg_conj]
 
 lemma IsSelfAdjoint.nconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ∗ₙ g) :=
   (conj_nconv _ _).trans $ congr_arg₂ _ hf hg
 
-lemma IsSelfAdjoint.ndconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ○ₙ g) :=
-  (conj_ndconv _ _).trans $ congr_arg₂ _ hf hg
+lemma IsSelfAdjoint.cdconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ○ₙ g) :=
+  (conj_cdconv _ _).trans $ congr_arg₂ _ hf hg
 
 @[simp]lemma conjneg_nconv (f g : G → R) : conjneg (f ∗ₙ g) = conjneg f ∗ₙ conjneg g := by
   funext a
@@ -243,84 +243,84 @@ lemma IsSelfAdjoint.ndconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSel
   exact Finset.expect_equiv (Equiv.neg (G × G)) (by simp [eq_comm, ← neg_eq_iff_eq_neg, add_comm])
     (by simp)
 
-@[simp] lemma conjneg_ndconv (f g : G → R) : conjneg (f ○ₙ g) = g ○ₙ f := by
+@[simp] lemma conjneg_cdconv (f g : G → R) : conjneg (f ○ₙ g) = g ○ₙ f := by
   simp_rw [← nconv_conjneg, conjneg_nconv, conjneg_conjneg, nconv_comm]
 
-@[simp] lemma ndconv_zero (f : G → R) : f ○ₙ 0 = 0 := by simp [← nconv_conjneg]
-@[simp] lemma zero_ndconv (f : G → R) : 0 ○ₙ f = 0 := by rw [← nconv_conjneg]; simp [-nconv_conjneg]
+@[simp] lemma cdconv_zero (f : G → R) : f ○ₙ 0 = 0 := by simp [← nconv_conjneg]
+@[simp] lemma zero_cdconv (f : G → R) : 0 ○ₙ f = 0 := by rw [← nconv_conjneg]; simp [-nconv_conjneg]
 
-lemma ndconv_add (f g h : G → R) : f ○ₙ (g + h) = f ○ₙ g + f ○ₙ h := by
+lemma cdconv_add (f g h : G → R) : f ○ₙ (g + h) = f ○ₙ g + f ○ₙ h := by
   simp_rw [← nconv_conjneg, conjneg_add, nconv_add]
 
-lemma add_ndconv (f g h : G → R) : (f + g) ○ₙ h = f ○ₙ h + g ○ₙ h := by
+lemma add_cdconv (f g h : G → R) : (f + g) ○ₙ h = f ○ₙ h + g ○ₙ h := by
   simp_rw [← nconv_conjneg, add_nconv]
 
-lemma smul_ndconv [DistribSMul H R] [IsScalarTower H R R] [SMulCommClass H R R] (c : H)
+lemma smul_cdconv [DistribSMul H R] [IsScalarTower H R R] [SMulCommClass H R R] (c : H)
     (f g : G → R) : c • f ○ₙ g = c • (f ○ₙ g) := by
   have := SMulCommClass.symm H R R
   ext a
-  simp only [Pi.smul_apply, smul_expect, ndconv_apply, smul_mul_assoc]
+  simp only [Pi.smul_apply, smul_expect, cdconv_apply, smul_mul_assoc]
 
-lemma ndconv_smul [Star H] [DistribSMul H R] [IsScalarTower H R R] [SMulCommClass H R R]
+lemma cdconv_smul [Star H] [DistribSMul H R] [IsScalarTower H R R] [SMulCommClass H R R]
     [StarModule H R] (c : H) (f g : G → R) : f ○ₙ c • g = star c • (f ○ₙ g) := by
   have := SMulCommClass.symm H R R
   ext a
-  simp only [Pi.smul_apply, smul_expect, ndconv_apply, mul_smul_comm, starRingEnd_apply, star_smul]
+  simp only [Pi.smul_apply, smul_expect, cdconv_apply, mul_smul_comm, starRingEnd_apply, star_smul]
 
-alias smul_ndconv_assoc := smul_ndconv
-alias smul_ndconv_left_comm := ndconv_smul
+alias smul_cdconv_assoc := smul_cdconv
+alias smul_cdconv_left_comm := cdconv_smul
 
-lemma nconv_ndconv_nconv_comm (f g h i : G → R) : f ∗ₙ g ○ₙ (h ∗ₙ i) = f ○ₙ h ∗ₙ (g ○ₙ i) := by
+lemma nconv_cdconv_nconv_comm (f g h i : G → R) : f ∗ₙ g ○ₙ (h ∗ₙ i) = f ○ₙ h ∗ₙ (g ○ₙ i) := by
   simp_rw [← nconv_conjneg, conjneg_nconv, nconv_nconv_nconv_comm]
 
-lemma ndconv_nconv_ndconv_comm (f g h i : G → R) : f ○ₙ g ∗ₙ (h ○ₙ i) = f ∗ₙ h ○ₙ (g ∗ₙ i) := by
+lemma cdconv_nconv_cdconv_comm (f g h i : G → R) : f ○ₙ g ∗ₙ (h ○ₙ i) = f ∗ₙ h ○ₙ (g ∗ₙ i) := by
   simp_rw [← nconv_conjneg, conjneg_nconv, nconv_nconv_nconv_comm]
 
-lemma ndconv_ndconv_ndconv_comm (f g h i : G → R) : f ○ₙ g ○ₙ (h ○ₙ i) = f ○ₙ h ○ₙ (g ○ₙ i) := by
+lemma cdconv_cdconv_cdconv_comm (f g h i : G → R) : f ○ₙ g ○ₙ (h ○ₙ i) = f ○ₙ h ○ₙ (g ○ₙ i) := by
   simp_rw [← nconv_conjneg, conjneg_nconv, nconv_nconv_nconv_comm]
 
 --TODO: Can we generalise to star ring homs?
--- lemma map_ndconv (f g : G → ℝ≥0) (a : G) : (↑((f ○ₙ g) a) : ℝ) = ((↑) ∘ f ○ₙ (↑) ∘ g) a := by
---   simp_rw [ndconv_apply, NNReal.coe_expect, NNReal.coe_mul, starRingEnd_apply, star_trivial,
+-- lemma map_cdconv (f g : G → ℝ≥0) (a : G) : (↑((f ○ₙ g) a) : ℝ) = ((↑) ∘ f ○ₙ (↑) ∘ g) a := by
+--   simp_rw [cdconv_apply, NNReal.coe_expect, NNReal.coe_mul, starRingEnd_apply, star_trivial,
 --     Function.comp_apply]
 
-lemma ndconv_eq_expect_add (f g : G → R) (a : G) : (f ○ₙ g) a = 𝔼 t, f (a + t) * conj (g t) := by
+lemma cdconv_eq_expect_add (f g : G → R) (a : G) : (f ○ₙ g) a = 𝔼 t, f (a + t) * conj (g t) := by
   simp [← nconv_conjneg, nconv_eq_expect_add]
 
-lemma ndconv_eq_expect_sub (f g : G → R) (a : G) : (f ○ₙ g) a = 𝔼 t, f t * conj (g (t - a)) := by
+lemma cdconv_eq_expect_sub (f g : G → R) (a : G) : (f ○ₙ g) a = 𝔼 t, f t * conj (g (t - a)) := by
   simp [← nconv_conjneg, nconv_eq_expect_sub']
 
-lemma ndconv_apply_neg (f g : G → R) (a : G) : (f ○ₙ g) (-a) = conj ((g ○ₙ f) a) := by
-  rw [← conjneg_ndconv f, conjneg_apply, Complex.conj_conj]
+lemma cdconv_apply_neg (f g : G → R) (a : G) : (f ○ₙ g) (-a) = conj ((g ○ₙ f) a) := by
+  rw [← conjneg_cdconv f, conjneg_apply, Complex.conj_conj]
 
-lemma ndconv_apply_sub (f g : G → R) (a b : G) :
+lemma cdconv_apply_sub (f g : G → R) (a b : G) :
     (f ○ₙ g) (a - b) = 𝔼 t, f (a + t) * conj (g (b + t)) := by
   simp [← nconv_conjneg, sub_eq_add_neg, nconv_apply_add, add_comm]
 
-lemma expect_ndconv_mul (f g h : G → R) :
+lemma expect_cdconv_mul (f g h : G → R) :
     𝔼 a, (f ○ₙ g) a * h a = 𝔼 a, 𝔼 b, f a * conj (g b) * h (a - b) := by
-  simp_rw [ndconv_eq_expect_sub, expect_mul]
+  simp_rw [cdconv_eq_expect_sub, expect_mul]
   rw [expect_comm]
   exact expect_congr rfl fun x _ ↦ Fintype.expect_equiv (Equiv.subLeft x) _ _ fun y ↦ by simp
 
-lemma expect_ndconv (f g : G → R) : 𝔼 a, (f ○ₙ g) a = (𝔼 a, f a) * 𝔼 a, conj (g a) := by
-  simpa only [expect_mul_expect, Pi.one_apply, mul_one] using expect_ndconv_mul f g 1
+lemma expect_cdconv (f g : G → R) : 𝔼 a, (f ○ₙ g) a = (𝔼 a, f a) * 𝔼 a, conj (g a) := by
+  simpa only [expect_mul_expect, Pi.one_apply, mul_one] using expect_cdconv_mul f g 1
 
 @[simp]
-lemma ndconv_const (f : G → R) (b : R) : f ○ₙ const _ b = const _ ((𝔼 x, f x) * conj b) := by
-  ext; simp [ndconv_eq_expect_sub, expect_mul]
+lemma cdconv_const (f : G → R) (b : R) : f ○ₙ const _ b = const _ ((𝔼 x, f x) * conj b) := by
+  ext; simp [cdconv_eq_expect_sub, expect_mul]
 
 @[simp]
-lemma const_ndconv (b : R) (f : G → R) : const _ b ○ₙ f = const _ (b * 𝔼 x, conj (f x)) := by
-  ext; simp [ndconv_eq_expect_add, mul_expect]
+lemma const_cdconv (b : R) (f : G → R) : const _ b ○ₙ f = const _ (b * 𝔼 x, conj (f x)) := by
+  ext; simp [cdconv_eq_expect_add, mul_expect]
 
-@[simp] lemma ndconv_trivNChar (f : G → R) : f ○ₙ trivNChar = f := by
+@[simp] lemma cdconv_trivNChar (f : G → R) : f ○ₙ trivNChar = f := by
   rw [← nconv_conjneg, conjneg_trivNChar, nconv_trivNChar]
 
-@[simp] lemma trivNChar_ndconv (f : G → R) : trivNChar ○ₙ f = conjneg f := by
+@[simp] lemma trivNChar_cdconv (f : G → R) : trivNChar ○ₙ f = conjneg f := by
   rw [← nconv_conjneg, trivNChar_nconv]
 
-lemma support_ndconv_subset (f g : G → R) : support (f ○ₙ g) ⊆ support f - support g := by
+lemma support_cdconv_subset (f g : G → R) : support (f ○ₙ g) ⊆ support f - support g := by
   simpa [sub_eq_add_neg] using support_nconv_subset f (conjneg g)
 
 -- lemma indicate_nconv_indicate_apply (s t : Finset G) (a : G) :
@@ -328,9 +328,9 @@ lemma support_ndconv_subset (f g : G → R) : support (f ○ₙ g) ⊆ support f
 --   simp only [nconv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, expect_boole]
 --   simp_rw [← mem_product, filter_univ_mem]
 
--- lemma indicate_ndconv_indicate_apply (s t : Finset G) (a : G) :
+-- lemma indicate_cdconv_indicate_apply (s t : Finset G) (a : G) :
 --     (𝟭_[R] s ○ₙ 𝟭 t) a = ((s ×ˢ t).filter fun x : G × G ↦ x.1 - x.2 = a).card := by
---   simp only [ndconv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, expect_boole,
+--   simp only [cdconv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, expect_boole,
 --     apply_ite conj, map_one, map_zero, Pi.conj_apply]
 --   simp_rw [← mem_product, filter_univ_mem]
 
@@ -350,14 +350,14 @@ lemma sub_nconv (f g h : G → R) : (f - g) ∗ₙ h = f ∗ₙ h - g ∗ₙ h :
 
 variable [StarRing R]
 
-@[simp] lemma ndconv_neg (f g : G → R) : f ○ₙ -g = -(f ○ₙ g) := by ext; simp [ndconv_apply]
-@[simp] lemma neg_ndconv (f g : G → R) : -f ○ₙ g = -(f ○ₙ g) := by ext; simp [ndconv_apply]
+@[simp] lemma cdconv_neg (f g : G → R) : f ○ₙ -g = -(f ○ₙ g) := by ext; simp [cdconv_apply]
+@[simp] lemma neg_cdconv (f g : G → R) : -f ○ₙ g = -(f ○ₙ g) := by ext; simp [cdconv_apply]
 
-lemma ndconv_sub (f g h : G → R) : f ○ₙ (g - h) = f ○ₙ g - f ○ₙ h := by
-  simp only [sub_eq_add_neg, ndconv_add, ndconv_neg]
+lemma cdconv_sub (f g h : G → R) : f ○ₙ (g - h) = f ○ₙ g - f ○ₙ h := by
+  simp only [sub_eq_add_neg, cdconv_add, cdconv_neg]
 
-lemma sub_ndconv (f g h : G → R) : (f - g) ○ₙ h = f ○ₙ h - g ○ₙ h := by
-  simp only [sub_eq_add_neg, add_ndconv, neg_ndconv]
+lemma sub_cdconv (f g h : G → R) : (f - g) ○ₙ h = f ○ₙ h - g ○ₙ h := by
+  simp only [sub_eq_add_neg, add_cdconv, neg_cdconv]
 
 end Field
 
@@ -369,8 +369,8 @@ variable [Semifield R] [CharZero R]
 
 variable [StarRing R]
 
-@[simp] lemma indicate_univ_ndconv_mu_univ : 𝟭_[R] (univ : Finset G) ○ₙ 𝟭 univ = 𝟭 univ := by
-  ext; simp [indicate_apply, ndconv_eq_expect_add, card_univ, *]
+@[simp] lemma indicate_univ_cdconv_mu_univ : 𝟭_[R] (univ : Finset G) ○ₙ 𝟭 univ = 𝟭 univ := by
+  ext; simp [indicate_apply, cdconv_eq_expect_add, card_univ, *]
 
 end Semifield
 
@@ -382,8 +382,8 @@ variable [Field R] [CharZero R]
 
 variable [StarRing R]
 
-@[simp] lemma balance_ndconv (f g : G → R) : balance (f ○ₙ g) = balance f ○ₙ balance g := by
-  simp [balance, ndconv_sub, sub_ndconv, expect_ndconv, map_expect, expect_sub_distrib]
+@[simp] lemma balance_cdconv (f g : G → R) : balance (f ○ₙ g) = balance f ○ₙ balance g := by
+  simp [balance, cdconv_sub, sub_cdconv, expect_cdconv, map_expect, expect_sub_distrib]
 
 end Field
 
@@ -394,13 +394,13 @@ variable {𝕜 : Type} [RCLike 𝕜] (f g : G → ℝ) (a : G)
 lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → 𝕜) a := map_nconv (algebraMap ℝ 𝕜) _ _ _
 
 @[simp, norm_cast]
-lemma coe_ndconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → 𝕜) a := by simp [ndconv_apply, coe_expect]
+lemma coe_cdconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → 𝕜) a := by simp [cdconv_apply, coe_expect]
 
 @[simp]
 lemma coe_comp_nconv : ofReal ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → 𝕜) := funext $ coe_nconv _ _
 
 @[simp]
-lemma coe_comp_ndconv : ofReal ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → 𝕜) := funext $ coe_ndconv _ _
+lemma coe_comp_cdconv : ofReal ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → 𝕜) := funext $ coe_cdconv _ _
 
 end RCLike
 
@@ -411,13 +411,13 @@ variable (f g : G → ℝ) (a : G)
 lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℂ) a := RCLike.coe_nconv _ _ _
 
 @[simp, norm_cast]
-lemma coe_ndconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) a := RCLike.coe_ndconv _ _ _
+lemma coe_cdconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) a := RCLike.coe_cdconv _ _ _
 
 @[simp]
 lemma coe_comp_nconv : ofReal' ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℂ) := funext $ coe_nconv _ _
 
 @[simp]
-lemma coe_comp_ndconv : ofReal' ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) := funext $ coe_ndconv _ _
+lemma coe_comp_cdconv : ofReal' ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) := funext $ coe_cdconv _ _
 
 end Complex
 
@@ -428,13 +428,13 @@ variable (f g : G → ℝ≥0) (a : G)
 lemma coe_nconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℝ) a := map_nconv NNReal.toRealHom _ _ _
 
 @[simp, norm_cast]
-lemma coe_ndconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℝ) a := by simp [ndconv_apply, coe_expect]
+lemma coe_cdconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℝ) a := by simp [cdconv_apply, coe_expect]
 
 @[simp]
 lemma coe_comp_nconv : ((↑) : _ → ℝ) ∘ (f ∗ₙ g) = (↑) ∘ f ∗ₙ (↑) ∘ g := funext $ coe_nconv _ _
 
 @[simp]
-lemma coe_comp_ndconv : ((↑) : _ → ℝ) ∘ (f ○ₙ g) = (↑) ∘ f ○ₙ (↑) ∘ g := funext $ coe_ndconv _ _
+lemma coe_comp_cdconv : ((↑) : _ → ℝ) ∘ (f ○ₙ g) = (↑) ∘ f ○ₙ (↑) ∘ g := funext $ coe_cdconv _ _
 
 end NNReal
 
@@ -513,9 +513,9 @@ variable [StarRing R]
   | 0 => by simp
   | n + 1 => by simp [iterNConv_succ, conjneg_iterNConv]
 
-lemma iterNConv_ndconv_distrib (f g : G → R) : ∀ n, (f ○ₙ g) ∗^ₙ n = f ∗^ₙ n ○ₙ g ∗^ₙ n
-  | 0 => (ndconv_trivNChar _).symm
-  | n + 1 => by simp_rw [iterNConv_succ, iterNConv_ndconv_distrib, nconv_ndconv_nconv_comm]
+lemma iterNConv_cdconv_distrib (f g : G → R) : ∀ n, (f ○ₙ g) ∗^ₙ n = f ∗^ₙ n ○ₙ g ∗^ₙ n
+  | 0 => (cdconv_trivNChar _).symm
+  | n + 1 => by simp_rw [iterNConv_succ, iterNConv_cdconv_distrib, nconv_cdconv_nconv_comm]
 
 -- lemma indicate_iterNConv_apply (s : Finset G) (n : ℕ) (a : G) :
 --     (𝟭_[ℝ] s ∗^ₙ n) a = ((piFinset fun _i ↦ s).filter fun x : Fin n → G ↦ ∑ i, x i = a).card := by

@@ -8,12 +8,13 @@ import LeanAPAP.Physics.Unbalancing
 # Finite field case
 -/
 
-open FiniteDimensional Fintype Function Real
+open FiniteDimensional Fintype Function Real MeasureTheory
 open Finset hiding card
 open scoped NNReal BigOperators Combinatorics.Additive Pointwise
 
 universe u
-variable {G : Type u} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {γ ε : ℝ}
+variable {G : Type u} [AddCommGroup G] [DecidableEq G] [Fintype G] [MeasurableSpace G]
+  [DiscreteMeasurableSpace G] {A C : Finset G} {γ ε : ℝ}
 
 lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
@@ -31,26 +32,24 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     _ ≤ _ := div_le_div_of_nonneg_right hAC (card G).cast_nonneg
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
     _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[NNReal.conjExponent p] :=
-        abs_l2Inner_le_lpNorm_mul_lpNorm hp'' _ _
+        abs_dL2Inner_le_dLpNorm_mul_dLpNorm hp'' _ _
     _ ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-(p : ℝ)⁻¹) * γ ^ (-(p : ℝ)⁻¹)) :=
-        mul_le_mul (lpNorm_conv_le_lpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
+        mul_le_mul (dLpNorm_conv_le_dLpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
           (by positivity) (by positivity)
     _ = ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈γ.curlog⌉₊), const _ (card G)⁻¹] *
           γ ^ (-(p : ℝ)⁻¹) := ?_
     _ ≤ _ := mul_le_mul_of_nonneg_left ?_ $ by positivity
-  · rw [← balance_conv, balance, l2Inner_sub_left, l2Inner_const_left, expect_conv, sum_mu ℝ hA,
+  · rw [← balance_conv, balance, dL2Inner_sub_left, dL2Inner_const_left, expect_conv, sum_mu ℝ hA,
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel₀, ← mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
-  · rw [lpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
+  · rw [dLpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
     rw [nnratCast_dens, le_div_iff₀, mul_comm] at hγC
     refine rpow_le_rpow_of_nonpos ?_ hγC (neg_nonpos.2 ?_)
     all_goals positivity
-  · simp_rw [Nat.cast_mul, Nat.cast_two, p]
-    rw [wlpNorm_const_right, mul_assoc, mul_left_comm, NNReal.coe_inv, inv_rpow, rpow_neg]
-    push_cast
-    any_goals norm_cast; rw [Nat.succ_le_iff]
-    rfl
-    all_goals positivity
+  · rw [mul_comm, wLpNorm_const_right, mul_right_comm, rpow_neg, ← inv_rpow]
+    congr
+    any_goals positivity
+    exact ENNReal.natCast_ne_top _
   · dsimp [p]
     push_cast
     norm_num
@@ -86,7 +85,7 @@ lemma ap_in_ff (hS : S.Nonempty) (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : �
     calc
       _ = ⟪μ V', μ A₁ ∗ μ A₂ ○ 𝟭 S⟫_[ℝ] := by
         sorry
-        -- rw [conv_assoc, conv_l2Inner, ← conj_l2Inner]
+        -- rw [conv_assoc, conv_dL2Inner, ← conj_dL2Inner]
         -- simp
 
       _ = _ := sorry
@@ -103,7 +102,7 @@ lemma di_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hε₀ : 0 < ε) (hε₁ : ε <
     refine ⟨⊤, univ, _⟩
     rw [AffineSubspace.direction_top]
     simp only [AffineSubspace.top_coe, coe_univ, eq_self_iff_true, finrank_top, tsub_self,
-      Nat.cast_zero, indicate_empty, zero_mul, lpNorm_zero, true_and_iff,
+      Nat.cast_zero, indicate_empty, zero_mul, nnLpNorm_zero, true_and_iff,
       Finset.card_empty, zero_div] at hαA ⊢
     exact ⟨by positivity, mul_nonpos_of_nonneg_of_nonpos (by positivity) hαA⟩
   have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
@@ -118,13 +117,14 @@ lemma di_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hε₀ : 0 < ε) (hε₁ : ε <
     simp [smul_dconv, dconv_smul, smul_smul]
   · simp [card_univ, show (card G : ℂ) ≠ 0 by sorry]
   · simp only [comp_const, Nonneg.coe_inv, NNReal.coe_natCast]
-    rw [← ENNReal.coe_one, lpNorm_const one_ne_zero]
+    unfold const
+    rw [dLpNorm_const one_ne_zero]
     sorry
     -- simp only [Nonneg.coe_one, inv_one, rpow_one, norm_inv, norm_coe_nat,
     --   mul_inv_cancel₀ (show (card G : ℝ) ≠ 0 by positivity)]
   · have hγ' : (1 : ℝ≥0) ≤ 2 * ⌈γ.curlog⌉₊ := sorry
     sorry
-    -- simpa [wlpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff₀' (show (0 : ℝ) < card G by positivity),
+    -- simpa [wLpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity),
     --   ← div_div, *] using global_dichotomy hA hγC hγ hAC
   sorry
 
@@ -175,6 +175,8 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
     obtain hB' | hB' := le_or_lt 2⁻¹ (card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
     · exact ⟨V, inferInstance, inferInstance, inferInstance, inferInstance, B,
         hV.trans (by gcongr; exact i.le_succ), hB, hαβ, fun _ ↦ hB'⟩
+    let _ : MeasurableSpace V := ⊤
+    have : DiscreteMeasurableSpace V := ⟨fun _ ↦ trivial⟩
     have : 2⁻¹ ≤ |card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ] - 1| := by
       rw [abs_sub_comm, le_abs, le_sub_comm]
       norm_num at hB' ⊢
@@ -207,7 +209,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
             _ ≤ 2 := by norm_num
         · positivity
     all_goals positivity
-  rw [hB.l2Inner_mu_conv_mu_mu_two_smul_mu] at hBV
+  rw [hB.dL2Inner_mu_conv_mu_mu_two_smul_mu] at hBV
   suffices h : (q ^ (n - 65 * curlog α ^ 9) : ℝ) ≤ q ^ (n / 2) by
     rw [rpow_le_rpow_left_iff ‹_›, sub_le_comm, sub_half, div_le_iff₀' zero_lt_two, ← mul_assoc] at h
     norm_num at h

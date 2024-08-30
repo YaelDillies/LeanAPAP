@@ -5,7 +5,7 @@ import LeanAPAP.Prereqs.FourierTransform.Discrete
 
 noncomputable section
 
-open Finset Fintype Function Real
+open Finset Fintype Function Real MeasureTheory
 open scoped Nat
 
 variable {G : Type*} [AddCommGroup G] {s : Finset G}
@@ -45,25 +45,25 @@ lemma boringEnergy_eq (n : ℕ) (s : Finset G) : boringEnergy n s = ∑ x, (𝟭
 @[simp] lemma boringEnergy_one (s : Finset G) : boringEnergy 1 s = s.card := by
   simp [boringEnergy_eq, indicate_apply]
 
-lemma nlpNorm_dft_indicate_pow (n : ℕ) (s : Finset G) :
+lemma cLpNorm_dft_indicate_pow (n : ℕ) (s : Finset G) :
     ‖dft (𝟭 s)‖ₙ_[↑(2 * n)] ^ (2 * n) = boringEnergy n s := by
   obtain rfl | hn := n.eq_zero_or_pos
   · simp
   refine Complex.ofReal_injective ?_
   calc
     _ = ⟪dft (𝟭 s ∗^ n), dft (𝟭 s ∗^ n)⟫ₙ_[ℂ] := ?_
-    _ = ⟪𝟭 s ∗^ n, 𝟭 s ∗^ n⟫_[ℂ] := nl2Inner_dft _ _
+    _ = ⟪𝟭 s ∗^ n, 𝟭 s ∗^ n⟫_[ℂ] := cL2Inner_dft _ _
     _ = _ := ?_
-  · rw [nlpNorm_pow_eq_expect]
+  · rw [cLpNorm_pow_eq_expect_norm]
     simp_rw [pow_mul', ← norm_pow _ n, Complex.ofReal_expect, Complex.ofReal_pow,
-      ← Complex.conj_mul', nl2Inner_eq_expect, dft_iterConv_apply]
+      ← Complex.conj_mul', cL2Inner_eq_expect, dft_iterConv_apply]
     positivity
-  · simp only [l2Inner_eq_sum, boringEnergy_eq, Complex.ofReal_mul, Complex.ofReal_natCast,
+  · simp only [dL2Inner_eq_sum, boringEnergy_eq, Complex.ofReal_mul, Complex.ofReal_natCast,
       Complex.ofReal_sum, Complex.ofReal_pow, mul_eq_mul_left_iff, Nat.cast_eq_zero,
       Fintype.card_ne_zero, or_false, sq, (((indicate_isSelfAdjoint _).iterConv _).apply _).conj_eq,
       Complex.coe_iterConv, Complex.ofReal_comp_indicate]
 
-lemma nl2Norm_dft_indicate (s : Finset G) : ‖dft (𝟭 s)‖ₙ_[2] = sqrt s.card := by
-  rw [eq_comm, sqrt_eq_iff_eq_sq]
-  simpa [eq_comm] using nlpNorm_dft_indicate_pow 1 s
+lemma cL2Norm_dft_indicate (s : Finset G) : ‖dft (𝟭 s)‖ₙ_[2] = sqrt s.card := by
+  rw [eq_comm, sqrt_eq_iff_eq_sq, eq_comm]
+  simpa using cLpNorm_dft_indicate_pow 1 s
   all_goals positivity

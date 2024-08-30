@@ -1,5 +1,7 @@
+import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
-import LeanAPAP.Prereqs.LpNorm.Compact
+import LeanAPAP.Prereqs.LpNorm.Compact.Inner
+import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 
 /-!
@@ -9,7 +11,7 @@ This file defines the discrete Fourier transform and shows the Parseval-Plancher
 Fourier inversion formula for it.
 -/
 
-open AddChar Finset Function
+open AddChar Finset Function MeasureTheory
 open Fintype (card)
 open scoped BigOperators ComplexConjugate ComplexOrder
 
@@ -23,37 +25,38 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
 @[simp] lemma dft_zero : dft (0 : α → ℂ) = 0 := by ext; simp [dft_apply]
 
 @[simp] lemma dft_add (f g : α → ℂ) : dft (f + g) = dft f + dft g := by
-  ext; simp [l2Inner_add_right, dft_apply]
+  ext; simp [dL2Inner_add_right, dft_apply]
 
 @[simp] lemma dft_neg (f : α → ℂ) : dft (-f) = - dft f := by ext; simp [dft_apply]
 
 @[simp] lemma dft_sub (f g : α → ℂ) : dft (f - g) = dft f - dft g := by
-  ext; simp [l2Inner_sub_right, dft_apply]
+  ext; simp [dL2Inner_sub_right, dft_apply]
 
 @[simp] lemma dft_const (a : ℂ) (hψ : ψ ≠ 0) : dft (const α a) ψ = 0 := by
-  simp only [dft_apply, l2Inner_eq_sum, const_apply, ← sum_mul, ← map_sum,
+  simp only [dft_apply, dL2Inner_eq_sum, const_apply, ← sum_mul, ← map_sum,
     sum_eq_zero_iff_ne_zero.2 hψ, map_zero, zero_mul]
 
 @[simp] lemma dft_smul [DistribSMul γ ℂ] [Star γ] [StarModule γ ℂ] [SMulCommClass γ ℂ ℂ] (c : γ)
-    (f : α → ℂ) : dft (c • f) = c • dft f := by ext; simp [l2Inner_smul_right, dft_apply]
+    (f : α → ℂ) : dft (c • f) = c • dft f := by ext; simp [dL2Inner_smul_right, dft_apply]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
-@[simp] lemma nl2Inner_dft (f g : α → ℂ) : ⟪dft f, dft g⟫ₙ_[ℂ] = ⟪f, g⟫_[ℂ] := by
+@[simp] lemma cL2Inner_dft (f g : α → ℂ) : ⟪dft f, dft g⟫ₙ_[ℂ] = ⟪f, g⟫_[ℂ] := by
   classical
   unfold dft
-  simp_rw [l2Inner_eq_sum, nl2Inner_eq_expect, map_sum, map_mul, starRingEnd_self_apply, sum_mul,
+  simp_rw [dL2Inner_eq_sum, cL2Inner_eq_expect, map_sum, map_mul, starRingEnd_self_apply, sum_mul,
     mul_sum, expect_sum_comm, mul_mul_mul_comm _ (conj $ f _), ← expect_mul, ←
     AddChar.inv_apply_eq_conj, ← map_neg_eq_inv, ← map_add_eq_mul, AddChar.expect_apply_eq_ite,
     add_neg_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
-@[simp] lemma nl2Norm_dft (f : α → ℂ) : ‖dft f‖ₙ_[2] = ‖f‖_[2] :=
-  (sq_eq_sq nlpNorm_nonneg lpNorm_nonneg).1 $ Complex.ofReal_injective $ by
-    push_cast; simpa only [nl2Inner_self, l2Inner_self] using nl2Inner_dft f f
+@[simp] lemma cL2Norm_dft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
+    ‖dft f‖ₙ_[2] = ‖f‖_[2] :=
+  (sq_eq_sq (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
+    push_cast; simpa only [cL2Inner_self, dL2Inner_self] using cL2Inner_dft f f
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a := by
-  classical simp_rw [dft, l2Inner_eq_sum, sum_mul, expect_sum_comm, mul_right_comm _ (f _),
+  classical simp_rw [dft, dL2Inner_eq_sum, sum_mul, expect_sum_comm, mul_right_comm _ (f _),
     ← expect_mul, ← AddChar.inv_apply_eq_conj, inv_mul_eq_div, ← map_sub_eq_div,
     AddChar.expect_apply_eq_ite, sub_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
@@ -65,7 +68,7 @@ lemma dft_inversion' (f : α → ℂ) (a : α) : ∑ ψ : AddChar α ℂ, dft f 
 
 lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
     dft (dft f) (doubleDualEmb a) = card α * f (-a) := by
-  simp only [← dft_inversion f (-a), mul_comm (conj _), dft_apply, l2Inner_eq_sum, map_neg_eq_inv,
+  simp only [← dft_inversion f (-a), mul_comm (conj _), dft_apply, dL2Inner_eq_sum, map_neg_eq_inv,
     AddChar.inv_apply_eq_conj, doubleDualEmb_apply, ← Fintype.card_mul_expect, AddChar.card_eq]
 
 lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
@@ -77,16 +80,16 @@ lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) 
   funext fun a ↦ (dft_inversion _ _).symm.trans $ by rw [h, dft_inversion]
 
 lemma dft_inv (ψ : AddChar α ℂ) (hf : IsSelfAdjoint f) : dft f ψ⁻¹ = conj (dft f ψ) := by
-  simp_rw [dft_apply, l2Inner_eq_sum, map_sum, AddChar.inv_apply', map_mul,
+  simp_rw [dft_apply, dL2Inner_eq_sum, map_sum, AddChar.inv_apply', map_mul,
     AddChar.inv_apply_eq_conj, Complex.conj_conj, (hf.apply _).conj_eq]
 
 @[simp]
 lemma dft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conj f) ψ = conj (dft f ψ⁻¹) := by
-  simp only [dft_apply, l2Inner_eq_sum, map_sum, map_mul, ← inv_apply', ← inv_apply_eq_conj,
+  simp only [dft_apply, dL2Inner_eq_sum, map_sum, map_mul, ← inv_apply', ← inv_apply_eq_conj,
     inv_inv, Pi.conj_apply]
 
 lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f) ψ = conj (dft f ψ) := by
-  simp only [dft_apply, l2Inner_eq_sum, conjneg_apply, map_sum, map_mul, RCLike.conj_conj]
+  simp only [dft_apply, dL2Inner_eq_sum, conjneg_apply, map_sum, map_mul, RCLike.conj_conj]
   refine Fintype.sum_equiv (Equiv.neg α) _ _ fun i ↦ ?_
   simp only [Equiv.neg_apply, ← inv_apply_eq_conj, ← inv_apply', inv_apply]
 
@@ -101,13 +104,13 @@ lemma dft_comp_neg_apply (f : α → ℂ) (ψ : AddChar α ℂ) :
 
 lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime n) :
     dft (dilate f n) ψ = dft f (ψ ^ n) := by
-  simp_rw [dft_apply, l2Inner_eq_sum, dilate]
+  simp_rw [dft_apply, dL2Inner_eq_sum, dilate]
   rw [← Nat.card_eq_fintype_card] at hn
   refine (Fintype.sum_bijective _ hn.nsmul_right_bijective _ _  ?_).symm
   simp only [pow_apply, ← map_nsmul_eq_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
 
 @[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
-  ext; simp [trivChar_apply, dft_apply, l2Inner_eq_sum, ← map_sum]
+  ext; simp [trivChar_apply, dft_apply, dL2Inner_eq_sum, ← map_sum]
 
 @[simp] lemma dft_one : dft (1 : α → ℂ) = card α • trivChar :=
   dft_injective $ by classical rw [dft_smul, dft_trivChar, dft_dft, Pi.one_comp, nsmul_eq_mul]
@@ -115,10 +118,10 @@ lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime 
 variable [DecidableEq α]
 
 @[simp] lemma dft_indicate_zero (A : Finset α) : dft (𝟭 A) 0 = A.card := by
-  simp only [dft_apply, l2Inner_eq_sum, sum_indicate, AddChar.zero_apply, map_one, one_mul]
+  simp only [dft_apply, dL2Inner_eq_sum, sum_indicate, AddChar.zero_apply, map_one, one_mul]
 
 lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ = dft f ψ * dft g ψ := by
-  simp_rw [dft, l2Inner_eq_sum, conv_eq_sum_sub', mul_sum, sum_mul, ← sum_product',
+  simp_rw [dft, dL2Inner_eq_sum, conv_eq_sum_sub', mul_sum, sum_mul, ← sum_product',
     univ_product_univ]
   refine Fintype.sum_equiv ((Equiv.prodComm _ _).trans $
     ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
@@ -142,25 +145,29 @@ lemma dft_dconv (f g : α → ℂ) : dft (f ○ g) = dft f * conj (dft g) := fun
 @[simp] lemma dft_iterConv_apply (f : α → ℂ) (n : ℕ) (ψ : AddChar α ℂ) :
     dft (f ∗^ n) ψ = dft f ψ ^ n := congr_fun (dft_iterConv _ _) _
 
-lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℂ) :
+variable [MeasurableSpace α] [DiscreteMeasurableSpace α]
+
+lemma dLpNorm_conv_le_dLpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℂ) :
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
   refine le_of_pow_le_pow_left hn₀ (by positivity) ?_
   obtain ⟨k, hnk⟩ := hn.two_dvd
   calc ‖f ∗ f‖_[n] ^ n
-      = ∑ x, ‖(f ∗ f) x‖ ^ n := lpNorm_pow_eq_sum hn₀ _
-    _ = ∑ x, ‖(𝔼 ψ, dft f ψ ^ 2 * ψ x)‖ ^ n := by
-        simp_rw [← norm_pow, ← dft_inversion (f ∗ f), dft_conv_apply, sq]
-    _ ≤ ∑ x, ‖𝔼 ψ, ‖dft f ψ‖ ^ 2 * ψ x‖ ^ n := Complex.le_of_eq_sum_of_eq_sum_norm
+      = ∑ x, ‖(f ∗ f) x‖₊ ^ n := dLpNorm_pow_eq_sum_nnnorm hn₀ _
+    _ = ∑ x, ‖(𝔼 ψ, dft f ψ ^ 2 * ψ x)‖₊ ^ n := by
+        simp_rw [← nnnorm_pow, ← dft_inversion (f ∗ f), dft_conv_apply, sq]
+    _ ≤ ∑ x, ‖𝔼 ψ, ‖dft f ψ‖₊ ^ 2 * ψ x‖₊ ^ n := Complex.le_of_eq_sum_of_eq_sum_norm
           (fun ψ : (Fin n → AddChar α ℂ) × (Fin n → AddChar α ℂ) ↦ conj (∏ i, dft f (ψ.1 i) ^ 2) *
-            (∏ i, dft f (ψ.2 i) ^ 2) * ∑ x, (∑ i, ψ.1 i - ∑ i, ψ.2 i) x) univ (by positivity) ?_ ?_
-    _ = ∑ x, ‖(f ○ f) x‖ ^ n := by
-        simp_rw [← norm_pow, ← dft_inversion (f ○ f), dft_dconv_apply, Complex.mul_conj']
-    _ = ‖f ○ f‖_[n] ^ n := (lpNorm_pow_eq_sum hn₀ _).symm
-  · push_cast
+            (∏ i, dft f (ψ.2 i) ^ 2) * ∑ x, (∑ i, ψ.1 i - ∑ i, ψ.2 i) x) univ
+            (by dsimp; norm_cast; positivity) ?_ ?_
+    _ = ∑ x, ‖(f ○ f) x‖₊ ^ n := by
+        simp_rw [← nnnorm_pow, ← dft_inversion (f ○ f), dft_dconv_apply, Complex.mul_conj']; simp
+    _ = ‖f ○ f‖_[n] ^ n := (dLpNorm_pow_eq_sum_nnnorm hn₀ _).symm
+  · simp only [NNReal.val_eq_coe]
+    push_cast
     simp_rw [hnk, pow_mul, ← Complex.conj_mul', map_expect, mul_pow, expect_pow, expect_mul_expect]
     sorry
   sorry
---   simp_rw [lpNorm_pow_eq_sum hn₀, mul_sum, ← mul_pow, ← nsmul_eq_mul, ← norm_nsmul, nsmul_eq_mul,
+--   simp_rw [dLpNorm_pow_eq_sum_nnnorm hn₀, mul_sum, ← mul_pow, ← nsmul_eq_mul, ← norm_nsmul, nsmul_eq_mul,
 --     ← dft_inversion', dft_conv, dft_dconv, Pi.mul_apply]
 --   rw [← Real.norm_of_nonneg (sum_nonneg fun i _ ↦ ?_), ← Complex.norm_real]
 --   rw [Complex.ofReal_sum (univ : Finset α)]
@@ -188,8 +195,8 @@ lemma lpNorm_conv_le_lpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → �
 --   refine sum_congr rfl fun x _ ↦ sum_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
 --   ring
 
---TODO: Can we unify with `lpNorm_conv_le_lpNorm_dconv`?
-lemma lpNorm_conv_le_lpNorm_dconv' (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℝ) :
+--TODO: Can we unify with `dLpNorm_conv_le_dLpNorm_dconv`?
+lemma dLpNorm_conv_le_dLpNorm_dconv' (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℝ) :
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
-  simpa only [← Complex.coe_comp_conv, ← Complex.coe_comp_dconv, Complex.lpNorm_coe_comp] using
-    lpNorm_conv_le_lpNorm_dconv hn₀ hn ((↑) ∘ f)
+  simpa only [← Complex.coe_comp_conv, ← Complex.coe_comp_dconv, Complex.dLpNorm_coe_comp] using
+    dLpNorm_conv_le_dLpNorm_dconv hn₀ hn ((↑) ∘ f)

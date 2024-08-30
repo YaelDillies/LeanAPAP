@@ -1,5 +1,6 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField.Basic
+import LeanAPAP.Mathlib.Algebra.Algebra.Rat
 import LeanAPAP.Mathlib.Algebra.Group.Action.Defs
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
@@ -22,6 +23,7 @@ import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.AddChar.Basic
+import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular
@@ -43,9 +45,11 @@ import LeanAPAP.Prereqs.Function.Indicator.Basic
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.LargeSpec
-import LeanAPAP.Prereqs.LpNorm.Compact
+import LeanAPAP.Prereqs.LpNorm.Compact.Defs
+import LeanAPAP.Prereqs.LpNorm.Compact.Inner
 import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
+import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
 import LeanAPAP.Prereqs.LpNorm.Weighted
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.NNLpNorm

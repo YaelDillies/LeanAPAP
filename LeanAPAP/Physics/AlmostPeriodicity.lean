@@ -10,6 +10,7 @@ import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 # Almost-periodicity
 -/
 
+open MeasureTheory
 open scoped Pointwise Combinatorics.Additive
 
 namespace Finset
@@ -87,15 +88,18 @@ open scoped BigOperators Pointwise NNReal ENNReal
 
 variable {G : Type*} [Fintype G] {A S : Finset G} {f : G → ℂ} {ε K : ℝ} {k m : ℕ}
 
+section
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
+
 lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hk : 64 * m / ε ^ 2 ≤ k) :
-    (8 * m) ^ m * k ^ (m - 1) * A.card ^ k * k * (2 * ‖f‖_[2 * m]) ^ (2 * m) ≤
+    (8 * m) ^ m * k ^ (m - 1) * A.card ^ k * k * (2 * ‖f‖_[2 * m] : ℝ) ^ (2 * m) ≤
       1 / 2 * ((k * ε) ^ (2 * m) * ∑ i : G, ‖f i‖ ^ (2 * m)) * ↑A.card ^ k := by
   have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
   have hm' : 2 * m ≠ 0 := by
     refine mul_ne_zero two_pos.ne' ?_
     rw [← pos_iff_ne_zero, ← Nat.succ_le_iff]
     exact hm
-  rw [mul_pow (2 : ℝ), ← hmeq, ← lpNorm_pow_eq_sum hm' f, ← mul_assoc, ← mul_assoc,
+  rw [mul_pow (2 : ℝ), ← hmeq, ← dLpNorm_pow_eq_sum_norm hm' f, ← mul_assoc, ← mul_assoc,
     mul_right_comm _ (A.card ^ k : ℝ), mul_right_comm _ (A.card ^ k : ℝ),
     mul_right_comm _ (A.card ^ k : ℝ)]
   gcongr ?_ * _ * _
@@ -115,33 +119,11 @@ lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hk : 64 * m / ε ^ 2 ≤ k) :
   · norm_num1; exact hk
   positivity
 
+end
+
 variable [DecidableEq G] [AddCommGroup G]
 
 local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
-
-namespace AlmostPeriodicity
-
-def LProp (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : Finset G) (a : Fin k → G) : Prop :=
-  ‖fun x : G ↦ ∑ i, f (x - a i) - (k • (μ A ∗ f)) x‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m]
-
-noncomputable instance : DecidablePred (LProp k m ε f A) := Classical.decPred _
-
-noncomputable def l (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : Finset G) : Finset (Fin k → G) :=
-  (A ^^ k).filter (LProp k m ε f A)
-
-lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
-    (h : ∑ a in A ^^ k,
-        ‖fun x : G ↦ ∑ i : Fin k, f (x - a i) - (k • (mu A ∗ f)) x‖_[2 * m] ^ (2 * m) ≤
-      1 / 2 * (k * ε * ‖f‖_[2 * m]) ^ (2 * m) * A.card ^ k) :
-    (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
-  rw [← Nat.cast_pow, ← Fintype.card_piFinset_const] at h
-  have := my_other_markov (by positivity) (by norm_num) (fun _ _ ↦ by positivity) h
-  norm_num1 at this
-  rw [Fintype.card_piFinset_const, mul_comm, mul_one_div, Nat.cast_pow] at this
-  refine this.trans_eq ?_
-  rw [l]
-  congr with a : 3
-  refine pow_le_pow_iff_left ?_ ?_ ?_ <;> positivity
 
 lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
     ∑ a in A ^^ k, ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
@@ -157,95 +139,6 @@ lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
     rw [← sum_filter, filter_mem_eq_inter, univ_inter, sub_self, smul_zero]
   congr with a : 1
   simp only [sum_sub_distrib, Pi.smul_apply, sum_const, card_fin]
-
-lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
-    (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
-      (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
-  -- lots of the equalities about m can be automated but it's *way* slower
-  have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
-  have hm' : 1 < 2 * m := (Nat.mul_le_mul_left 2 hm).trans_lt' $ by norm_num1
-  have hm'' : (1 : ℝ≥0∞) ≤ 2 * m := by rw [← hmeq, Nat.one_le_cast]; exact hm'.le
-  gcongr
-  refine (lpNorm_sub_le hm'' _ _).trans ?_
-  rw [lpNorm_translate, two_mul ‖f‖_[2 * m], add_le_add_iff_left]
-  have hmeq' : ((2 * m : ℝ≥0) : ℝ≥0∞) = 2 * m := by
-    rw [ENNReal.coe_mul, ENNReal.coe_two, ENNReal.coe_natCast]
-  have : (1 : ℝ≥0) < 2 * m := by
-    rw [← Nat.cast_two, ← Nat.cast_mul, Nat.one_lt_cast]
-    exact hm'
-  rw [← hmeq', conv_comm]
-  refine (lpNorm_conv_le this.le _ _).trans ?_
-  rw [l1Norm_mu hA, mul_one]
-
-lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :
-    (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
-  have : 0 < k := by
-    rw [← @Nat.cast_pos ℝ]
-    refine hk.trans_lt' ?_
-    refine div_pos (mul_pos (by norm_num1) ?_) (pow_pos hε _)
-    rw [Nat.cast_pos, ← Nat.succ_le_iff]
-    exact hm
-  rcases A.eq_empty_or_nonempty with (rfl | hA)
-  · simp [zero_pow this.ne']
-  refine lemma28_markov hε hm ?_
-  have hm' : 2 * m ≠ 0 := by linarith
-  have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
-  rw [← hmeq, mul_pow]
-  simp only [lpNorm_pow_eq_sum hm']
-  rw [sum_comm]
-  have : ∀ x : G, ∑ a in A ^^ k,
-      ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
-    (8 * m) ^ m * k ^ (m - 1) *
-      ∑ a in A ^^ k, ∑ i, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) :=
-    lemma28_part_one hm
-  refine (sum_le_sum fun x _ ↦ this x).trans ?_
-  rw [← mul_sum]
-  simp only [@sum_comm _ _ G]
-  have (a : Fin k → G) (i : Fin k) :
-      ∑ x, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) = ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) := by
-    rw [← hmeq, lpNorm_pow_eq_sum hm']
-    simp only [Pi.sub_apply, translate_apply]
-  simp only [this]
-  have :
-    (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
-      (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
-    lemma28_part_two hm hA
-  refine this.trans ?_
-  simp only [sum_const, Fintype.card_piFinset_const, nsmul_eq_mul, Nat.cast_pow]
-  refine (lemma28_end hε hm hk).trans_eq' ?_
-  simp only [mul_assoc, card_fin]
-
-lemma just_the_triangle_inequality {t : G} {a : Fin k → G} (ha : a ∈ l k m ε f A)
-    (ha' : (a + fun _ ↦ t) ∈ l k m ε f A) (hk : 0 < k) (hm : 1 ≤ m) :
-    ‖τ (-t) (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ 2 * ε * ‖f‖_[2 * m] := by
-  let f₁ : G → ℂ := fun x ↦ ∑ i, f (x - a i)
-  let f₂ : G → ℂ := fun x ↦ ∑ i, f (x - a i - t)
-  have hp : (1 : ℝ≥0∞) ≤ 2 * m := by norm_cast; linarith
-  have h₁ : ‖f₁ - k • (mu A ∗ f)‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m] := by
-    rw [l, Finset.mem_filter] at ha ; exact ha.2
-  have h₂ : ‖f₂ - k • (mu A ∗ f)‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m] := by
-    rw [l, Finset.mem_filter, LProp] at ha'
-    refine ha'.2.trans_eq' ?_
-    congr with i : 1
-    simp [sub_sub, f₂]
-  have h₃ : f₂ = τ t f₁ := by
-    ext i : 1
-    rw [translate_apply]
-    refine Finset.sum_congr rfl fun j _ ↦ ?_
-    rw [sub_right_comm]
-  have h₄₁ : ‖τ t f₁ - k • (mu A ∗ f)‖_[2 * m] = ‖τ (-t) (τ t f₁ - k • (mu A ∗ f))‖_[2 * m] := by
-    rw [lpNorm_translate]
-  have h₄ : ‖τ t f₁ - k • (mu A ∗ f)‖_[2 * m] = ‖f₁ - τ (-t) (k • (mu A ∗ f))‖_[2 * m] := by
-    rw [h₄₁, translate_sub_right, translate_translate]
-    simp
-  have h₅₁ : ‖τ (-t) (k • (mu A ∗ f)) - f₁‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m] := by
-    rwa [lpNorm_sub_comm, ← h₄, ← h₃]
-  have : (0 : ℝ) < k := by positivity
-  refine le_of_mul_le_mul_left ?_ this
-  rw [← nsmul_eq_mul, ← lpNorm_nsmul hp _ (_ - mu A ∗ f), nsmul_sub, ←
-    translate_smul_right (-t) (mu A ∗ f) k, mul_assoc, mul_left_comm, two_mul ((k : ℝ) * _), ←
-    mul_assoc]
-  exact (lpNorm_sub_le_lpNorm_sub_add_lpNorm_sub hp _ _).trans (add_le_add h₅₁ h₁)
 
 lemma big_shifts_step2 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
     (∑ x in L + S.piDiag (Fin k), ∑ l in L, ∑ s in S.piDiag (Fin k), ite (l + s = x) (1 : ℝ) 0) ^ 2
@@ -325,6 +218,128 @@ lemma big_shifts (S : Finset G) (L : Finset (Fin k → G)) (hk : k ≠ 0)
   rw [← sum_const] at this
   exact exists_le_of_sum_le hL' this
 
+variable [MeasurableSpace G]
+
+
+namespace AlmostPeriodicity
+
+def LProp (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : Finset G) (a : Fin k → G) : Prop :=
+  ‖fun x : G ↦ ∑ i, f (x - a i) - (k • (μ A ∗ f)) x‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m]
+
+noncomputable instance : DecidablePred (LProp k m ε f A) := Classical.decPred _
+
+noncomputable def l (k m : ℕ) (ε : ℝ) (f : G → ℂ) (A : Finset G) : Finset (Fin k → G) :=
+  (A ^^ k).filter (LProp k m ε f A)
+
+lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
+    (h : ∑ a in A ^^ k,
+        (‖fun x : G ↦ ∑ i : Fin k, f (x - a i) - (k • (mu A ∗ f)) x‖_[2 * m] ^ (2 * m) : ℝ) ≤
+      1 / 2 * (k * ε * ‖f‖_[2 * m]) ^ (2 * m) * A.card ^ k) :
+    (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
+  rw [← Nat.cast_pow, ← Fintype.card_piFinset_const] at h
+  have := my_other_markov (by positivity) (by norm_num) (fun _ _ ↦ by positivity) h
+  norm_num1 at this
+  rw [Fintype.card_piFinset_const, mul_comm, mul_one_div, Nat.cast_pow] at this
+  refine this.trans_eq ?_
+  rw [l]
+  congr with a : 3
+  refine pow_le_pow_iff_left ?_ ?_ ?_ <;> positivity
+
+variable [DiscreteMeasurableSpace G]
+
+lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
+    (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
+      (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
+  -- lots of the equalities about m can be automated but it's *way* slower
+  have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
+  have hm' : 1 < 2 * m := (Nat.mul_le_mul_left 2 hm).trans_lt' $ by norm_num1
+  have hm'' : (1 : ℝ≥0∞) ≤ 2 * m := by rw [← hmeq, Nat.one_le_cast]; exact hm'.le
+  gcongr
+  refine (dLpNorm_sub_le hm'').trans ?_
+  rw [dLpNorm_translate, two_mul ‖f‖_[2 * m], add_le_add_iff_left]
+  have hmeq' : ((2 * m : ℝ≥0) : ℝ≥0∞) = 2 * m := by
+    rw [ENNReal.coe_mul, ENNReal.coe_two, ENNReal.coe_natCast]
+  have : (1 : ℝ≥0) < 2 * m := by
+    rw [← Nat.cast_two, ← Nat.cast_mul, Nat.one_lt_cast]
+    exact hm'
+  rw [← hmeq', conv_comm]
+  refine (dLpNorm_conv_le this.le _ _).trans ?_
+  rw [dL1Norm_mu hA, mul_one]
+
+lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :
+    (A.card ^ k : ℝ) / 2 ≤ (l k m ε f A).card := by
+  have : 0 < k := by
+    rw [← @Nat.cast_pos ℝ]
+    refine hk.trans_lt' ?_
+    refine div_pos (mul_pos (by norm_num1) ?_) (pow_pos hε _)
+    rw [Nat.cast_pos, ← Nat.succ_le_iff]
+    exact hm
+  rcases A.eq_empty_or_nonempty with (rfl | hA)
+  · simp [zero_pow this.ne']
+  refine lemma28_markov hε hm ?_
+  have hm' : 2 * m ≠ 0 := by linarith
+  have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
+  rw [← hmeq, mul_pow]
+  simp only [dLpNorm_pow_eq_sum_norm hm']
+  rw [sum_comm]
+  have : ∀ x : G, ∑ a in A ^^ k,
+      ‖∑ i, f (x - a i) - (k • (mu A ∗ f)) x‖ ^ (2 * m) ≤
+    (8 * m) ^ m * k ^ (m - 1) *
+      ∑ a in A ^^ k, ∑ i, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) :=
+    lemma28_part_one hm
+  refine (sum_le_sum fun x _ ↦ this x).trans ?_
+  rw [← mul_sum]
+  simp only [@sum_comm _ _ G]
+  have (a : Fin k → G) (i : Fin k) :
+      ∑ x, ‖f (x - a i) - (mu A ∗ f) x‖ ^ (2 * m) = ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) := by
+    rw [← hmeq, dLpNorm_pow_eq_sum_norm hm']
+    simp only [Pi.sub_apply, translate_apply]
+  simp only [this]
+  have :
+    (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
+      (8 * m) ^ m * k ^ (m - 1) * ∑ a in A ^^ k, ∑ i, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
+    lemma28_part_two hm hA
+  refine le_trans (mod_cast this) ?_
+  simp only [sum_const, Fintype.card_piFinset_const, nsmul_eq_mul, Nat.cast_pow]
+  refine (lemma28_end hε hm hk).trans_eq' ?_
+  simp [mul_assoc, card_fin]
+
+lemma just_the_triangle_inequality {t : G} {a : Fin k → G} (ha : a ∈ l k m ε f A)
+    (ha' : (a + fun _ ↦ t) ∈ l k m ε f A) (hk : 0 < k) (hm : 1 ≤ m) :
+    ‖τ (-t) (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ 2 * ε * ‖f‖_[2 * m] := by
+  let f₁ : G → ℂ := fun x ↦ ∑ i, f (x - a i)
+  let f₂ : G → ℂ := fun x ↦ ∑ i, f (x - a i - t)
+  have hp : (1 : ℝ≥0∞) ≤ 2 * m := by norm_cast; linarith
+  have h₁ : ‖f₁ - k • (mu A ∗ f)‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m] := by
+    rw [l, Finset.mem_filter] at ha ; exact ha.2
+  have h₂ : ‖f₂ - k • (mu A ∗ f)‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m] := by
+    rw [l, Finset.mem_filter, LProp] at ha'
+    refine ha'.2.trans_eq' ?_
+    congr with i : 1
+    simp [sub_sub, f₂]
+  have h₃ : f₂ = τ t f₁ := by
+    ext i : 1
+    rw [translate_apply]
+    refine Finset.sum_congr rfl fun j _ ↦ ?_
+    rw [sub_right_comm]
+  have h₄₁ : ‖τ t f₁ - k • (mu A ∗ f)‖_[2 * m] = ‖τ (-t) (τ t f₁ - k • (mu A ∗ f))‖_[2 * m] := by
+    rw [dLpNorm_translate]
+  have h₄ : ‖τ t f₁ - k • (mu A ∗ f)‖_[2 * m] = ‖f₁ - τ (-t) (k • (mu A ∗ f))‖_[2 * m] := by
+    rw [h₄₁, translate_sub_right, translate_translate]
+    simp
+  have h₅₁ : ‖τ (-t) (k • (mu A ∗ f)) - f₁‖_[2 * m] ≤ k * ε * ‖f‖_[2 * m] := by
+    rwa [dLpNorm_sub_comm, ← h₄, ← h₃]
+  have : (0 : ℝ) < k := by positivity
+  refine le_of_mul_le_mul_left ?_ this
+  rw [← nsmul_eq_mul, ← NNReal.coe_nsmul, ← dLpNorm_nsmul _ (_ - mu A ∗ f), nsmul_sub, ←
+    translate_smul_right (-t) (mu A ∗ f) k, mul_assoc, mul_left_comm, two_mul ((k : ℝ) * _), ←
+    mul_assoc]
+  calc
+    (‖τ (-t) (k • (μ A ∗ f)) - k • (μ A ∗ f)‖_[2 * m] : ℝ)
+      ≤ ↑(‖τ (-t) (k • (μ A ∗ f)) - f₁‖_[2 * m] + ‖f₁ - k • (μ A ∗ f)‖_[2 * m]) := by
+      gcongr; exact dLpNorm_sub_le_dLpNorm_sub_add_dLpNorm_sub (mod_cast hp)
+    _ ≤ k * ε * ‖f‖_[2 * m] + k * ε * ‖f‖_[2 * m] := by push_cast; gcongr
+
 lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * m / (ε / 2) ^ 2⌉₊)
     (h₁ : Lc * Sc ≤ ASc ^ k * Tc) (h₂ : (Ac : ℝ) ^ k / 2 ≤ Lc) (h₃ : (ASc : ℝ) ≤ K * Ac)
     (hAc : 0 < Ac) (hε : 0 < ε) (hε' : ε ≤ 1) (hm : 1 ≤ m) :
@@ -381,7 +396,7 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
       refine (mul_le_mul_of_nonneg_right this (Nat.cast_nonneg _)).trans ?_
       rw [one_mul, Nat.cast_le]
       exact card_le_univ _
-    simp only [mu_empty, zero_conv, translate_zero_right, sub_self, lpNorm_zero]
+    simp only [mu_empty, zero_conv, translate_zero_right, sub_self, dLpNorm_zero]
     positivity
   let k := ⌈(64 : ℝ) * m / (ε / 2) ^ 2⌉₊
   have hk : k ≠ 0 := by positivity
@@ -438,21 +453,23 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
         = (F ∗ μ C) x := by simp [sub_conv, F]
       _ = ∑ y, F y * μ C (x - y) := conv_eq_sum_sub' ..
       _ = ∑ y, F y * μ (x +ᵥ -C) y := by simp [neg_add_eq_sub]
-  rw [linftyNorm_eq_ciSup]
+  rw [dLinftyNorm_eq_iSup_norm]
   refine ciSup_le fun x ↦ ?_
   calc
     ‖(τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℂ) x‖
       = ‖∑ y, F y * μ (x +ᵥ -C) y‖ := by rw [this]
     _ ≤ ∑ y, ‖F y * μ (x +ᵥ -C) y‖ := norm_sum_le _ _
-    _ = ‖F * μ (x +ᵥ -C)‖_[1] := by rw [l1Norm_eq_sum]; rfl
-    _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := l1Norm_mul_le hM _ _
+    _ = ‖F * μ (x +ᵥ -C)‖_[1] := by rw [dL1Norm_eq_sum_norm]; rfl
+    _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := dL1Norm_mul_le hM _ _
     _ ≤ ε / exp 1 * B.card ^ (M : ℝ)⁻¹ * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := by
         gcongr
-        simpa only [← ENNReal.coe_natCast, lpNorm_indicate hM₀] using hT _ ht
+        simpa only [← ENNReal.coe_natCast, dLpNorm_indicate hM₀] using hT _ ht
     _ = ε * ((C.card / B.card) ^ (-(M : ℝ)⁻¹) / exp 1) := by
-        rw [← mul_comm_div, lpNorm_mu hM.symm.one_le hC.neg.vadd_finset, card_vadd_finset,
-          card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_natCast,
-          rpow_neg, rpow_neg, ← div_eq_mul_inv, inv_div_inv] <;> positivity
+        rw [← mul_comm_div, dLpNorm_mu hM.symm.one_le hC.neg.vadd_finset, card_vadd_finset,
+          card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_natCast]
+        push_cast
+        rw [rpow_neg, rpow_neg, ← div_eq_mul_inv, inv_div_inv]
+        all_goals positivity
     _ ≤ ε := mul_le_of_le_one_right (by positivity) $ (div_le_one $ by positivity).2 ?_
   calc
     (C.card / B.card : ℝ) ^ (-(M : ℝ)⁻¹)
@@ -479,16 +496,18 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
     have : (0 : ℝ) < T.card := hKT.trans_lt' $ by positivity
     simpa [card_pos] using this
   calc
-    ‖μ T ∗^ k ∗ F - F‖_[∞]
+    (‖μ T ∗^ k ∗ F - F‖_[∞] : ℝ)
       = ‖𝔼 a ∈ T ^^ k, (τ (∑ i, a i) F - F)‖_[∞] := by
         rw [mu_iterConv_conv, expect_sub_distrib, expect_const hT'.piFinset_const]
-    _ ≤ 𝔼 a ∈ T ^^ k, ‖τ (∑ i, a i) F - F‖_[∞] := lpNorm_expect_le le_top _ _
-    _ ≤ 𝔼 _a ∈ T ^^ k, ε := expect_le_expect fun x hx ↦ ?_
+    _ ≤ 𝔼 a ∈ T ^^ k, ‖τ (∑ i, a i) F - F‖_[∞] := dLpNorm_expect_le le_top
+    _ ≤ 𝔼 _a ∈ T ^^ k, ε := ?_
     _ = ε := by rw [expect_const hT'.piFinset_const]
+  push_cast
+  refine expect_le_expect fun x hx ↦
   calc
-    ‖τ (∑ i, x i) F - F‖_[⊤]
-    _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := lpNorm_translate_sum_sub_le le_top _ _ _
-    _ ≤ ∑ _i, ε / k := sum_le_sum fun i _ ↦ hT _ $ Fintype.mem_piFinset.1 hx _
+    (‖τ (∑ i, x i) F - F‖_[⊤] : ℝ)
+    _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := dLpNorm_translate_sum_sub_le le_top _ _ _
+    _ ≤ ∑ _i, ε / k := by push_cast; exact sum_le_sum fun i _ ↦ hT _ $ Fintype.mem_piFinset.1 hx _
     _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel₀]; positivity
 
 end AlmostPeriodicity
