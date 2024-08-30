@@ -11,8 +11,6 @@ import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.Data.ENNReal.Operations
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Mathlib.MeasureTheory.MeasurableSpace.Defs
-import LeanAPAP.Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 import LeanAPAP.Mathlib.Order.ConditionallyCompleteLattice.Basic
 import LeanAPAP.Mathlib.Order.Filter.Basic
 import LeanAPAP.Mathlib.Order.LiminfLimsup
