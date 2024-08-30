@@ -48,4 +48,5 @@ import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 import LeanAPAP.Prereqs.LpNorm.Weighted
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
+import LeanAPAP.Prereqs.NNLpNorm
 import LeanAPAP.Prereqs.Rudin
