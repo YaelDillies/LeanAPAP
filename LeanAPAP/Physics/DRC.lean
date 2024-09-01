@@ -27,7 +27,7 @@ private lemma lemma_0 (p : ℕ) (B₁ B₂ A : Finset G) (f : G → ℝ) :
   congr with b₁
   congr with b₂
   refine Fintype.sum_equiv (Equiv.neg $ Fin p → G) _ _ fun s ↦ ?_
-  rw [← smul_mul_assoc, ← smul_mul_smul, card_smul_mu_apply, card_smul_mu_apply,
+  rw [← smul_mul_assoc, mul_smul_mul_comm, card_smul_mu_apply, card_smul_mu_apply,
     indicate_inter_apply, indicate_inter_apply, mul_mul_mul_comm, prod_mul_distrib]
   simp [c, indicate_inf_apply, ← translate_indicate, sub_eq_add_neg, mul_assoc, add_comm]
 

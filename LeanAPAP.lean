@@ -1,17 +1,13 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.Algebra.Rat
-import LeanAPAP.Mathlib.Algebra.Group.Action.Defs
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
-import LeanAPAP.Mathlib.Algebra.Star.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Analysis.Normed.Field.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import LeanAPAP.Mathlib.Data.ENNReal.Operations
-import LeanAPAP.Mathlib.Data.NNReal.Basic
 import LeanAPAP.Mathlib.Data.Real.Sqrt
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
@@ -25,6 +21,7 @@ import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.AddChar.Basic
 import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
+import LeanAPAP.Prereqs.Bohr.Arc
 import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular
 import LeanAPAP.Prereqs.Chang

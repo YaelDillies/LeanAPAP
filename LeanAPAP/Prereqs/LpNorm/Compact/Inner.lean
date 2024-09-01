@@ -1,6 +1,5 @@
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Algebra.Algebra.Rat
-import LeanAPAP.Mathlib.Algebra.Group.Action.Defs
 import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.LpNorm.Compact.Defs
