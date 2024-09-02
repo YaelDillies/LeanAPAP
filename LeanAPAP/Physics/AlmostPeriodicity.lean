@@ -1,9 +1,9 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Additive.DoublingConst
 import Mathlib.Data.Complex.ExponentialBounds
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
-import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 
@@ -87,7 +87,14 @@ end
 open Finset Real
 open scoped BigOperators Pointwise NNReal ENNReal
 
-variable {G : Type*} [Fintype G] {A S : Finset G} {f : G → ℂ} {ε K : ℝ} {k m : ℕ}
+variable {G : Type*} [Fintype G] {A S : Finset G} {f : G → ℂ} {x ε K : ℝ} {k m : ℕ}
+
+variable {x : ℝ}
+local notation "𝓛" x => 1 + log (min 1 x)⁻¹
+
+private lemma curlog_pos (hx₀ : 0 < x) : 0 < 𝓛 x := by
+  have : 0 ≤ log (min 1 x)⁻¹ := log_nonneg $ one_le_inv (by positivity) inf_le_left
+  positivity
 
 section
 variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
@@ -383,11 +390,13 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
   linarith only [this]
 
 -- trivially true for other reasons for big ε
-lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (hm : 1 ≤ m) (f : G → ℂ)
+lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (f : G → ℂ)
     (hK' : 2 ≤ K) (hK : σ[A, S] ≤ K) :
     ∃ T : Finset G,
       K ^ (-512 * m / ε ^ 2 : ℝ) * S.card ≤ T.card ∧
         ∀ t ∈ T, ‖τ t (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ ε * ‖f‖_[2 * m] := by
+  obtain rfl | hm := m.eq_zero_or_pos
+  · exact ⟨S, by simp⟩
   obtain rfl | hA := A.eq_empty_or_nonempty
   · refine ⟨univ, ?_, fun t _ ↦ ?_⟩
     · have : K ^ ((-512 : ℝ) * m / ε ^ 2) ≤ 1 := by
@@ -419,16 +428,14 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
 theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hK₂ : 2 ≤ K)
     (hK : σ[A, S] ≤ K) (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
     ∃ T : Finset G,
-      K ^ (-4096 * ⌈curlog (min 1 (C.card / B.card))⌉ / ε ^ 2) * S.card ≤ T.card ∧
+      K ^ (-4096 * ⌈𝓛 (C.card / B.card)⌉ / ε ^ 2) * S.card ≤ T.card ∧
       ∀ t ∈ T, ‖τ t (μ_[ℂ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
-  set m : ℝ := curlog (min 1 (C.card / B.card))
-  have hm₀ : 0 ≤ m := curlog_nonneg (by positivity) inf_le_left
-  have : 0 < B.card := hB.card_pos -- TODO: Why does positivity fail here?
-  have : 0 < C.card := hC.card_pos
-  have hm₂ : 2 ≤ m := two_le_curlog (by positivity) inf_le_left
+  let r : ℝ := min 1 (C.card / B.card)
+  set m : ℝ := 𝓛 (C.card / B.card)
+  have hm₀ : 0 < m := curlog_pos (by positivity)
   have hm₁ : 1 ≤ ⌈m⌉₊ := Nat.one_le_iff_ne_zero.2 $ by positivity
   obtain ⟨T, hKT, hT⟩ := almost_periodicity (ε / exp 1) (by positivity)
-    (div_le_one_of_le (hε₁.trans $ one_le_exp zero_le_one) $ by positivity) (⌈m⌉₊) hm₁ (𝟭 B) hK₂ hK
+    (div_le_one_of_le (hε₁.trans $ one_le_exp zero_le_one) $ by positivity) ⌈m⌉₊ (𝟭 B) hK₂ hK
   norm_cast at hT
   set M : ℕ := 2 * ⌈m⌉₊
   have hM₀ : (M : ℝ≥0) ≠ 0 := by positivity
@@ -437,8 +444,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
   refine ⟨T, ?_, fun t ht ↦ ?_⟩
   · calc
       _ = K ^(-(512 * 8) / ε ^ 2 * ⌈m⌉₊) * S.card := by
-          rw [mul_div_right_comm, natCast_ceil_eq_intCast_ceil hm₀]
-          norm_num
+          rw [mul_div_right_comm, natCast_ceil_eq_intCast_ceil hm₀.le]; norm_num
       _ ≤ K ^(-(512 * exp 1 ^ 2) / ε ^ 2 * ⌈m⌉₊) * S.card := by
           gcongr
           · exact one_le_two.trans hK₂
@@ -474,19 +480,25 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
     _ ≤ ε := mul_le_of_le_one_right (by positivity) $ (div_le_one $ by positivity).2 ?_
   calc
     (C.card / B.card : ℝ) ^ (-(M : ℝ)⁻¹)
-      ≤ (min 1 (C.card / B.card) : ℝ) ^ (-(M : ℝ)⁻¹) :=
+      ≤ r ^ (-(M : ℝ)⁻¹) :=
         rpow_le_rpow_of_nonpos (by positivity) inf_le_right $ neg_nonpos.2 $ by positivity
-    _ ≤ (min 1 (C.card / B.card) : ℝ) ^ (-m⁻¹) :=
+    _ ≤ r ^ (-(1 + log r⁻¹)⁻¹) :=
         rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left $ neg_le_neg $ inv_le_inv_of_le
           (by positivity) $ (Nat.le_ceil _).trans $
             mod_cast Nat.le_mul_of_pos_left _ (by positivity)
-    _ ≤ exp 1 := rpow_neg_inv_curlog_le (by positivity) inf_le_left
+    _ ≤ r ^ (-(0 + log r⁻¹)⁻¹) := by
+      obtain hr | hr : r = 1 ∨ r < 1 := inf_le_left.eq_or_lt
+      · simp [hr]
+      have : 0 < log r⁻¹ := log_pos <| one_lt_inv (by positivity) hr
+      exact rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left (by gcongr; exact zero_le_one)
+    _ = r ^ (log r)⁻¹ := by simp [inv_neg]
+    _ ≤ exp 1 := rpow_inv_log_le_exp_one
 
 theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (k : ℕ) (hk : k ≠ 0)
     (hK₂ : 2 ≤ K) (hK : σ[A, S] ≤ K) (hS : S.Nonempty)
     (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
     ∃ T : Finset G,
-      K ^ (-4096 * ⌈curlog (min 1 (C.card / B.card))⌉ * k ^ 2/ ε ^ 2) * S.card ≤ T.card ∧
+      K ^ (-4096 * ⌈𝓛 (C.card / B.card)⌉ * k ^ 2/ ε ^ 2) * S.card ≤ T.card ∧
       ‖μ T ∗^ k ∗ (μ_[ℂ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
   obtain ⟨T, hKT, hT⟩ := linfty_almost_periodicity (ε / k) (by positivity)
     (div_le_one_of_le (hε₁.trans $ mod_cast Nat.one_le_iff_ne_zero.2 hk) $ by positivity) hK₂ hK
@@ -512,3 +524,4 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
     _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel₀]; positivity
 
 end AlmostPeriodicity
+#min_imports

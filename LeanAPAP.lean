@@ -2,11 +2,13 @@ import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Group.Basic
+import LeanAPAP.Mathlib.Algebra.Order.Field.Defs
 import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
 import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
 import LeanAPAP.Mathlib.Data.Finset.Pointwise.Basic
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup

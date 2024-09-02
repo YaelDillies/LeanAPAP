@@ -2,6 +2,7 @@ import Mathlib.FieldTheory.Finite.Basic
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
 import LeanAPAP.Mathlib.Data.Finset.Pointwise.Basic
 import LeanAPAP.Prereqs.Convolution.ThreeAP
+import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.Unbalancing
