@@ -1,4 +1,5 @@
-import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
+import LeanAPAP.Prereqs.Function.Translate
+import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 
 /-!
 # Lp norms

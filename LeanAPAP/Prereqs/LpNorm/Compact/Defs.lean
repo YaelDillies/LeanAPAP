@@ -1,8 +1,7 @@
 import Mathlib.Data.Finset.Density
 import Mathlib.Probability.ConditionalProbability
-import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
-import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
 import LeanAPAP.Prereqs.Expect.Complex
+import LeanAPAP.Prereqs.NNLpNorm
 
 /-!
 # Normalised Lp norms

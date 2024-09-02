@@ -1,8 +1,8 @@
 import Mathlib.Analysis.InnerProductSpace.PiL2
-import LeanAPAP.Mathlib.Algebra.Algebra.Rat
 import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.LpNorm.Compact.Defs
+import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
 
 /-! # Inner product -/
 

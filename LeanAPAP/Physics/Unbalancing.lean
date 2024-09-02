@@ -1,6 +1,6 @@
 import Mathlib.Algebra.Order.Group.PosPart
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Prereqs.Convolution.Discrete.Basic
+import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
 import LeanAPAP.Prereqs.LpNorm.Weighted
 

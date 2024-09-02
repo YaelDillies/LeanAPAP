@@ -1,8 +1,7 @@
 import Mathlib.Data.Real.StarOrdered
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
-import LeanAPAP.Prereqs.Convolution.Order
-import LeanAPAP.Prereqs.LpNorm.Compact.Defs
+import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
 
 /-!
 # Norm of a convolution

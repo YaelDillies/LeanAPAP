@@ -1,6 +1,5 @@
 import Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
-import LeanAPAP.Prereqs.Function.Translate
 
 open AddChar Function
 open scoped NNReal ENNReal

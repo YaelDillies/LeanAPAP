@@ -1,8 +1,9 @@
 import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
+import LeanAPAP.Prereqs.Convolution.Discrete.Defs
+import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.LpNorm.Compact.Inner
 import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
-import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 
 /-!
 # Discrete Fourier transform
