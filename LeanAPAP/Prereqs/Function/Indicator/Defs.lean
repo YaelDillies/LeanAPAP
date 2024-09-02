@@ -1,5 +1,10 @@
-import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Data.Complex.Basic
+import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
+import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Algebra.Order.Field.Defs
+import Mathlib.Algebra.Star.Pi
+import Mathlib.Data.Finset.Pointwise.Basic
+import Mathlib.Data.Fintype.Lattice
+import Mathlib.Data.Nat.Cast.Order.Ring
 
 open Finset Function
 open Fintype (card)
@@ -89,13 +94,6 @@ variable [Group α]
 lemma indicate_inv (s : Finset α) (a : α) : 𝟭_[β] s⁻¹ a = 𝟭 s a⁻¹ := if_congr mem_inv' rfl rfl
 
 end Group
-
-variable {β}
-variable [StarRing β]
-
-lemma indicate_isSelfAdjoint (s : Finset α) : IsSelfAdjoint (𝟭_[β] s) :=
-  Pi.isSelfAdjoint.2 fun g ↦ by rw [indicate]; split_ifs <;> simp
-
 end Semiring
 
 section CommSemiring
@@ -118,32 +116,10 @@ variable [StarRing β]
 
 end CommSemiring
 
-namespace NNReal
-open scoped NNReal
-
-@[simp, norm_cast] lemma coe_indicate (s : Finset α) (x : α) : ↑(𝟭_[ℝ≥0] s x) = 𝟭_[ℝ] s x :=
-  map_indicate NNReal.toRealHom _ _
-
-@[simp] lemma coe_comp_indicate (s : Finset α) : (↑) ∘ 𝟭_[ℝ≥0] s = 𝟭_[ℝ] s := by
-  ext; exact coe_indicate _ _
-
-end NNReal
-
-namespace Complex
-
-@[simp, norm_cast] lemma ofReal_indicate (s : Finset α) (x : α) : ↑(𝟭_[ℝ] s x) = 𝟭_[ℂ] s x :=
-  map_indicate ofReal _ _
-
-@[simp] lemma ofReal_comp_indicate (s : Finset α) : (↑) ∘ 𝟭_[ℝ] s = 𝟭_[ℂ] s := by
-  ext; exact ofReal_indicate _ _
-
-end Complex
-
 section OrderedSemiring
 variable [OrderedSemiring β] {s : Finset α}
 
-@[simp] lemma indicate_nonneg : 0 ≤ 𝟭_[β] s := fun a ↦ by
-  rw [indicate_apply]; split_ifs <;> norm_num
+@[simp] lemma indicate_nonneg : 0 ≤ 𝟭_[β] s := fun a ↦ by rw [indicate_apply]; split_ifs <;> simp
 
 @[simp] lemma indicate_pos [Nontrivial β] : 0 < 𝟭_[β] s ↔ s.Nonempty := by
   simp [indicate_apply, Pi.lt_def, Function.funext_iff, lt_iff_le_and_ne, @eq_comm β 0,
@@ -253,28 +229,10 @@ variable (β) [Semifield β] [StarRing β] [AddCommGroup α] {s : Finset α}
 
 end Semifield
 
-namespace RCLike
-variable {𝕜 : Type*} [RCLike 𝕜] (s : Finset α) (a : α)
-
-@[simp, norm_cast] lemma coe_mu : ↑(μ_[ℝ] s a) = μ_[𝕜] s a := map_mu (algebraMap ℝ 𝕜) _ _
-@[simp] lemma coe_comp_mu : (↑) ∘ μ_[ℝ] s = μ_[𝕜] s := funext $ coe_mu _
-
-end RCLike
-
-namespace NNReal
-open scoped NNReal
-
-@[simp, norm_cast]
-lemma coe_mu (s : Finset α) (x : α) : ↑(μ_[ℝ≥0] s x) = μ_[ℝ] s x := map_mu NNReal.toRealHom _ _
-
-@[simp] lemma coe_comp_mu (s : Finset α) : (↑) ∘ μ_[ℝ≥0] s = μ_[ℝ] s := funext $ coe_mu _
-
-end NNReal
-
 section LinearOrderedSemifield
 variable [LinearOrderedSemifield β] {s : Finset α}
 
-@[simp] lemma mu_nonneg : 0 ≤ μ_[β] s := fun a ↦ by rw [mu_apply]; split_ifs <;> norm_num
+@[simp] lemma mu_nonneg : 0 ≤ μ_[β] s := fun a ↦ by rw [mu_apply]; split_ifs <;> simp
 @[simp] lemma mu_pos : 0 < μ_[β] s ↔ s.Nonempty := mu_nonneg.gt_iff_ne.trans mu_ne_zero
 
 protected alias ⟨_, Finset.Nonempty.mu_pos⟩ := mu_pos

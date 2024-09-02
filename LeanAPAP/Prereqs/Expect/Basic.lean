@@ -1,6 +1,10 @@
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Algebra.Order.Module.Rat
-import Mathlib.Analysis.RCLike.Basic
+import Mathlib.Algebra.Algebra.Field
+import Mathlib.Algebra.Star.Order
+import Mathlib.Analysis.CStarAlgebra.Basic
+import Mathlib.Analysis.Normed.Operator.ContinuousLinearMap
+import Mathlib.Data.Real.Sqrt
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
@@ -479,27 +483,6 @@ lemma expect_eq_zero_iff_of_nonpos [Nonempty ι] (hf : f ≤ 0) : 𝔼 i, f i = 
 
 end OrderedAddCommMonoid
 end Fintype
-
-namespace RCLike
-variable [RCLike α] [Fintype ι] (f : ι → ℝ) (a : ι)
-
-@[simp, norm_cast]
-lemma coe_balance : (↑(balance f a) : α) = balance ((↑) ∘ f) a := map_balance (algebraMap ℝ α) _ _
-
-@[simp] lemma coe_comp_balance : ((↑) : ℝ → α) ∘ balance f = balance ((↑) ∘ f) :=
-  funext $ coe_balance _
-
-end RCLike
-
-section
-variable {ι K E : Type*} [RCLike K] [NormedField E] [CharZero E] [NormedSpace K E]
-
-include K in
-@[bound]
-lemma norm_expect_le {s : Finset ι} {f : ι → E} : ‖𝔼 i ∈ s, f i‖ ≤ 𝔼 i ∈ s, ‖f i‖ :=
-  s.le_expect_of_subadditive norm norm_zero norm_add_le (fun _ _ ↦ by rw [RCLike.norm_nnqsmul K]) f
-
-end
 
 open Finset
 

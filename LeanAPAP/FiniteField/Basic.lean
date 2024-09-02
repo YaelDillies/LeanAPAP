@@ -5,6 +5,7 @@ import LeanAPAP.Mathlib.Data.Finset.Preimage
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Physics.AlmostPeriodicity
+import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
 
 /-!
@@ -122,36 +123,34 @@ lemma ap_in_ff (hS : S.Nonempty) (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : �
   sorry
 
 lemma di_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens)
+    (hA₀ : A.Nonempty)
     (hγC : γ ≤ C.dens) (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
             2 ^ 171 * 𝓛 α ^ 4 * 𝓛 γ ^ 4 / ε ^ 24 ∧
           (1 + ε / 32) * α ≤ ‖𝟭_[ℝ] A ∗ μ (Set.toFinset V)‖_[⊤] := by
-  obtain rfl | hA := A.eq_empty_or_nonempty
-  · stop
-    refine ⟨⊤, univ, _⟩
-    rw [AffineSubspace.direction_top]
-    simp only [AffineSubspace.top_coe, coe_univ, eq_self_iff_true, finrank_top, tsub_self,
-      Nat.cast_zero, indicate_empty, zero_mul, nnLpNorm_zero, true_and_iff,
-      Finset.card_empty, zero_div] at hαA ⊢
-    exact ⟨by positivity, mul_nonpos_of_nonneg_of_nonpos (by positivity) hαA⟩
   have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
   have hG : (card G : ℝ) ≠ 0 := by positivity
-  have := unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁).ne') (ε / 2)
-    (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)
-    (const _ (card G)⁻¹) (card G • (balance (μ A) ○ balance (μ A)))
-    (sqrt (card G) • balance (μ A)) (const _ (card G)⁻¹) ?_ ?_ ?_ ?_
+  let p : ℕ := 2 * ⌈𝓛 γ⌉₊
+  let p' : ℝ := 240 / ε * log (6 / ε) * p
+  let f : G → ℝ := balance (μ A)
+  have :=
+    calc
+      1 + ε / 4 = 1 + ε / 2 / 2 := by ring
+      _ ≤ _ :=
+        unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁).ne') (ε / 2)
+          (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)
+          (card G • (balance (μ A) ○ balance (μ A))) (sqrt (card G) • balance (μ A))
+          (const _ (card G)⁻¹) ?_ ?_ ?_
+      _ = card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (f ○ f) + 1‖_[.ofReal p'] := by
+        congr 3 <;> ring_nf; simp [hε₀.ne']; ring
+  let q : ℝ := 2 * ⌈p' + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊
+  -- have := sifting_cor (ε := ε / 16) (δ := ε / 32) (by positivity) (by linarith) (by positivity)
+  --   _ _ _ hA₀
   rotate_left
-  · stop
-    ext a : 1
-    simp [smul_dconv, dconv_smul, smul_smul]
+  · ext a : 1
+    simp [smul_dconv, dconv_smul, smul_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
   · simp [card_univ, show (card G : ℂ) ≠ 0 by sorry]
-  · simp only [comp_const, Nonneg.coe_inv, NNReal.coe_natCast]
-    unfold const
-    rw [dLpNorm_const one_ne_zero]
-    sorry
-    -- simp only [Nonneg.coe_one, inv_one, rpow_one, norm_inv, norm_coe_nat,
-    --   mul_inv_cancel₀ (show (card G : ℝ) ≠ 0 by positivity)]
   · have hγ' : (1 : ℝ≥0) ≤ 2 * ⌈𝓛 γ⌉₊ := sorry
     sorry
     -- simpa [wLpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity),
@@ -211,7 +210,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
       rw [abs_sub_comm, le_abs, le_sub_comm]
       norm_num at hB' ⊢
       exact .inl hB'.le
-    obtain ⟨V', _, hVV', hv'⟩ := di_in_ff hq₃ hq (by positivity) two_inv_lt_one le_rfl (by
+    obtain ⟨V', _, hVV', hv'⟩ := di_in_ff hq₃ hq (by positivity) two_inv_lt_one le_rfl sorry (by
       rwa [Finset.dens_image (Nat.Coprime.nsmul_right_bijective _)]
       simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow) hα₀ this
     rw [dLinftyNorm_eq_iSup_norm, ← Finset.sup'_univ_eq_ciSup, Finset.le_sup'_iff] at hv'

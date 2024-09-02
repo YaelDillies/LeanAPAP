@@ -42,6 +42,7 @@ import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.FourierTransform.Discrete
 import LeanAPAP.Prereqs.Function.Indicator.Basic
+import LeanAPAP.Prereqs.Function.Indicator.Complex
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.LargeSpec

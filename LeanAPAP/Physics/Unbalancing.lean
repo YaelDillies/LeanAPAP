@@ -8,7 +8,9 @@ import LeanAPAP.Prereqs.LpNorm.Weighted
 # Unbalancing
 -/
 
-open Finset Real MeasureTheory
+open Finset hiding card
+open Fintype (card)
+open Function Real MeasureTheory
 open scoped ComplexConjugate ComplexOrder NNReal ENNReal
 
 variable {G : Type*} [Fintype G] [MeasurableSpace G] [DiscreteMeasurableSpace G] [DecidableEq G]
@@ -54,7 +56,7 @@ private lemma p'_pos (hp : 5 ≤ p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < 
   have := log_ε_pos hε₀ hε₁; positivity
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
-private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1)
+private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1)
     (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1)
     (hε : ε ≤ ‖f‖_[p, ν]) :
     1 + ε / 2 ≤ ‖f + 1‖_[.ofReal (24 / ε * log (3 / ε) * p), ν] := by
@@ -193,10 +195,10 @@ private lemma unbalancing' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 
 
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier
 transform. -/
-lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (ν : G → ℝ≥0)
+lemma unbalancing' (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (ν : G → ℝ≥0)
     (f : G → ℝ) (g h : G → ℂ) (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h)
     (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1) (hε : ε ≤ ‖f‖_[p, ν]) :
-    1 + ε / 2 ≤‖f + 1‖_[.ofReal (120 / ε * log (3 / ε) * p), ν] := by
+    1 + ε / 2 ≤ ‖f + 1‖_[.ofReal (120 / ε * log (3 / ε) * p), ν] := by
   have := log_ε_pos hε₀ hε₁
   have :=
     calc
@@ -205,7 +207,7 @@ lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ 
         := add_le_add_right (mul_le_mul_left' (Nat.one_le_iff_ne_zero.2 hp) _) _
   calc
     _ ≤ ↑‖f + 1‖_[.ofReal (24 / ε * log (3 / ε) * ↑(2 * p + 3)), ν] :=
-      unbalancing' (2 * p + 3) this ((even_two_mul _).add_odd $ by decide) hε₀ hε₁ hf hν hν₁ $
+      unbalancing'' (2 * p + 3) this ((even_two_mul _).add_odd $ by decide) hε₀ hε₁ hf hν hν₁ $
         hε.trans $
           wLpNorm_mono_right
             (Nat.cast_le.2 $ le_add_of_le_left $ le_mul_of_one_le_left' one_le_two) _ _
@@ -216,3 +218,19 @@ lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ 
     _ = 24 / ε * log (3 / ε) * ↑(2 * p + 3 * 1) := by simp
     _ ≤ 24 / ε * log (3 / ε) * ↑(2 * p + 3 * p) := by gcongr
     _ = _ := by push_cast; ring
+
+/-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier
+transform. -/
+lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (f : G → ℝ) (g h : G → ℂ)
+    (hf : (↑) ∘ f = g ○ g) (hh : ∀ x, (h ○ h) x = (card G : ℝ)⁻¹)
+    (hε : ε ≤ (card G) ^ (-(↑p)⁻¹ : ℝ) * ‖f‖_[p]) :
+    1 + ε / 2 ≤ card G ^ (-(ε / 120 * (log (3 / ε))⁻¹ * (↑p)⁻¹)) *
+      ‖f + 1‖_[.ofReal (120 / ε * log (3 / ε) * p)] :=
+  calc
+    1 + ε / 2 ≤ ‖f + 1‖_[.ofReal (120 / ε * log (3 / ε) * p), const _ (card G)⁻¹] :=
+      unbalancing' p hp ε hε₀ hε₁ _ _ g h hf (funext fun x ↦ (hh x).symm)
+        (by simp; simp [← const_def]) (by simpa [rpow_neg, inv_rpow] using hε)
+    _ ≤ _ := by
+      have : 0 ≤ log (3 / ε) := log_nonneg $ (one_le_div hε₀).2 (by linarith)
+      have : 0 ≤ 120 / ε * log (3 / ε) * p := by positivity
+      simp [*, inv_rpow, ← rpow_neg, -mul_inv_rev, mul_inv]
