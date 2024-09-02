@@ -1,6 +1,7 @@
 import Mathlib.FieldTheory.Finite.Basic
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
 import LeanAPAP.Mathlib.Data.Finset.Pointwise.Basic
+import LeanAPAP.Mathlib.Data.Finset.Preimage
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Physics.AlmostPeriodicity
@@ -216,7 +217,17 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
     rw [dLinftyNorm_eq_iSup_norm, ← Finset.sup'_univ_eq_ciSup, Finset.le_sup'_iff] at hv'
     obtain ⟨x, -, hx⟩ := hv'
     let B' : Finset V' := (-x +ᵥ B).preimage (↑) Set.injOn_subtype_val
-    have hβ : (1 + 64⁻¹ : ℝ) * B.dens ≤ B'.dens := sorry
+    have hβ := by
+      calc
+        ((1 + 64⁻¹ : ℝ) * B.dens : ℝ) = (1 + 2⁻¹ / 32) * B.dens := by ring
+        _ ≤ ‖(𝟭_[ℝ] B ∗ μ (V' : Set V).toFinset) x‖ := hx
+        _ = B'.dens := ?_
+      rw [mu, conv_smul, Pi.smul_apply, indicate_conv_indicate_eq_card_vadd_inter_neg,
+        norm_of_nonneg (by positivity), nnratCast_dens, card_preimage, smul_eq_mul, inv_mul_eq_div]
+      congr 2
+      · congr 1 with x
+        simp
+      · simp
     simp at hx
     refine ⟨V', inferInstance, inferInstance, inferInstance, inferInstance, B', ?_, ?_, ?_,
       fun h ↦ ?_⟩
@@ -227,7 +238,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
         _ ≤ finrank (ZMod q) V' + 2 ^ 171 * 𝓛 B.dens ^ 4 * 𝓛 α ^ 4 / 2⁻¹ ^ 24 +
             2 ^ 195 * i * 𝓛 α ^ 8 := by gcongr
         _ ≤ finrank (ZMod q) V' + 2 ^ 171 * 𝓛 α ^ 4 * 𝓛 α ^ 4 / 2⁻¹ ^ 24 +
-            2 ^ 195 * i * 𝓛 α ^ 8 := by gcongr; sorry
+            2 ^ 195 * i * 𝓛 α ^ 8 := by have := hα₀.trans_le hαβ; gcongr
         _ = _ := by push_cast; ring
     · exact .of_image .subtypeVal Set.injOn_subtype_val (Set.subset_univ _)
         (hB.vadd_set (a := -x) |>.mono $ by simp [B'])

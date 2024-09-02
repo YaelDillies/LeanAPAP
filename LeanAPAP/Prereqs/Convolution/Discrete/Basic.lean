@@ -50,7 +50,7 @@ In this section, we define the convolution `f ∗ g` and difference convolution 
 section CommSemiring
 variable [CommSemiring R] {f g : G → R}
 
-lemma indicate_conv_indicate_apply (s t : Finset G) (a : G) :
+lemma indicate_conv_indicate_eq_sum (s t : Finset G) (a : G) :
     (𝟭_[R] s ∗ 𝟭 t) a = ((s ×ˢ t).filter fun x : G × G ↦ x.1 + x.2 = a).card := by
   simp only [conv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, sum_boole]
   simp_rw [← mem_product, filter_univ_mem]
@@ -60,6 +60,12 @@ lemma indicate_conv (s : Finset G) (f : G → R) : 𝟭 s ∗ f = ∑ a ∈ s, �
 
 lemma conv_indicate (f : G → R) (s : Finset G) : f ∗ 𝟭 s = ∑ a ∈ s, τ a f := by
   ext; simp [conv_eq_sum_sub, indicate_apply]
+
+lemma indicate_conv_indicate_eq_card_vadd_inter_neg (s t : Finset G) (a : G) :
+    (𝟭_[R] s ∗ 𝟭 t) a = ((-a +ᵥ s) ∩ -t).card := by
+  rw [← card_neg, neg_inter]
+  simp [conv_indicate, indicate, inter_comm, ← filter_mem_eq_inter, ← neg_vadd_mem_iff,
+    ← sub_eq_add_neg]
 
 variable [StarRing R]
 
