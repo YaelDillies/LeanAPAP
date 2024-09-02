@@ -89,7 +89,6 @@ open scoped BigOperators Pointwise NNReal ENNReal
 
 variable {G : Type*} [Fintype G] {A S : Finset G} {f : G → ℂ} {x ε K : ℝ} {k m : ℕ}
 
-variable {x : ℝ}
 local notation "𝓛" x => 1 + log (min 1 x)⁻¹
 
 private lemma curlog_pos (hx₀ : 0 < x) : 0 < 𝓛 x := by
