@@ -1,8 +1,9 @@
 import Mathlib.Analysis.Normed.Group.Constructions
 import Mathlib.MeasureTheory.Integral.Bochner
+import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Prereqs.Expect.Basic
+import LeanAPAP.Prereqs.Expect.Order
 
 open Filter
 open scoped BigOperators ComplexConjugate ENNReal NNReal

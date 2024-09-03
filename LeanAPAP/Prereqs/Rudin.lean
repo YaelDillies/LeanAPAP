@@ -1,6 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
-import LeanAPAP.Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.Randomisation
 

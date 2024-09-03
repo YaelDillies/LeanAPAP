@@ -1,11 +1,12 @@
+import Mathlib.Algebra.Algebra.Rat
+import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 import Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.CharP.Defs
+import Mathlib.Algebra.Module.Rat
 import Mathlib.Algebra.Order.Module.Rat
-import Mathlib.Algebra.Algebra.Field
-import Mathlib.Algebra.Star.Order
-import Mathlib.Analysis.CStarAlgebra.Basic
-import Mathlib.Analysis.Normed.Operator.ContinuousLinearMap
-import Mathlib.Data.Real.Sqrt
-import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Data.Finset.Density
+import Mathlib.Data.Finset.Pointwise.Basic
+import Mathlib.Data.Fintype.BigOperators
 
 /-!
 # Average over a finset
@@ -25,7 +26,7 @@ This file defines `Finset.expect`, the average (aka expectation) of a function o
 
 open Function
 open Fintype (card)
-open scoped Pointwise NNRat NNReal
+open scoped Pointwise NNRat
 
 variable {ι κ α β : Type*}
 
@@ -218,13 +219,14 @@ lemma card_smul_expect (s : Finset ι) (f : ι → α) : s.card • 𝔼 i ∈ s
   obtain rfl | hs := s.eq_empty_or_nonempty
   · simp
   · rw [expect, ← Nat.cast_smul_eq_nsmul ℚ≥0, smul_inv_smul₀]
-    positivity
+    exact mod_cast hs.card_ne_zero
 
 @[simp] nonrec lemma _root_.Fintype.card_smul_expect [Fintype ι] (f : ι → α) :
     Fintype.card ι • 𝔼 i, f i = ∑ i, f i := card_smul_expect _ _
 
 @[simp] lemma expect_const (hs : s.Nonempty) (a : α) : 𝔼 _i ∈ s, a = a := by
-  rw [expect, sum_const, ← Nat.cast_smul_eq_nsmul ℚ≥0, inv_smul_smul₀]; positivity
+  rw [expect, sum_const, ← Nat.cast_smul_eq_nsmul ℚ≥0, inv_smul_smul₀]
+  exact mod_cast hs.card_ne_zero
 
 lemma smul_expect {G : Type*} [DistribSMul G α] [SMulCommClass G ℚ≥0 α] (a : G)
     (s : Finset ι) (f : ι → α) : a • 𝔼 i ∈ s, f i = 𝔼 i ∈ s, a • f i := by
@@ -360,11 +362,11 @@ lemma _root_.GCongr.expect_le_expect (h : ∀ i ∈ s, f i ≤ g i) : s.expect f
   Finset.expect_le_expect h
 
 lemma expect_le (hs : s.Nonempty) (f : ι → α) (a : α) (h : ∀ x ∈ s, f x ≤ a) : 𝔼 i ∈ s, f i ≤ a :=
-  (inv_smul_le_iff_of_pos $ by positivity).2 $ by
+  (inv_smul_le_iff_of_pos $ mod_cast hs.card_pos).2 $ by
     rw [Nat.cast_smul_eq_nsmul]; exact sum_le_card_nsmul _ _ _ h
 
 lemma le_expect (hs : s.Nonempty) (f : ι → α) (a : α) (h : ∀ x ∈ s, a ≤ f x) : a ≤ 𝔼 i ∈ s, f i :=
-  (le_inv_smul_iff_of_pos $ by positivity).2 $ by
+  (le_inv_smul_iff_of_pos $ mod_cast hs.card_pos).2 $ by
     rw [Nat.cast_smul_eq_nsmul]; exact card_nsmul_le_sum _ _ _ h
 
 lemma expect_nonneg (hf : ∀ i ∈ s, 0 ≤ f i) : 0 ≤ 𝔼 i ∈ s, f i :=
@@ -394,7 +396,7 @@ section PosSMulStrictMono
 variable [PosSMulStrictMono ℚ≥0 α]
 
 lemma expect_pos (hf : ∀ i ∈ s, 0 < f i) (hs : s.Nonempty) : 0 < 𝔼 i ∈ s, f i :=
-  smul_pos (by positivity) $ sum_pos hf hs
+  smul_pos (inv_pos.2 $ mod_cast hs.card_pos) $ sum_pos hf hs
 
 end PosSMulStrictMono
 end OrderedCancelAddCommMonoid
@@ -493,49 +495,3 @@ instance LinearOrderedSemifield.toPosSMulStrictMono [LinearOrderedSemifield α] 
     PosSMulStrictMono ℚ≥0 α where
   elim a ha b₁ b₂ hb := by
     simp_rw [NNRat.smul_def]; exact mul_lt_mul_of_pos_left hb (NNRat.cast_pos.2 ha)
-
-namespace Mathlib.Meta.Positivity
-open Qq Lean Meta
-
-@[positivity Finset.expect _ _]
-def evalFinsetExpect : PositivityExt where eval {u α} zα pα e := do
-  match e with
-  | ~q(@Finset.expect $ι _ $instα $instmod $s $f) =>
-    let (lhs, _, (rhs : Q($α))) ← lambdaMetaTelescope f
-    let so : Option Q(Finset.Nonempty $s) ← do -- TODO: It doesn't complain if we make a typo?
-      try
-        let _fi ← synthInstanceQ q(Fintype $ι)
-        let _no ← synthInstanceQ q(Nonempty $ι)
-        match s with
-        | ~q(@univ _ $fi) => pure (some q(Finset.univ_nonempty (α := $ι)))
-        | _ => pure none
-      catch _ => do
-        let .some fv ← findLocalDeclWithType? q(Finset.Nonempty $s) | pure none
-        pure (some (.fvar fv))
-    match ← core zα pα rhs, so with
-    | .nonnegative pb, _ => do
-      let instαordmon ← synthInstanceQ q(OrderedAddCommMonoid $α)
-      let instαordsmul ← synthInstanceQ q(PosSMulMono ℚ≥0 $α)
-      assumeInstancesCommute
-      let pr : Q(∀ i, 0 ≤ $f i) ← mkLambdaFVars lhs pb
-      return .nonnegative q(@expect_nonneg $ι $α $instαordmon $instmod $s $f $instαordsmul
-        fun i _ ↦ $pr i)
-    | .positive pb, .some (fi : Q(Finset.Nonempty $s)) => do
-      let instαordmon ← synthInstanceQ q(OrderedCancelAddCommMonoid $α)
-      let instαordsmul ← synthInstanceQ q(PosSMulStrictMono ℚ≥0 $α)
-      assumeInstancesCommute
-      let pr : Q(∀ i, 0 < $f i) ← mkLambdaFVars lhs pb
-      return .positive q(@expect_pos $ι $α $instαordmon $instmod $s $f $instαordsmul
-        (fun i _ ↦ $pr i) $fi)
-    | _, _ => pure .none
-  | _ => throwError "not Finset.expect"
-
-example (n : ℕ) (a : ℕ → ℝ) : 0 ≤ 𝔼 j ∈ range n, a j^2 := by positivity
-example (a : ULift.{2} ℕ → ℝ) (s : Finset (ULift.{2} ℕ)) : 0 ≤ 𝔼 j ∈ s, a j^2 := by positivity
-example (n : ℕ) (a : ℕ → ℝ) : 0 ≤ 𝔼 j : Fin 8, 𝔼 i ∈ range n, (a j^2 + i ^ 2) := by positivity
-example (n : ℕ) (a : ℕ → ℝ) : 0 < 𝔼 j : Fin (n + 1), (a j^2 + 1) := by positivity
-example (a : ℕ → ℝ) : 0 < 𝔼 j ∈ ({1} : Finset ℕ), (a j^2 + 1) := by
-  have : Finset.Nonempty {1} := singleton_nonempty 1
-  positivity
-
-end Mathlib.Meta.Positivity

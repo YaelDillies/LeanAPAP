@@ -1,6 +1,5 @@
 import Mathlib.Analysis.Complex.Angle
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
-import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.Bohr.Basic
 
 /- ### Arc Bohr sets -/

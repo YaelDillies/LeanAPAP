@@ -2,7 +2,7 @@ import Mathlib.Combinatorics.Additive.AP.Three.Defs
 import Mathlib.Data.Real.StarOrdered
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Defs
-import LeanAPAP.Prereqs.LpNorm.Discrete.Inner
+import LeanAPAP.Prereqs.Inner.Discrete.Basic
 
 /-!
 # The convolution characterisation of 3AP-free sets
