@@ -230,28 +230,39 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
       (exp_monotone $ neg_le_neg $ (inv_mul_le_iff $ by positivity).1 hpε)
     _ = δ / 2 := by rw [exp_neg, exp_log, inv_div]; positivity
 
---TODO: When `1 < ε`, the result is trivial since `S = univ`.
+-- TODO: When `1 < ε`, the result is trivial since `S = univ`.
 /-- Special case of `sifting` when `B₁ = B₂ = univ`. -/
 lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p) (hp₂ : 2 ≤ p)
-    (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hA : A.Nonempty)
-    (hf : ∃ x, x ∈ A - A ∧ (𝟭 A ○ 𝟭 A) x ≤ (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ]) :
+    (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hA : A.Nonempty) :
     ∃ A₁ A₂, 1 - δ ≤ ∑ x in s p ε univ univ A, (μ A₁ ○ μ A₂) x ∧
         (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤ A₁.dens ∧
           (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤ A₂.dens := by
-  have hp₀ : p ≠ 0 := by positivity
-  have :
-    (4 : ℝ)⁻¹ * (A.dens) ^ (2 * p) ≤
-      4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / A.card ^ (2 * p) := by
-    rw [mul_div_assoc, ← div_pow]
-    refine mul_le_mul_of_nonneg_left (pow_le_pow_left (by positivity) ?_ _) (by norm_num)
-    rw [nnratCast_dens, le_div_iff₀, ← mul_div_right_comm]
-    calc
-      _ = (‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] : ℝ) := by
-        simp [mu, wLpNorm_smul_right, hp₀, dL1Norm_dconv, card_univ, inv_mul_eq_div]
+  by_cases hf : ∃ x, x ∈ A - A ∧ (𝟭 A ○ 𝟭 A) x ≤ (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ]
+  · have hp₀ : p ≠ 0 := by positivity
+    have :
+      (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤
+        4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / A.card ^ (2 * p) := by
+      rw [mul_div_assoc, ← div_pow]
+      refine mul_le_mul_of_nonneg_left (pow_le_pow_left (by positivity) ?_ _) (by norm_num)
+      rw [nnratCast_dens, le_div_iff₀, ← mul_div_right_comm]
+      calc
+        _ = (‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] : ℝ) := by
+          simp [mu, wLpNorm_smul_right, hp₀, dL1Norm_dconv, card_univ, inv_mul_eq_div]
 
-      _ ≤ _ := wLpNorm_mono_right (one_le_two.trans $ by norm_cast) _ _
-    · exact Nat.cast_pos.2 hA.card_pos
-  obtain ⟨A₁, -, A₂, -, h, hcard₁, hcard₂⟩ :=
-    sifting univ univ hε hε₁ hδ hp hp₂ hpε (by simp [univ_nonempty]) hA (by simpa)
-  exact ⟨A₁, A₂, h, this.trans $ by simpa [nnratCast_dens] using hcard₁,
-    this.trans $ by simpa [nnratCast_dens] using hcard₂⟩
+        _ ≤ _ := wLpNorm_mono_right (one_le_two.trans $ by norm_cast) _ _
+      · exact Nat.cast_pos.2 hA.card_pos
+    obtain ⟨A₁, -, A₂, -, h, hcard₁, hcard₂⟩ :=
+      sifting univ univ hε hε₁ hδ hp hp₂ hpε (by simp [univ_nonempty]) hA (by simpa)
+    exact ⟨A₁, A₂, h, this.trans $ by simpa [nnratCast_dens] using hcard₁,
+      this.trans $ by simpa [nnratCast_dens] using hcard₂⟩
+  · refine ⟨A, A, ?_, ?_⟩
+    · rw [Fintype.sum_subset]
+      simpa [sum_dconv, sum_mu, hA] using hδ.le
+      · simpa [← Function.mem_support, ← coe_sub] using hf
+    · rw [and_self]
+      calc
+        (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤ 1 * A.dens ^ 1 := by
+          gcongr ?_ * ?_
+          · norm_num
+          · exact pow_le_pow_of_le_one (by positivity) (mod_cast A.dens_le_one) (by omega)
+        _ = A.dens := by simp

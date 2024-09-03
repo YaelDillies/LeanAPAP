@@ -4,6 +4,7 @@ import LeanAPAP.Mathlib.Data.Finset.Preimage
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Physics.AlmostPeriodicity
+import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.Function.Indicator.Complex
 
@@ -11,7 +12,7 @@ import LeanAPAP.Prereqs.Function.Indicator.Complex
 # Finite field case
 -/
 
-attribute [-simp] div_pow
+attribute [-simp] div_pow Real.log_inv
 
 open FiniteDimensional Fintype Function Real MeasureTheory
 open Finset hiding card
@@ -91,16 +92,20 @@ lemma global_dichotomy (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
 
 variable {q n : ℕ} [Module (ZMod q) G] {A₁ A₂ : Finset G} (S : Finset G) {α : ℝ}
 
-lemma ap_in_ff (hS : S.Nonempty) (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens)
+lemma ap_in_ff (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens)
     (hαA₂ : α ≤ A₂.dens) :
-    ∃ (V : Submodule (ZMod q) G) (V' : Finset G),
-      (V : Set G) = V' ∧
+    ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
             2 ^ 27 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 / ε ^ 2 ∧
-          |∑ x in S, (μ V' ∗ μ A₁ ∗ μ A₂) x - ∑ x in S, (μ A₁ ∗ μ A₂) x| ≤ ε := by
+          |∑ x ∈ S, (μ (Set.toFinset V) ∗ μ A₁ ∗ μ A₂) x - ∑ x ∈ S, (μ A₁ ∗ μ A₂) x| ≤ ε := by
   classical
   have hA₁ : A₁.Nonempty := by simpa using hα₀.trans_le hαA₁
   have hA₂ : A₂.Nonempty := by simpa using hα₀.trans_le hαA₂
+  have hα₁ : α ≤ 1 := hαA₁.trans $ mod_cast A₁.dens_le_one
+  have : 0 ≤ log α⁻¹ := log_nonneg $ one_le_inv hα₀ hα₁
+  have : 0 ≤ log (ε * α)⁻¹ := log_nonneg $ one_le_inv (by positivity) $ mul_le_one hε₁ hα₀.le hα₁
+  obtain rfl | hS := S.eq_empty_or_nonempty
+  · exact ⟨⊤, inferInstance, by simp [hε₀.le]; positivity⟩
   have hA₁ : σ[A₁, univ] ≤ α⁻¹ :=
     calc
       _ ≤ (A₁.dens⁻¹ : ℝ) := by norm_cast; exact addConst_le_inv_dens
@@ -121,40 +126,72 @@ lemma ap_in_ff (hS : S.Nonempty) (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : �
       _ = _ := sorry
   sorry
 
-lemma di_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hε₀ : 0 < ε) (hε₁ : ε < 1) (hαA : α ≤ A.dens)
-    (hA₀ : A.Nonempty)
+lemma di_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hε₀ : 0 < ε) (hε₁ : ε < 1) (hA₀ : A.Nonempty)
     (hγC : γ ≤ C.dens) (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
-            2 ^ 171 * 𝓛 α ^ 4 * 𝓛 γ ^ 4 / ε ^ 24 ∧
-          (1 + ε / 32) * α ≤ ‖𝟭_[ℝ] A ∗ μ (Set.toFinset V)‖_[⊤] := by
+            2 ^ 171 * 𝓛 A.dens ^ 4 * 𝓛 γ ^ 4 / ε ^ 24 ∧
+          (1 + ε / 32) * A.dens ≤ ‖𝟭_[ℝ] A ∗ μ (Set.toFinset V)‖_[⊤] := by
   have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
   have hG : (card G : ℝ) ≠ 0 := by positivity
+  let α : ℝ := A.dens
   let p : ℕ := 2 * ⌈𝓛 γ⌉₊
   let p' : ℝ := 240 / ε * log (6 / ε) * p
+  let q' : ℕ := 2 * ⌈p' + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊
   let f : G → ℝ := balance (μ A)
+  have : 0 < 𝓛 γ := curlog_pos hγ.le hγ₁
+  have : 0 < p := by positivity
+  have : 0 < log (6 / ε) := log_pos $ (one_lt_div hε₀).2 (by linarith)
+  have : 0 < p' := by positivity
+  have : 0 < log (64 / ε) := log_pos $ (one_lt_div hε₀).2 (by linarith)
+  have : 0 < q' := by positivity
   have :=
     calc
       1 + ε / 4 = 1 + ε / 2 / 2 := by ring
-      _ ≤ _ :=
-        unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁).ne') (ε / 2)
-          (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)
+      _ ≤ _ := by
+        refine unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁).ne')
+          (ε / 2) (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)
           (card G • (balance (μ A) ○ balance (μ A))) (sqrt (card G) • balance (μ A))
           (const _ (card G)⁻¹) ?_ ?_ ?_
+        · ext a : 1
+          simp [smul_dconv, dconv_smul, smul_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
+        · simp [card_univ, show (card G : ℂ) ≠ 0 by sorry]
+        · have hγ' : (1 : ℝ≥0) ≤ 2 * ⌈𝓛 γ⌉₊ := sorry
+          sorry
+          -- simpa [wLpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity),
+          --   ← div_div, *] using global_dichotomy hA hγC hγ hAC
       _ = card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (f ○ f) + 1‖_[.ofReal p'] := by
         congr 3 <;> ring_nf; simp [hε₀.ne']; ring
-  let q : ℝ := 2 * ⌈p' + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊
-  -- have := sifting_cor (ε := ε / 16) (δ := ε / 32) (by positivity) (by linarith) (by positivity)
-  --   _ _ _ hA₀
-  rotate_left
-  · ext a : 1
-    simp [smul_dconv, dconv_smul, smul_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
-  · simp [card_univ, show (card G : ℂ) ≠ 0 by sorry]
-  · have hγ' : (1 : ℝ≥0) ≤ 2 * ⌈𝓛 γ⌉₊ := sorry
-    sorry
-    -- simpa [wLpNorm_nsmul hγ', ← nsmul_eq_mul, div_le_iff' (show (0 : ℝ) < card G by positivity),
-    --   ← div_div, *] using global_dichotomy hA hγC hγ hAC
-  sorry
+  obtain ⟨A₁, A₂, hA, hA₁, hA₂⟩ : ∃ (A₁ A₂ : Finset G),
+      1 - ε / 32 ≤ ∑ x ∈ s q' (ε / 16) univ univ A, (μ A₁ ○ μ A₂) x ∧
+        (4⁻¹ : ℝ) * A.dens ^ (2 * q') ≤ A₁.dens ∧ (4⁻¹ : ℝ) * A.dens ^ (2 * q') ≤ A₂.dens :=
+    sifting_cor (ε := ε / 16) (δ := ε / 32) (by positivity) (by linarith) (by positivity) (p := q')
+    (even_two_mul _) (le_mul_of_one_le_right zero_le_two (by simp; positivity)) (by
+      calc
+        (ε / 16)⁻¹ * log (2 / (ε / 32)) = 2 ^ 4 * ε⁻¹ ^ 1 * log (64 / ε) := by ring_nf
+        _ ≤ 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε) := by
+          gcongr
+          · norm_num
+          · norm_num
+          · exact one_le_inv hε₀ hε₁.le
+          · norm_num
+        _ ≤ ⌈2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊ := Nat.le_ceil _
+        _ = ↑(1 * ⌈0 + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊) := by rw [one_mul, zero_add]
+        _ ≤ q' := by unfold_let q'; gcongr; norm_num) hA₀
+  let s' : Finset G := {x | 1 + ε / 8 ≤ card G • (μ A ○ μ A) x}
+  have hss' : s q' (ε / 16) univ univ A ⊆ s' := sorry
+  obtain ⟨V, _, hVdim, hV⟩ : ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
+    ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
+        2 ^ 27 * 𝓛 (4⁻¹ * α ^ (2 * q')) ^ 2 * 𝓛 (ε / 32 * (4⁻¹ * α ^ (2 * q'))) ^ 2 / (ε / 32) ^ 2 ∧
+      |∑ x ∈ s', (μ (Set.toFinset V) ∗ μ A₁ ∗ μ A₂) x - ∑ x ∈ s', (μ A₁ ∗ μ A₂) x| ≤ ε / 32 :=
+    ap_in_ff _ (by positivity) (by positivity) (by linarith) hA₁ hA₂
+  refine ⟨V, inferInstance, ?_, ?_⟩
+  · calc
+      ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
+        2 ^ 27 * 𝓛 (4⁻¹ * α ^ (2 * q')) ^ 2 * 𝓛 (ε / 32 * (4⁻¹ * α ^ (2 * q'))) ^ 2 / (ε / 32) ^ 2
+          := hVdim
+      _ ≤ 2 ^ 171 * 𝓛 α ^ 4 * 𝓛 γ ^ 4 / ε ^ 24 := sorry
+  · sorry
 
 theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
     (hA : ThreeAPFree (α := G) A) : finrank (ZMod q) G ≤ 2 ^ 203 * 𝓛 A.dens ^ 9 := by
@@ -209,7 +246,8 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
       rw [abs_sub_comm, le_abs, le_sub_comm]
       norm_num at hB' ⊢
       exact .inl hB'.le
-    obtain ⟨V', _, hVV', hv'⟩ := di_in_ff hq₃ hq (by positivity) two_inv_lt_one le_rfl sorry (by
+    obtain ⟨V', _, hVV', hv'⟩ := di_in_ff hq₃ hq (by positivity) two_inv_lt_one
+      (by simpa using hα₀.trans_le hαβ) (by
       rwa [Finset.dens_image (Nat.Coprime.nsmul_right_bijective _)]
       simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow) hα₀ this
     rw [dLinftyNorm_eq_iSup_norm, ← Finset.sup'_univ_eq_ciSup, Finset.le_sup'_iff] at hv'
