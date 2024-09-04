@@ -1,3 +1,4 @@
+import Mathlib.Algebra.Star.Conjneg
 import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 

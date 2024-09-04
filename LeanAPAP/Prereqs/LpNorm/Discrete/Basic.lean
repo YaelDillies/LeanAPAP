@@ -1,3 +1,4 @@
+import Mathlib.Algebra.Star.Conjneg
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Function.Translate

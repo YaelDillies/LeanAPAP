@@ -5,6 +5,7 @@ import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Expect.Complex
+import LeanAPAP.Prereqs.Inner.Discrete.Basic
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 
 /-!

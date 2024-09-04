@@ -1,6 +1,5 @@
 import Mathlib.Algebra.BigOperators.Pi
-import Mathlib.Algebra.Order.Pi
-import Mathlib.Algebra.Star.Order
+import Mathlib.Algebra.Star.SelfAdjoint
 import Mathlib.Data.ZMod.Basic
 
 /-!
@@ -70,88 +69,6 @@ lemma translate_prod_right (a : α) (f : ι → α → β) (s : Finset ι) :
     τ a (∏ i in s, f i) = ∏ i in s, τ a (f i) := by ext; simp
 
 end translate
-
-/-! ### Conjugation negation operator -/
-
-section conjneg
-variable {ι α β γ : Type*} [AddGroup α]
-
-section CommSemiring
-variable [CommSemiring β] [StarRing β] {f g : α → β}
-
-def conjneg (f : α → β) : α → β := conj fun x ↦ f (-x)
-
-@[simp] lemma conjneg_apply (f : α → β) (x : α) : conjneg f x = conj (f (-x)) := rfl
-@[simp] lemma conjneg_conjneg (f : α → β) : conjneg (conjneg f) = f := by ext; simp
-
-lemma conjneg_injective : Injective (conjneg : (α → β) → α → β) :=
-  Involutive.injective conjneg_conjneg
-
-@[simp] lemma conjneg_inj : conjneg f = conjneg g ↔ f = g := conjneg_injective.eq_iff
-lemma conjneg_ne_conjneg : conjneg f ≠ conjneg g ↔ f ≠ g := conjneg_injective.ne_iff
-
-@[simp] lemma conjneg_conj (f : α → β) : conjneg (conj f) = conj (conjneg f) := rfl
-
-@[simp] lemma conjneg_zero : conjneg (0 : α → β) = 0 := by ext; simp
-@[simp] lemma conjneg_one : conjneg (1 : α → β) = 1 := by ext; simp
-@[simp] lemma conjneg_add (f g : α → β) : conjneg (f + g) = conjneg f + conjneg g := by ext; simp
-
-@[simp] lemma conjneg_sum (s : Finset ι) (f : ι → α → β) :
-    conjneg (∑ i in s, f i) = ∑ i in s, conjneg (f i) := by
-  ext; simp only [map_sum, conjneg_apply, Finset.sum_apply]
-
-@[simp] lemma conjneg_prod (s : Finset ι) (f : ι → α → β) :
-    conjneg (∏ i in s, f i) = ∏ i in s, conjneg (f i) := by
-  ext; simp only [map_prod, conjneg_apply, Finset.prod_apply]
-
-@[simp] lemma conjneg_eq_zero : conjneg f = 0 ↔ f = 0 := by
-  rw [← conjneg_inj, conjneg_conjneg, conjneg_zero]
-
-@[simp]
-lemma conjneg_eq_one : conjneg f = 1 ↔ f = 1 := by rw [← conjneg_inj, conjneg_conjneg, conjneg_one]
-
-lemma conjneg_ne_zero : conjneg f ≠ 0 ↔ f ≠ 0 := conjneg_eq_zero.not
-lemma conjneg_ne_one : conjneg f ≠ 1 ↔ f ≠ 1 := conjneg_eq_one.not
-
-lemma sum_conjneg [Fintype α] (f : α → β) : ∑ a, conjneg f a = ∑ a, conj (f a) :=
-  Fintype.sum_equiv (Equiv.neg _) _ _ fun _ ↦ rfl
-
-@[simp] lemma support_conjneg (f : α → β) : support (conjneg f) = -support f := by
-  ext; simp [starRingEnd_apply]
-
-end CommSemiring
-
-section CommRing
-variable [CommRing β] [StarRing β]
-
-@[simp] lemma conjneg_sub (f g : α → β) : conjneg (f - g) = conjneg f - conjneg g := by ext; simp
-@[simp] lemma conjneg_neg (f : α → β) : conjneg (-f) = -conjneg f := by ext; simp
-
-end CommRing
-
-section OrderedCommSemiring
-variable [OrderedCommSemiring β] [StarRing β] [StarOrderedRing β] {f : α → β}
-
-@[simp] lemma conjneg_nonneg : 0 ≤ conjneg f ↔ 0 ≤ f :=
-  (Equiv.neg _).forall_congr' $ by simp [starRingEnd_apply]
-
-@[simp] lemma conjneg_pos : 0 < conjneg f ↔ 0 < f := by
-  simp_rw [lt_iff_le_and_ne, @ne_comm (α → β) 0, conjneg_nonneg, conjneg_ne_zero]
-
-end OrderedCommSemiring
-
-section OrderedCommRing
-variable [OrderedCommRing β] [StarRing β] [StarOrderedRing β] {f : α → β}
-
-@[simp] lemma conjneg_nonpos : conjneg f ≤ 0 ↔ f ≤ 0 := by
-  simp_rw [← neg_nonneg, ← conjneg_neg, conjneg_nonneg]
-
-@[simp]
-lemma conjneg_neg' : conjneg f < 0 ↔ f < 0 := by simp_rw [← neg_pos, ← conjneg_neg, conjneg_pos]
-
-end OrderedCommRing
-
-end conjneg
 
 open Fintype
 

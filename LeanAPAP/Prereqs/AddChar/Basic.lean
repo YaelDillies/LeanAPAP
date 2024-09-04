@@ -1,6 +1,6 @@
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Prereqs.Expect.Basic
-import LeanAPAP.Prereqs.Inner.Discrete.Basic
+import LeanAPAP.Prereqs.Inner.Discrete.Defs
 
 open Finset hiding card
 open Fintype (card)

@@ -4,9 +4,9 @@ import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Algebra.CharP.Defs
 import Mathlib.Algebra.Module.Rat
 import Mathlib.Algebra.Order.Module.Rat
-import Mathlib.Data.Finset.Density
 import Mathlib.Data.Finset.Pointwise.Basic
 import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.NNRat.Order
 
 /-!
 # Average over a finset

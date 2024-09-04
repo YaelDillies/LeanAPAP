@@ -1,6 +1,7 @@
 import Mathlib.Data.Finset.Density
 import Mathlib.Probability.ConditionalProbability
 import LeanAPAP.Prereqs.Expect.Complex
+import LeanAPAP.Prereqs.Expect.Order
 import LeanAPAP.Prereqs.NNLpNorm
 
 /-!
