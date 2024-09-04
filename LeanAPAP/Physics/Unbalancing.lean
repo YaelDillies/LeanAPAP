@@ -13,8 +13,8 @@ open Fintype (card)
 open Function Real MeasureTheory
 open scoped ComplexConjugate ComplexOrder NNReal ENNReal
 
-variable {G : Type*} [Fintype G] [MeasurableSpace G] [DiscreteMeasurableSpace G] [DecidableEq G]
-  [AddCommGroup G] {ν : G → ℝ≥0} {f : G → ℝ} {g h : G → ℂ} {ε : ℝ} {p : ℕ}
+variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
+  {ν : G → ℝ≥0} {f : G → ℝ} {g h : G → ℂ} {ε : ℝ} {p : ℕ}
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
@@ -38,22 +38,25 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
   simp only [sum_pow', sum_mul_sum, map_mul, starRingEnd_self_apply, Fintype.piFinset_univ,
     ← Complex.conj_mul', sum_product, map_sum, map_prod,
     mul_mul_mul_comm (g _), ← prod_mul_distrib]
-  simp only [sum_mul, @sum_comm _ _ (Fin k → G), mul_comm (conj _)]
-  sorry
-  -- exact sum_comm
+  simp only [sum_mul, @sum_comm _ _ (Fin k → G), mul_comm (conj _), prod_mul_distrib]
+  rw [sum_comm]
+  congr with x
+  congr with y
+  congr with z
+  rw [mul_mul_mul_comm _ _ _ (h _), mul_comm (h _)]
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg {f : G → ℝ} (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
     (0 : ℝ) ≤ ⟪(↑) ∘ ν, f ^ k⟫_[ℝ] := by
-  sorry
-  -- simpa [← Complex.zero_le_real, starRingEnd_apply, dL2Inner_eq_sum]
-  --   using pow_inner_nonneg' hf hν k
+  simpa [← Complex.zero_le_real, dL2Inner_eq_sum, mul_comm] using pow_inner_nonneg' hf hν k
 
 private lemma log_ε_pos (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < log (3 / ε) :=
   log_pos $ (one_lt_div hε₀).2 $ hε₁.trans_lt $ by norm_num
 
 private lemma p'_pos (hp : 5 ≤ p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < 24 / ε * log (3 / ε) * p := by
   have := log_ε_pos hε₀ hε₁; positivity
+
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1)
