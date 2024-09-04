@@ -13,6 +13,8 @@ open Function ProbabilityTheory Real
 open Fintype (card)
 open scoped BigOperators ComplexConjugate ENNReal NNReal
 
+local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
+
 variable {α 𝕜 R E : Type*} [MeasurableSpace α]
 
 /-! ### Lp norm -/
@@ -217,6 +219,20 @@ lemma cLinftyNorm_eq_iSup_norm (f : α → E) : ‖f‖ₙ_[∞] = ⨆ i, ‖f i
 
 lemma cLpNorm_mono_real {g : α → ℝ} (h : ∀ x, ‖f x‖ ≤ g x) : ‖f‖ₙ_[p] ≤ ‖g‖ₙ_[p] :=
   nnLpNorm_mono_real .of_discrete h
+
+lemma cLpNorm_two_mul_sum_pow {ι : Type*} {n : ℕ} (hn : n ≠ 0) (s : Finset ι) (f : ι → α → ℂ) :
+    ‖∑ i ∈ s, f i‖ₙ_[2 * n] ^ (2 * n) =
+      ∑ x ∈ s ^^ n, ∑ y ∈ s ^^ n, 𝔼 a, (∏ i, conj (f (x i) a)) * ∏ i, f (y i) a :=
+  calc
+    _ = 𝔼 a, (‖∑ i ∈ s, f i a‖ : ℂ) ^ (2 * n) := by
+      norm_cast
+      rw [← cLpNorm_pow_eq_expect_norm]
+      simp_rw [← sum_apply]
+      norm_cast
+      positivity
+    _ = 𝔼 a, (∑ i ∈ s, conj (f i a)) ^ n * (∑ j ∈ s, f j a) ^ n := by
+      simp_rw [pow_mul, ← Complex.conj_mul', mul_pow, map_sum]
+    _ = _ := by simp_rw [sum_pow', sum_mul_sum, expect_sum_comm]
 
 end NormedAddCommGroup
 

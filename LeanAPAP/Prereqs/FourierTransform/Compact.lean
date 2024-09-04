@@ -1,5 +1,4 @@
 import LeanAPAP.Prereqs.Convolution.Compact
-import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.FourierTransform.Discrete
 import LeanAPAP.Prereqs.Function.Indicator.Basic
 
@@ -65,6 +64,9 @@ lemma cft_inversion (f : α → ℂ) (a : α) : ∑ ψ, cft f ψ * ψ a = f a :=
     AddChar.sum_apply_eq_ite, sub_eq_zero, ite_mul, zero_mul, Fintype.expect_ite_eq]
   simp [add_neg_eq_zero, card_univ, NNRat.smul_def (α := ℂ), Fintype.card_ne_zero]
 
+/-- **Fourier inversion** for the discrete Fourier transform. -/
+lemma cft_inversion' (f : α → ℂ) : ∑ ψ, cft f ψ • ⇑ψ = f := by ext; simpa using cft_inversion _ _
+
 lemma dft_cft_doubleDualEmb (f : α → ℂ) (a : α) : dft (cft f) (doubleDualEmb a) = f (-a) := by
   simp only [← cft_inversion f (-a), mul_comm (conj _), dft_apply, dL2Inner_eq_sum, map_neg_eq_inv,
     AddChar.inv_apply_eq_conj, doubleDualEmb_apply]
@@ -126,8 +128,8 @@ variable [DecidableEq α]
     dens, NNRat.smul_def (α := ℂ), div_eq_inv_mul]
   simp
 
-lemma cft_nconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : cft (f ∗ₙ g) ψ = cft f ψ * cft g ψ := by
-  simp_rw [cft, cL2Inner_eq_expect, nconv_eq_expect_sub', mul_expect, expect_mul, ← expect_product',
+lemma cft_cconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : cft (f ∗ₙ g) ψ = cft f ψ * cft g ψ := by
+  simp_rw [cft, cL2Inner_eq_expect, cconv_eq_expect_sub', mul_expect, expect_mul, ← expect_product',
     univ_product_univ]
   refine Fintype.expect_equiv ((Equiv.prodComm _ _).trans $
     ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
@@ -137,69 +139,26 @@ lemma cft_nconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : cft (f ∗ₙ g
 
 lemma cft_cdconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
     cft (f ○ₙ g) ψ = cft f ψ * conj (cft g ψ) := by
-  rw [← nconv_conjneg, cft_nconv_apply, cft_conjneg_apply]
+  rw [← cconv_conjneg, cft_cconv_apply, cft_conjneg_apply]
 
-@[simp] lemma cft_nconv (f g : α → ℂ) : cft (f ∗ₙ g) = cft f * cft g :=
-  funext $ cft_nconv_apply _ _
+@[simp] lemma cft_cconv (f g : α → ℂ) : cft (f ∗ₙ g) = cft f * cft g :=
+  funext $ cft_cconv_apply _ _
 
 @[simp]
 lemma cft_cdconv (f g : α → ℂ) : cft (f ○ₙ g) = cft f * conj (cft g) :=
   funext $ cft_cdconv_apply _ _
 
-@[simp] lemma cft_iterNConv (f : α → ℂ) : ∀ n, cft (f ∗^ₙ n) = cft f ^ n
+@[simp] lemma cft_iterCconv (f : α → ℂ) : ∀ n, cft (f ∗^ₙ n) = cft f ^ n
   | 0 => cft_trivNChar
-  | n + 1 => by simp [iterNConv_succ, pow_succ, cft_iterNConv]
+  | n + 1 => by simp [iterCconv_succ, pow_succ, cft_iterCconv]
 
-@[simp] lemma cft_iterNConv_apply (f : α → ℂ) (n : ℕ) (ψ : AddChar α ℂ) :
-    cft (f ∗^ₙ n) ψ = cft f ψ ^ n := congr_fun (cft_iterNConv _ _) _
+@[simp] lemma cft_iterCconv_apply (f : α → ℂ) (n : ℕ) (ψ : AddChar α ℂ) :
+    cft (f ∗^ₙ n) ψ = cft f ψ ^ n := congr_fun (cft_iterCconv _ _) _
 
--- lemma dL2Norm_iterNConv (f : α → ℂ) (n : ℕ) : ‖f ∗^ₙ n‖ₙ_[2] = ‖f ^ n‖_[2] := by
---   rw [← dL2Norm_cft, cft_iterNConv, ← ENNReal.coe_two, dLpNorm_pow]
+-- lemma dL2Norm_iterCconv (f : α → ℂ) (n : ℕ) : ‖f ∗^ₙ n‖ₙ_[2] = ‖f ^ n‖_[2] := by
+--   rw [← dL2Norm_cft, cft_iterCconv, ← ENNReal.coe_two, dLpNorm_pow]
 --   norm_cast
 --   refine (sq_eq_sq (by positivity) $ by positivity).1 ?_
 --   rw [← ENNReal.coe_two, dLpNorm_pow, ← pow_mul', ← Complex.ofReal_inj]
 --   push_cast
 --   simp_rw [pow_mul, ← Complex.mul_conj', conj_iterConv_apply, mul_pow]
-
-variable [MeasurableSpace α] [DiscreteMeasurableSpace α]
-
-lemma cLpNorm_nconv_le_cLpNorm_cdconv (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℂ) :
-    ‖f ∗ₙ f‖ₙ_[n] ≤ ‖f ○ₙ f‖ₙ_[n] := by
-  cases isEmpty_or_nonempty α
-  · rw [Subsingleton.elim (f ∗ₙ f) (f ○ₙ f)]
-  refine le_of_pow_le_pow_left hn₀ (by positivity) ?_
-  obtain ⟨n, rfl⟩ := hn.two_dvd
-  simp_rw [← NNReal.coe_le_coe, NNReal.coe_pow, cLpNorm_pow_eq_expect_norm hn₀,
-    ← cft_inversion (f ∗ₙ f), ← cft_inversion (f ○ₙ f), cft_nconv, cft_cdconv, Pi.mul_apply]
-  rw [← Real.norm_of_nonneg (expect_nonneg fun i _ ↦ ?_), ← Complex.norm_real]
-  rw [Complex.ofReal_expect (univ : Finset α)]
-  any_goals positivity
-  simp_rw [pow_mul', ← norm_pow _ n, Complex.ofReal_pow, ← Complex.conj_mul', map_pow, map_sum,
-    map_mul, Fintype.sum_pow, Fintype.sum_mul_sum]
-  sorry
-  -- simp only [@expect_comm _ _ α, ← mul_expect, prod_mul_prod_comm]
-  -- refine (norm_expect_le _ _).trans_eq (Complex.ofReal_injective _)
-  -- simp only [norm_mul, norm_prod, RCLike.norm_conj, ← pow_mul]
-  -- push_cast
-  -- have : ∀ f g : Fin n → AddChar α ℂ, 0 ≤ ∑ a, ∏ i, conj (f i a) * g i a := by
-  --   rintro f g
-  --   suffices : ∑ a, ∏ i, conj (f i a) * g i a = if ∑ i, (g i - f i) = 0 then (card α : ℂ) else 0
-  --   · rw [this]
-  --     split_ifs <;> positivity
-  --   simp_rw [← AddChar.expect_eq_ite, AddChar.expect_apply, AddChar.sub_apply, AddChar.map_neg_eq_inv,
-  --     AddChar.inv_apply_eq_conj, mul_comm]
-  -- simp only [RCLike.ofReal_pow, pow_mul, ← Complex.conj_mul', map_expect, map_mul, Complex.conj_conj,
-  --   Pi.conj_apply, mul_pow, Fintype.expect_pow, ← sq, Fintype.expect_mul_expect]
-  -- conv_lhs =>
-  --   arg 2
-  --   ext
-  --   rw [← Complex.eq_coe_norm_of_nonneg (this _ _)]
-  -- simp only [@expect_comm _ _ α, mul_expect, map_prod, map_mul, RCLike.conj_conj, ← prod_mul_distrib]
-  -- refine expect_congr rfl fun x _ ↦ expect_congr rfl fun a _ ↦ prod_congr rfl fun i _ ↦ _
-  -- ring
-
---TODO: Can we unify with `cLpNorm_nconv_le_cLpNorm_cdconv`?
-lemma cLpNorm_nconv_le_cLpNorm_cdconv' (hn₀ : n ≠ 0) (hn : Even n) (f : α → ℝ) :
-    ‖f ∗ₙ f‖ₙ_[n] ≤ ‖f ○ₙ f‖ₙ_[n] := by
-  simpa only [← Complex.coe_comp_nconv, ← Complex.coe_comp_cdconv, Complex.cLpNorm_coe_comp] using
-    cLpNorm_nconv_le_cLpNorm_cdconv hn₀ hn ((↑) ∘ f)

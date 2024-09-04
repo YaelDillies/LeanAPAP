@@ -1,5 +1,11 @@
 import Mathlib.Algebra.Group.AddChar
 
+/-!
+# TODO
+
+Unsimp `AddChar.sub_apply`
+-/
+
 variable {G R : Type*}
 
 namespace AddChar

@@ -41,6 +41,7 @@ import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.Expect.Order
 import LeanAPAP.Prereqs.FourierTransform.Compact
+import LeanAPAP.Prereqs.FourierTransform.Convolution
 import LeanAPAP.Prereqs.FourierTransform.Discrete
 import LeanAPAP.Prereqs.Function.Indicator.Basic
 import LeanAPAP.Prereqs.Function.Indicator.Complex

@@ -5,7 +5,9 @@ Authors: Yaël Dillies, Bhavik Mehta
 -/
 import Mathlib.Algebra.Algebra.Rat
 import Mathlib.Algebra.BigOperators.GroupWithZero.Action
+import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.Module.Pi
 import Mathlib.Data.Finset.Pointwise.Basic
 import Mathlib.Data.Fintype.BigOperators
 
@@ -339,6 +341,11 @@ lemma expect_div (s : Finset ι) (f : ι → M) (a : M) : (𝔼 i ∈ s, f i) / 
   simp_rw [div_eq_mul_inv, expect_mul]
 
 end Semifield
+
+@[simp] lemma expect_apply {α : Type*} {π : α → Type*} [∀ a, CommSemiring (π a)]
+    [∀ a, Module ℚ≥0 (π a)] (s : Finset ι) (f : ι → ∀ a, π a) (a : α) :
+    (𝔼 i ∈ s, f i) a = 𝔼 i ∈ s, f i a := by simp [expect]
+
 end Finset
 
 namespace algebraMap
