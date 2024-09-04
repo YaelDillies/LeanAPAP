@@ -3,10 +3,13 @@ import LeanAPAP.FiniteField.Basic
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Field.Defs
+import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
+import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Mathlib.Algebra.Order.Module.Rat
 import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
