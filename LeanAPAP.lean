@@ -4,6 +4,7 @@ import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Field.Defs
 import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
+import LeanAPAP.Mathlib.Algebra.Order.Module.Rat
 import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
@@ -22,6 +23,7 @@ import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.AddChar.Basic
 import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
+import LeanAPAP.Prereqs.Balance
 import LeanAPAP.Prereqs.Bohr.Arc
 import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular

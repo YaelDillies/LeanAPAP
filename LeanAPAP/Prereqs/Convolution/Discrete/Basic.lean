@@ -1,7 +1,8 @@
 import Mathlib.Algebra.Module.Pi
 import Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Prereqs.Function.Indicator.Basic
+import LeanAPAP.Prereqs.Balance
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
+import LeanAPAP.Prereqs.Function.Indicator.Basic
 
 /-!
 # Convolution

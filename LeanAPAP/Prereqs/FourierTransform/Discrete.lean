@@ -16,6 +16,8 @@ open AddChar Finset Function MeasureTheory
 open Fintype (card)
 open scoped BigOperators ComplexConjugate ComplexOrder
 
+local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
+
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 
 /-- The discrete Fourier transform. -/
@@ -64,7 +66,7 @@ lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a :
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion' (f : α → ℂ) (a : α) : ∑ ψ : AddChar α ℂ, dft f ψ * ψ a = card α * f a := by
   rw [mul_comm, ← div_eq_iff, ← dft_inversion f, ← AddChar.card_eq,
-    Fintype.expect_eq_sum_div_card (α := ℂ)]
+    Fintype.expect_eq_sum_div_card (M := ℂ)]
   simp
 
 lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :

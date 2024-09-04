@@ -32,6 +32,8 @@ point in time.
 open Finset Fintype Function
 open scoped BigOperators ComplexConjugate NNReal Pointwise
 
+local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
+
 variable {G H R S : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
 
 /-!

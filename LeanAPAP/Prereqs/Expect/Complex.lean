@@ -1,6 +1,7 @@
 import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Data.Complex.Basic
-import LeanAPAP.Prereqs.Expect.Basic
+import LeanAPAP.Prereqs.Balance
+import LeanAPAP.Prereqs.Expect.Order
 
 open Finset
 open scoped BigOperators NNReal

@@ -9,6 +9,8 @@ open Finset Function
 open Fintype (card)
 open scoped BigOperators ComplexConjugate Pointwise
 
+local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
+
 /-! ### Indicator -/
 
 variable {ι α β γ : Type*} [DecidableEq α]
