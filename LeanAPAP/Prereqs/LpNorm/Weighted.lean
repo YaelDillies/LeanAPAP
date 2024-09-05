@@ -108,6 +108,7 @@ lemma wL1Norm_eq_sum_nnnorm (w : α → ℝ≥0) (f : α → E) : ‖f‖_[1, w]
 lemma wL1Norm_eq_sum_norm (w : α → ℝ≥0) (f : α → E) : ‖f‖_[1, w] = ∑ i, w i • ‖f i‖ := by
   simp [wLpNorm_eq_sum_norm]
 
+@[gcongr] 
 lemma wLpNorm_mono_right (hpq : p ≤ q) (w : α → ℝ≥0) (f : α → E) : ‖f‖_[p, w] ≤ ‖f‖_[q, w] :=
   sorry
 

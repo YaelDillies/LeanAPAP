@@ -1,6 +1,5 @@
 import Mathlib.FieldTheory.Finite.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Floor
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
+import LeanAPAP.Mathlib.Algebra.Order.Ring.Basic
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
 import LeanAPAP.Mathlib.Data.Finset.Preimage
 import LeanAPAP.Prereqs.Convolution.ThreeAP
@@ -174,58 +173,51 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
   have hG : (card G : ℝ) ≠ 0 := by positivity
   let α : ℝ := A.dens
   let p : ℕ := 2 * ⌈𝓛 γ⌉₊
-  let p' : ℝ := 240 / ε * log (6 / ε) * p
-  let q' : ℕ := 2 * ⌈p' + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊
   let f : G → ℝ := balance (μ A)
-  have : 0 < 𝓛 γ := curlog_pos hγ.le hγ₁
   obtain rfl | hA₀ := A.eq_empty_or_nonempty
   · exact ⟨⊤, Classical.decPred _, by simp; positivity⟩
+  obtain ⟨p', hp', unbalancing⟩ :
+    ∃ p' : ℕ, p' ≤ 2 ^ 10 * (ε / 2)⁻¹ ^ 2 * p ∧
+      1 + ε / 2 / 2 ≤ card G ^ (-(p'⁻¹ : ℝ)) * ‖card G • (f ○ f) + 1‖_[p'] := by
+    refine unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁).ne')
+      (ε / 2) (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)
+      (card G • (balance (μ A) ○ balance (μ A))) (sqrt (card G) • balance (μ A))
+      (const _ (card G)⁻¹) ?_ ?_ ?_
+    · ext a : 1
+      simp [smul_dconv, dconv_smul, smul_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
+    · simp [card_univ]
+    · have global_dichotomy := global_dichotomy hA₀ hγC hγ hAC
+      rw [wLpNorm_const_right (ENNReal.natCast_ne_top _)] at global_dichotomy
+      simpa [dLpNorm_nsmul, ← nsmul_eq_mul, div_le_iff₀' (show (0 : ℝ) < card G by positivity),
+        ← div_div, rpow_neg, inv_rpow] using global_dichotomy
+  let q' : ℕ := 2 * ⌈p' + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊
+  have : 0 < 𝓛 γ := curlog_pos hγ.le hγ₁
   have hα₀ : 0 < α := by positivity
   have hα₁ : α ≤ 1 := by unfold_let α; exact mod_cast A.dens_le_one
   have : 0 < p := by positivity
   have : 0 < log (6 / ε) := log_pos $ (one_lt_div hε₀).2 (by linarith)
-  have : 0 < p' := by positivity
+  have : 0 < p' := pos_iff_ne_zero.2 $ by rintro rfl; simp at unbalancing; linarith
   have : 0 < log (64 / ε) := log_pos $ (one_lt_div hε₀).2 (by linarith)
-  have : 0 < q' := by positivity
   have : 1 ≤ 𝓛 γ := one_le_curlog hγ.le hγ₁
+  have : 0 < q' := by positivity
+  have : 1 ≤ ε⁻¹ := one_le_inv hε₀ hε₁.le
   have :=
     calc
-      (q' : ℝ)
-        = 2 * ⌈480 * ε⁻¹ ^ 1 * log (6 * ε⁻¹) * ⌈𝓛 γ⌉₊ +
-          2 ^ 8 * ε⁻¹ ^ 2 * log (2 ^ 6 * ε⁻¹) * 1⌉₊ := by unfold_let q' p' p; push_cast; ring_nf
-      _ ≤ 2 * ⌈2 ^ 10 * ε⁻¹ ^ 2 * (2 ^ 3 * ε⁻¹) * (2 * 𝓛 γ) +
-          2 ^ 8 * ε⁻¹ ^ 2 * (2 ^ 6 * ε⁻¹) * 𝓛 γ⌉₊ := by
+      (q' : ℝ) ≤ ↑(2 * ⌈2 ^ 10 * (ε / 2)⁻¹ ^ 2 * p + 2 ^ 8 * ε⁻¹ ^ 2 * (64 / ε)⌉₊) := by
+        unfold_let q'; gcongr; exact log_le_self (by positivity)
+      _ = 2 * ⌈2 ^ 13 * ε⁻¹ ^ 2 * ⌈𝓛 γ⌉₊ + 2 ^ 14 * ε⁻¹ ^ 3 * 1⌉₊ := by
+        unfold_let p; push_cast; ring_nf
+      _ ≤ 2 * ⌈2 ^ 13 * ε⁻¹ ^ 3 * (2 * 𝓛 γ) + 2 ^ 14 * ε⁻¹ ^ 3 * 𝓛 γ⌉₊ := by
         gcongr
+        · assumption
         · norm_num
-        · exact one_le_inv hε₀ hε₁.le
-        · norm_num
-        · calc
-            log (6 * ε⁻¹) ≤ 6 * ε⁻¹ := log_le_self (by positivity)
-            _ ≤ 2 ^ 3 * ε⁻¹ := by gcongr; norm_num
-        · exact (Nat.ceil_lt_two_mul $ one_le_curlog hγ.le hγ₁).le
-        · exact log_le_self (by positivity)
+        · exact (Nat.ceil_lt_two_mul ‹_›).le
       _ = 2 * ⌈2 ^ 15 * ε⁻¹ ^ 3 * 𝓛 γ⌉₊ := by ring_nf
       _ ≤ 2 * (2 * (2 ^ 15 * ε⁻¹ ^ 3 * 𝓛 γ)) := by
-        gcongr; exact (Nat.ceil_lt_two_mul $ one_le_mul_of_one_le_of_one_le
-          (one_le_mul_of_one_le_of_one_le (by norm_num) sorry) ‹_›).le
+        gcongr
+        exact (Nat.ceil_lt_two_mul $ one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le
+          (by norm_num) $ one_le_pow₀ (one_le_inv hε₀ hε₁.le) _) ‹_›).le
       _ = 2 ^ 17 * 𝓛 γ / ε ^ 3 := by ring
-  have global_dichotomy := global_dichotomy hA₀ hγC hγ hAC
-  have :=
-    calc
-      1 + ε / 4 = 1 + ε / 2 / 2 := by ring
-      _ ≤ _ := by
-        refine unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁).ne')
-          (ε / 2) (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)
-          (card G • (balance (μ A) ○ balance (μ A))) (sqrt (card G) • balance (μ A))
-          (const _ (card G)⁻¹) ?_ ?_ ?_
-        · ext a : 1
-          simp [smul_dconv, dconv_smul, smul_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
-        · simp [card_univ]
-        · rw [wLpNorm_const_right (ENNReal.natCast_ne_top _)] at global_dichotomy
-          simpa [dLpNorm_nsmul, ← nsmul_eq_mul, div_le_iff₀' (show (0 : ℝ) < card G by positivity),
-            ← div_div, rpow_neg, inv_rpow] using global_dichotomy
-      _ = card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (f ○ f) + 1‖_[.ofReal p'] := by
-        congr 3 <;> ring_nf; simp [hε₀.ne']; ring
   obtain ⟨A₁, A₂, hA, hA₁, hA₂⟩ : ∃ (A₁ A₂ : Finset G),
       1 - ε / 32 ≤ ∑ x ∈ s q' (ε / 16) univ univ A, (μ A₁ ○ μ A₂) x ∧
         (4⁻¹ : ℝ) * A.dens ^ (2 * q') ≤ A₁.dens ∧ (4⁻¹ : ℝ) * A.dens ^ (2 * q') ≤ A₂.dens :=
@@ -241,9 +233,26 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           · norm_num
         _ ≤ ⌈2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊ := Nat.le_ceil _
         _ = ↑(1 * ⌈0 + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊) := by rw [one_mul, zero_add]
-        _ ≤ q' := by unfold_let q'; gcongr; norm_num) hA₀
+        _ ≤ q' := by unfold_let q'; gcongr; norm_num; positivity) hA₀
+  have :=
+    calc
+      p' = 1 * ⌈(p' + 0 : ℝ)⌉₊ := by simp
+      _ ≤ q' := by unfold_let q'; gcongr; norm_num; positivity
+  have : card G • (f ○ f) + 1 = card G • (μ A ○ μ A) := by
+    unfold_let f
+    rw [← balance_dconv, balance, smul_sub, smul_const, Fintype.card_smul_expect]
+    sorry
+  have :=
+    calc
+      1 + ε / 4 = 1 + ε / 2 / 2 := by ring
+      _ ≤ card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (f ○ f) + 1‖_[p'] := unbalancing
+      _ = card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (μ_[ℝ] A ○ μ A)‖_[p'] := by congr
+      _ ≤ card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (μ_[ℝ] A ○ μ A)‖_[q'] := by gcongr
   let s' : Finset G := {x | 1 + ε / 8 ≤ card G • (μ A ○ μ A) x}
-  have hss' : s q' (ε / 16) univ univ A ⊆ s' := sorry
+  have hss' : s q' (ε / 16) univ univ A ⊆ s' := by
+    simp only [nsmul_eq_mul, subset_iff, mem_s, ENNReal.coe_natCast, mu_univ_dconv_mu_univ,
+      mem_filter, mem_univ, true_and, s']
+    sorry
   obtain ⟨V, _, hVdim, hV⟩ : ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
     ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
         2 ^ 27 * 𝓛 (4⁻¹ * α ^ (2 * q')) ^ 2 * 𝓛 (ε / 32 * (4⁻¹ * α ^ (2 * q'))) ^ 2 / (ε / 32) ^ 2 ∧

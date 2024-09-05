@@ -1,5 +1,8 @@
 import Mathlib.Algebra.Order.Group.PosPart
 import Mathlib.Data.Complex.ExponentialBounds
+import LeanAPAP.Mathlib.Algebra.Order.Floor
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
+import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Inner.Discrete.Defs
 import LeanAPAP.Prereqs.LpNorm.Weighted
@@ -201,39 +204,48 @@ transform. -/
 lemma unbalancing' (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (ν : G → ℝ≥0)
     (f : G → ℝ) (g h : G → ℂ) (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h)
     (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1) (hε : ε ≤ ‖f‖_[p, ν]) :
-    1 + ε / 2 ≤ ‖f + 1‖_[.ofReal (120 / ε * log (3 / ε) * p), ν] := by
+    ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ ‖f + 1‖_[p', ν] := by
   have := log_ε_pos hε₀ hε₁
   have :=
     calc
       5 = 2 * 1 + 3 := by norm_num
       _ ≤ 2 * p + 3
         := add_le_add_right (mul_le_mul_left' (Nat.one_le_iff_ne_zero.2 hp) _) _
+  rw [← Nat.one_le_iff_ne_zero] at hp
+  refine ⟨⌈120 / ε * log (3 / ε) * p⌉₊, ?_, ?_⟩
+  · calc
+      (⌈120 / ε * log (3 / ε) * p⌉₊ : ℝ)
+        = ⌈120 * ε⁻¹ * log (3 * ε⁻¹) * p⌉₊ := by simp [div_eq_mul_inv]
+      _ ≤ 2 * (120 * ε⁻¹ * log (3 * ε⁻¹) * p) :=
+        (Nat.ceil_lt_two_mul $ one_le_mul_of_one_le_of_one_le
+          (one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le (by norm_num) $
+            one_le_inv hε₀ hε₁) $ sorry) $ by simpa [Nat.one_le_iff_ne_zero]).le
+      _ ≤ 2 * (120 * ε⁻¹ * (3 * ε⁻¹) * p) := by gcongr; exact Real.log_le_self (by positivity)
+      _ ≤ 2 * (2 ^ 7 * ε⁻¹ * (2 ^ 2 * ε⁻¹) * p) := by gcongr <;> norm_num
+      _ = 2 ^ 10 * ε⁻¹ ^ 2 * p := by ring
   calc
     _ ≤ ↑‖f + 1‖_[.ofReal (24 / ε * log (3 / ε) * ↑(2 * p + 3)), ν] :=
       unbalancing'' (2 * p + 3) this ((even_two_mul _).add_odd $ by decide) hε₀ hε₁ hf hν hν₁ $
-        hε.trans $
-          wLpNorm_mono_right
-            (Nat.cast_le.2 $ le_add_of_le_left $ le_mul_of_one_le_left' one_le_two) _ _
+        hε.trans $ wLpNorm_mono_right
+          (Nat.cast_le.2 $ le_add_of_le_left $ le_mul_of_one_le_left' one_le_two) _ _
     _ ≤ _ := wLpNorm_mono_right ?_ _ _
-  rw [← Nat.one_le_iff_ne_zero] at hp
-  gcongr ENNReal.ofReal ?_
+  norm_cast
   calc
     _ = 24 / ε * log (3 / ε) * ↑(2 * p + 3 * 1) := by simp
     _ ≤ 24 / ε * log (3 / ε) * ↑(2 * p + 3 * p) := by gcongr
-    _ = _ := by push_cast; ring
+    _ = 120 / ε * log (3 / ε) * p := by push_cast; ring
+    _ ≤ ⌈120 / ε * log (3 / ε) * p⌉₊ := Nat.le_ceil _
 
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier
 transform. -/
 lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (f : G → ℝ) (g h : G → ℂ)
     (hf : (↑) ∘ f = g ○ g) (hh : ∀ x, (h ○ h) x = (card G : ℝ)⁻¹)
-    (hε : ε ≤ (card G) ^ (-(↑p)⁻¹ : ℝ) * ‖f‖_[p]) :
-    1 + ε / 2 ≤ card G ^ (-(ε / 120 * (log (3 / ε))⁻¹ * (↑p)⁻¹)) *
-      ‖f + 1‖_[.ofReal (120 / ε * log (3 / ε) * p)] :=
-  calc
-    1 + ε / 2 ≤ ‖f + 1‖_[.ofReal (120 / ε * log (3 / ε) * p), const _ (card G)⁻¹] :=
-      unbalancing' p hp ε hε₀ hε₁ _ _ g h hf (funext fun x ↦ (hh x).symm)
-        (by simp; simp [← const_def]) (by simpa [rpow_neg, inv_rpow] using hε)
-    _ ≤ _ := by
-      have : 0 ≤ log (3 / ε) := log_nonneg $ (one_le_div hε₀).2 (by linarith)
-      have : 0 ≤ 120 / ε * log (3 / ε) * p := by positivity
-      simp [*, inv_rpow, ← rpow_neg, -mul_inv_rev, mul_inv]
+    (hε : ε ≤ card G ^ (-(↑p)⁻¹ : ℝ) * ‖f‖_[p]) :
+    ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ card G ^ (-(p'⁻¹ : ℝ)) * ‖f + 1‖_[p'] := by
+  obtain ⟨p', hp', h⟩ :
+      ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ ‖f + 1‖_[p', const _ (card G)⁻¹] :=
+    unbalancing' p hp ε hε₀ hε₁ _ _ g h hf (funext fun x ↦ (hh x).symm)
+      (by simp; simp [← const_def]) (by simpa [rpow_neg, inv_rpow] using hε)
+  refine ⟨p', hp', h.trans ?_⟩
+  have : 0 ≤ log (3 / ε) := log_nonneg $ (one_le_div hε₀).2 (by linarith)
+  simp [*, inv_rpow, ← rpow_neg, -mul_inv_rev, mul_inv]

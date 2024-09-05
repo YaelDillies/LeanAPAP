@@ -148,6 +148,9 @@ lemma mu_apply (x : α) : μ s x = (s.card : β)⁻¹ * ite (x ∈ s) 1 0 := rfl
 lemma map_mu (f : β →+* γ) (s : Finset α) (x : α) : f (μ s x) = μ s x := by
   simp_rw [mu, Pi.smul_apply, smul_eq_mul, map_mul, map_indicate, map_inv₀, map_natCast]
 
+lemma mu_univ_eq_const [Fintype α] : μ_[β] (univ : Finset α) = const _ (card α : β)⁻¹ := by
+  ext; simp [mu]
+
 section Nontrivial
 variable [CharZero β] {a : α}
 
