@@ -81,7 +81,7 @@ private lemma curlog_pow_le {n : ℕ} (hx₀ : 0 < x) (hn : n ≠ 0) : 𝓛 (x ^
 
 lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.Nonempty)
     (hγC : γ ≤ C.dens) (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
-    ε / (2 * card G) ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈𝓛 γ⌉₊), const _ (card G)⁻¹] := by
+    ε / (2 * card G) ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈𝓛 γ⌉₊), μ univ] := by
   have hC : C.Nonempty := by simpa using hγ.trans_le hγC
   have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
   set p := 2 * ⌈𝓛 γ⌉₊
@@ -98,8 +98,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     _ ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-(p : ℝ)⁻¹) * γ ^ (-(p : ℝ)⁻¹)) :=
         mul_le_mul (dLpNorm_conv_le_dLpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
           (by positivity) (by positivity)
-    _ = ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈𝓛 γ⌉₊), const _ (card G)⁻¹] *
-          γ ^ (-(p : ℝ)⁻¹) := ?_
+    _ = ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈𝓛 γ⌉₊), μ univ] * γ ^ (-(p : ℝ)⁻¹) := ?_
     _ ≤ _ := mul_le_mul_of_nonneg_left ?_ $ by positivity
   · rw [← balance_conv, balance, dL2Inner_sub_left, dL2Inner_const_left, expect_conv, sum_mu ℝ hA,
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel₀, ← mul_sub,
@@ -108,7 +107,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     rw [nnratCast_dens, le_div_iff₀, mul_comm] at hγC
     refine rpow_le_rpow_of_nonpos ?_ hγC (neg_nonpos.2 ?_)
     all_goals positivity
-  · rw [mul_comm, wLpNorm_const_right, mul_right_comm, rpow_neg, ← inv_rpow]
+  · rw [mul_comm, mu_univ_eq_const, wLpNorm_const_right, mul_right_comm, rpow_neg, ← inv_rpow]
     congr
     any_goals positivity
     exact ENNReal.natCast_ne_top _
@@ -178,17 +177,15 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
   · exact ⟨⊤, Classical.decPred _, by simp; positivity⟩
   obtain ⟨p', hp', unbalancing⟩ :
     ∃ p' : ℕ, p' ≤ 2 ^ 10 * (ε / 2)⁻¹ ^ 2 * p ∧
-      1 + ε / 2 / 2 ≤ card G ^ (-(p'⁻¹ : ℝ)) * ‖card G • (f ○ f) + 1‖_[p'] := by
+      1 + ε / 2 / 2 ≤ ‖card G • (f ○ f) + 1‖_[p', μ univ] := by
     refine unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁).ne')
       (ε / 2) (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)
-      (card G • (balance (μ A) ○ balance (μ A))) (sqrt (card G) • balance (μ A))
-      (const _ (card G)⁻¹) ?_ ?_ ?_
+      (card G • (balance (μ A) ○ balance (μ A))) (sqrt (card G) • balance (μ A)) (μ univ) ?_ ?_ ?_
     · ext a : 1
       simp [smul_dconv, dconv_smul, smul_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
-    · simp [card_univ]
+    · simp
     · have global_dichotomy := global_dichotomy hA₀ hγC hγ hAC
-      rw [wLpNorm_const_right (ENNReal.natCast_ne_top _)] at global_dichotomy
-      simpa [dLpNorm_nsmul, ← nsmul_eq_mul, div_le_iff₀' (show (0 : ℝ) < card G by positivity),
+      simpa [wLpNorm_nsmul, ← nsmul_eq_mul, div_le_iff₀' (show (0 : ℝ) < card G by positivity),
         ← div_div, rpow_neg, inv_rpow] using global_dichotomy
   let q' : ℕ := 2 * ⌈p' + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊
   have : 0 < 𝓛 γ := curlog_pos hγ.le hγ₁
@@ -241,18 +238,28 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
   have : card G • (f ○ f) + 1 = card G • (μ A ○ μ A) := by
     unfold_let f
     rw [← balance_dconv, balance, smul_sub, smul_const, Fintype.card_smul_expect]
-    sorry
+    simp [sum_dconv, hA₀]
   have :=
     calc
       1 + ε / 4 = 1 + ε / 2 / 2 := by ring
-      _ ≤ card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (f ○ f) + 1‖_[p'] := unbalancing
-      _ = card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (μ_[ℝ] A ○ μ A)‖_[p'] := by congr
-      _ ≤ card G ^ (-(↑p')⁻¹ : ℝ) * ‖card G • (μ_[ℝ] A ○ μ A)‖_[q'] := by gcongr
+      _ ≤ ‖card G • (f ○ f) + 1‖_[p', μ univ] := unbalancing
+      _ = card G • ‖(μ_[ℝ] A ○ μ A)‖_[p', μ univ] := by simp [this, wLpNorm_nsmul, -nsmul_eq_mul]
+      _ ≤ card G • ‖(μ_[ℝ] A ○ μ A)‖_[q', μ univ] := by gcongr
   let s' : Finset G := {x | 1 + ε / 8 ≤ card G • (μ A ○ μ A) x}
   have hss' : s q' (ε / 16) univ univ A ⊆ s' := by
-    simp only [nsmul_eq_mul, subset_iff, mem_s, ENNReal.coe_natCast, mu_univ_dconv_mu_univ,
+    simp only [subset_iff, mem_s', ENNReal.coe_natCast, mu_univ_dconv_mu_univ,
       mem_filter, mem_univ, true_and, s']
-    sorry
+    rintro x hx
+    calc
+      1 + ε / 8 = 1 + ε / 8 + 0 := by rw [add_zero]
+      _ ≤ 1 + ε / 8 + ε * (16⁻¹ - ε / 64) := by
+        have : 0 ≤ 16⁻¹ - ε / 64 := by linarith
+        gcongr
+        positivity
+      _ = (1 - ε / 16) * (1 + ε / 4) := by ring
+      _ ≤ (1 - ε / 16) * card G • ‖μ_[ℝ] A ○ μ A‖_[q', μ univ] := by gcongr; linarith
+      _ = card G • ((1 - ε / 16) * ‖μ_[ℝ] A ○ μ A‖_[q', μ univ]) := mul_smul_comm ..
+      _ ≤ card G • (μ A ○ μ A) x := by gcongr
   obtain ⟨V, _, hVdim, hV⟩ : ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
     ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
         2 ^ 27 * 𝓛 (4⁻¹ * α ^ (2 * q')) ^ 2 * 𝓛 (ε / 32 * (4⁻¹ * α ^ (2 * q'))) ^ 2 / (ε / 32) ^ 2 ∧
@@ -287,10 +294,18 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
       _ = 2 ^ 59 * q' ^ 4 * 𝓛 α ^ 4 / ε ^ 4 := by ring
       _ ≤ 2 ^ 59 * (2 ^ 17 * 𝓛 γ / ε ^ 3) ^ 4 * 𝓛 α ^ 4 / ε ^ 4 := by gcongr
       _ = 2 ^ 127 * 𝓛 α ^ 4 * 𝓛 γ ^ 4 / ε ^ 16 := by ring
-  · sorry
+  · rw [← le_div_iff₀ (by positivity)]
+    calc
+      1 + ε / 32 = 1 + ε / 32 + 0 := by rw [add_zero]
+      _ ≤ 1 + ε / 32 + ε * (32⁻¹ - ε / 128) := by
+        have : 0 ≤ 32⁻¹ - ε / 128 := by linarith
+        gcongr
+        positivity
+      _ = (1 + ε / 8) * (1 - ε / 16) := by ring
+      _ ≤ _ := sorry
 
-theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) {A : Finset G} (hA₀ : A.Nonempty)
-    (hA : ThreeAPFree (α := G) A) : finrank (ZMod q) G ≤ 2 ^ 151 * 𝓛 A.dens ^ 9 := by
+theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFree (α := G) A) :
+    finrank (ZMod q) G ≤ 2 ^ 151 * 𝓛 A.dens ^ 9 := by
   let n : ℝ := finrank (ZMod q) G
   let α : ℝ := A.dens
   have : 1 < (q : ℝ) := mod_cast hq₃.trans_lt' (by norm_num)

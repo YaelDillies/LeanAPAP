@@ -187,7 +187,7 @@ lemma card_smul_mu [CharZero β] (s : Finset α) : s.card • μ_[β] s = 𝟭 s
 lemma card_smul_mu_apply [CharZero β] (s : Finset α) (x : α) : s.card • μ_[β] s x = 𝟭 s x :=
   congr_fun (card_smul_mu β _) _
 
-lemma sum_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : ∑ x, μ_[β] s x = 1 := by
+@[simp] lemma sum_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : ∑ x, μ_[β] s x = 1 := by
   simpa [mu_apply] using mul_inv_cancel₀ (Nat.cast_ne_zero.2 hs.card_pos.ne')
 
 section AddGroup

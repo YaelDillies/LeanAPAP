@@ -50,6 +50,12 @@ noncomputable def s (p : ℝ≥0) (ε : ℝ) (B₁ B₂ A : Finset G) : Finset G
 lemma mem_s {p : ℝ≥0} {ε : ℝ} {B₁ B₂ A : Finset G} {x : G} :
     x ∈ s p ε B₁ B₂ A ↔ (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] < (𝟭 A ○ 𝟭 A) x := by simp [s]
 
+lemma mem_s' {p : ℝ≥0} {ε : ℝ} {B₁ B₂ A : Finset G} {x : G} :
+    x ∈ s p ε B₁ B₂ A ↔ (1 - ε) * ‖μ_[ℝ] A ○ μ A‖_[p, μ B₁ ○ μ B₂] < (μ A ○ μ A) x := by
+  obtain rfl | hA := A.eq_empty_or_nonempty
+  · simp
+  · simp [← card_smul_mu, -nsmul_eq_mul, smul_dconv, dconv_smul, wLpNorm_nsmul, hA.card_pos]
+
 variable [DiscreteMeasurableSpace G]
 
 /-- If `A` is nonempty, and `B₁` and `B₂` intersect, then the `μ B₁ ○ μ B₂`-weighted Lp norm of

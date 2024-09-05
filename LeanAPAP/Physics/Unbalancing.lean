@@ -4,6 +4,7 @@ import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
+import LeanAPAP.Prereqs.Function.Indicator.Complex
 import LeanAPAP.Prereqs.Inner.Discrete.Defs
 import LeanAPAP.Prereqs.LpNorm.Weighted
 
@@ -20,13 +21,13 @@ variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
   {ν : G → ℝ≥0} {f : G → ℝ} {g h : G → ℂ} {ε : ℝ} {p : ℕ}
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
-lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
+lemma pow_inner_nonneg' {f : G → ℂ} (hf : g ○ g = f) (hν : h ○ h = (↑) ∘ ν) (k : ℕ) :
     (0 : ℂ) ≤ ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] := by
   suffices
     ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] = ∑ z : Fin k → G, (‖∑ x, (∏ i, conj (g (x + z i))) * h x‖ : ℂ) ^ 2 by
     rw [this]
     positivity
-  rw [hf, hν, dL2Inner_eq_sum]
+  rw [← hf, ← hν, dL2Inner_eq_sum]
   simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
   simp_rw [dconv_apply h, mul_sum]
   --TODO: Please make `conv` work here :(
@@ -49,7 +50,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : f = g ○ g) (hν : (↑) ∘ ν =
   rw [mul_mul_mul_comm _ _ _ (h _), mul_comm (h _)]
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
-lemma pow_inner_nonneg {f : G → ℝ} (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (k : ℕ) :
+lemma pow_inner_nonneg {f : G → ℝ} (hf : g ○ g = (↑) ∘ f) (hν : h ○ h = (↑) ∘ ν) (k : ℕ) :
     (0 : ℝ) ≤ ⟪(↑) ∘ ν, f ^ k⟫_[ℝ] := by
   simpa [← Complex.zero_le_real, dL2Inner_eq_sum, mul_comm] using pow_inner_nonneg' hf hν k
 
@@ -63,7 +64,7 @@ variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1)
-    (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h) (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1)
+    (hf : g ○ g = (↑) ∘ f) (hν : h ○ h = (↑) ∘ ν) (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1)
     (hε : ε ≤ ‖f‖_[p, ν]) :
     1 + ε / 2 ≤ ‖f + 1‖_[.ofReal (24 / ε * log (3 / ε) * p), ν] := by
   simp only [dL1Norm_eq_sum_nnnorm, NNReal.nnnorm_eq, Function.comp_apply] at hν₁
@@ -202,7 +203,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier
 transform. -/
 lemma unbalancing' (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (ν : G → ℝ≥0)
-    (f : G → ℝ) (g h : G → ℂ) (hf : (↑) ∘ f = g ○ g) (hν : (↑) ∘ ν = h ○ h)
+    (f : G → ℝ) (g h : G → ℂ) (hf : g ○ g = (↑) ∘ f) (hν : h ○ h = (↑) ∘ ν)
     (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1) (hε : ε ≤ ‖f‖_[p, ν]) :
     ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ ‖f + 1‖_[p', ν] := by
   have := log_ε_pos hε₀ hε₁
@@ -239,13 +240,9 @@ lemma unbalancing' (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier
 transform. -/
 lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (f : G → ℝ) (g h : G → ℂ)
-    (hf : (↑) ∘ f = g ○ g) (hh : ∀ x, (h ○ h) x = (card G : ℝ)⁻¹)
-    (hε : ε ≤ card G ^ (-(↑p)⁻¹ : ℝ) * ‖f‖_[p]) :
-    ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ card G ^ (-(p'⁻¹ : ℝ)) * ‖f + 1‖_[p'] := by
-  obtain ⟨p', hp', h⟩ :
-      ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ ‖f + 1‖_[p', const _ (card G)⁻¹] :=
-    unbalancing' p hp ε hε₀ hε₁ _ _ g h hf (funext fun x ↦ (hh x).symm)
-      (by simp; simp [← const_def]) (by simpa [rpow_neg, inv_rpow] using hε)
-  refine ⟨p', hp', h.trans ?_⟩
-  have : 0 ≤ log (3 / ε) := log_nonneg $ (one_le_div hε₀).2 (by linarith)
-  simp [*, inv_rpow, ← rpow_neg, -mul_inv_rev, mul_inv]
+    (hf : g ○ g = (↑) ∘ f) (hh : h ○ h = μ univ)
+    (hε : ε ≤ ‖f‖_[p, μ univ]) :
+    ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ ‖f + 1‖_[p', μ univ] :=
+  unbalancing' p hp ε hε₀ hε₁ _ _ g h hf
+    (show _ = Complex.ofReal' ∘ NNReal.toReal ∘ μ univ by simpa using hh)
+    (by simp; simp [mu_univ_eq_const, ← const_def]) (by simpa [rpow_neg, inv_rpow] using hε)
