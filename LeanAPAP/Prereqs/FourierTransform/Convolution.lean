@@ -2,7 +2,7 @@ import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Convolution.Compact
 import LeanAPAP.Prereqs.Function.Indicator.Defs
-import LeanAPAP.Prereqs.Inner.Compact.Basic
+import LeanAPAP.Prereqs.Inner.Compact
 import LeanAPAP.Prereqs.Inner.Discrete.Basic
 import LeanAPAP.Prereqs.FourierTransform.Compact
 

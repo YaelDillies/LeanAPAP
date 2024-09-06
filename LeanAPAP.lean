@@ -57,11 +57,11 @@ import LeanAPAP.Prereqs.Function.Indicator.Basic
 import LeanAPAP.Prereqs.Function.Indicator.Complex
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Function.Translate
-import LeanAPAP.Prereqs.Inner.Compact.Basic
+import LeanAPAP.Prereqs.Inner.Compact
 import LeanAPAP.Prereqs.Inner.Discrete.Basic
 import LeanAPAP.Prereqs.Inner.Discrete.Defs
 import LeanAPAP.Prereqs.LargeSpec
-import LeanAPAP.Prereqs.LpNorm.Compact.Defs
+import LeanAPAP.Prereqs.LpNorm.Compact
 import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 import LeanAPAP.Prereqs.LpNorm.Weighted
