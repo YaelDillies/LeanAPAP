@@ -191,7 +191,7 @@ lemma dL2Norm_eq_sum_nnnorm (f : α → E) : ‖f‖_[2] = (∑ i, ‖f i‖₊ 
 lemma dL1Norm_eq_sum_norm (f : α → E) : ‖f‖_[1] = ∑ i, ‖f i‖ := by simp [dLpNorm_eq_sum_norm']
 lemma dL1Norm_eq_sum_nnnorm (f : α → E) : ‖f‖_[1] = ∑ i, ‖f i‖₊ := by simp [dLpNorm_eq_sum_nnnorm']
 
-@[simp] lemma dLinftyNorm_eq_iSup_nnnorm (f : α → E) : ‖f‖_[∞] = ⨆ i, ‖f i‖₊ := by
+lemma dLinftyNorm_eq_iSup_nnnorm (f : α → E) : ‖f‖_[∞] = ⨆ i, ‖f i‖₊ := by
   cases isEmpty_or_nonempty α
   · simp
   · simp [dLpNorm, nnLinftyNorm_eq_essSup]
@@ -328,10 +328,12 @@ lemma dLpNorm_eq_dL1Norm_rpow (hp : p ≠ 0) (f : α → 𝕜) :
     ‖f‖_[p] = ‖fun a ↦ ‖f a‖ ^ (p : ℝ)‖_[1] ^ (p⁻¹ : ℝ) := by
   ext; simp [dLpNorm_eq_sum_nnnorm hp, dL1Norm_eq_sum_nnnorm, abs_rpow_of_nonneg]
 
-lemma dLpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → 𝕜) :
+lemma dLpNorm_rpow' {p : ℝ≥0∞} (hp₀ : p ≠ 0) (hp : p ≠ ∞) (hq : q ≠ 0) (f : α → 𝕜) :
     ‖f‖_[p] ^ (q : ℝ) = ‖(fun a ↦ ‖f a‖) ^ (q : ℝ)‖_[p / q] := by
-  rw [← ENNReal.coe_div hq, dLpNorm_rpow (div_ne_zero hp hq) hq (fun _ ↦ norm_nonneg _), dLpNorm_norm,
-    ← ENNReal.coe_mul, div_mul_cancel₀ _ hq]
+  lift p to ℝ≥0 using hp
+  simp at hp₀
+  rw [← ENNReal.coe_div hq, dLpNorm_rpow (div_ne_zero hp₀ hq) hq (fun _ ↦ norm_nonneg _),
+    dLpNorm_norm, ← ENNReal.coe_mul, div_mul_cancel₀ _ hq]
 
 end Hoelder
 

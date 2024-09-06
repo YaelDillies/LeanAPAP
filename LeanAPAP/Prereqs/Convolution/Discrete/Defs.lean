@@ -228,6 +228,18 @@ lemma IsSelfAdjoint.dconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelf
 alias smul_dconv_assoc := smul_dconv
 alias smul_dconv_left_comm := dconv_smul
 
+lemma dconv_right_comm (f g h : G → R) : f ○ g ○ h = f ○ h ○ g := by
+  simp_rw [← conv_conjneg, conv_right_comm]
+
+lemma conv_dconv_assoc (f g h : G → R) : f ∗ g ○ h = f ∗ (g ○ h) := by
+  simp_rw [← conv_conjneg, conv_assoc]
+
+lemma conv_dconv_left_comm (f g h : G → R) : f ∗ (g ○ h) = g ∗ (f ○ h) := by
+  simp_rw [← conv_conjneg, conv_left_comm]
+
+lemma conv_dconv_right_comm (f g h : G → R) : f ∗ g ○ h = f ○ h ∗ g := by
+  simp_rw [← conv_conjneg, conv_right_comm]
+
 lemma conv_dconv_conv_comm (f g h i : G → R) : f ∗ g ○ (h ∗ i) = f ○ h ∗ (g ○ i) := by
   simp_rw [← conv_conjneg, conjneg_conv, conv_conv_conv_comm]
 

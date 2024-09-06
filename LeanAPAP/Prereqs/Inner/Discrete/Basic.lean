@@ -1,4 +1,5 @@
 import Mathlib.Analysis.InnerProductSpace.PiL2
+import LeanAPAP.Mathlib.Data.Real.ConjExponents
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 import LeanAPAP.Prereqs.Inner.Discrete.Defs
 
@@ -39,7 +40,7 @@ end MeasureTheory
 
 namespace MeasureTheory
 section Real
-variable {α : Type*} {mα : MeasurableSpace α} [DiscreteMeasurableSpace α] [Fintype α] {p q : ℝ≥0}
+variable {α : Type*} {mα : MeasurableSpace α} [DiscreteMeasurableSpace α] [Fintype α] {p q : ℝ≥0∞}
   {f g : α → ℝ}
 
 lemma dL1Norm_mul_of_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f * g‖_[1] = ⟪f, g⟫_[ℝ] := by
@@ -51,7 +52,8 @@ lemma dL2Inner_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → �
   have hp := hpq.ne_zero
   have hq := hpq.symm.ne_zero
   norm_cast at hp hq
-  simpa [dL2Inner_eq_sum, dLpNorm_eq_sum_nnnorm, *] using inner_le_Lp_mul_Lq _ f g hpq.coe
+  sorry
+  -- simpa [dL2Inner_eq_sum, dLpNorm_eq_sum_nnnorm, *] using inner_le_Lp_mul_Lq _ f g hpq.coe
 
 /-- **Hölder's inequality**, binary case. -/
 lemma abs_dL2Inner_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
@@ -73,7 +75,8 @@ lemma nnnorm_dL2Inner_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : �
     ‖⟪f, g⟫_[R]‖₊ ≤ ‖f‖_[p] * ‖g‖_[q] :=
   calc
     _ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] := norm_dL2Inner_le _ _
-    _ ≤ ‖fun a ↦ ‖f a‖‖_[p] * ‖fun a ↦ ‖g a‖‖_[q] := dL2Inner_le_dLpNorm_mul_dLpNorm hpq _ _
+    _ ≤ ‖fun a ↦ ‖f a‖‖_[p] * ‖fun a ↦ ‖g a‖‖_[q] :=
+      dL2Inner_le_dLpNorm_mul_dLpNorm hpq.coe_ennreal _ _
     _ = ‖f‖_[p] * ‖g‖_[q] := by simp_rw [dLpNorm_norm]
 
 /-- **Hölder's inequality**, binary case. -/
@@ -88,14 +91,15 @@ lemma dLpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ 
   push_cast
   rw [dL1Norm_mul_of_nonneg, mul_rpow, ← NNReal.coe_rpow, ← NNReal.coe_rpow, dLpNorm_rpow',
     dLpNorm_rpow', ← ENNReal.coe_div, ← ENNReal.coe_div]
-  refine dL2Inner_le_dLpNorm_mul_dLpNorm ⟨?_, ?_⟩ _ _
+  refine dL2Inner_le_dLpNorm_mul_dLpNorm (NNReal.IsConjExponent.coe_ennreal ⟨?_, ?_⟩) _ _
   · norm_cast
     rw [div_eq_mul_inv, ← hpqr, mul_add, mul_inv_cancel₀ hp]
     exact lt_add_of_pos_right _ (by positivity)
   · norm_cast
     simp [div_eq_mul_inv, hpqr, ← mul_add, hr]
   any_goals intro a; dsimp
-  all_goals positivity
+  any_goals positivity
+  all_goals simp
 
 /-- **Hölder's inequality**, binary case. -/
 lemma dL1Norm_mul_le (hpq : p.IsConjExponent q) (f g : α → R) :

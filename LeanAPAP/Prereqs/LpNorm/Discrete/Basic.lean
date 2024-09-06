@@ -50,7 +50,8 @@ lemma dLpNorm_mu_le (hp : 1 ≤ p) : ‖μ_[R] s‖_[p] ≤ s.card ^ (p⁻¹ - 1
   · simp
   · exact (dLpNorm_mu hp hs).le
 
-lemma dL1Norm_mu (hs : s.Nonempty) : ‖μ_[R] s‖_[1] = 1 := by simpa using dLpNorm_mu le_rfl hs
+@[simp] lemma dL1Norm_mu (hs : s.Nonempty) : ‖μ_[R] s‖_[1] = 1 := by
+  simpa using dLpNorm_mu le_rfl hs
 
 lemma dL1Norm_mu_le_one : ‖μ_[R] s‖_[1] ≤ 1 := by simpa using dLpNorm_mu_le le_rfl
 

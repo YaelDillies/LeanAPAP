@@ -219,7 +219,7 @@ lemma cL2Inner_le_cLpNorm_mul_cLpNorm (hpq : p.IsConjExponent q) (f g : α → �
   push_cast
   gcongr
   rw [← dLpNorm_eq_sum_norm hp, ← dLpNorm_eq_sum_norm hq]
-  exact dL2Inner_le_dLpNorm_mul_dLpNorm hpq _ _
+  exact dL2Inner_le_dLpNorm_mul_dLpNorm hpq.coe_ennreal _ _
   · simp [hpq.coe.inv_add_inv_conj]
 
 /-- **Hölder's inequality**, binary case. -/

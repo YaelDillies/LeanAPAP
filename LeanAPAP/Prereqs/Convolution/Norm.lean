@@ -46,6 +46,12 @@ lemma dconv_dL2Inner (f g h : α → β) : ⟪f ○ g, h⟫_[β] = ⟪conj h ∗
 lemma conv_dL2Inner (f g h : α → β) : ⟪f ∗ g, h⟫_[β] = ⟪conj h ○ conj g, conj f⟫_[β] := by
   rw [dL2Inner_anticomm, dL2Inner_anticomm (_ ○ _), conj_conv, dL2Inner_conv]; simp
 
+lemma dconv_dL2Inner_eq_dL2Inner_conv (f g h : α → β) : ⟪f ○ g, h⟫_[β] = ⟪f, h ∗ g⟫_[β] := by
+  rw [dconv_dL2Inner, ← conj_conv, ← dL2Inner_anticomm]
+
+lemma dL2Inner_dconv_eq_conv_dL2Inner (f g h : α → β) : ⟪f, h ○ g⟫_[β] = ⟪f ∗ g, h⟫_[β] := by
+  rw [dL2Inner_dconv, ← conj_conv, ← dL2Inner_anticomm]
+
 variable [MeasurableSpace α] [DiscreteMeasurableSpace α]
 
 @[simp] lemma dLpNorm_trivChar (hp : p ≠ 0) : ‖(trivChar : α → β)‖_[p] = 1 := by

@@ -1,11 +1,15 @@
 import Mathlib.FieldTheory.Finite.Basic
+import LeanAPAP.Mathlib.Algebra.Order.BigOperators.Group.Finset
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Basic
+import LeanAPAP.Mathlib.Algebra.Order.Ring.Defs
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
+import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Finset.Preimage
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.FourierTransform.Convolution
 import LeanAPAP.Prereqs.Function.Indicator.Complex
 import LeanAPAP.Prereqs.LargeSpec
+import LeanAPAP.Prereqs.PointwiseDensity
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
@@ -14,11 +18,13 @@ import LeanAPAP.Physics.Unbalancing
 # Finite field case
 -/
 
+set_option linter.haveLet 0
+
 attribute [-simp] div_pow Real.log_inv
 
 open FiniteDimensional Fintype Function Real MeasureTheory
 open Finset hiding card
-open scoped NNReal BigOperators Combinatorics.Additive Pointwise
+open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise
 
 universe u
 variable {G : Type u} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {x y γ ε : ℝ}
@@ -94,7 +100,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     _ ≤ _ := div_le_div_of_nonneg_right hAC (card G).cast_nonneg
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
     _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[NNReal.conjExponent p] :=
-        abs_dL2Inner_le_dLpNorm_mul_dLpNorm hp'' _ _
+        abs_dL2Inner_le_dLpNorm_mul_dLpNorm hp''.coe_ennreal _ _
     _ ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-(p : ℝ)⁻¹) * γ ^ (-(p : ℝ)⁻¹)) :=
         mul_le_mul (dLpNorm_conv_le_dLpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
           (by positivity) (by positivity)
@@ -161,15 +167,22 @@ lemma ap_in_ff (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hαA₁ 
       _ = _ := sorry
   sorry
 
+lemma ap_in_ff' (hα₀ : 0 < α) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens) (hαA₂ : α ≤ A₂.dens) :
+    ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
+        ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
+            2 ^ 27 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 / ε ^ 2 ∧
+          |∑ x ∈ S, (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x - ∑ x ∈ S, (μ A₁ ○ μ A₂) x| ≤ ε := by
+  simpa [← conjneg_mu] using ap_in_ff (q := q) S (A₂ := -A₂) hα₀ hε₀ hε₁ hαA₁ (by simpa)
+
+set_option maxHeartbeats 300000 in
 lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q) (hq : q.Prime)
     (hε₀ : 0 < ε) (hε₁ : ε < 1) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
             2 ^ 127 * 𝓛 A.dens ^ 4 * 𝓛 γ ^ 4 / ε ^ 16 ∧
-          (1 + ε / 32) * A.dens ≤ ‖𝟭_[ℝ] A ∗ μ (Set.toFinset V)‖_[⊤] := by
+          (1 + ε / 32) * A.dens ≤ ‖𝟭_[ℝ] A ∗ μ (Set.toFinset V)‖_[∞] := by
   have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
-  have hG : (card G : ℝ) ≠ 0 := by positivity
   let α : ℝ := A.dens
   let p : ℕ := 2 * ⌈𝓛 γ⌉₊
   let f : G → ℝ := balance (μ A)
@@ -251,20 +264,30 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
       mem_filter, mem_univ, true_and, s']
     rintro x hx
     calc
-      1 + ε / 8 = 1 + ε / 8 + 0 := by rw [add_zero]
-      _ ≤ 1 + ε / 8 + ε * (16⁻¹ - ε / 64) := by
-        have : 0 ≤ 16⁻¹ - ε / 64 := by linarith
-        gcongr
-        positivity
-      _ = (1 - ε / 16) * (1 + ε / 4) := by ring
+      1 + ε / 8 ≤ (1 - ε / 16) * (1 + ε / 4) := one_add_le_one_sub_mul_one_add $
+        calc
+          ε / 8 + ε / 16 + ε / 16 * (ε / 4) ≤ ε / 8 + ε / 16 + ε / 16 * (1 / 4) := by gcongr
+          _ ≤ ε / 4 := by linarith
       _ ≤ (1 - ε / 16) * card G • ‖μ_[ℝ] A ○ μ A‖_[q', μ univ] := by gcongr; linarith
       _ = card G • ((1 - ε / 16) * ‖μ_[ℝ] A ○ μ A‖_[q', μ univ]) := mul_smul_comm ..
       _ ≤ card G • (μ A ○ μ A) x := by gcongr
   obtain ⟨V, _, hVdim, hV⟩ : ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
     ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
         2 ^ 27 * 𝓛 (4⁻¹ * α ^ (2 * q')) ^ 2 * 𝓛 (ε / 32 * (4⁻¹ * α ^ (2 * q'))) ^ 2 / (ε / 32) ^ 2 ∧
-      |∑ x ∈ s', (μ (Set.toFinset V) ∗ μ A₁ ∗ μ A₂) x - ∑ x ∈ s', (μ A₁ ∗ μ A₂) x| ≤ ε / 32 :=
-    ap_in_ff _ (by positivity) (by positivity) (by linarith) hA₁ hA₂
+      |∑ x ∈ s', (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x - ∑ x ∈ s', (μ A₁ ○ μ A₂) x| ≤ ε / 32 :=
+    ap_in_ff' _ (by positivity) (by positivity) (by linarith) hA₁ hA₂
+  replace hV :=
+    calc
+      1 - ε / 16 = 1 - ε / 32 - ε / 32 := by ring
+      _ ≤ ∑ x ∈ s q' (ε / 16) univ univ A, (μ A₁ ○ μ A₂) x -
+        |∑ x ∈ s', (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x - ∑ x ∈ s', (μ A₁ ○ μ A₂) x| := by gcongr
+      _ ≤ ∑ x ∈ s', (μ A₁ ○ μ A₂) x -
+        -(∑ x ∈ s', (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x - ∑ x ∈ s', (μ A₁ ○ μ A₂) x) := by
+        gcongr
+        · have : 0 ≤ μ_[ℝ] A₁ ○ μ A₂ := dconv_nonneg mu_nonneg mu_nonneg
+          exact fun _ _ _ ↦ this _
+        · exact neg_le_abs _
+      _ = ∑ x ∈ s', (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x := by ring
   refine ⟨V, inferInstance, ?_, ?_⟩
   · calc
       ↑(finrank (ZMod q) G - finrank (ZMod q) V)
@@ -295,14 +318,45 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
       _ ≤ 2 ^ 59 * (2 ^ 17 * 𝓛 γ / ε ^ 3) ^ 4 * 𝓛 α ^ 4 / ε ^ 4 := by gcongr
       _ = 2 ^ 127 * 𝓛 α ^ 4 * 𝓛 γ ^ 4 / ε ^ 16 := by ring
   · rw [← le_div_iff₀ (by positivity)]
+    have : 0 ≤ μ_[ℝ] (Set.toFinset V) ∗ μ A₁ ○ μ A₂ :=
+      dconv_nonneg (conv_nonneg mu_nonneg mu_nonneg) mu_nonneg
     calc
-      1 + ε / 32 = 1 + ε / 32 + 0 := by rw [add_zero]
-      _ ≤ 1 + ε / 32 + ε * (32⁻¹ - ε / 128) := by
-        have : 0 ≤ 32⁻¹ - ε / 128 := by linarith
+      1 + ε / 32 ≤ (1 + ε / 8) * (1 - ε / 16) := one_add_le_one_add_mul_one_sub $
+        calc
+          ε / 32 + ε / 16 + ε / 8 * (ε / 16) ≤ ε / 32 + ε / 16 + ε / 8 * (1 / 16) := by gcongr
+          _ ≤ ε / 8 := by linarith
+      _ ≤ (1 + ε / 8) * ∑ x ∈ s', (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x := by gcongr
+      _ = ∑ x ∈ s', (1 + ε / 8) * (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x := mul_sum ..
+      _ ≤ ∑ x ∈ s', card G • (μ A ○ μ A) x * (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x := by
+        gcongr with x hx
+        · exact this _
+        · exact (mem_filter.1 hx).2
+      _ ≤ ∑ x, card G • (μ A ○ μ A) x * (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x := by
         gcongr
-        positivity
-      _ = (1 + ε / 8) * (1 - ε / 16) := by ring
-      _ ≤ _ := sorry
+        · rintro x - -
+          have : (0 : ℝ) ≤ _ := this x
+          have : 0 ≤ μ_[ℝ] A ○ μ A := dconv_nonneg mu_nonneg mu_nonneg
+          have : (0 : ℝ) ≤ _ := this x
+          positivity
+        · exact subset_univ _
+      _ = card G • ⟪μ_[ℝ] (Set.toFinset V) ∗ μ A, μ A ∗ μ A₂ ○ μ A₁⟫_[ℝ] := by
+        rw [← dL2Inner_dconv_eq_conv_dL2Inner, dconv_right_comm, conv_dconv_right_comm (μ A),
+          dL2Inner_dconv_eq_conv_dL2Inner, ← dconv_dL2Inner_eq_dL2Inner_conv, dL2Inner_anticomm]
+        simp [dL2Inner, smul_sum, mul_assoc]
+      _ ≤ card G • (‖μ_[ℝ] (Set.toFinset V) ∗ μ A‖_[∞] * ‖μ A ∗ μ A₂ ○ μ A₁‖_[1]) := by
+        gcongr; exact dL2Inner_le_dLpNorm_mul_dLpNorm .top_one _ _
+      _ = _ := by
+        have : 0 < (4 : ℝ)⁻¹ * A.dens ^ (2 * q') := by positivity
+        replace hA₁ : A₁.Nonempty := by simpa using this.trans_le hA₁
+        replace hA₂ : A₂.Nonempty := by simpa using this.trans_le hA₂
+        rw [dL1Norm_dconv, dL1Norm_conv]
+        simp [eq_div_iff, hA₀.dens_ne_zero, hA₀, hA₁, hA₂, ← card_smul_mu, smul_conv, dLpNorm_nsmul,
+          -nsmul_eq_mul]
+        simp [← mul_assoc, mul_comm, conv_comm]
+        · exact mu_nonneg
+        · exact mu_nonneg
+        · exact conv_nonneg mu_nonneg mu_nonneg
+        · exact mu_nonneg
 
 theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFree (α := G) A) :
     finrank (ZMod q) G ≤ 2 ^ 151 * 𝓛 A.dens ^ 9 := by
