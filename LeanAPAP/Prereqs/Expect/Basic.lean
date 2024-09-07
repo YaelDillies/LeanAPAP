@@ -89,7 +89,7 @@ to show the domain type when the expect is over `Finset.univ`. -/
         `(bigOpBinder| $(.mk i):ident)
     `(𝔼 $binder:bigOpBinder, $body)
   else
-    let ss ← withNaryArg 3 <| delab
+    let ss ← withNaryArg 4 <| delab
     `(𝔼 $(.mk i):ident ∈ $ss, $body)
 
 end BigOperators
