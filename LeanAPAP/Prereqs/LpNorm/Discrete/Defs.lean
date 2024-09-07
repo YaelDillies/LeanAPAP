@@ -238,49 +238,43 @@ private lemma dLpNorm_pos_of_pos {α E : Type*} {_ : MeasurableSpace α} [Discre
     (hp : p ≠ 0) (hf : 0 < f) : 0 < ‖f‖_[p] := dLpNorm_pos_of_ne_zero hp hf.ne'
 
 /-- The `positivity` extension which identifies expressions of the form `‖f‖_[p]`. -/
-@[positivity ‖_‖_[_]] def evalLpNorm : PositivityExt where eval {u} α _z _p e := do
+@[positivity ‖_‖_[_]] def evalDLpNorm : PositivityExt where eval {u} α _z _p e := do
   match u, α, e with
-  | 0, ~q(ℝ≥0), ~q(@nnLpNorm $ι $E $instιmeas $instEnorm $f $p $μ) =>
-    match μ with
-    | ~q(Measure.count) =>
-      let some pp := (← core q(inferInstance) q(inferInstance) p).toNonzero _ _ | failure
-      try
-        let _pE ← synthInstanceQ q(PartialOrder $E)
-        assumeInstancesCommute
-        let _ ← synthInstanceQ q(Fintype $ι)
-        let _ ← synthInstanceQ q(DiscreteMeasurableSpace $ι)
-        match ← core q(inferInstance) q(inferInstance) f with
-        | .positive pf =>
-          return .positive q(dLpNorm_pos_of_pos $pp $pf)
-        | .nonzero pf => return .positive q(dLpNorm_pos_of_ne_zero $pp $pf)
-        | _ => failure
-      catch _ =>
-        assumeInstancesCommute
-        let some pf ← findLocalDeclWithType? q($f ≠ 0) | failure
-        let pf : Q($f ≠ 0) := .fvar pf
-        let _ ← synthInstanceQ q(Fintype $ι)
-        let _ ← synthInstanceQ q(DiscreteMeasurableSpace $ι)
-        return .positive q(dLpNorm_pos_of_ne_zero $pp $pf)
-    | _ => throwError "not dLpNorm"
+  | 0, ~q(ℝ≥0), ~q(@dLpNorm $ι $E $instιmeas $instEnorm $p $f) =>
+    let pp ← (← core q(inferInstance) q(inferInstance) p).toNonzero _ _
+    try
+      let _pE ← synthInstanceQ q(PartialOrder $E)
+      assumeInstancesCommute
+      let _ ← synthInstanceQ q(Fintype $ι)
+      let _ ← synthInstanceQ q(DiscreteMeasurableSpace $ι)
+      let pf ← (← core q(inferInstance) q(inferInstance) f).toNonzero _ _
+      return .positive q(dLpNorm_pos_of_ne_zero $pp $pf)
+    catch _ =>
+      assumeInstancesCommute
+      let some pf ← findLocalDeclWithType? q($f ≠ 0) | failure
+      let pf : Q($f ≠ 0) := .fvar pf
+      logInfo "reer"
+      let _ ← synthInstanceQ q(Fintype $ι)
+      let _ ← synthInstanceQ q(DiscreteMeasurableSpace $ι)
+      return .positive q(dLpNorm_pos_of_ne_zero $pp $pf)
   | _ => throwError "not dLpNorm"
 
 section Examples
 section NormedAddCommGroup
-variable [Fintype α] [DiscreteMeasurableSpace α] [NormedAddCommGroup E] [PartialOrder E]
- {w : α → ℝ≥0} {f : α → E}
+variable [Fintype α] [DiscreteMeasurableSpace α] [NormedAddCommGroup E] [PartialOrder E] {f : α → E}
 
-example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
--- example {p : ℝ≥0∞} (hp : p ≠ 0) (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
--- example {p : ℝ≥0∞} (hp : p ≠ 0) {f : α → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} (hp : p ≠ 0) (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} (hp : p ≠ 0) {f : α → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
 
 end NormedAddCommGroup
 
 section Complex
-variable [DiscreteMeasurableSpace α] {w : α → ℝ≥0} {f : α → ℂ}
+variable [Fintype α] [DiscreteMeasurableSpace α] {w : α → ℝ≥0} {f : α → ℂ}
 
-example {p : ℝ≥0∞} : 0 ≤ ‖f‖_[p] := by positivity
--- example {p : ℝ≥0∞} (hp : p ≠ 0) (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
--- example {p : ℝ≥0∞} (hp : p ≠ 0) {f : α → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
+open scoped ComplexOrder
+
+example {p : ℝ≥0∞} (hp : p ≠ 0) (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
+example {p : ℝ≥0∞} (hp : p ≠ 0) {f : α → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity
 
 end Complex
 end Examples
