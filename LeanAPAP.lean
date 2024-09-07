@@ -1,5 +1,6 @@
 import LeanAPAP.Extras.BSG
-import LeanAPAP.FiniteField.Basic
+import LeanAPAP.FiniteField
+import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -45,7 +46,6 @@ import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Convolution.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.Convolution.WithConv
-import LeanAPAP.Prereqs.Curlog
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex

@@ -1,6 +1,6 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalities
-import LeanAPAP.Prereqs.Curlog
+import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.Rudin
@@ -12,8 +12,30 @@ import LeanAPAP.Prereqs.Rudin
 open Finset Fintype Function Real MeasureTheory
 open scoped ComplexConjugate ComplexOrder NNReal
 
-variable {G : Type*} [AddCommGroup G] [Fintype G] {f : G → ℂ} {η : ℝ} {ψ : AddChar G ℂ}
+variable {G : Type*} [AddCommGroup G] [Fintype G] {f : G → ℂ} {x η : ℝ} {ψ : AddChar G ℂ}
   {Δ : Finset (AddChar G ℂ)} {m : ℕ}
+
+local notation "𝓛" x:arg => 1 + log x⁻¹
+
+private lemma curlog_pos (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 0 < 𝓛 x := by
+  obtain rfl | hx₀ := hx₀.eq_or_lt
+  · simp
+  have : 0 ≤ log x⁻¹ := log_nonneg $ one_le_inv (by positivity) hx₁
+  positivity
+
+private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻¹ ^ (𝓛 x)⁻¹ ≤ exp 1 := by
+  obtain rfl | hx₀ := hx₀.eq_or_lt
+  · simp; positivity
+  obtain rfl | hx₁ := hx₁.eq_or_lt
+  · simp
+  have hx := one_lt_inv hx₀ hx₁
+  calc
+    x⁻¹ ^ (𝓛 x)⁻¹ ≤ x⁻¹ ^ (log x⁻¹)⁻¹ := by
+      gcongr
+      · exact hx.le
+      · exact log_pos hx
+      · simp
+    _ ≤ exp 1 := x⁻¹.rpow_inv_log_le_exp_one
 
 noncomputable def changConst : ℝ := 32 * exp 1
 
@@ -151,13 +173,13 @@ lemma spec_hoelder (hη : 0 ≤ η) (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0)
 /-- **Chang's lemma**. -/
 lemma chang (hf : f ≠ 0) (hη : 0 < η) :
     ∃ Δ, Δ ⊆ largeSpec f η ∧
-      Δ.card ≤ ⌈changConst * exp 1 * ⌈curlog (α f)⌉₊ / η ^ 2⌉₊ ∧ largeSpec f η ⊆ Δ.addSpan := by
+      Δ.card ≤ ⌈changConst * exp 1 * ⌈𝓛 (α f)⌉₊ / η ^ 2⌉₊ ∧ largeSpec f η ⊆ Δ.addSpan := by
   refine exists_subset_addSpan_card_le_of_forall_addDissociated fun Δ hΔη hΔ ↦ ?_
   obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ Δ.card
   · simp [hΔ']
   have : 0 < α f := α_pos hf
-  set β := ⌈curlog (α f)⌉₊
-  have hβ : 0 < β := Nat.ceil_pos.2 (curlog_pos (α_pos hf) $ α_le_one _)
+  set β := ⌈𝓛 (α f)⌉₊
+  have hβ : 0 < β := Nat.ceil_pos.2 (curlog_pos (by positivity) $ α_le_one _)
   refine le_of_pow_le_pow_left hβ.ne' zero_le' $ Nat.cast_le.1 $ le_of_mul_le_mul_right ?_
     (by positivity : 0 < ↑Δ.card ^ β * (η ^ (2 * β) * α f))
   push_cast
@@ -173,5 +195,8 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
     _ = _ := by ring
   refine le_mul_of_one_le_right (by positivity) ?_
   rw [← inv_pos_le_iff_one_le_mul']
-  exact inv_le_exp_curlog.trans $ exp_monotone $ Nat.le_ceil _
+  calc
+    (α f)⁻¹ = exp (0 + log (α f)⁻¹) := by rw [zero_add, exp_log]; norm_cast; positivity
+    _ ≤ exp ⌈0 + log (α f)⁻¹⌉₊ := by gcongr; exact Nat.le_ceil _
+    _ ≤ exp β := by unfold_let β; gcongr; exact zero_le_one
   all_goals positivity
