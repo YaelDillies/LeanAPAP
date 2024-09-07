@@ -1,6 +1,7 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalities
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
+import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.Rudin
@@ -77,16 +78,9 @@ lemma AddDissociated.boringEnergy_le [DecidableEq G] {s : Finset G}
 
 local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 
-variable [MeasurableSpace G]
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
-private noncomputable def α (f : G → ℂ) := ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G
-
-lemma α_nonneg (f : G → ℂ) : 0 ≤ α f := by unfold α; positivity
-lemma α_pos (hf : f ≠ 0) : 0 < α f := by unfold α; sorry -- positivity
-
-variable [DiscreteMeasurableSpace G]
-
-lemma α_le_one (f : G → ℂ) : α f ≤ 1 := by
+private lemma α_le_one (f : G → ℂ) : ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G ≤ 1 := by
   refine div_le_one_of_le (div_le_of_nonneg_of_le_mul ?_ ?_ ?_) ?_
   any_goals positivity
   rw [dL1Norm_eq_sum_nnnorm, dL2Norm_sq_eq_sum_nnnorm, ← NNReal.coe_le_coe]
@@ -159,29 +153,32 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       mul_left_comm (Algebra.cast (ν _ : ℝ) : ℂ), ← mul_sum, ← sub_eq_add_neg, sum_sub_distrib,
       Complex.conj_ofReal, mul_comm (Algebra.cast (ν _ : ℝ) : ℂ)]
     rfl
-  sorry
-  sorry
-  -- positivity
+  positivity
+
+open scoped ComplexOrder
 
 lemma spec_hoelder (hη : 0 ≤ η) (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0) :
-    ↑Δ.card ^ (2 * m) * (η ^ (2 * m) * α f) ≤ boringEnergy m Δ := by
+    Δ.card ^ (2 * m) * (η ^ (2 * m) * (‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G)) ≤ boringEnergy m Δ := by
   have hG : (0 : ℝ) < card G := by positivity
-  simpa [boringEnergy, α, mul_assoc, ← Pi.one_def, ← mul_div_right_comm, ← mul_div_assoc,
+  simpa [boringEnergy, mul_assoc, ← Pi.one_def, ← mul_div_right_comm, ← mul_div_assoc,
     div_le_iff₀ hG, energy_nsmul, -nsmul_eq_mul, ← nsmul_eq_mul'] using
     general_hoelder hη 1 (fun (_ : G) _ ↦ le_rfl) hΔ hm
 
 /-- **Chang's lemma**. -/
 lemma chang (hf : f ≠ 0) (hη : 0 < η) :
     ∃ Δ, Δ ⊆ largeSpec f η ∧
-      Δ.card ≤ ⌈changConst * exp 1 * ⌈𝓛 (α f)⌉₊ / η ^ 2⌉₊ ∧ largeSpec f η ⊆ Δ.addSpan := by
+      Δ.card ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G)⌉₊ / η ^ 2⌉₊ ∧
+      largeSpec f η ⊆ Δ.addSpan := by
   refine exists_subset_addSpan_card_le_of_forall_addDissociated fun Δ hΔη hΔ ↦ ?_
   obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ Δ.card
   · simp [hΔ']
-  have : 0 < α f := α_pos hf
-  set β := ⌈𝓛 (α f)⌉₊
+  let α := ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G
+  have : 0 < α := by positivity
+  set β := ⌈𝓛 α⌉₊
   have hβ : 0 < β := Nat.ceil_pos.2 (curlog_pos (by positivity) $ α_le_one _)
+  have : 0 < ‖f‖_[1] := by positivity
   refine le_of_pow_le_pow_left hβ.ne' zero_le' $ Nat.cast_le.1 $ le_of_mul_le_mul_right ?_
-    (by positivity : 0 < ↑Δ.card ^ β * (η ^ (2 * β) * α f))
+    (by positivity : 0 < Δ.card ^ β * (η ^ (2 * β) * α))
   push_cast
   rw [← mul_assoc, ← pow_add, ← two_mul]
   refine ((spec_hoelder hη.le hΔη hβ.ne').trans $ hΔ.boringEnergy_le _).trans ?_
@@ -189,14 +186,14 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
   rw [mul_right_comm, div_pow, mul_pow, mul_pow, exp_one_pow, ← pow_mul, mul_div_assoc]
   calc
     _ = (changConst * Δ.card * β) ^ β := by ring
-    _ ≤ (changConst * Δ.card * β) ^ β * (α f * exp β) := ?_
-    _ ≤ (changConst * Δ.card * β) ^ β * ((η / η) ^ (2 * β) * α f * exp β) := by
-        rw [div_self hη.ne', one_pow, one_mul]
+    _ ≤ (changConst * Δ.card * β) ^ β * (α * exp β) := ?_
+    _ ≤ (changConst * Δ.card * β) ^ β * ((η / η) ^ (2 * β) * α * exp β) := by
+      rw [div_self hη.ne', one_pow, one_mul]
     _ = _ := by ring
   refine le_mul_of_one_le_right (by positivity) ?_
   rw [← inv_pos_le_iff_one_le_mul']
   calc
-    (α f)⁻¹ = exp (0 + log (α f)⁻¹) := by rw [zero_add, exp_log]; norm_cast; positivity
-    _ ≤ exp ⌈0 + log (α f)⁻¹⌉₊ := by gcongr; exact Nat.le_ceil _
+    α⁻¹ = exp (0 + log α⁻¹) := by rw [zero_add, exp_log]; norm_cast; positivity
+    _ ≤ exp ⌈0 + log α⁻¹⌉₊ := by gcongr; exact Nat.le_ceil _
     _ ≤ exp β := by unfold_let β; gcongr; exact zero_le_one
   all_goals positivity

@@ -3,6 +3,7 @@ import LeanAPAP.FiniteField
 import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Group.Basic
+import LeanAPAP.Mathlib.Algebra.Group.Subgroup.Basic
 import LeanAPAP.Mathlib.Algebra.Order.BigOperators.Group.Finset
 import LeanAPAP.Mathlib.Algebra.Order.Field.Defs
 import LeanAPAP.Mathlib.Algebra.Order.Floor
@@ -10,6 +11,7 @@ import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Mathlib.Algebra.Order.Module.Rat
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Basic
+import LeanAPAP.Mathlib.Algebra.Order.Ring.Cast
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Defs
 import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
@@ -17,15 +19,19 @@ import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
+import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Operations
 import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Mathlib.Data.Finset.Density
 import LeanAPAP.Mathlib.Data.Finset.Pointwise.Basic
 import LeanAPAP.Mathlib.Data.Finset.Preimage
 import LeanAPAP.Mathlib.Data.Real.ConjExponents
+import LeanAPAP.Mathlib.Data.ZMod.Module
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+import LeanAPAP.Mathlib.Order.CompleteLattice
 import LeanAPAP.Mathlib.Order.Filter.Basic
+import LeanAPAP.Mathlib.Order.Hom.Basic
 import LeanAPAP.Mathlib.Order.LiminfLimsup
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity
@@ -60,6 +66,7 @@ import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.Inner.Compact
 import LeanAPAP.Prereqs.Inner.Discrete.Basic
 import LeanAPAP.Prereqs.Inner.Discrete.Defs
+import LeanAPAP.Prereqs.Inner.Function
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.LpNorm.Compact
 import LeanAPAP.Prereqs.LpNorm.Discrete.Basic

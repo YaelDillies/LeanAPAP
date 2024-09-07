@@ -108,11 +108,10 @@ lemma indicate_inf [Fintype α] (s : Finset ι) (t : ι → Finset α) :
 
 variable [StarRing β]
 
-@[simp] lemma conj_indicate_apply [AddCommGroup α] (s : Finset α) (a : α) :
-    conj (𝟭_[β] s a) = 𝟭 s a := by simp [indicate_apply]
+@[simp] lemma conj_indicate_apply (s : Finset α) (a : α) : conj (𝟭_[β] s a) = 𝟭 s a := by
+  simp [indicate_apply]
 
-@[simp] lemma conj_indicate [AddCommGroup α] (s : Finset α) : conj (𝟭_[β] s) = 𝟭 s := by
-  ext; simp
+@[simp] lemma conj_indicate (s : Finset α) : conj (𝟭_[β] s) = 𝟭 s := by ext; simp
 
 end CommSemiring
 
@@ -224,7 +223,7 @@ end Group
 end DivisionSemiring
 
 section Semifield
-variable (β) [Semifield β] [StarRing β] [AddCommGroup α] {s : Finset α}
+variable (β) [Semifield β] [StarRing β] {s : Finset α}
 
 @[simp] lemma conj_mu_apply (s : Finset α) (a : α) : conj (μ_[β] s a) = μ s a := by simp [mu]
 

@@ -116,6 +116,9 @@ lemma conv_right_comm (f g h : G → R) : f ∗ g ∗ h = f ∗ h ∗ g := by
 lemma conv_left_comm (f g h : G → R) : f ∗ (g ∗ h) = g ∗ (f ∗ h) := by
   rw [← conv_assoc, ← conv_assoc, conv_comm g]
 
+lemma conv_rotate (f g h : G → R) : f ∗ g ∗ h = g ∗ h ∗ f := by rw [conv_assoc, conv_comm]
+lemma conv_rotate' (f g h : G → R) : f ∗ (g ∗ h) = g ∗ (h ∗ f) := by rw [conv_comm, ← conv_assoc]
+
 lemma conv_conv_conv_comm (f g h i : G → R) : f ∗ g ∗ (h ∗ i) = f ∗ h ∗ (g ∗ i) := by
   rw [conv_assoc, conv_assoc, conv_left_comm g]
 

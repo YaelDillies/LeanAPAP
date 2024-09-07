@@ -55,6 +55,10 @@ lemma dLpNorm_mu_le (hp : 1 ≤ p) : ‖μ_[R] s‖_[p] ≤ s.card ^ (p⁻¹ - 1
 
 lemma dL1Norm_mu_le_one : ‖μ_[R] s‖_[1] ≤ 1 := by simpa using dLpNorm_mu_le le_rfl
 
+@[simp] lemma dL2Norm_mu (hs : s.Nonempty) : ‖μ_[R] s‖_[2] = s.card ^ (-2⁻¹ : ℝ) := by
+  have : (2⁻¹ - 1 : ℝ) = -2⁻¹ := by norm_num
+  simpa [sqrt_eq_rpow, this] using dLpNorm_mu one_le_two (R := R) hs
+
 end Indicator
 
 /-! ### Translation -/

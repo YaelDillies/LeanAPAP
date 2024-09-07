@@ -348,7 +348,7 @@ lemma just_the_triangle_inequality {t : G} {a : Fin k → G} (ha : a ∈ l k m �
       gcongr; exact dLpNorm_sub_le_dLpNorm_sub_add_dLpNorm_sub (mod_cast hp)
     _ ≤ k * ε * ‖f‖_[2 * m] + k * ε * ‖f‖_[2 * m] := by push_cast; gcongr
 
-lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * m / (ε / 2) ^ 2⌉₊)
+lemma T_bound (hK₂ : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * m / (ε / 2) ^ 2⌉₊)
     (h₁ : Lc * Sc ≤ ASc ^ k * Tc) (h₂ : (Ac : ℝ) ^ k / 2 ≤ Lc) (h₃ : (ASc : ℝ) ≤ K * Ac)
     (hAc : 0 < Ac) (hε : 0 < ε) (hε' : ε ≤ 1) (hm : 1 ≤ m) :
     K ^ (-512 * m / ε ^ 2 : ℝ) * Sc ≤ Tc := by
@@ -361,7 +361,7 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
   refine le_of_mul_le_mul_left ?_ this
   have : (Ac : ℝ) ^ k ≤ K * Lc := by
     rw [div_le_iff₀'] at h₂
-    refine h₂.trans (mul_le_mul_of_nonneg_right hK' (Nat.cast_nonneg _))
+    refine h₂.trans (mul_le_mul_of_nonneg_right hK₂ (Nat.cast_nonneg _))
     exact zero_lt_two
   rw [neg_mul, neg_div, Real.rpow_neg hK.le, mul_left_comm,
     inv_mul_le_iff (Real.rpow_pos_of_pos hK _)]
@@ -375,7 +375,7 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
   rw [mul_pow, ← mul_assoc, ← pow_succ']
   refine mul_le_mul_of_nonneg_right ?_ (pow_nonneg (Nat.cast_nonneg _) _)
   rw [← Real.rpow_natCast]
-  refine Real.rpow_le_rpow_of_exponent_le (one_le_two.trans hK') ?_
+  refine Real.rpow_le_rpow_of_exponent_le (one_le_two.trans hK₂) ?_
   rw [Nat.cast_add_one, ← le_sub_iff_add_le, hk']
   refine (Nat.ceil_lt_add_one ?_).le.trans ?_
   · positivity
@@ -391,7 +391,7 @@ lemma T_bound (hK' : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) * 
 
 -- trivially true for other reasons for big ε
 lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (f : G → ℂ)
-    (hK' : 2 ≤ K) (hK : σ[A, S] ≤ K) :
+    (hK₂ : 2 ≤ K) (hK : σ[A, S] ≤ K) :
     ∃ T : Finset G,
       K ^ (-512 * m / ε ^ 2 : ℝ) * S.card ≤ T.card ∧
         ∀ t ∈ T, ‖τ t (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ ε * ‖f‖_[2 * m] := by
@@ -400,7 +400,7 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
   obtain rfl | hA := A.eq_empty_or_nonempty
   · refine ⟨univ, ?_, fun t _ ↦ ?_⟩
     · have : K ^ ((-512 : ℝ) * m / ε ^ 2) ≤ 1 := by
-        refine Real.rpow_le_one_of_one_le_of_nonpos (one_le_two.trans hK') ?_
+        refine Real.rpow_le_one_of_one_le_of_nonpos (one_le_two.trans hK₂) ?_
         rw [neg_mul, neg_div, Right.neg_nonpos_iff]
         positivity
       refine (mul_le_mul_of_nonneg_right this (Nat.cast_nonneg _)).trans ?_
@@ -418,7 +418,7 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
   obtain ⟨a, ha, hL'⟩ := big_shifts S _ hk hL (filter_subset _ _)
   refine ⟨univ.filter fun t : G ↦ (a + fun _ ↦ -t) ∈ L, ?_, ?_⟩
   · simp_rw [sub_eq_add_neg] at hL'
-    exact T_bound hK' L.card S.card A.card (A + S).card _ rfl hL' this
+    exact T_bound hK₂ L.card S.card A.card (A + S).card _ rfl hL' this
       (by rw [← cast_addConst_mul_card]; gcongr) hA.card_pos hε hε' hm
   intro t ht
   simp only [exists_prop, exists_eq_right, mem_filter, mem_univ, true_and_iff] at ht
