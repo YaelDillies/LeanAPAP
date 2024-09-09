@@ -4,6 +4,7 @@ import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Algebra.CharP.Defs
 import Mathlib.Algebra.Module.Rat
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.Module.Rat
 import Mathlib.Data.Finset.Pointwise.Basic
 import Mathlib.Data.Fintype.BigOperators
@@ -18,7 +19,7 @@ open Function
 open Fintype (card)
 open scoped BigOperators Pointwise NNRat
 
-variable {ι κ α β : Type*}
+variable {ι κ α β R : Type*}
 
 local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
 
@@ -94,6 +95,18 @@ lemma abs_expect_le_expect_abs (s : Finset ι) (f : ι → α) : |𝔼 i ∈ s, 
   le_expect_of_subadditive _ abs_zero abs_add (fun _ _ ↦ abs_nnqsmul _ _) _ _
 
 end LinearOrderedAddCommGroup
+
+section LinearOrderedCommSemiring
+variable [LinearOrderedCommSemiring R] [ExistsAddOfLE R] [Module ℚ≥0 R] [PosSMulMono ℚ≥0 R]
+
+/-- **Cauchy-Schwarz inequality** for finsets. -/
+lemma expect_mul_sq_le_sq_mul_sq (s : Finset ι) (f g : ι → R) :
+    (𝔼 i ∈ s, f i * g i) ^ 2 ≤ (𝔼 i ∈ s, f i ^ 2) * 𝔼 i ∈ s, g i ^ 2 := by
+  simp only [expect, smul_pow, inv_pow, smul_mul_smul_comm, ← sq]
+  gcongr
+  exact sum_mul_sq_le_sq_mul_sq ..
+
+end LinearOrderedCommSemiring
 end Finset
 
 open Finset

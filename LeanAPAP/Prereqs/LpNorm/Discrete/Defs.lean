@@ -201,6 +201,12 @@ lemma dLinftyNorm_eq_iSup_norm (f : α → E) : ‖f‖_[∞] = ⨆ i, ‖f i‖
   · simp
   · simp [dLpNorm, nnLinftyNorm_eq_essSup]
 
+lemma nnnorm_le_dLinftyNorm {i : α} : ‖f i‖₊ ≤ ‖f‖_[∞] := by
+  rw [dLinftyNorm_eq_iSup_nnnorm]; exact le_ciSup (f := fun i ↦ ‖f i‖₊) (Finite.bddAbove_range _) i
+
+lemma norm_le_dLinftyNorm {i : α} : ‖f i‖ ≤ ‖f‖_[∞] := by
+  rw [dLinftyNorm_eq_iSup_norm]; exact le_ciSup (f := fun i ↦ ‖f i‖) (Finite.bddAbove_range _) i
+
 @[simp] lemma dLpNorm_eq_zero (hp : p ≠ 0) : ‖f‖_[p] = 0 ↔ f = 0 := by
   simp [dLpNorm, nnLpNorm_eq_zero .of_discrete hp, ae_eq_top.2]
 

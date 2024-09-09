@@ -8,6 +8,7 @@ import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Algebra.Module.Pi
+import Mathlib.Data.Finset.Density
 import Mathlib.Data.Finset.Pointwise.Basic
 import Mathlib.Data.Fintype.BigOperators
 
@@ -149,6 +150,12 @@ lemma expect_ite_zero (s : Finset ι) (p : ι → Prop) [DecidablePred p]
 
 section DecidableEq
 variable [DecidableEq ι]
+
+@[simp] lemma expect_ite_mem (s t : Finset ι) (f : ι → M) :
+    𝔼 i ∈ s, (if i ∈ t then f i else 0) = ((s ∩ t).card / s.card : ℚ≥0) • 𝔼 i ∈ s ∩ t, f i := by
+  obtain hst | hst := (s ∩ t).eq_empty_or_nonempty
+  · simp [expect, hst]
+  · simp [expect, smul_smul, ← inv_mul_eq_div, hst.card_ne_zero]
 
 @[simp] lemma expect_dite_eq (i : ι) (f : ∀ j, i = j → M) :
     𝔼 j ∈ s, (if h : i = j then f j h else 0) = if i ∈ s then f i rfl /ℚ s.card else 0 := by
@@ -387,6 +394,10 @@ lemma expect_ite_zero (p : ι → Prop) [DecidablePred p] (h : ∀ i j, p i → 
   simp [univ.expect_ite_zero p (by simpa using h), card_univ]
 
 variable [DecidableEq ι]
+
+@[simp] lemma expect_ite_mem (s : Finset ι) (f : ι → M) :
+    𝔼 i, (if i ∈ s then f i else 0) = s.dens • 𝔼 i ∈ s, f i := by
+  simp [Finset.expect_ite_mem, dens]
 
 lemma expect_dite_eq (i : ι) (f : ∀ j, i = j → M) :
     𝔼 j, (if h : i = j then f j h else 0) = f i rfl /ℚ card ι := by simp [card_univ]

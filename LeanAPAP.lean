@@ -1,6 +1,7 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
+import LeanAPAP.Mathlib.Algebra.BigOperators.Group.Finset
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Subgroup.Basic
@@ -19,6 +20,7 @@ import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
+import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Operations
 import LeanAPAP.Mathlib.Data.ENNReal.Real
@@ -55,6 +57,7 @@ import LeanAPAP.Prereqs.Convolution.WithConv
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex
+import LeanAPAP.Prereqs.Expect.MeanInequalities
 import LeanAPAP.Prereqs.Expect.Order
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.FourierTransform.Convolution
