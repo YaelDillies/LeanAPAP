@@ -35,7 +35,7 @@ lemma dLpNorm_pow_indicate {p : ℕ} (hp : p ≠ 0) (s : Finset ι) :
 lemma dL2Norm_sq_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[2] ^ 2 = s.card := by
   simpa using dLpNorm_pow_indicate two_ne_zero s
 
-lemma dL2Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[2] = NNReal.sqrt s.card := by
+@[simp] lemma dL2Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[2] = NNReal.sqrt s.card := by
   rw [eq_comm, NNReal.sqrt_eq_iff_eq_sq, dL2Norm_sq_indicate]
 
 @[simp] lemma dL1Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[1] = s.card := by

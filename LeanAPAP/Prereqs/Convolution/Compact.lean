@@ -173,7 +173,7 @@ lemma expect_cconv_mul (f g h : G → R) :
   exact expect_congr rfl fun x _ ↦ Fintype.expect_equiv (Equiv.subRight x) _ _ fun y ↦ by simp
 
 lemma expect_cconv (f g : G → R) : 𝔼 a, (f ∗ₙ g) a = (𝔼 a, f a) * 𝔼 a, g a := by
-  simpa only [expect_mul_expect, Pi.one_apply, mul_one] using expect_cconv_mul f g 1
+  simpa only [Fintype.expect_mul_expect, Pi.one_apply, mul_one] using expect_cconv_mul f g 1
 
 @[simp] lemma cconv_const (f : G → R) (b : R) : f ∗ₙ const _ b = const _ ((𝔼 x, f x) * b) := by
   ext; simp [cconv_eq_expect_sub', expect_mul]
@@ -306,7 +306,7 @@ lemma expect_cdconv_mul (f g h : G → R) :
   exact expect_congr rfl fun x _ ↦ Fintype.expect_equiv (Equiv.subLeft x) _ _ fun y ↦ by simp
 
 lemma expect_cdconv (f g : G → R) : 𝔼 a, (f ○ₙ g) a = (𝔼 a, f a) * 𝔼 a, conj (g a) := by
-  simpa only [expect_mul_expect, Pi.one_apply, mul_one] using expect_cdconv_mul f g 1
+  simpa only [Fintype.expect_mul_expect, Pi.one_apply, mul_one] using expect_cdconv_mul f g 1
 
 @[simp]
 lemma cdconv_const (f : G → R) (b : R) : f ○ₙ const _ b = const _ ((𝔼 x, f x) * conj b) := by

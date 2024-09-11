@@ -46,13 +46,18 @@ variable (β)
 section Nontrivial
 variable {β} [Nontrivial β] {a : α}
 
-@[simp] lemma indicate_eq_zero : 𝟭_[β] s a = 0 ↔ a ∉ s := one_ne_zero.ite_eq_right_iff
+@[simp] lemma indicate_apply_eq_zero : 𝟭_[β] s a = 0 ↔ a ∉ s := one_ne_zero.ite_eq_right_iff
 
-lemma indicate_ne_zero : 𝟭_[β] s a ≠ 0 ↔ a ∈ s := one_ne_zero.ite_ne_right_iff
+lemma indicate_apply_ne_zero : 𝟭_[β] s a ≠ 0 ↔ a ∈ s := one_ne_zero.ite_ne_right_iff
+
+@[simp] lemma indicate_eq_zero : 𝟭_[β] s = 0 ↔ s = ∅ := by
+  simp [funext_iff, eq_empty_iff_forall_not_mem]
+
+lemma indicate_ne_zero : 𝟭_[β] s ≠ 0 ↔ s.Nonempty := by simp [nonempty_iff_ne_empty]
 
 variable (β)
 
-@[simp] lemma support_indicate : support (𝟭_[β] s) = s := by ext; exact indicate_ne_zero
+@[simp] lemma support_indicate : support (𝟭_[β] s) = s := by ext; exact indicate_apply_ne_zero
 
 end Nontrivial
 

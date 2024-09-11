@@ -259,7 +259,6 @@ private lemma dLpNorm_pos_of_pos {α E : Type*} {_ : MeasurableSpace α} [Discre
       assumeInstancesCommute
       let some pf ← findLocalDeclWithType? q($f ≠ 0) | failure
       let pf : Q($f ≠ 0) := .fvar pf
-      logInfo "reer"
       let _ ← synthInstanceQ q(Fintype $ι)
       let _ ← synthInstanceQ q(DiscreteMeasurableSpace $ι)
       return .positive q(dLpNorm_pos_of_ne_zero $pp $pf)

@@ -418,5 +418,9 @@ variable [Semiring M] [Module ℚ≥0 M]
 
 @[simp] lemma expect_one [Nonempty ι] : 𝔼 _i : ι, (1 : M) = 1 := expect_const _
 
+lemma expect_mul_expect [IsScalarTower ℚ≥0 M M] [SMulCommClass ℚ≥0 M M] (f : ι → M)
+    (g : κ → M) : (𝔼 i, f i) * 𝔼 j, g j = 𝔼 i, 𝔼 j, f i * g j :=
+  Finset.expect_mul_expect ..
+
 end Semiring
 end Fintype

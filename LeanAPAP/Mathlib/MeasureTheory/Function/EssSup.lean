@@ -1,7 +1,9 @@
 import Mathlib.MeasureTheory.Function.EssSup
+import Mathlib.Probability.ConditionalProbability
+import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
 import LeanAPAP.Mathlib.Order.LiminfLimsup
 
-open Filter MeasureTheory
+open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 variable {α β : Type*} {m : MeasurableSpace α} [ConditionallyCompleteLattice β]
@@ -25,8 +27,16 @@ lemma essSup_eq_ciSup (hμ : ∀ a, μ {a} ≠ 0) (hf : BddAbove (Set.range f)) 
 lemma essInf_eq_ciInf (hμ : ∀ a, μ {a} ≠ 0) (hf : BddBelow (Set.range f)) :
     essInf f μ = ⨅ a, f a := by rw [essInf, ae_eq_top.2 hμ, liminf_top_eq_ciInf hf]
 
-@[simp] lemma essSup_count_eq_ciSup [MeasurableSingletonClass α] (hf : BddAbove (Set.range f)) :
+variable [MeasurableSingletonClass α]
+
+@[simp] lemma essSup_count_eq_ciSup (hf : BddAbove (Set.range f)) :
     essSup f .count = ⨆ a, f a := essSup_eq_ciSup (by simp) hf
 
-@[simp] lemma essInf_count_eq_ciInf [MeasurableSingletonClass α] (hf : BddBelow (Set.range f)) :
+@[simp] lemma essInf_count_eq_ciInf (hf : BddBelow (Set.range f)) :
     essInf f .count = ⨅ a, f a := essInf_eq_ciInf (by simp) hf
+
+@[simp] lemma essSup_cond_count_eq_ciSup [Finite α] (hf : BddAbove (Set.range f)) :
+    essSup f .count[|.univ] = ⨆ a, f a := essSup_eq_ciSup (by simp [cond_apply, Set.finite_univ]) hf
+
+@[simp] lemma essInf_cond_count_eq_ciInf [Finite α] (hf : BddBelow (Set.range f)) :
+    essInf f .count[|.univ] = ⨅ a, f a := essInf_eq_ciInf (by simp [cond_apply, Set.finite_univ]) hf

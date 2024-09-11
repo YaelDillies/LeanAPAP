@@ -1,7 +1,13 @@
+import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Data.Finset.Density
+import Mathlib.Data.Fintype.Order
 import Mathlib.Probability.ConditionalProbability
+import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
+import LeanAPAP.Mathlib.Order.Filter.Basic
 import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.Expect.Order
+import LeanAPAP.Prereqs.Function.Translate
+import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.NNLpNorm
 
 /-!
@@ -201,16 +207,14 @@ lemma cLinftyNorm_eq_iSup_nnnorm (f : α → E) : ‖f‖ₙ_[∞] = ⨆ i, ‖f
   cases isEmpty_or_nonempty α
   · simp
   · simp [cLpNorm, nnLinftyNorm_eq_essSup]
-    sorry
 
 lemma cLinftyNorm_eq_iSup_norm (f : α → E) : ‖f‖ₙ_[∞] = ⨆ i, ‖f i‖ := by
   cases isEmpty_or_nonempty α
   · simp
   · simp [cLpNorm, nnLinftyNorm_eq_essSup]
-    sorry
 
 @[simp] lemma cLpNorm_eq_zero (hp : p ≠ 0) : ‖f‖ₙ_[p] = 0 ↔ f = 0 := by
-  simp [cLpNorm, nnLpNorm_eq_zero .of_discrete hp, ae_eq_top.2]; sorry
+  simp [cLpNorm, nnLpNorm_eq_zero .of_discrete hp, ae_eq_top.2, cond_apply, Set.finite_univ]
 
 @[simp] lemma cLpNorm_pos (hp : p ≠ 0) : 0 < ‖f‖ₙ_[p] ↔ f ≠ 0 :=
   pos_iff_ne_zero.trans (cLpNorm_eq_zero hp).not
@@ -235,9 +239,62 @@ lemma cLpNorm_two_mul_sum_pow {ι : Type*} {n : ℕ} (hn : n ≠ 0) (s : Finset 
     _ = _ := by simp_rw [sum_pow', sum_mul_sum, expect_sum_comm]
 
 end NormedAddCommGroup
+end MeasureTheory
+
+namespace Mathlib.Meta.Positivity
+open Lean Meta Qq Function MeasureTheory
+
+private alias ⟨_, cLpNorm_pos_of_ne_zero⟩ := cLpNorm_pos
+
+private lemma cLpNorm_pos_of_pos {α E : Type*} {_ : MeasurableSpace α} [DiscreteMeasurableSpace α]
+    [Fintype α] [NormedAddCommGroup E] [Preorder E] {p : ℝ≥0∞} {f : α → E}
+    (hp : p ≠ 0) (hf : 0 < f) : 0 < ‖f‖ₙ_[p] := cLpNorm_pos_of_ne_zero hp hf.ne'
+
+/-- The `positivity` extension which identifies expressions of the form `‖f‖ₙ_[p]`. -/
+@[positivity ‖_‖ₙ_[_]] def evalcLpNorm : PositivityExt where eval {u} α _z _p e := do
+  match u, α, e with
+  | 0, ~q(ℝ≥0), ~q(@cLpNorm $ι $E $instιmeas $instEnorm $p $f) =>
+    let pp ← (← core q(inferInstance) q(inferInstance) p).toNonzero _ _
+    try
+      let _pE ← synthInstanceQ q(PartialOrder $E)
+      assumeInstancesCommute
+      let _ ← synthInstanceQ q(Fintype $ι)
+      let _ ← synthInstanceQ q(DiscreteMeasurableSpace $ι)
+      let pf ← (← core q(inferInstance) q(inferInstance) f).toNonzero _ _
+      return .positive q(cLpNorm_pos_of_ne_zero $pp $pf)
+    catch _ =>
+      assumeInstancesCommute
+      let some pf ← findLocalDeclWithType? q($f ≠ 0) | failure
+      let pf : Q($f ≠ 0) := .fvar pf
+      let _ ← synthInstanceQ q(Fintype $ι)
+      let _ ← synthInstanceQ q(DiscreteMeasurableSpace $ι)
+      return .positive q(cLpNorm_pos_of_ne_zero $pp $pf)
+  | _ => throwError "not cLpNorm"
+
+section Examples
+section NormedAddCommGroup
+variable [Fintype α] [DiscreteMeasurableSpace α] [NormedAddCommGroup E] [PartialOrder E] {f : α → E}
+
+example {p : ℝ≥0∞} (hp : p ≠ 0) (hf : f ≠ 0) : 0 < ‖f‖ₙ_[p] := by positivity
+example {p : ℝ≥0∞} (hp : p ≠ 0) {f : α → ℝ} (hf : 0 < f) : 0 < ‖f‖ₙ_[p] := by positivity
+
+end NormedAddCommGroup
+
+section Complex
+variable [Fintype α] [DiscreteMeasurableSpace α] {w : α → ℝ≥0} {f : α → ℂ}
+
+open scoped ComplexOrder
+
+example {p : ℝ≥0∞} (hp : p ≠ 0) (hf : f ≠ 0) : 0 < ‖f‖ₙ_[p] := by positivity
+example {p : ℝ≥0∞} (hp : p ≠ 0) {f : α → ℝ} (hf : 0 < f) : 0 < ‖f‖ₙ_[p] := by positivity
+
+end Complex
+end Examples
+end Mathlib.Meta.Positivity
 
 /-! ### Hölder inequality -/
 
+namespace MeasureTheory
 section Real
 variable {α : Type*} {mα : MeasurableSpace α} [DiscreteMeasurableSpace α] [Fintype α] {p q : ℝ≥0}
   {f g : α → ℝ}
@@ -297,3 +354,81 @@ lemma RCLike.cLpNorm_coe_comp [RCLike 𝕜] (p) (f : α → ℝ) : ‖((↑) : �
 
 end
 end MeasureTheory
+
+
+namespace MeasureTheory
+variable {ι G 𝕜 E R : Type*} [Fintype ι] {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι]
+
+/-! ### Indicator -/
+
+section Indicator
+variable [RCLike R] [DecidableEq ι] {s : Finset ι} {p : ℝ≥0}
+
+lemma cLpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖ₙ_[p] ^ (p : ℝ) = s.dens := by
+  obtain rfl | hs := s.eq_empty_or_nonempty
+  · simpa
+  have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) =
+    ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := fun x ↦ by split_ifs <;> simp
+  simp [cLpNorm_rpow_eq_expect_nnnorm, hp, indicate_apply, apply_ite nnnorm, expect_const,
+    sum_boole, this, zero_rpow, filter_mem_eq_inter, nnratCast_dens, hs]
+
+lemma cLpNorm_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖ₙ_[p] = s.dens ^ (p⁻¹ : ℝ) := by
+  refine (NNReal.eq_rpow_inv_iff ?_).2 (cLpNorm_rpow_indicate ?_ _) <;> positivity
+
+lemma cLpNorm_pow_indicate {p : ℕ} (hp : p ≠ 0) (s : Finset ι) :
+    ‖𝟭_[R] s‖ₙ_[p] ^ (p : ℝ) = s.dens := by
+  simpa using cLpNorm_rpow_indicate (Nat.cast_ne_zero.2 hp) s
+
+lemma cL2Norm_sq_indicate (s : Finset ι) : ‖𝟭_[R] s‖ₙ_[2] ^ 2 = s.dens := by
+  simpa using cLpNorm_pow_indicate two_ne_zero s
+
+@[simp] lemma cL2Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖ₙ_[2] = NNReal.sqrt s.dens := by
+  rw [eq_comm, NNReal.sqrt_eq_iff_eq_sq, cL2Norm_sq_indicate]
+
+@[simp] lemma cL1Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖ₙ_[1] = s.dens := by
+  simpa using cLpNorm_pow_indicate one_ne_zero s
+
+end Indicator
+
+/-! ### Translation -/
+
+section cLpNorm
+variable {mG : MeasurableSpace G} [DiscreteMeasurableSpace G] [AddCommGroup G] [Fintype G]
+  {p : ℝ≥0∞}
+
+@[simp]
+lemma cLpNorm_translate [NormedAddCommGroup E] (a : G) (f : G → E) : ‖τ a f‖ₙ_[p] = ‖f‖ₙ_[p] := by
+  obtain p | p := p
+  · simp only [cLinftyNorm_eq_iSup_nnnorm, ENNReal.none_eq_top, translate_apply]
+    exact (Equiv.subRight _).iSup_congr fun _ ↦ rfl
+  obtain rfl | hp := eq_or_ne p 0
+  · simp only [cLpNorm_exponent_zero, translate_apply, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero,
+      Nat.cast_inj]
+  · simp only [cLpNorm_eq_expect_nnnorm hp, ENNReal.some_eq_coe, translate_apply]
+    congr 1
+    exact Fintype.expect_equiv (Equiv.subRight _) _ _ fun _ ↦ rfl
+
+@[simp] lemma cLpNorm_conjneg [RCLike E] (f : G → E) : ‖conjneg f‖ₙ_[p] = ‖f‖ₙ_[p] := by
+  simp only [conjneg, cLpNorm_conj]
+  obtain p | p := p
+  · simp only [cLinftyNorm_eq_iSup_nnnorm, ENNReal.none_eq_top, conjneg, RCLike.norm_conj]
+    exact (Equiv.neg _).iSup_congr fun _ ↦ rfl
+  obtain rfl | hp := eq_or_ne p 0
+  · simp only [cLpNorm_exponent_zero, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
+  · simp only [cLpNorm_eq_expect_nnnorm hp, ENNReal.some_eq_coe]
+    congr 1
+    exact Fintype.expect_equiv (Equiv.neg _) _ _ fun _ ↦ rfl
+
+lemma cLpNorm_translate_sum_sub_le [NormedAddCommGroup E] (hp : 1 ≤ p) {ι : Type*} (s : Finset ι)
+    (a : ι → G) (f : G → E) : ‖τ (∑ i ∈ s, a i) f - f‖ₙ_[p] ≤ ∑ i ∈ s, ‖τ (a i) f - f‖ₙ_[p] := by
+  induction' s using Finset.cons_induction with i s ih hs
+  · simp
+  calc
+    _ = ‖τ (∑ j ∈ s, a j) (τ (a i) f - f) + (τ (∑ j ∈ s, a j) f - f)‖ₙ_[p] := by
+        rw [sum_cons, translate_add', translate_sub_right, sub_add_sub_cancel]
+    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖ₙ_[p] + ‖(τ (∑ j ∈ s, a j) f - f)‖ₙ_[p] := cLpNorm_add_le hp
+    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖ₙ_[p] + ∑ j ∈ s, ‖(τ (a j) f - f)‖ₙ_[p] :=
+        add_le_add_left hs _
+    _ = _ := by rw [cLpNorm_translate, sum_cons]
+
+end cLpNorm
