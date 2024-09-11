@@ -17,7 +17,6 @@ import LeanAPAP.Mathlib.Algebra.Order.Ring.Defs
 import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
 import LeanAPAP.Mathlib.Data.Complex.Basic
@@ -33,9 +32,7 @@ import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
 import LeanAPAP.Mathlib.Order.CompleteLattice
-import LeanAPAP.Mathlib.Order.Filter.Basic
 import LeanAPAP.Mathlib.Order.Hom.Basic
-import LeanAPAP.Mathlib.Order.LiminfLimsup
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC

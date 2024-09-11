@@ -2,7 +2,6 @@ import Mathlib.Analysis.Normed.Group.Constructions
 import Mathlib.MeasureTheory.Integral.Bochner
 import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.Order.Module.Rat
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import LeanAPAP.Prereqs.Expect.Basic
 

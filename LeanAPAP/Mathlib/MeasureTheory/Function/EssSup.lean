@@ -1,7 +1,6 @@
 import Mathlib.MeasureTheory.Function.EssSup
 import Mathlib.Probability.ConditionalProbability
 import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
-import LeanAPAP.Mathlib.Order.LiminfLimsup
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal

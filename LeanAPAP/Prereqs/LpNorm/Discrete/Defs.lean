@@ -1,6 +1,5 @@
 import Mathlib.Data.Fintype.Order
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
-import LeanAPAP.Mathlib.Order.Filter.Basic
 import LeanAPAP.Prereqs.NNLpNorm
 
 /-!
