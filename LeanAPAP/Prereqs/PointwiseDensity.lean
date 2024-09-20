@@ -1,5 +1,5 @@
+import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 import Mathlib.Data.Finset.Density
-import Mathlib.Data.Finset.Pointwise.Basic
 
 open scoped Pointwise
 

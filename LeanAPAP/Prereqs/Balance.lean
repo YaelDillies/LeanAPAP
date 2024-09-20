@@ -1,4 +1,4 @@
-import LeanAPAP.Prereqs.Expect.Basic
+import Mathlib.Algebra.BigOperators.Expect
 
 /-!
 # Balancing a function

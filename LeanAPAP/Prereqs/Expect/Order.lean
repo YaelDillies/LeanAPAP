@@ -1,15 +1,9 @@
-import Mathlib.Data.Real.Basic
-import Mathlib.Algebra.Algebra.Rat
-import Mathlib.Algebra.BigOperators.GroupWithZero.Action
-import Mathlib.Algebra.BigOperators.Ring
-import Mathlib.Algebra.CharP.Defs
+import Mathlib.Algebra.BigOperators.Expect
 import Mathlib.Algebra.Module.Rat
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.Module.Rat
-import Mathlib.Data.Finset.Pointwise.Basic
-import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.NNRat.Order
-import LeanAPAP.Prereqs.Expect.Basic
+import Mathlib.Tactic.GCongr
 
 /-!
 # Order properties of the average over a finset
@@ -103,8 +97,9 @@ variable [LinearOrderedCommSemiring R] [ExistsAddOfLE R] [Module ℚ≥0 R] [Pos
 lemma expect_mul_sq_le_sq_mul_sq (s : Finset ι) (f g : ι → R) :
     (𝔼 i ∈ s, f i * g i) ^ 2 ≤ (𝔼 i ∈ s, f i ^ 2) * 𝔼 i ∈ s, g i ^ 2 := by
   simp only [expect, smul_pow, inv_pow, smul_mul_smul_comm, ← sq]
+  have : (0 : ℚ) ≤ (s.card ^ 2 : ℚ)⁻¹ := by positivity
   gcongr
-  exact sum_mul_sq_le_sq_mul_sq ..
+  exact sum_mul_sq_le_sq_mul_sq (R := R) ..
 
 end LinearOrderedCommSemiring
 end Finset
@@ -165,11 +160,11 @@ def evalFinsetExpect : PositivityExt where eval {u α} zα pα e := do
     | _, _ => pure .none
   | _ => throwError "not Finset.expect"
 
-example (n : ℕ) (a : ℕ → ℝ) : 0 ≤ 𝔼 j ∈ range n, a j^2 := by positivity
-example (a : ULift.{2} ℕ → ℝ) (s : Finset (ULift.{2} ℕ)) : 0 ≤ 𝔼 j ∈ s, a j^2 := by positivity
-example (n : ℕ) (a : ℕ → ℝ) : 0 ≤ 𝔼 j : Fin 8, 𝔼 i ∈ range n, (a j^2 + i ^ 2) := by positivity
-example (n : ℕ) (a : ℕ → ℝ) : 0 < 𝔼 j : Fin (n + 1), (a j^2 + 1) := by positivity
-example (a : ℕ → ℝ) : 0 < 𝔼 j ∈ ({1} : Finset ℕ), (a j^2 + 1) := by
+example (n : ℕ) (a : ℕ → ℚ) : 0 ≤ 𝔼 j ∈ range n, a j^2 := by positivity
+example (a : ULift.{2} ℕ → ℚ) (s : Finset (ULift.{2} ℕ)) : 0 ≤ 𝔼 j ∈ s, a j^2 := by positivity
+example (n : ℕ) (a : ℕ → ℚ) : 0 ≤ 𝔼 j : Fin 8, 𝔼 i ∈ range n, (a j^2 + i ^ 2) := by positivity
+example (n : ℕ) (a : ℕ → ℚ) : 0 < 𝔼 j : Fin (n + 1), (a j^2 + 1) := by positivity
+example (a : ℕ → ℚ) : 0 < 𝔼 j ∈ ({1} : Finset ℕ), (a j^2 + 1) := by
   have : Finset.Nonempty {1} := singleton_nonempty 1
   positivity
 

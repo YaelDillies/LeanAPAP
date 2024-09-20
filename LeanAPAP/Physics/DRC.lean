@@ -94,7 +94,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         (dconv_nonneg indicate_nonneg indicate_nonneg) _) fun _ ↦ by simp -- positivity
     refine Fintype.sum_pos $ this.gt_iff_ne.2 $ support_nonempty_iff.1 ?_
     simp only [support_comp_eq, Set.Nonempty, and_assoc, support_mul', support_dconv,
-      indicate_nonneg, mu_nonneg, support_indicate, support_mu, NNReal.coe_eq_zero, iff_self_iff,
+      indicate_nonneg, mu_nonneg, support_indicate, support_mu, NNReal.coe_eq_zero, iff_self,
       forall_const, Set.mem_inter_iff, ← coe_sub, mem_coe, support_pow' _ hp₀, hf]
   set A₁ := fun s ↦ B₁ ∩ c p A s
   set A₂ := fun s ↦ B₂ ∩ c p A s
@@ -111,7 +111,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         (2 * ∑ x, (μ B₁ ○ μ B₂) x * (𝟭_[ℝ] A ○ 𝟭 A) x ^ p * f x) by
     obtain ⟨s, -, hs⟩ := exists_lt_of_sum_lt this
     refine ⟨_, inter_subset_left (s₂ := c p A s), _, inter_subset_left (s₂ := c p A s), ?_⟩
-    simp only [indicate_apply, mem_filter, mem_univ, true_and_iff, boole_mul] at hs
+    simp only [indicate_apply, mem_filter, mem_univ, true_and, boole_mul] at hs
     split_ifs at hs with h; swap
     · simp only [zero_mul, dL2Inner_eq_sum, Function.comp_apply, RCLike.inner_apply,
         RCLike.conj_to_real] at hs
@@ -133,7 +133,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     all_goals exact Nat.cast_le.2 $ card_mono inter_subset_left
   rw [← sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ← sum_mul, mul_right_comm, ← hgB,
     mul_left_comm, ← mul_assoc]
-  simp only [indicate_apply, boole_mul, mem_filter, mem_univ, true_and_iff, ← sum_filter,
+  simp only [indicate_apply, boole_mul, mem_filter, mem_univ, true_and, ← sum_filter,
     mul_lt_mul_right hf, Function.comp_apply]
   by_cases h : ∀ s, g s ≠ 0 → M ^ 2 ≤ g s
   · rw [← sum_filter_ne_zero (s := filter _ _), Finset.filter_comm,
@@ -161,7 +161,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
           := mul_le_mul_of_nonneg_left
             (sum_sqrt_mul_sqrt_le _ fun i ↦ by positivity fun i ↦ by positivity) hM.le
       _ = _ := ?_
-  · simp only [mem_filter, mem_univ, true_and_iff, Nat.cast_nonneg, and_imp]
+  · simp only [mem_filter, mem_univ, true_and, Nat.cast_nonneg, and_imp]
     exact fun s hsM hs ↦ mul_lt_mul_of_pos_right ((sqrt_lt' hM).2 hsM) $
       sqrt_pos.2 $ (hg _).lt_of_ne' hs
   rw [sum_cast_c, sum_cast_c, sqrt_mul', sqrt_mul', mul_mul_mul_comm (sqrt _), mul_self_sqrt,

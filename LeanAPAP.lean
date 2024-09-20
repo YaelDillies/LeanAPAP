@@ -4,6 +4,7 @@ import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Algebra.BigOperators.Group.Finset
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Group.Basic
+import LeanAPAP.Mathlib.Algebra.Group.Pointwise.Finset
 import LeanAPAP.Mathlib.Algebra.Group.Subgroup.Basic
 import LeanAPAP.Mathlib.Algebra.Order.BigOperators.Group.Finset
 import LeanAPAP.Mathlib.Algebra.Order.Field.Defs
@@ -24,8 +25,8 @@ import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Operations
 import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Mathlib.Data.Finset.Density
-import LeanAPAP.Mathlib.Data.Finset.Pointwise.Basic
 import LeanAPAP.Mathlib.Data.Finset.Preimage
+import LeanAPAP.Mathlib.Data.Fintype.Basic
 import LeanAPAP.Mathlib.Data.Real.ConjExponents
 import LeanAPAP.Mathlib.Data.ZMod.Module
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup

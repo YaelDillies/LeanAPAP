@@ -34,7 +34,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : g ○ g = f) (hν : h ○ h = (↑
   have : ∀ x, ∀ yz ∈ univ.filter fun yz : G × G ↦ yz.1 - yz.2 = x,
     conj ((g ○ g) x) ^ k * (h yz.1 * conj (h yz.2)) =
       conj ((g ○ g) (yz.1 - yz.2)) ^ k * (h yz.1 * conj (h yz.2)) := by
-    simp only [mem_filter, mem_univ, true_and_iff]
+    simp only [mem_filter, mem_univ, true_and]
     rintro _ _ rfl
     rfl
   refine (sum_congr rfl fun _ _ ↦ sum_congr rfl $ this _).trans ?_
@@ -121,7 +121,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
       _ = (3 / 4) ^ p * ε ^ p * ∑ i in P \ T, (ν i : ℝ) := by rw [← sum_mul, mul_comm, mul_pow]
       _ ≤ 4⁻¹ * ε ^ p * ∑ i, (ν i : ℝ) := ?_
       _ = 4⁻¹ * ε ^ p := by norm_cast; simp [hν₁]
-    · simp only [mem_sdiff, mem_filter, mem_univ, true_and_iff, not_le, P, T] at hi
+    · simp only [mem_sdiff, mem_filter, mem_univ, true_and, not_le, P, T] at hi
       exact mul_le_mul_of_nonneg_left (pow_le_pow_left hi.1 hi.2.le _) (by positivity)
     · refine mul_le_mul (mul_le_mul_of_nonneg_right (le_trans (pow_le_pow_of_le_one ?_ ?_ hp) ?_)
         ?_) (sum_le_univ_sum_of_nonneg fun i ↦ ?_) ?_ ?_ <;>

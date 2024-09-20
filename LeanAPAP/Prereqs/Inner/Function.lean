@@ -1,4 +1,4 @@
-import LeanAPAP.Prereqs.Expect.Basic
+import Mathlib.Algebra.BigOperators.Expect
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Inner.Discrete.Defs
 

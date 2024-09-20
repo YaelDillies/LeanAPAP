@@ -1,8 +1,8 @@
 import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 import Mathlib.Algebra.Order.Field.Defs
 import Mathlib.Algebra.Star.Pi
-import Mathlib.Data.Finset.Pointwise.Basic
 import Mathlib.Data.Fintype.Lattice
 import Mathlib.Data.Nat.Cast.Order.Ring
 

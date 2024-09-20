@@ -1,5 +1,5 @@
+import Mathlib.Algebra.BigOperators.Expect
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
-import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Inner.Discrete.Defs
 
 open Finset hiding card

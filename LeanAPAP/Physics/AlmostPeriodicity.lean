@@ -200,7 +200,7 @@ lemma big_shifts (S : Finset G) (L : Finset (Fin k → G)) (hk : k ≠ 0)
     ∃ a : Fin k → G, a ∈ L ∧
       L.card * S.card ≤ (A + S).card ^ k * (univ.filter fun t : G ↦ (a - fun _ ↦ t) ∈ L).card := by
   rcases S.eq_empty_or_nonempty with (rfl | hS)
-  · simpa only [card_empty, mul_zero, zero_le', and_true_iff] using hL'
+  · simpa only [card_empty, mul_zero, zero_le', and_true] using hL'
   have hS' : 0 < S.card := by rwa [card_pos]
   have : (L + S.piDiag (Fin k)).card ≤ (A + S).card ^ k := by
     refine (card_le_card (add_subset_add_right hL)).trans ?_
@@ -421,7 +421,7 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
     exact T_bound hK₂ L.card S.card A.card (A + S).card _ rfl hL' this
       (by rw [← cast_addConst_mul_card]; gcongr) hA.card_pos hε hε' hm
   intro t ht
-  simp only [exists_prop, exists_eq_right, mem_filter, mem_univ, true_and_iff] at ht
+  simp only [exists_prop, exists_eq_right, mem_filter, mem_univ, true_and] at ht
   have := just_the_triangle_inequality ha ht hk.bot_lt hm
   rwa [neg_neg, mul_div_cancel₀ _ (two_ne_zero' ℝ)] at this
 

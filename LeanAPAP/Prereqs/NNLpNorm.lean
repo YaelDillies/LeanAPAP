@@ -1,9 +1,9 @@
+import Mathlib.Algebra.BigOperators.Expect
 import Mathlib.Analysis.Normed.Group.Constructions
 import Mathlib.MeasureTheory.Integral.Bochner
 import Mathlib.Tactic.Positivity.Finset
 import LeanAPAP.Mathlib.Algebra.Order.Module.Rat
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Prereqs.Expect.Basic
 
 open Filter
 open scoped BigOperators ComplexConjugate ENNReal NNReal

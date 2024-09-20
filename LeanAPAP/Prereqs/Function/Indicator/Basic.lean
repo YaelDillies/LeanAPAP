@@ -1,7 +1,8 @@
 import Mathlib.Algebra.AddTorsor
+import Mathlib.Algebra.BigOperators.Expect
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Data.Fintype.Lattice
-import LeanAPAP.Prereqs.Expect.Basic
+import Mathlib.Data.NNRat.Order
 import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 

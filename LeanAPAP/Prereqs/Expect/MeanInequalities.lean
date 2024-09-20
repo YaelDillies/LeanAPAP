@@ -1,5 +1,5 @@
+import Mathlib.Algebra.BigOperators.Expect
 import Mathlib.Analysis.MeanInequalities
-import LeanAPAP.Prereqs.Expect.Basic
 
 open Finset
 open scoped BigOperators

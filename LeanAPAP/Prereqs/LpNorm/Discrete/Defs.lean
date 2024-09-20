@@ -212,8 +212,6 @@ lemma norm_le_dLinftyNorm {i : α} : ‖f i‖ ≤ ‖f‖_[∞] := by
 @[simp] lemma dLpNorm_pos (hp : p ≠ 0) : 0 < ‖f‖_[p] ↔ f ≠ 0 :=
   pos_iff_ne_zero.trans (dLpNorm_eq_zero hp).not
 
-@[gcongr] lemma dLpNorm_mono_right (hpq : p ≤ q) : ‖f‖_[p] ≤ ‖f‖_[q] := sorry
-
 lemma dLpNorm_mono_real {g : α → ℝ} (h : ∀ x, ‖f x‖ ≤ g x) : ‖f‖_[p] ≤ ‖g‖_[p] :=
   nnLpNorm_mono_real .of_discrete h
 
