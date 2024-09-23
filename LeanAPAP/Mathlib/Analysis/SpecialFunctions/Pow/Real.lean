@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Algebra.Order.Field.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 namespace Real

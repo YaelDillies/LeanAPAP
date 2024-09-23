@@ -49,7 +49,7 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
   simp_rw [dL2Inner_eq_sum, cL2Inner_eq_expect, map_expect, map_mul, starRingEnd_self_apply,
     expect_mul, mul_expect, ← expect_sum_comm, mul_mul_mul_comm _ (conj $ f _), ← sum_mul, ←
     AddChar.inv_apply_eq_conj, ← map_neg_eq_inv, ← map_add_eq_mul, AddChar.sum_apply_eq_ite]
-  simp [add_neg_eq_zero, card_univ, Fintype.card_ne_zero, NNRat.smul_def (α := ℂ)]
+  simp [add_neg_eq_zero, card_univ, Fintype.card_ne_zero, NNRat.smul_def]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma dL2Norm_cft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
@@ -62,7 +62,7 @@ lemma cft_inversion (f : α → ℂ) (a : α) : ∑ ψ, cft f ψ * ψ a = f a :=
   classical simp_rw [cft, cL2Inner_eq_expect, expect_mul, ← expect_sum_comm, mul_right_comm _ (f _),
     ← sum_mul, ← AddChar.inv_apply_eq_conj, inv_mul_eq_div, ← map_sub_eq_div,
     AddChar.sum_apply_eq_ite, sub_eq_zero, ite_mul, zero_mul, Fintype.expect_ite_eq]
-  simp [add_neg_eq_zero, card_univ, NNRat.smul_def (α := ℂ), Fintype.card_ne_zero]
+  simp [add_neg_eq_zero, card_univ, NNRat.smul_def (K := ℂ), Fintype.card_ne_zero]
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma cft_inversion' (f : α → ℂ) : ∑ ψ, cft f ψ • ⇑ψ = f := by ext; simpa using cft_inversion _ _
@@ -115,8 +115,7 @@ lemma cft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime 
 
 @[simp] lemma cft_trivNChar [DecidableEq α] : cft (trivNChar : α → ℂ) = 1 := by
   ext
-  simp [trivChar_apply, cft_apply, cL2Inner_eq_expect, ← map_expect, card_univ,
-    NNRat.smul_def (α := ℂ)]
+  simp [trivChar_apply, cft_apply, cL2Inner_eq_expect, ← map_expect, card_univ, NNRat.smul_def]
 
 @[simp] lemma cft_one : cft (1 : α → ℂ) = trivChar :=
   dft_injective $ by classical rw [dft_trivChar, dft_cft, Pi.one_comp]
@@ -125,7 +124,7 @@ variable [DecidableEq α]
 
 @[simp] lemma cft_indicate_zero (s : Finset α) : cft (𝟭 s) 0 = s.dens := by
   simp only [cft_apply, cL2Inner_eq_expect, expect_indicate, AddChar.zero_apply, map_one, one_mul,
-    dens, NNRat.smul_def (α := ℂ), div_eq_inv_mul]
+    dens, NNRat.smul_def (K := ℂ), div_eq_inv_mul]
   simp
 
 lemma cft_cconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : cft (f ∗ₙ g) ψ = cft f ψ * cft g ψ := by

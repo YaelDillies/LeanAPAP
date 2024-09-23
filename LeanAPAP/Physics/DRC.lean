@@ -207,7 +207,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
     rw [sum_mu _ hA₁, sum_mu _ hA₂, one_mul]
   rw [div_le_iff₀ (dLpNorm_conv_pos hp₀.ne' hB hA), ← le_div_iff₀' (zero_lt_two' ℝ)]
   simp only [apply_ite NNReal.toReal, indicate_apply, NNReal.coe_one, NNReal.coe_zero, mul_boole,
-    sum_ite_mem, univ_inter, mul_div_right_comm]
+    Fintype.sum_ite_mem, mul_div_right_comm]
   calc
     ∑ x in (s p ε B₁ B₂ A)ᶜ, (μ B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p ≤
         ∑ x in (s p ε B₁ B₂ A)ᶜ,

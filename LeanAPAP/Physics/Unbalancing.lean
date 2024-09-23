@@ -149,7 +149,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
       _ ≤ sqrt (∑ i in T, ν i) * sqrt (∑ i in T, ν i * |(f ^ (2 * p)) i|) :=
         (sum_sqrt_mul_sqrt_le _ (fun i ↦ ?_) fun i ↦ ?_)
       _ ≤ sqrt (∑ i in T, ν i) * sqrt (∑ i, ν i * |(f ^ (2 * p)) i|) := by
-        gcongr; exact sum_le_univ_sum_of_nonneg fun i ↦ by positivity
+        gcongr; exact T.subset_univ
       _ = sqrt (∑ i in T, ν i) * ‖f‖_[2 * ↑p, ν] ^ p := ?_
       _ ≤ _ := by gcongr; exact mod_cast hf₁
     any_goals positivity

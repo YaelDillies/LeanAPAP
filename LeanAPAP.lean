@@ -1,13 +1,10 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
-import LeanAPAP.Mathlib.Algebra.BigOperators.Group.Finset
 import LeanAPAP.Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Mathlib.Algebra.Group.Basic
 import LeanAPAP.Mathlib.Algebra.Group.Pointwise.Finset
 import LeanAPAP.Mathlib.Algebra.Group.Subgroup.Basic
-import LeanAPAP.Mathlib.Algebra.Order.BigOperators.Group.Finset
-import LeanAPAP.Mathlib.Algebra.Order.Field.Defs
 import LeanAPAP.Mathlib.Algebra.Order.Floor
 import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled

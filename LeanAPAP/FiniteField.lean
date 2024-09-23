@@ -1,5 +1,4 @@
 import Mathlib.FieldTheory.Finite.Basic
-import LeanAPAP.Mathlib.Algebra.Order.BigOperators.Group.Finset
 import LeanAPAP.Mathlib.Algebra.Group.Subgroup.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Cast
