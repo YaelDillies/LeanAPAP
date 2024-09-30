@@ -1,5 +1,5 @@
 import Mathlib.Algebra.BigOperators.Expect
-import LeanAPAP.Mathlib.Algebra.Group.AddChar
+import Mathlib.Algebra.Group.AddChar
 import LeanAPAP.Prereqs.Inner.Discrete.Defs
 
 open Finset hiding card
@@ -25,7 +25,7 @@ variable [Fintype G] [Semifield R] [IsDomain R] [CharZero R] {ψ : AddChar G R}
 
 lemma expect_eq_ite (ψ : AddChar G R) : 𝔼 a, ψ a = if ψ = 0 then 1 else 0 := by
   split_ifs with h
-  · simp [h, card_univ, univ_nonempty]
+  · simp [h, card_univ]
   obtain ⟨x, hx⟩ := ne_one_iff.1 h
   refine eq_zero_of_mul_eq_self_left hx ?_
   rw [Finset.mul_expect]

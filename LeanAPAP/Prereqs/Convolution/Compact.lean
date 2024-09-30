@@ -1,6 +1,5 @@
-import LeanAPAP.Mathlib.Data.Fintype.Basic
+import LeanAPAP.Prereqs.Balance.Defs
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
-import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 

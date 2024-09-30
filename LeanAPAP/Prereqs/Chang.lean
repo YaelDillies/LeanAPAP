@@ -1,6 +1,5 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalities
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.LargeSpec

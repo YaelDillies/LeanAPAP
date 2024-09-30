@@ -1,17 +1,10 @@
 import Mathlib.FieldTheory.Finite.Basic
-import LeanAPAP.Mathlib.Algebra.Group.Subgroup.Basic
 import LeanAPAP.Mathlib.Algebra.Order.Ring.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Ring.Cast
-import LeanAPAP.Mathlib.Algebra.Order.Ring.Defs
-import LeanAPAP.Mathlib.Combinatorics.Additive.FreimanHom
-import LeanAPAP.Mathlib.Data.Finset.Density
-import LeanAPAP.Mathlib.Data.Finset.Preimage
-import LeanAPAP.Mathlib.Data.ZMod.Module
+import LeanAPAP.Prereqs.Balance.Complex
 import LeanAPAP.Prereqs.Chang
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.FourierTransform.Convolution
 import LeanAPAP.Prereqs.Inner.Function
-import LeanAPAP.Prereqs.PointwiseDensity
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
@@ -22,7 +15,7 @@ import LeanAPAP.Physics.Unbalancing
 
 set_option linter.haveLet 0
 
-attribute [-simp] div_pow Real.log_inv
+attribute [-simp] Real.log_inv
 
 open FiniteDimensional Fintype Function Real MeasureTheory
 open Finset hiding card
@@ -188,10 +181,10 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
         _ ≤ 2 ^ 12 * 𝓛 α * (2 * 𝓛 α) * (2 ^ 3 * 𝓛 (ε * α)) ^ 2 / ε ^ 2 := by
           gcongr
           · exact le_add_of_nonneg_left zero_le_one
-          · exact (Int.ceil_lt_two_mul $ one_le_curlog hα₀.le hα₁).le
+          · exact Int.ceil_le_two_mul <| two_inv_lt_one.le.trans <| one_le_curlog hα₀.le hα₁
           · calc
               k ≤ 2 * 𝓛 (ε * α / 4) :=
-                (Nat.ceil_lt_two_mul $ one_le_curlog (by positivity) sorry).le
+                Nat.ceil_le_two_mul <| two_inv_lt_one.le.trans <| one_le_curlog (by positivity) sorry
               _ ≤ 2 * (4 * 𝓛 (ε * α)) := by
                 gcongr
                 exact curlog_div_le (by positivity) (mul_le_one hε₁ hα₀.le hα₁) (by norm_num)
@@ -211,11 +204,14 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
         · calc
             exp 1 ^ 2 ≤ 2.7182818286 ^ 2 := by gcongr; exact exp_one_lt_d9.le
             _ ≤ 2 ^ 3 := by norm_num
-        · exact (Nat.ceil_lt_two_mul $ one_le_curlog (by positivity) $ mod_cast T.dens_le_one).le
+        · exact Nat.ceil_le_two_mul <| two_inv_lt_one.le.trans <|
+            one_le_curlog (by positivity) <| mod_cast T.dens_le_one
       _ = ⌈2 ^ 11 * 𝓛 T.dens⌉₊ := by ring_nf
-      _ ≤ 2 * (2 ^ 11 * 𝓛 T.dens) :=
-        (Nat.ceil_lt_two_mul $ one_le_mul_of_one_le_of_one_le (by norm_num) $
-          one_le_curlog (by positivity) $ mod_cast T.dens_le_one).le
+      _ ≤ 2 * (2 ^ 11 * 𝓛 T.dens) := Nat.ceil_le_two_mul <|
+          calc
+            (2⁻¹ : ℝ) ≤ 2 ^ 11 * 1 := by norm_num
+            _ ≤ 2 ^ 11 * 𝓛 T.dens := by
+              gcongr; exact one_le_curlog (by positivity) $ mod_cast T.dens_le_one
       _ = 2 ^ 12 * 𝓛 T.dens := by ring
       _ ≤ 2 ^ 12 * (1 + 2 ^ 19 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2) := by gcongr
       _ ≤ 2 ^ 12 * (2 ^ 19 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 +
@@ -284,12 +280,16 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
         gcongr
         · assumption
         · norm_num
-        · exact (Nat.ceil_lt_two_mul ‹_›).le
+        · exact Nat.ceil_le_two_mul <| two_inv_lt_one.le.trans ‹_›
       _ = 2 * ⌈2 ^ 15 * ε⁻¹ ^ 3 * 𝓛 γ⌉₊ := by ring_nf
       _ ≤ 2 * (2 * (2 ^ 15 * ε⁻¹ ^ 3 * 𝓛 γ)) := by
         gcongr
-        exact (Nat.ceil_lt_two_mul $ one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le
-          (by norm_num) $ one_le_pow₀ (one_le_inv hε₀ hε₁.le) _) ‹_›).le
+        refine Nat.ceil_le_two_mul ?_
+        calc
+          (2⁻¹ : ℝ) ≤ 2 ^ 15 * 1 * 1 := by norm_num
+          _ ≤ 2 ^ 15 * ε⁻¹ ^ 3 * 𝓛 γ := ?_
+        gcongr
+        exact one_le_pow₀ (one_le_inv hε₀ hε₁.le) _
       _ = 2 ^ 17 * 𝓛 γ / ε ^ 3 := by ring
   obtain ⟨A₁, A₂, hA, hA₁, hA₂⟩ : ∃ (A₁ A₂ : Finset G),
       1 - ε / 32 ≤ ∑ x ∈ s q' (ε / 16) univ univ A, (μ A₁ ○ μ A₂) x ∧

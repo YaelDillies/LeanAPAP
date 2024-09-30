@@ -1,11 +1,10 @@
+import Mathlib.Algebra.Order.BigOperators.Expect
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Data.Finset.Density
 import Mathlib.Data.Fintype.Order
 import Mathlib.Probability.ConditionalProbability
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
-import LeanAPAP.Prereqs.Expect.Basic
 import LeanAPAP.Prereqs.Expect.Complex
-import LeanAPAP.Prereqs.Expect.Order
 import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.NNLpNorm

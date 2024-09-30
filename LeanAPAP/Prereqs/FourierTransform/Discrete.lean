@@ -1,5 +1,6 @@
 import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
+import LeanAPAP.Prereqs.Balance.Defs
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Inner.Compact

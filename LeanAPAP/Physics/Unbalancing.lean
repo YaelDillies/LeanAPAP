@@ -1,7 +1,5 @@
 import Mathlib.Algebra.Order.Group.PosPart
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Mathlib.Algebra.Order.Floor
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Log.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Complex
@@ -217,10 +215,19 @@ lemma unbalancing' (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁
   · calc
       (⌈120 / ε * log (3 / ε) * p⌉₊ : ℝ)
         = ⌈120 * ε⁻¹ * log (3 * ε⁻¹) * p⌉₊ := by simp [div_eq_mul_inv]
-      _ ≤ 2 * (120 * ε⁻¹ * log (3 * ε⁻¹) * p) :=
-        (Nat.ceil_lt_two_mul $ one_le_mul_of_one_le_of_one_le
-          (one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le (by norm_num) $
-            one_le_inv hε₀ hε₁) $ sorry) $ by simpa [Nat.one_le_iff_ne_zero]).le
+      _ ≤ 2 * (120 * ε⁻¹ * log (3 * ε⁻¹) * p) := Nat.ceil_le_two_mul <|
+        calc
+          (2⁻¹ : ℝ) ≤ 120 * 1 * 1 * 1 := by norm_num
+          _ ≤ 120 * ε⁻¹ * log (3 * ε⁻¹) * p := by
+            gcongr
+            · exact one_le_inv hε₀ hε₁
+            · rw [← log_exp 1]
+              gcongr
+              calc
+                exp 1 ≤ 2.7182818286 := exp_one_lt_d9.le
+                _ ≤ 3 * 1 := by norm_num
+                _ ≤ 3 * ε⁻¹ := by gcongr; exact one_le_inv hε₀ hε₁
+            · exact mod_cast hp
       _ ≤ 2 * (120 * ε⁻¹ * (3 * ε⁻¹) * p) := by gcongr; exact Real.log_le_self (by positivity)
       _ ≤ 2 * (2 ^ 7 * ε⁻¹ * (2 ^ 2 * ε⁻¹) * p) := by gcongr <;> norm_num
       _ = 2 ^ 10 * ε⁻¹ ^ 2 * p := by ring

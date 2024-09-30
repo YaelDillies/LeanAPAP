@@ -1,8 +1,8 @@
 import Mathlib.Algebra.BigOperators.Expect
+import Mathlib.Algebra.Order.Module.Rat
 import Mathlib.Analysis.Normed.Group.Constructions
 import Mathlib.MeasureTheory.Integral.Bochner
 import Mathlib.Tactic.Positivity.Finset
-import LeanAPAP.Mathlib.Algebra.Order.Module.Rat
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 
 open Filter

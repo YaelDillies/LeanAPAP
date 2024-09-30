@@ -38,7 +38,7 @@ lemma balance_apply (f : ι → α) (x : ι) : balance f x = f x - 𝔼 y, f y :
 @[simp] lemma expect_balance (f : ι → α) : 𝔼 x, balance f x = 0 := by simp [expect]
 
 @[simp] lemma balance_idem (f : ι → α) : balance (balance f) = balance f := by
-  cases isEmpty_or_nonempty ι <;> ext x <;> simp [balance, expect_sub_distrib, univ_nonempty]
+  cases isEmpty_or_nonempty ι <;> ext x <;> simp [balance, expect_sub_distrib]
 
 @[simp] lemma map_balance {F : Type*} [FunLike F α β] [LinearMapClass F ℚ≥0 α β] (g : F) (f : ι → α)
     (a : ι) : g (balance f a) = balance (g ∘ f) a := by simp [balance, map_expect]

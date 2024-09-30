@@ -26,7 +26,7 @@ lemma cLpNorm_cconv_le_cLpNorm_cdconv (hn₀ : n ≠ 0) (hn : Even n) (f : G →
   · simp only [NNReal.val_eq_coe]
     push_cast
     rw [← cft_inversion' (f ∗ₙ f), cLpNorm_two_mul_sum_pow hn₀]
-    simp_rw [cft_cconv_apply, ← sq, Fintype.sum_prod_type, mul_expect]
+    simp_rw [cft_cconv_apply, ← sq, Fintype.sum_prod_type, mul_expect, AddChar.sub_apply]
     simp [mul_mul_mul_comm, mul_comm, map_neg_eq_conj, prod_mul_distrib]
   · simp only [NNReal.val_eq_coe]
     push_cast
@@ -41,10 +41,10 @@ lemma cLpNorm_cconv_le_cLpNorm_cdconv (hn₀ : n ≠ 0) (hn : Even n) (f : G →
     congr 1
     calc
       𝔼 x, (∏ i, conj (ψ i x)) * ∏ i, φ i x = 𝔼 x, (∑ i, φ i - ∑ i, ψ i) x := by
-        simp [map_neg_eq_conj, mul_comm]
-      _ = ‖𝔼 x, (∑ i, φ i - ∑ i, ψ i) x‖ := by simp [expect_eq_ite, -sub_apply, apply_ite]
+        simp [map_neg_eq_conj, mul_comm, AddChar.sub_apply]
+      _ = ‖𝔼 x, (∑ i, φ i - ∑ i, ψ i) x‖ := by simp [expect_eq_ite, apply_ite]
       _ = ‖𝔼 x, (∏ i, φ i x) * ∏ i, (ψ i) (-x)‖ := by
-        simp [map_neg_eq_conj, mul_comm]
+        simp [map_neg_eq_conj, mul_comm, AddChar.sub_apply]
 
 lemma dLpNorm_conv_le_dLpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : G → ℂ) :
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := sorry

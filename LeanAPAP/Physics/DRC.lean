@@ -122,7 +122,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     have : (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / A.card ^ (2 * p)
       ≤ (A₁ s).card / B₁.card * ((A₂ s).card / B₂.card) := by
       rw [div_mul_div_comm, le_div_iff₀]
-      simpa [hg_def, hM_def, mul_pow, pow_mul', show (2 : ℝ) ^ 2 = 4 by norm_num,
+      simpa [hg_def, hM_def, mul_pow, div_pow, pow_mul', show (2 : ℝ) ^ 2 = 4 by norm_num,
         mul_div_right_comm] using h
       positivity
     refine ⟨(lt_of_mul_lt_mul_left (hs.trans_eq' ?_) $ hg s).le, this.trans $ mul_le_of_le_one_right
@@ -258,7 +258,7 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
         _ ≤ _ := wLpNorm_mono_right (one_le_two.trans $ by norm_cast) _ _
       · exact Nat.cast_pos.2 hA.card_pos
     obtain ⟨A₁, -, A₂, -, h, hcard₁, hcard₂⟩ :=
-      sifting univ univ hε hε₁ hδ hp hp₂ hpε (by simp [univ_nonempty]) hA (by simpa)
+      sifting univ univ hε hε₁ hδ hp hp₂ hpε (by simp) hA (by simpa)
     exact ⟨A₁, A₂, h, this.trans $ by simpa [nnratCast_dens] using hcard₁,
       this.trans $ by simpa [nnratCast_dens] using hcard₂⟩
   · refine ⟨A, A, ?_, ?_⟩

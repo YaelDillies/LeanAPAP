@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Additive.DoublingConst
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Pow.Real
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Expect.Complex
@@ -451,7 +450,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
           calc
             _ ≤ 2.7182818286 ^ 2 := pow_le_pow_left (by positivity) exp_one_lt_d9.le _
             _ ≤ _ := by norm_num
-      _ = _ := by simp [div_div_eq_mul_div, ← mul_div_right_comm, mul_right_comm]
+      _ = _ := by simp [div_div_eq_mul_div, ← mul_div_right_comm, mul_right_comm, div_pow]
       _ ≤ _ := hKT
   set F : G → ℂ := τ t (μ A ∗ 𝟭 B) - μ A ∗ 𝟭 B
   have (x) :=
