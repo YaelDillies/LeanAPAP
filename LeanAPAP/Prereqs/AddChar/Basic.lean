@@ -1,10 +1,10 @@
 import Mathlib.Algebra.BigOperators.Expect
 import Mathlib.Algebra.Group.AddChar
-import LeanAPAP.Prereqs.Inner.Discrete.Defs
+import LeanAPAP.Prereqs.Inner.Weighted
 
 open Finset hiding card
 open Fintype (card)
-open Function MeasureTheory
+open Function RCLike
 open scoped BigOperators ComplexConjugate DirectSum
 
 variable {G H R : Type*}
@@ -12,13 +12,6 @@ variable {G H R : Type*}
 namespace AddChar
 section AddGroup
 variable [AddGroup G]
-section RCLike
-variable [RCLike R]
-
-protected lemma dL2Inner_self [Fintype G] (ψ : AddChar G R) :
-    ⟪(ψ : G → R), ψ⟫_[R] = Fintype.card G := dL2Inner_self_of_norm_eq_one ψ.norm_apply
-
-end RCLike
 
 section Semifield
 variable [Fintype G] [Semifield R] [IsDomain R] [CharZero R] {ψ : AddChar G R}
@@ -37,6 +30,14 @@ lemma expect_eq_zero_iff_ne_zero : 𝔼 x, ψ x = 0 ↔ ψ ≠ 0 := by
 lemma expect_ne_zero_iff_eq_zero : 𝔼 x, ψ x ≠ 0 ↔ ψ = 0 := expect_eq_zero_iff_ne_zero.not_left
 
 end Semifield
+
+section RCLike
+variable [RCLike R] [Fintype G]
+
+lemma wInner_compact_self (ψ : AddChar G R) : ⟪(ψ : G → R), ψ⟫ₙ_[R] = 1 := by
+  simp [wInner_compact_eq_expect, ψ.norm_apply, RCLike.conj_mul]
+
+end RCLike
 end AddGroup
 
 section AddCommGroup
@@ -45,26 +46,26 @@ variable [AddCommGroup G]
 section RCLike
 variable [RCLike R] {ψ₁ ψ₂ : AddChar G R}
 
-lemma dL2Inner_eq [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
-    ⟪(ψ₁ : G → R), ψ₂⟫_[R] = if ψ₁ = ψ₂ then ↑(card G) else 0 := by
+lemma wInner_compact_eq_boole [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
+    ⟪(ψ₁ : G → R), ψ₂⟫ₙ_[R] = if ψ₁ = ψ₂ then 1 else 0 := by
   split_ifs with h
-  · rw [h, AddChar.dL2Inner_self]
+  · rw [h, wInner_compact_self]
   have : ψ₁⁻¹ * ψ₂ ≠ 1 := by rwa [Ne, inv_mul_eq_one]
-  simp_rw [dL2Inner_eq_sum, ← inv_apply_eq_conj]
-  simpa [map_neg_eq_inv] using sum_eq_zero_iff_ne_zero.2 this
+  simp_rw [wInner_compact_eq_expect, RCLike.inner_apply, ← inv_apply_eq_conj]
+  simpa [map_neg_eq_inv] using expect_eq_zero_iff_ne_zero.2 this
 
-lemma dL2Inner_eq_zero_iff_ne [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫_[R] = 0 ↔ ψ₁ ≠ ψ₂ := by
-  rw [dL2Inner_eq, Ne.ite_eq_right_iff (Nat.cast_ne_zero.2 Fintype.card_ne_zero)]
+lemma wInner_compact_eq_zero_iff_ne [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫ₙ_[R] = 0 ↔ ψ₁ ≠ ψ₂ := by
+  rw [wInner_compact_eq_boole, one_ne_zero.ite_eq_right_iff]
 
-lemma dL2Inner_eq_card_iff_eq [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫_[R] = card G ↔ ψ₁ = ψ₂ := by
-  rw [dL2Inner_eq, Ne.ite_eq_left_iff (Nat.cast_ne_zero.2 Fintype.card_ne_zero)]
+lemma wInner_compact_eq_one_iff_eq [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫ₙ_[R] = 1 ↔ ψ₁ = ψ₂ := by
+  rw [wInner_compact_eq_boole, one_ne_zero.ite_eq_left_iff]
 
 variable (G R)
 
 protected lemma linearIndependent [Finite G] : LinearIndependent R ((⇑) : AddChar G R → G → R) := by
   cases nonempty_fintype G
-  exact linearIndependent_of_ne_zero_of_dL2Inner_eq_zero AddChar.coe_ne_zero fun ψ₁ ψ₂ ↦
-    dL2Inner_eq_zero_iff_ne.2
+  exact linearIndependent_of_ne_zero_of_wInner_compact_eq_zero AddChar.coe_ne_zero fun ψ₁ ψ₂ ↦
+    wInner_compact_eq_zero_iff_ne.2
 
 noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
   @Fintype.ofFinite _ (AddChar.linearIndependent G R).finite

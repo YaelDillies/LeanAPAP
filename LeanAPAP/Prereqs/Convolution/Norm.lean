@@ -1,8 +1,8 @@
 import Mathlib.Algebra.Order.Star.Conjneg
 import Mathlib.Data.Real.StarOrdered
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
+import LeanAPAP.Prereqs.Inner.Weighted
 import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
-import LeanAPAP.Prereqs.Inner.Discrete.Defs
 
 /-!
 # Norm of a convolution
@@ -11,50 +11,52 @@ This file characterises the L1-norm of the convolution of two functions and prov
 convolution inequality.
 -/
 
-open Finset Function Real MeasureTheory
+open Finset Function MeasureTheory RCLike Real
 open scoped ComplexConjugate ENNReal NNReal Pointwise
 
-variable {α β : Type*} [Fintype α] [DecidableEq α] [AddCommGroup α]
+variable {ι 𝕜 : Type*} [Fintype ι] [DecidableEq ι] [AddCommGroup ι]
 
 section RCLike
-variable [RCLike β] {p : ℝ≥0∞}
+variable [RCLike 𝕜] {p : ℝ≥0∞}
 
-lemma conv_eq_dL2Inner (f g : α → β) (a : α) : (f ∗ g) a = ⟪conj f, τ a fun x ↦ g (-x)⟫_[β] := by
-  simp [dL2Inner_eq_sum, conv_eq_sum_sub', map_sum]
+lemma conv_eq_wInner_one (f g : ι → 𝕜) (a : ι) : (f ∗ g) a = ⟪conj f, τ a fun x ↦ g (-x)⟫_[𝕜] := by
+  simp [wInner_one_eq_sum, conv_eq_sum_sub', map_sum]
 
-lemma dconv_eq_dL2Inner (f g : α → β) (a : α) : (f ○ g) a = conj ⟪f, τ a g⟫_[β] := by
-  simp [dL2Inner_eq_sum, dconv_eq_sum_sub', map_sum]
+lemma dconv_eq_wInner_one (f g : ι → 𝕜) (a : ι) : (f ○ g) a = conj ⟪f, τ a g⟫_[𝕜] := by
+  simp [wInner_one_eq_sum, dconv_eq_sum_sub', map_sum]
 
-lemma dL2Inner_dconv (f g h : α → β) : ⟪f, g ○ h⟫_[β] = ⟪conj g, conj f ∗ conj h⟫_[β] := by
+lemma wInner_one_dconv (f g h : ι → 𝕜) : ⟪f, g ○ h⟫_[𝕜] = ⟪conj g, conj f ∗ conj h⟫_[𝕜] := by
   calc
     _ = ∑ b, ∑ a, g a * conj (h b) * conj (f (a - b)) := by
-      simp_rw [dL2Inner, mul_comm _ ((_ ○ _) _), sum_dconv_mul]; exact sum_comm
+      simp_rw [wInner_one_eq_sum, inner_apply, mul_comm _ ((_ ○ _) _), sum_dconv_mul]
+      exact sum_comm
     _ = ∑ b, ∑ a, conj (f a) * conj (h b) * g (a + b) := by
       simp_rw [← Fintype.sum_prod_type']
       exact Fintype.sum_equiv ((Equiv.refl _).prodShear Equiv.subRight) _ _
         (by simp [mul_rotate, mul_right_comm])
     _ = _ := by
-      simp_rw [dL2Inner, mul_comm _ ((_ ∗ _) _), sum_conv_mul, Pi.conj_apply, RCLike.conj_conj]
+      simp_rw [wInner_one_eq_sum, inner_apply, mul_comm _ ((_ ∗ _) _), sum_conv_mul, Pi.conj_apply,
+        RCLike.conj_conj]
       exact sum_comm
 
-lemma dL2Inner_conv (f g h : α → β) : ⟪f, g ∗ h⟫_[β] = ⟪conj g, conj f ○ conj h⟫_[β] := by
-  simp_rw [dL2Inner_dconv, RCLike.conj_conj]
+lemma wInner_one_conv (f g h : ι → 𝕜) : ⟪f, g ∗ h⟫_[𝕜] = ⟪conj g, conj f ○ conj h⟫_[𝕜] := by
+  simp_rw [wInner_one_dconv, RCLike.conj_conj]
 
-lemma dconv_dL2Inner (f g h : α → β) : ⟪f ○ g, h⟫_[β] = ⟪conj h ∗ conj g, conj f⟫_[β] := by
-  rw [dL2Inner_anticomm, dL2Inner_anticomm (_ ∗ _), conj_dconv, dL2Inner_dconv]; simp
+lemma dconv_wInner_one (f g h : ι → 𝕜) : ⟪f ○ g, h⟫_[𝕜] = ⟪conj h ∗ conj g, conj f⟫_[𝕜] := by
+  rw [← conj_wInner_symm, wInner_one_dconv, conj_wInner_symm]
 
-lemma conv_dL2Inner (f g h : α → β) : ⟪f ∗ g, h⟫_[β] = ⟪conj h ○ conj g, conj f⟫_[β] := by
-  rw [dL2Inner_anticomm, dL2Inner_anticomm (_ ○ _), conj_conv, dL2Inner_conv]; simp
+lemma conv_wInner_one (f g h : ι → 𝕜) : ⟪f ∗ g, h⟫_[𝕜] = ⟪conj h ○ conj g, conj f⟫_[𝕜] := by
+  rw [← conj_wInner_symm, wInner_one_conv, conj_wInner_symm]
 
-lemma dconv_dL2Inner_eq_dL2Inner_conv (f g h : α → β) : ⟪f ○ g, h⟫_[β] = ⟪f, h ∗ g⟫_[β] := by
-  rw [dconv_dL2Inner, ← conj_conv, ← dL2Inner_anticomm]
+lemma dconv_wInner_one_eq_wInner_one_conv (f g h : ι → 𝕜) : ⟪f ○ g, h⟫_[𝕜] = ⟪f, h ∗ g⟫_[𝕜] := by
+  rw [dconv_wInner_one]; simp [wInner_one_eq_sum, mul_comm]
 
-lemma dL2Inner_dconv_eq_conv_dL2Inner (f g h : α → β) : ⟪f, h ○ g⟫_[β] = ⟪f ∗ g, h⟫_[β] := by
-  rw [dL2Inner_dconv, ← conj_conv, ← dL2Inner_anticomm]
+lemma wInner_one_dconv_eq_conv_wInner_one (f g h : ι → 𝕜) : ⟪f, h ○ g⟫_[𝕜] = ⟪f ∗ g, h⟫_[𝕜] := by
+  rw [wInner_one_dconv]; simp [wInner_one_eq_sum, mul_comm]
 
-variable [MeasurableSpace α] [DiscreteMeasurableSpace α]
+variable [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
 
-@[simp] lemma dLpNorm_trivChar (hp : p ≠ 0) : ‖(trivChar : α → β)‖_[p] = 1 := by
+@[simp] lemma dLpNorm_trivChar (hp : p ≠ 0) : ‖(trivChar : ι → 𝕜)‖_[p] = 1 := by
   obtain _ | p := p
   · simp only [ENNReal.none_eq_top, dLinftyNorm_eq_iSup_nnnorm, trivChar_apply, apply_ite, nnnorm_one,
       nnnorm_zero]
@@ -63,7 +65,7 @@ variable [MeasurableSpace α] [DiscreteMeasurableSpace α]
     simp [dLpNorm_eq_sum_nnnorm hp, apply_ite, hp]
 
 /-- A special case of **Young's convolution inequality**. -/
-lemma dLpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] := by
+lemma dLpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : ι → 𝕜) : ‖f ∗ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] := by
   obtain rfl | hp := hp.eq_or_lt
   · simp_rw [ENNReal.coe_one, dL1Norm_eq_sum_nnnorm, sum_mul_sum, conv_eq_sum_sub']
     calc
@@ -116,15 +118,15 @@ lemma dLpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ∗ 
     positivity
 
 /-- A special case of **Young's convolution inequality**. -/
-lemma dLpNorm_dconv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : α → β) : ‖f ○ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] := by
+lemma dLpNorm_dconv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : ι → 𝕜) : ‖f ○ g‖_[p] ≤ ‖f‖_[p] * ‖g‖_[1] := by
   simpa only [conv_conjneg, dLpNorm_conjneg] using dLpNorm_conv_le hp f (conjneg g)
 
 end RCLike
 
 section Real
-variable [MeasurableSpace α] [DiscreteMeasurableSpace α] {f g : α → ℝ} {n : ℕ}
+variable [MeasurableSpace ι] [DiscreteMeasurableSpace ι] {f g : ι → ℝ} {n : ℕ}
 
---TODO: Include `f : α → ℂ`
+--TODO: Include `f : ι → ℂ`
 lemma dL1Norm_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f ∗ g‖_[1] = ‖f‖_[1] * ‖g‖_[1] := by
   ext
   have : ∀ x, 0 ≤ ∑ y, f y * g (x - y) := fun x ↦ sum_nonneg fun y _ ↦ mul_nonneg (hf _) (hg _)

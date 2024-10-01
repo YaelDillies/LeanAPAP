@@ -3,7 +3,7 @@ import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Complex
-import LeanAPAP.Prereqs.Inner.Discrete.Defs
+import LeanAPAP.Prereqs.Inner.Weighted
 import LeanAPAP.Prereqs.LpNorm.Weighted
 
 /-!
@@ -12,7 +12,7 @@ import LeanAPAP.Prereqs.LpNorm.Weighted
 
 open Finset hiding card
 open Fintype (card)
-open Function Real MeasureTheory
+open Function MeasureTheory RCLike Real
 open scoped ComplexConjugate ComplexOrder NNReal ENNReal
 
 variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
@@ -20,12 +20,12 @@ variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg' {f : G → ℂ} (hf : g ○ g = f) (hν : h ○ h = (↑) ∘ ν) (k : ℕ) :
-    (0 : ℂ) ≤ ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] := by
+    0 ≤ ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] := by
   suffices
     ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] = ∑ z : Fin k → G, (‖∑ x, (∏ i, conj (g (x + z i))) * h x‖ : ℂ) ^ 2 by
     rw [this]
     positivity
-  rw [← hf, ← hν, dL2Inner_eq_sum]
+  rw [← hf, ← hν, wInner_one_eq_sum]
   simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
   simp_rw [dconv_apply h, mul_sum]
   --TODO: Please make `conv` work here :(
@@ -50,7 +50,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : g ○ g = f) (hν : h ○ h = (↑
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg {f : G → ℝ} (hf : g ○ g = (↑) ∘ f) (hν : h ○ h = (↑) ∘ ν) (k : ℕ) :
     (0 : ℝ) ≤ ⟪(↑) ∘ ν, f ^ k⟫_[ℝ] := by
-  simpa [← Complex.zero_le_real, dL2Inner_eq_sum, mul_comm] using pow_inner_nonneg' hf hν k
+  simpa [← Complex.zero_le_real, wInner_one_eq_sum, mul_comm] using pow_inner_nonneg' hf hν k
 
 private lemma log_ε_pos (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) : 0 < log (3 / ε) :=
   log_pos $ (one_lt_div hε₀).2 $ hε₁.trans_lt $ by norm_num
@@ -99,7 +99,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
       refine sum_congr rfl fun i _ ↦ ?_
       rw [← abs_of_nonneg ((Nat.Odd.sub_odd hp₁ odd_one).pow_nonneg $ f _), abs_pow,
         pow_sub_one_mul hp₁.pos.ne', NNReal.smul_def, smul_eq_mul]
-    · simp [dL2Inner_eq_sum, ← sum_add_distrib, ← mul_add, ← pow_sub_one_mul hp₁.pos.ne' (f _),
+    · simp [wInner_one_eq_sum, ← sum_add_distrib, ← mul_add, ← pow_sub_one_mul hp₁.pos.ne' (f _),
         mul_sum, mul_left_comm (2 : ℝ), add_abs_eq_two_nsmul_posPart]
   set P := univ.filter fun i ↦ 0 ≤ f i
   set T := univ.filter fun i ↦ 3 / 4 * ε ≤ f i

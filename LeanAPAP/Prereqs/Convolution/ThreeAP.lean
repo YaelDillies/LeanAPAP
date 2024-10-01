@@ -2,23 +2,23 @@ import Mathlib.Combinatorics.Additive.AP.Three.Defs
 import Mathlib.Data.Real.StarOrdered
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Defs
-import LeanAPAP.Prereqs.Inner.Discrete.Defs
+import LeanAPAP.Prereqs.Inner.Weighted
 
 /-!
 # The convolution characterisation of 3AP-free sets
 -/
 
-open Finset Fintype Function MeasureTheory
+open Finset Fintype Function RCLike
 open scoped Pointwise
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {s : Finset G}
 
-lemma ThreeAPFree.dL2Inner_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
+lemma ThreeAPFree.wInner_one_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
     (hs : ThreeAPFree (s : Set G)) :
-    ⟪μ s ∗ μ s, μ (s.image (2 • ·))⟫_[ℝ] = (s.card ^ 2 : ℝ)⁻¹ := by
+    ⟪μ_[ℝ] s ∗ μ s, μ (s.image (2 • ·))⟫_[ℝ] = (s.card ^ 2 : ℝ)⁻¹ := by
   obtain rfl | hs' := s.eq_empty_or_nonempty
   · simp
-  simp only [dL2Inner_eq_sum, sum_conv_mul, ← sum_product', RCLike.conj_to_real]
+  simp only [wInner_one_eq_sum, inner_apply, sum_conv_mul, ← sum_product', RCLike.conj_to_real]
   rw [← diag_union_offDiag univ, sum_union (disjoint_diag_offDiag _), sum_diag, ←
     sum_add_sum_compl s, @sum_eq_card_nsmul _ _ _ _ _ (s.card ^ 3 : ℝ)⁻¹, nsmul_eq_mul,
     Finset.sum_eq_zero, Finset.sum_eq_zero, add_zero, add_zero, pow_succ', mul_inv,

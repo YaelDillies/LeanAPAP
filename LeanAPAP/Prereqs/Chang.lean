@@ -9,7 +9,7 @@ import LeanAPAP.Prereqs.Rudin
 # Chang's lemma
 -/
 
-open Finset Fintype Function Real MeasureTheory
+open Finset Fintype Function MeasureTheory RCLike Real
 open scoped ComplexConjugate ComplexOrder NNReal
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] {f : G → ℂ} {x η : ℝ} {ψ : AddChar G ℂ}
@@ -106,8 +106,8 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
   rotate_left
   · rw [← nsmul_eq_mul']
     exact card_nsmul_le_sum _ _ _ fun x hx ↦ mem_largeSpec.1 $ hΔ hx
-  · simp_rw [mul_sum, mul_comm (f _), mul_assoc (c _), @sum_comm _ _ G, ← mul_sum, ← dL2Inner_eq_sum,
-      ← dft_apply, ← hc, ← RCLike.ofReal_sum, RCLike.norm_ofReal]
+  · simp_rw [mul_sum, mul_comm (f _), mul_assoc (c _), @sum_comm _ _ G, ← mul_sum, ← inner_apply,
+      ← wInner_one_eq_sum, ← dft_apply, ← hc, ← RCLike.ofReal_sum, RCLike.norm_ofReal]
     exact le_abs_self _
   · norm_cast
     exact hm.bot_lt
@@ -146,11 +146,11 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       (norm_sum_le _ _).trans $ sum_le_sum fun _ _ ↦ norm_sum_le _ _
     _ = _ := by simp [energy, norm_c, -Complex.norm_eq_abs, norm_prod]
   · push_cast
-    simp_rw [← RCLike.conj_mul, dft_apply, dL2Inner_eq_sum, map_sum, map_mul, RCLike.conj_conj,
-      mul_pow, sum_pow', sum_mul, mul_sum, @sum_comm _ _ G, ← AddChar.inv_apply_eq_conj, ←
-      AddChar.neg_apply', prod_mul_prod_comm, ← AddChar.add_apply, ← AddChar.sum_apply,
-      mul_left_comm (Algebra.cast (ν _ : ℝ) : ℂ), ← mul_sum, ← sub_eq_add_neg, sum_sub_distrib,
-      Complex.conj_ofReal, mul_comm (Algebra.cast (ν _ : ℝ) : ℂ)]
+    simp_rw [← RCLike.conj_mul, dft_apply, wInner_one_eq_sum, inner_apply, map_sum, map_mul,
+      RCLike.conj_conj, mul_pow, sum_pow', sum_mul, mul_sum, @sum_comm _ _ G,
+      ← AddChar.inv_apply_eq_conj, ← AddChar.neg_apply', prod_mul_prod_comm, ← AddChar.add_apply,
+      ← AddChar.sum_apply, mul_left_comm (Algebra.cast (ν _ : ℝ) : ℂ), ← mul_sum, ← sub_eq_add_neg,
+      sum_sub_distrib, Complex.conj_ofReal, mul_comm (Algebra.cast (ν _ : ℝ) : ℂ)]
     rfl
   positivity
 

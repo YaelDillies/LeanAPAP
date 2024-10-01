@@ -4,7 +4,7 @@ import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Expect.Complex
-import LeanAPAP.Prereqs.Inner.Discrete.Basic
+import LeanAPAP.Prereqs.Inner.Hoelder.Discrete
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 
 /-!

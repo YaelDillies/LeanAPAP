@@ -1,40 +1,31 @@
-import Mathlib.Analysis.InnerProductSpace.PiL2
 import LeanAPAP.Mathlib.Data.Real.ConjExponents
+import LeanAPAP.Prereqs.Inner.Weighted
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
-import LeanAPAP.Prereqs.Inner.Discrete.Defs
 
 /-! # Inner product -/
 
-open Finset Function Real
+open Finset Function MeasureTheory RCLike Real
 open scoped ComplexConjugate ENNReal NNReal NNRat
 
-variable {ι R S : Type*} [Fintype ι]
+variable {ι 𝕜 S : Type*} [Fintype ι]
 
-namespace MeasureTheory
+namespace RCLike
+variable [RCLike 𝕜] {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι] {f : ι → 𝕜}
 
-section RCLike
-variable {κ : Type*} [RCLike R] {f : ι → R}
-
-@[simp] lemma dL2Inner_self {_ : MeasurableSpace ι} [DiscreteMeasurableSpace ι] (f : ι → R) :
-    ⟪f, f⟫_[R] = ((‖f‖_[2] : ℝ) : R) ^ 2 := by
+@[simp] lemma wInner_one_self {_ : MeasurableSpace ι} [DiscreteMeasurableSpace ι] (f : ι → 𝕜) :
+    ⟪f, f⟫_[𝕜] = ((‖f‖_[2] : ℝ) : 𝕜) ^ 2 := by
   simp_rw [← algebraMap.coe_pow, ← NNReal.coe_pow]
-  simp [dL2Norm_sq_eq_sum_nnnorm, dL2Inner_eq_sum, RCLike.conj_mul]
+  simp [dL2Norm_sq_eq_sum_nnnorm, wInner_one_eq_sum, RCLike.conj_mul]
 
-variable {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι]
-
-lemma dL1Norm_mul (f g : ι → R) : ‖f * g‖_[1] = ⟪fun i ↦ ‖f i‖, fun i ↦ ‖g i‖⟫_[ℝ] := by
-  simp [dL2Inner_eq_sum, dL1Norm_eq_sum_nnnorm]
-
-end RCLike
-
-variable {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι]
+lemma dL1Norm_mul (f g : ι → 𝕜) : ‖f * g‖_[1] = ⟪fun i ↦ ‖f i‖, fun i ↦ ‖g i‖⟫_[ℝ] := by
+  simp [wInner_one_eq_sum, dL1Norm_eq_sum_nnnorm]
 
 /-- **Cauchy-Schwarz inequality** -/
-lemma dL2Inner_le_dL2Norm_mul_dL2Norm (f g : ι → ℝ) : ⟪f, g⟫_[ℝ] ≤ ‖f‖_[2] * ‖g‖_[2] := by
-  simpa [dL2Norm_eq_sum_nnnorm, PiLp.norm_eq_of_L2, sqrt_eq_rpow]
+lemma wInner_one_le_dL2Norm_mul_dL2Norm (f g : ι → ℝ) : ⟪f, g⟫_[ℝ] ≤ ‖f‖_[2] * ‖g‖_[2] := by
+  simpa [dL2Norm_eq_sum_nnnorm, PiLp.norm_eq_of_L2, sqrt_eq_rpow, wInner_one_eq_inner]
     using real_inner_le_norm ((WithLp.equiv 2 _).symm f) _
 
-end MeasureTheory
+end RCLike
 
 /-! ### Hölder inequality -/
 
@@ -47,40 +38,40 @@ lemma dL1Norm_mul_of_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f * g‖_[1] = �
   convert dL1Norm_mul f g using 2 <;> ext a <;> refine (norm_of_nonneg ?_).symm; exacts [hf _, hg _]
 
 /-- **Hölder's inequality**, binary case. -/
-lemma dL2Inner_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
+lemma wInner_one_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     ⟪f, g⟫_[ℝ] ≤ ‖f‖_[p] * ‖g‖_[q] := by
   have hp := hpq.ne_zero
   have hq := hpq.symm.ne_zero
   norm_cast at hp hq
   sorry
-  -- simpa [dL2Inner_eq_sum, dLpNorm_eq_sum_nnnorm, *] using inner_le_Lp_mul_Lq _ f g hpq.coe
+  -- simpa [wInner_one_eq_sum, dLpNorm_eq_sum_nnnorm, *] using inner_le_Lp_mul_Lq _ f g hpq.coe
 
 /-- **Hölder's inequality**, binary case. -/
-lemma abs_dL2Inner_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
+lemma abs_wInner_one_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     |⟪f, g⟫_[ℝ]| ≤ ‖f‖_[p] * ‖g‖_[q] :=
-  abs_dL2Inner_le_dL2Inner_abs.trans $
-    (dL2Inner_le_dLpNorm_mul_dLpNorm hpq _ _).trans_eq $ by simp_rw [dLpNorm_abs]
+  (abs_wInner_le_wInner_abs zero_le_one).trans $
+    (wInner_one_le_dLpNorm_mul_dLpNorm hpq _ _).trans_eq $ by simp_rw [dLpNorm_abs]
 
 end Real
 
 section Hoelder
-variable {α : Type*} {mα : MeasurableSpace α} [DiscreteMeasurableSpace α] [Fintype α] [RCLike R]
-  {p q : ℝ≥0} {f g : α → R}
+variable {α : Type*} {mα : MeasurableSpace α} [DiscreteMeasurableSpace α] [Fintype α] [RCLike 𝕜]
+  {p q : ℝ≥0} {f g : α → 𝕜}
 
-lemma norm_dL2Inner_le (f g : α → R) : ‖⟪f, g⟫_[R]‖₊ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] :=
-  (norm_sum_le _ _).trans $ by simp [dL2Inner]
+lemma norm_wInner_one_le (f g : α → 𝕜) : ‖⟪f, g⟫_[𝕜]‖₊ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] :=
+  (norm_sum_le _ _).trans $ by simp [wInner_one_eq_sum]
 
 /-- **Hölder's inequality**, binary case. -/
-lemma nnnorm_dL2Inner_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → R) :
-    ‖⟪f, g⟫_[R]‖₊ ≤ ‖f‖_[p] * ‖g‖_[q] :=
+lemma nnnorm_wInner_one_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
+    ‖⟪f, g⟫_[𝕜]‖₊ ≤ ‖f‖_[p] * ‖g‖_[q] :=
   calc
-    _ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] := norm_dL2Inner_le _ _
+    _ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] := norm_wInner_one_le _ _
     _ ≤ ‖fun a ↦ ‖f a‖‖_[p] * ‖fun a ↦ ‖g a‖‖_[q] :=
-      dL2Inner_le_dLpNorm_mul_dLpNorm hpq.coe_ennreal _ _
+      wInner_one_le_dLpNorm_mul_dLpNorm hpq.coe_ennreal _ _
     _ = ‖f‖_[p] * ‖g‖_[q] := by simp_rw [dLpNorm_norm]
 
 /-- **Hölder's inequality**, binary case. -/
-lemma dLpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ + q⁻¹ = r⁻¹) (f g : α → R) :
+lemma dLpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ + q⁻¹ = r⁻¹) (f g : α → 𝕜) :
     ‖f * g‖_[r] ≤ ‖f‖_[p] * ‖g‖_[q] := by
   have hr : r ≠ 0 := by
     rintro rfl
@@ -91,7 +82,7 @@ lemma dLpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ 
   push_cast
   rw [dL1Norm_mul_of_nonneg, mul_rpow, ← NNReal.coe_rpow, ← NNReal.coe_rpow, dLpNorm_rpow',
     dLpNorm_rpow', ← ENNReal.coe_div, ← ENNReal.coe_div]
-  refine dL2Inner_le_dLpNorm_mul_dLpNorm (NNReal.IsConjExponent.coe_ennreal ⟨?_, ?_⟩) _ _
+  refine wInner_one_le_dLpNorm_mul_dLpNorm (NNReal.IsConjExponent.coe_ennreal ⟨?_, ?_⟩) _ _
   · norm_cast
     rw [div_eq_mul_inv, ← hpqr, mul_add, mul_inv_cancel₀ hp]
     exact lt_add_of_pos_right _ (by positivity)
@@ -102,14 +93,14 @@ lemma dLpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ 
   all_goals simp
 
 /-- **Hölder's inequality**, binary case. -/
-lemma dL1Norm_mul_le (hpq : p.IsConjExponent q) (f g : α → R) :
+lemma dL1Norm_mul_le (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
     ‖f * g‖_[1] ≤ ‖f‖_[p] * ‖g‖_[q] :=
   dLpNorm_mul_le (mod_cast hpq.ne_zero) (mod_cast hpq.symm.ne_zero) _
     (by simpa using hpq.inv_add_inv_conj) _ _
 
 /-- **Hölder's inequality**, finitary case. -/
 lemma dLpNorm_prod_le {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp : ∀ i, p i ≠ 0)
-    (q : ℝ≥0) (hpq : ∑ i ∈ s, (p i)⁻¹ = q⁻¹) (f : ι → α → R) :
+    (q : ℝ≥0) (hpq : ∑ i ∈ s, (p i)⁻¹ = q⁻¹) (f : ι → α → 𝕜) :
     ‖∏ i ∈ s, f i‖_[q] ≤ ∏ i ∈ s, ‖f i‖_[p i] := by
   induction' s using Finset.cons_induction with i s hi ih generalizing q
   · cases not_nonempty_empty hs

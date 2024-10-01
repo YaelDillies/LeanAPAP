@@ -17,7 +17,7 @@ set_option linter.haveLet 0
 
 attribute [-simp] Real.log_inv
 
-open FiniteDimensional Fintype Function Real MeasureTheory
+open FiniteDimensional Fintype Function MeasureTheory RCLike Real
 open Finset hiding card
 open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise
 
@@ -85,7 +85,7 @@ private lemma curlog_pow_le {n : ℕ} (hx₀ : 0 < x) (hn : n ≠ 0) : 𝓛 (x ^
   rw [← rpow_natCast]; exact curlog_rpow_le hx₀ $ mod_cast Nat.one_le_iff_ne_zero.2 hn
 
 lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.Nonempty)
-    (hγC : γ ≤ C.dens) (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
+    (hγC : γ ≤ C.dens) (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ_[ℝ] A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ε / (2 * card G) ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈𝓛 γ⌉₊), μ univ] := by
   have hC : C.Nonempty := by simpa using hγ.trans_le hγC
   have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
@@ -99,13 +99,13 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     _ ≤ _ := div_le_div_of_nonneg_right hAC (card G).cast_nonneg
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
     _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[NNReal.conjExponent p] :=
-        abs_dL2Inner_le_dLpNorm_mul_dLpNorm hp''.coe_ennreal _ _
+        abs_wInner_one_le_dLpNorm_mul_dLpNorm hp''.coe_ennreal _ _
     _ ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-(p : ℝ)⁻¹) * γ ^ (-(p : ℝ)⁻¹)) :=
         mul_le_mul (dLpNorm_conv_le_dLpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
           (by positivity) (by positivity)
     _ = ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈𝓛 γ⌉₊), μ univ] * γ ^ (-(p : ℝ)⁻¹) := ?_
     _ ≤ _ := mul_le_mul_of_nonneg_left ?_ $ by positivity
-  · rw [← balance_conv, balance, dL2Inner_sub_left, dL2Inner_const_left, expect_conv, sum_mu ℝ hA,
+  · rw [← balance_conv, balance, wInner_sub_left, wInner_one_const_left, expect_conv, sum_mu ℝ hA,
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel₀, ← mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
   · rw [dLpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
@@ -221,8 +221,8 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
       _ = 2 ^ 32 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 := by ring
   · have : ∑ x ∈ S, (μ_[ℝ] V' ∗ μ A₁ ∗ μ A₂) x = 𝔼 x ∈ V', (μ A₁ ∗ μ A₂ ○ 𝟭 S) x := by
       have : -V' = V' := by ext; simp [V']
-      rw [← mu_dL2Inner, ← indicate_dL2Inner, conv_rotate, ← dconv_dL2Inner_eq_dL2Inner_conv,
-        dL2Inner_dconv_eq_conv_dL2Inner, ← conv_conjneg, conjneg_mu, this, conv_comm]
+      rw [← mu_wInner_one, ← indicate_wInner_one, conv_rotate, ← dconv_wInner_one_eq_wInner_one_conv,
+        wInner_one_dconv_eq_conv_wInner_one, ← conv_conjneg, conjneg_mu, this, conv_comm]
     have : ∑ x ∈ S, (μ_[ℝ] A₁ ∗ μ A₂) x = (μ_[ℝ] A₁ ∗ μ A₂ ○ 𝟭 S) 0 := by simp [dconv_indicate]
     sorry
 
@@ -236,7 +236,7 @@ lemma ap_in_ff' (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (h�
 set_option maxHeartbeats 300000 in
 lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q) (hq : q.Prime)
     (hε₀ : 0 < ε) (hε₁ : ε < 1) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
-    (hAC : ε ≤ |card G * ⟪μ A ∗ μ A, μ C⟫_[ℝ] - 1|) :
+    (hAC : ε ≤ |card G * ⟪μ_[ℝ] A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
             2 ^ 132 * 𝓛 A.dens ^ 4 * 𝓛 γ ^ 4 / ε ^ 16 ∧
@@ -407,11 +407,12 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           positivity
         · exact subset_univ _
       _ = card G • ⟪μ_[ℝ] (Set.toFinset V) ∗ μ A, μ A ∗ μ A₂ ○ μ A₁⟫_[ℝ] := by
-        rw [← dL2Inner_dconv_eq_conv_dL2Inner, dconv_right_comm, conv_dconv_right_comm (μ A),
-          dL2Inner_dconv_eq_conv_dL2Inner, ← dconv_dL2Inner_eq_dL2Inner_conv, dL2Inner_anticomm]
-        simp [dL2Inner, smul_sum, mul_assoc]
+        rw [← wInner_one_dconv_eq_conv_wInner_one, dconv_right_comm, conv_dconv_right_comm (μ A),
+          wInner_one_dconv_eq_conv_wInner_one, ← dconv_wInner_one_eq_wInner_one_conv,
+          ← conj_wInner_symm]
+        simp [wInner_one_eq_sum, inner_apply, smul_sum, mul_assoc]
       _ ≤ card G • (‖μ_[ℝ] (Set.toFinset V) ∗ μ A‖_[∞] * ‖μ A ∗ μ A₂ ○ μ A₁‖_[1]) := by
-        gcongr; exact dL2Inner_le_dLpNorm_mul_dLpNorm .top_one _ _
+        gcongr; exact wInner_one_le_dLpNorm_mul_dLpNorm .top_one _ _
       _ = _ := by
         have : 0 < (4 : ℝ)⁻¹ * A.dens ^ (2 * q') := by positivity
         replace hA₁ : A₁.Nonempty := by simpa using this.trans_le hA₁
@@ -463,18 +464,18 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
       (B : Finset V), n ≤ finrank (ZMod q) V + 2 ^ 148 * i * 𝓛 α ^ 8 ∧ ThreeAPFree (B : Set V)
         ∧ α ≤ B.dens ∧
       (B.dens < (65 / 64 : ℝ) ^ i * α →
-        2⁻¹ ≤ card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
+        2⁻¹ ≤ card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
     induction' i with i ih hi
     · exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp, hA,
         by simp, by simp [α, nnratCast_dens, Fintype.card_subtype, subset_iff]⟩
     obtain ⟨V, _, _, _, _, B, hV, hB, hαβ, hBV⟩ := ih
-    obtain hB' | hB' := le_or_lt 2⁻¹ (card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
+    obtain hB' | hB' := le_or_lt 2⁻¹ (card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
     · exact ⟨V, inferInstance, inferInstance, inferInstance, inferInstance, B,
         hV.trans (by gcongr; exact i.le_succ), hB, hαβ, fun _ ↦ hB'⟩
     let _ : MeasurableSpace V := ⊤
     have : DiscreteMeasurableSpace V := ⟨fun _ ↦ trivial⟩
     have : 0 < 𝓛 B.dens := curlog_pos (by positivity) (by simp)
-    have : 2⁻¹ ≤ |card V * ⟪μ B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ] - 1| := by
+    have : 2⁻¹ ≤ |card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ] - 1| := by
       rw [abs_sub_comm, le_abs, le_sub_comm]
       norm_num at hB' ⊢
       exact .inl hB'.le
@@ -538,7 +539,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
           log (65 / 64) ≤ 65/64 - 1 := log_le_sub_one_of_pos $ by norm_num
           _ ≤ 1 := by norm_num
     all_goals positivity
-  rw [hB.dL2Inner_mu_conv_mu_mu_two_smul_mu] at hBV
+  rw [hB.wInner_one_mu_conv_mu_mu_two_smul_mu] at hBV
   suffices h : (q ^ (n - 2 ^ 155 * 𝓛 α ^ 9) : ℝ) ≤ q ^ (n / 2) by
     rwa [rpow_le_rpow_left_iff ‹_›, sub_le_comm, sub_half, div_le_iff₀' zero_lt_two, ← mul_assoc,
       ← pow_succ'] at h

@@ -3,7 +3,7 @@ import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Balance.Defs
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Defs
-import LeanAPAP.Prereqs.Inner.Compact
+import LeanAPAP.Prereqs.Inner.Hoelder.Compact
 
 /-!
 # Discrete Fourier transform
@@ -12,8 +12,8 @@ This file defines the discrete Fourier transform and shows the Parseval-Plancher
 Fourier inversion formula for it.
 -/
 
-open AddChar Finset Function MeasureTheory
 open Fintype (card)
+open AddChar Finset Function MeasureTheory RCLike
 open scoped BigOperators ComplexConjugate ComplexOrder
 
 local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
@@ -21,45 +21,46 @@ local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 
 /-- The discrete Fourier transform. -/
-def dft (f : α → ℂ) : AddChar α ℂ → ℂ := fun ψ ↦ ⟪ψ, f⟫_[ℂ]
+noncomputable def dft (f : α → ℂ) : AddChar α ℂ → ℂ := fun ψ ↦ ⟪ψ, f⟫_[ℂ]
 
 lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_[ℂ] := rfl
 
 @[simp] lemma dft_zero : dft (0 : α → ℂ) = 0 := by ext; simp [dft_apply]
 
 @[simp] lemma dft_add (f g : α → ℂ) : dft (f + g) = dft f + dft g := by
-  ext; simp [dL2Inner_add_right, dft_apply]
+  ext; simp [wInner_add_right, dft_apply]
 
 @[simp] lemma dft_neg (f : α → ℂ) : dft (-f) = - dft f := by ext; simp [dft_apply]
 
 @[simp] lemma dft_sub (f g : α → ℂ) : dft (f - g) = dft f - dft g := by
-  ext; simp [dL2Inner_sub_right, dft_apply]
+  ext; simp [wInner_sub_right, dft_apply]
 
 @[simp] lemma dft_const (a : ℂ) (hψ : ψ ≠ 0) : dft (const α a) ψ = 0 := by
-  simp only [dft_apply, dL2Inner_eq_sum, const_apply, ← sum_mul, ← map_sum,
+  simp only [dft_apply, wInner_one_eq_sum, inner_apply, const_apply, ← sum_mul, ← map_sum,
     sum_eq_zero_iff_ne_zero.2 hψ, map_zero, zero_mul]
 
-@[simp] lemma dft_smul [DistribSMul γ ℂ] [Star γ] [StarModule γ ℂ] [SMulCommClass γ ℂ ℂ] (c : γ)
-    (f : α → ℂ) : dft (c • f) = c • dft f := by ext; simp [dL2Inner_smul_right, dft_apply]
+@[simp] lemma dft_smul {𝕝 : Type*} [CommSemiring 𝕝] [Algebra 𝕝 ℂ] [IsScalarTower 𝕝 ℂ ℂ] (c : 𝕝)
+    (f : α → ℂ) : dft (c • f) = c • dft f := by ext; simp [wInner_smul_right, dft_apply]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
-@[simp] lemma cL2Inner_dft (f g : α → ℂ) : ⟪dft f, dft g⟫ₙ_[ℂ] = ⟪f, g⟫_[ℂ] := by
+@[simp] lemma wInner_compact_dft (f g : α → ℂ) : ⟪dft f, dft g⟫ₙ_[ℂ] = ⟪f, g⟫_[ℂ] := by
   classical
   unfold dft
-  simp_rw [dL2Inner_eq_sum, cL2Inner_eq_expect, map_sum, map_mul, starRingEnd_self_apply, sum_mul,
-    mul_sum, expect_sum_comm, mul_mul_mul_comm _ (conj $ f _), ← expect_mul, ←
-    AddChar.inv_apply_eq_conj, ← map_neg_eq_inv, ← map_add_eq_mul, AddChar.expect_apply_eq_ite,
-    add_neg_eq_zero, boole_mul, Fintype.sum_ite_eq]
+  simp_rw [wInner_one_eq_sum, wInner_compact_eq_expect, inner_apply, map_sum, map_mul,
+    starRingEnd_self_apply, sum_mul, mul_sum, expect_sum_comm, mul_mul_mul_comm _ (conj $ f _),
+    ← expect_mul, ← AddChar.inv_apply_eq_conj, ← map_neg_eq_inv, ← map_add_eq_mul,
+    AddChar.expect_apply_eq_ite, add_neg_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma cL2Norm_dft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
     ‖dft f‖ₙ_[2] = ‖f‖_[2] :=
   (sq_eq_sq (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
-    push_cast; simpa only [cL2Inner_self, dL2Inner_self] using cL2Inner_dft f f
+    push_cast; simpa only [RCLike.wInner_compact_self, wInner_one_self] using wInner_compact_dft f f
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a := by
-  classical simp_rw [dft, dL2Inner_eq_sum, sum_mul, expect_sum_comm, mul_right_comm _ (f _),
+  classical
+  simp_rw [dft, wInner_one_eq_sum, inner_apply, sum_mul, expect_sum_comm, mul_right_comm _ (f _),
     ← expect_mul, ← AddChar.inv_apply_eq_conj, inv_mul_eq_div, ← map_sub_eq_div,
     AddChar.expect_apply_eq_ite, sub_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
@@ -68,8 +69,9 @@ lemma dft_inversion' (f : α → ℂ) : 𝔼 ψ, dft f ψ • ⇑ψ = f := by ex
 
 lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
     dft (dft f) (doubleDualEmb a) = card α * f (-a) := by
-  simp only [← dft_inversion f (-a), mul_comm (conj _), dft_apply, dL2Inner_eq_sum, map_neg_eq_inv,
-    AddChar.inv_apply_eq_conj, doubleDualEmb_apply, ← Fintype.card_mul_expect, AddChar.card_eq]
+  simp only [← dft_inversion f (-a), mul_comm (conj _), dft_apply, wInner_one_eq_sum, inner_apply,
+    map_neg_eq_inv, AddChar.inv_apply_eq_conj, doubleDualEmb_apply, ← Fintype.card_mul_expect,
+    AddChar.card_eq]
 
 lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
   funext fun a ↦ by
@@ -80,16 +82,17 @@ lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) 
   funext fun a ↦ (dft_inversion _ _).symm.trans $ by rw [h, dft_inversion]
 
 lemma dft_inv (ψ : AddChar α ℂ) (hf : IsSelfAdjoint f) : dft f ψ⁻¹ = conj (dft f ψ) := by
-  simp_rw [dft_apply, dL2Inner_eq_sum, map_sum, AddChar.inv_apply', map_mul,
+  simp_rw [dft_apply, wInner_one_eq_sum, inner_apply, map_sum, AddChar.inv_apply', map_mul,
     AddChar.inv_apply_eq_conj, Complex.conj_conj, (hf.apply _).conj_eq]
 
 @[simp]
 lemma dft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conj f) ψ = conj (dft f ψ⁻¹) := by
-  simp only [dft_apply, dL2Inner_eq_sum, map_sum, map_mul, ← inv_apply', ← inv_apply_eq_conj,
-    inv_inv, Pi.conj_apply]
+  simp only [dft_apply, wInner_one_eq_sum, inner_apply, map_sum, map_mul, ← inv_apply',
+    ← inv_apply_eq_conj, inv_inv, Pi.conj_apply]
 
 lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f) ψ = conj (dft f ψ) := by
-  simp only [dft_apply, dL2Inner_eq_sum, conjneg_apply, map_sum, map_mul, RCLike.conj_conj]
+  simp only [dft_apply, wInner_one_eq_sum, inner_apply, conjneg_apply, map_sum, map_mul,
+    RCLike.conj_conj]
   refine Fintype.sum_equiv (Equiv.neg α) _ _ fun i ↦ ?_
   simp only [Equiv.neg_apply, ← inv_apply_eq_conj, ← inv_apply', inv_apply]
 
@@ -104,13 +107,13 @@ lemma dft_comp_neg_apply (f : α → ℂ) (ψ : AddChar α ℂ) :
 
 lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime n) :
     dft (dilate f n) ψ = dft f (ψ ^ n) := by
-  simp_rw [dft_apply, dL2Inner_eq_sum, dilate]
+  simp_rw [dft_apply, wInner_one_eq_sum, dilate]
   rw [← Nat.card_eq_fintype_card] at hn
   refine (Fintype.sum_bijective _ hn.nsmul_right_bijective _ _  ?_).symm
   simp only [pow_apply, ← map_nsmul_eq_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
 
 @[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
-  ext; simp [trivChar_apply, dft_apply, dL2Inner_eq_sum, ← map_sum]
+  ext; simp [trivChar_apply, dft_apply, wInner_one_eq_sum, ← map_sum]
 
 @[simp] lemma dft_one : dft (1 : α → ℂ) = card α • trivChar :=
   dft_injective $ by classical rw [dft_smul, dft_trivChar, dft_dft, Pi.one_comp, nsmul_eq_mul]
@@ -118,10 +121,11 @@ lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime 
 variable [DecidableEq α]
 
 @[simp] lemma dft_indicate_zero (A : Finset α) : dft (𝟭 A) 0 = A.card := by
-  simp only [dft_apply, dL2Inner_eq_sum, sum_indicate, AddChar.zero_apply, map_one, one_mul]
+  simp only [dft_apply, wInner_one_eq_sum, inner_apply, sum_indicate, AddChar.zero_apply, map_one,
+    one_mul]
 
 lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ = dft f ψ * dft g ψ := by
-  simp_rw [dft, dL2Inner_eq_sum, conv_eq_sum_sub', mul_sum, sum_mul, ← sum_product',
+  simp_rw [dft, wInner_one_eq_sum, inner_apply, conv_eq_sum_sub', mul_sum, sum_mul, ← sum_product',
     univ_product_univ]
   refine Fintype.sum_equiv ((Equiv.prodComm _ _).trans $
     ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_

@@ -209,11 +209,17 @@ lemma dconv_smul [Star H] [DistribSMul H R] [SMulCommClass H R R] [StarModule H 
 @[simp] lemma dconv_conjneg (f g : G → R) : f ○ conjneg g = f ∗ g := by
   rw [← conv_conjneg, conjneg_conjneg]
 
-@[simp] lemma conj_conv (f g : G → R) : conj (f ∗ g) = conj f ∗ conj g :=
-  funext fun a ↦ by simp only [Pi.conj_apply, conv_apply, map_sum, map_mul]
+@[simp] lemma conj_conv_apply (f g : G → R) (a : G) : conj ((f ∗ g) a) = (conj f ∗ conj g) a := by
+  simp only [Pi.conj_apply, conv_apply, map_sum, map_mul]
 
-@[simp] lemma conj_dconv (f g : G → R) : conj (f ○ g) = conj f ○ conj g := by
-  simp_rw [← conv_conjneg, conj_conv, conjneg_conj]
+@[simp] lemma conj_dconv_apply (f g : G → R) (a : G) : conj ((f ○ g) a) = (conj f ○ conj g) a := by
+  simp_rw [← conv_conjneg, conj_conv_apply, conjneg_conj]
+
+@[simp] lemma conj_conv (f g : G → R) : conj (f ∗ g) = conj f ∗ conj g :=
+  funext <| conj_conv_apply _ _
+
+@[simp] lemma conj_dconv (f g : G → R) : conj (f ○ g) = conj f ○ conj g :=
+  funext <| conj_dconv_apply _ _
 
 lemma IsSelfAdjoint.conv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ∗ g) :=
   (conj_conv _ _).trans $ congr_arg₂ _ hf hg
