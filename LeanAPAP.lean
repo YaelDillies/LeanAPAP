@@ -33,7 +33,6 @@ import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Convolution.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
-import LeanAPAP.Prereqs.Convolution.WithConv
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.FourierTransform.Compact
