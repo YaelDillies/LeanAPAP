@@ -271,9 +271,7 @@ example {p : ℝ≥0∞} (hp : p ≠ 0) {f : α → ℝ} (hf : 0 < f) : 0 < ‖f
 end NormedAddCommGroup
 
 section Complex
-variable [Fintype α] [DiscreteMeasurableSpace α] {w : α → ℝ≥0} {f : α → ℂ}
-
-open scoped ComplexOrder
+variable [Fintype α] [DiscreteMeasurableSpace α] {f : α → ℂ}
 
 example {p : ℝ≥0∞} (hp : p ≠ 0) (hf : f ≠ 0) : 0 < ‖f‖_[p] := by positivity
 example {p : ℝ≥0∞} (hp : p ≠ 0) {f : α → ℝ} (hf : 0 < f) : 0 < ‖f‖_[p] := by positivity

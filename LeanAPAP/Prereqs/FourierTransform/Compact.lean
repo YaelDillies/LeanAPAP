@@ -11,8 +11,7 @@ Parseval-Plancherel identity and Fourier inversion formula for it.
 
 noncomputable section
 
-open AddChar Finset Function MeasureTheory RCLike
-open Fintype (card)
+open AddChar Finset Fintype Function MeasureTheory RCLike
 open scoped ComplexConjugate ComplexOrder
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}

@@ -1,8 +1,9 @@
-import LeanAPAP.Prereqs.Balance.Defs
-import LeanAPAP.Prereqs.Expect.Complex
+import Mathlib.Algebra.BigOperators.Balance
+import Mathlib.Analysis.RCLike.Basic
+import Mathlib.Data.Complex.BigOperators
 
-open Finset
-open scoped BigOperators NNReal
+open Fintype
+open scoped NNReal
 
 namespace Complex
 variable {ι : Type*}
@@ -28,4 +29,3 @@ lemma coe_balance : (↑(balance f a) : 𝕜) = balance ((↑) ∘ f) a := map_b
   simp [balance]
 
 end RCLike
-

@@ -87,7 +87,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
   set M : ℝ :=
     2 ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p * (sqrt B₁.card * sqrt B₂.card) / A.card ^ p
       with hM_def
-  have hM : 0 < M := by rw [hM_def]; sorry -- positivity
+  have hM : 0 < M := by rw [hM_def]; positivity
   replace hf : 0 < ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x := by
     have : 0 ≤ μ_[ℝ] B₁ ○ μ B₂ * (𝟭 A ○ 𝟭 A) ^ p * (↑) ∘ f :=
       mul_nonneg (mul_nonneg (dconv_nonneg mu_nonneg mu_nonneg) $ pow_nonneg
@@ -148,7 +148,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     refine (le_or_lt_of_add_le_add ?_).resolve_left h.not_le
     simp_rw [← not_le, ← compl_filter, ← two_mul, ← mul_add, sum_compl_add_sum]
     rfl
-  rw [← lt_div_iff' (zero_lt_two' ℝ), div_eq_inv_mul]
+  rw [← lt_div_iff₀' (zero_lt_two' ℝ), div_eq_inv_mul]
   calc
     ∑ s with g s < M ^ 2, g s = ∑ s with g s < M ^ 2 ∧ g s ≠ 0, sqrt (g s) * sqrt (g s)
           := by simp_rw [mul_self_sqrt (hg _), ← filter_filter, sum_filter_ne_zero]
@@ -189,7 +189,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
         c.Nonempty := by
     simp_rw [nonempty_iff_ne_empty]
     rintro c r h rfl
-    simp [pow_mul', (zero_lt_four' ℝ).not_le, inv_mul_le_iff (zero_lt_four' ℝ), mul_assoc,
+    simp [pow_mul', (zero_lt_four' ℝ).not_le, inv_mul_le_iff₀ (zero_lt_four' ℝ), mul_assoc,
       div_nonpos_iff, mul_nonpos_iff, (pow_pos (dLpNorm_conv_pos hp₀.ne' hB hA) 2).not_le] at h
     norm_cast at h
     simp [hp₀, hp₀.ne', hA.ne_empty] at h
@@ -233,7 +233,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
     (1 - ε) ^ p ≤ exp (-ε) ^ p := pow_le_pow_left (sub_nonneg.2 hε₁) (one_sub_le_exp_neg _) _
     _ = exp (-(ε * p)) := by rw [← neg_mul, exp_mul, rpow_natCast]
     _ ≤ exp (-log (2 / δ)) :=
-      (exp_monotone $ neg_le_neg $ (inv_mul_le_iff $ by positivity).1 hpε)
+      (exp_monotone $ neg_le_neg $ (inv_mul_le_iff₀ $ by positivity).1 hpε)
     _ = δ / 2 := by rw [exp_neg, exp_log, inv_div]; positivity
 
 -- TODO: When `1 < ε`, the result is trivial since `S = univ`.

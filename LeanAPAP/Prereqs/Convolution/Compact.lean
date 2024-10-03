@@ -1,6 +1,5 @@
-import LeanAPAP.Prereqs.Balance.Defs
+import Mathlib.Algebra.BigOperators.Balance
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
-import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 
 /-!
@@ -393,11 +392,11 @@ end Field
 namespace RCLike
 variable {𝕜 : Type} [RCLike 𝕜] (f g : G → ℝ) (a : G)
 
-@[simp, norm_cast]
-lemma coe_cconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → 𝕜) a := map_cconv (algebraMap ℝ 𝕜) _ _ _
+@[simp, norm_cast] lemma coe_cconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → 𝕜) a :=
+  map_cconv (algebraMap ℝ 𝕜) ..
 
-@[simp, norm_cast]
-lemma coe_cdconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → 𝕜) a := by simp [cdconv_apply, coe_expect]
+@[simp, norm_cast] lemma coe_cdconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → 𝕜) a := by
+  simp [cdconv_apply, ofReal_expect]
 
 @[simp]
 lemma coe_comp_cconv : ofReal ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → 𝕜) := funext $ coe_cconv _ _

@@ -1,19 +1,10 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
-import LeanAPAP.Mathlib.Algebra.Order.Group.Unbundled.Basic
-import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
-import LeanAPAP.Mathlib.Algebra.Order.Ring.Basic
-import LeanAPAP.Mathlib.Algebra.Star.Rat
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Mathlib.Data.ENNReal.Basic
-import LeanAPAP.Mathlib.Data.ENNReal.Operations
-import LeanAPAP.Mathlib.Data.ENNReal.Real
-import LeanAPAP.Mathlib.Data.Real.ConjExponents
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Mathlib.Order.Hom.Basic
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
@@ -22,7 +13,6 @@ import LeanAPAP.Prereqs.AddChar.Basic
 import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Balance.Complex
-import LeanAPAP.Prereqs.Balance.Defs
 import LeanAPAP.Prereqs.Bohr.Arc
 import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular
@@ -34,7 +24,6 @@ import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Convolution.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.Energy
-import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.FourierTransform.Convolution
 import LeanAPAP.Prereqs.FourierTransform.Discrete

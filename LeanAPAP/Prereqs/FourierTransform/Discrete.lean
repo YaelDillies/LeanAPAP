@@ -1,6 +1,6 @@
+import Mathlib.Algebra.BigOperators.Balance
 import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
-import LeanAPAP.Prereqs.Balance.Defs
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Inner.Hoelder.Compact
@@ -12,11 +12,8 @@ This file defines the discrete Fourier transform and shows the Parseval-Plancher
 Fourier inversion formula for it.
 -/
 
-open Fintype (card)
-open AddChar Finset Function MeasureTheory RCLike
+open AddChar Finset Fintype Function MeasureTheory RCLike
 open scoped BigOperators ComplexConjugate ComplexOrder
-
-local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 

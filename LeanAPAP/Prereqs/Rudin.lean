@@ -1,5 +1,6 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
+import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.Randomisation
 
@@ -68,8 +69,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
     · simp
     specialize H hp ((sqrt p / ‖f‖ₙ_[2]) • f) ?_
     · rwa [cft_smul, support_const_smul_of_ne_zero]
-      sorry
-      -- positivity
+      positivity
     have : 0 < ‖f‖ₙ_[2] := (cLpNorm_pos two_ne_zero).2 hf
     have : 0 < |√ p| := by positivity
     simp_rw [Function.comp_def, Pi.smul_apply, Complex.smul_re, ← Pi.smul_def] at H

@@ -3,7 +3,6 @@ import Mathlib.Combinatorics.Additive.DoublingConst
 import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
-import LeanAPAP.Prereqs.Expect.Complex
 import LeanAPAP.Prereqs.Inner.Hoelder.Discrete
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 
@@ -363,7 +362,7 @@ lemma T_bound (hK₂ : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) 
     refine h₂.trans (mul_le_mul_of_nonneg_right hK₂ (Nat.cast_nonneg _))
     exact zero_lt_two
   rw [neg_mul, neg_div, Real.rpow_neg hK.le, mul_left_comm,
-    inv_mul_le_iff (Real.rpow_pos_of_pos hK _)]
+    inv_mul_le_iff₀ (Real.rpow_pos_of_pos hK _)]
   refine (mul_le_mul_of_nonneg_right this (Nat.cast_nonneg _)).trans ?_
   rw [mul_assoc]
   rw [← @Nat.cast_le ℝ, Nat.cast_mul] at h₁

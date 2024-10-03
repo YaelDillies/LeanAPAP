@@ -49,12 +49,6 @@ variable {K : Type*} [RCLike K]
 
 @[simp] lemma wLpNorm_conj (f : α → K) : ‖conj f‖_[p, w] = ‖f‖_[p, w] := by simp [← wLpNorm_norm]
 
-variable [AddGroup α]
-
-@[simp] lemma wLpNorm_conjneg (f : α → K) : ‖conjneg f‖_[p, w] = ‖f‖_[p, w] := by
-  simp [← wLpNorm_norm]
-  sorry
-
 end RCLike
 
 variable [Fintype α]
@@ -108,7 +102,7 @@ lemma wL1Norm_eq_sum_nnnorm (w : α → ℝ≥0) (f : α → E) : ‖f‖_[1, w]
 lemma wL1Norm_eq_sum_norm (w : α → ℝ≥0) (f : α → E) : ‖f‖_[1, w] = ∑ i, w i • ‖f i‖ := by
   simp [wLpNorm_eq_sum_norm]
 
-@[gcongr] 
+@[gcongr]
 lemma wLpNorm_mono_right (hpq : p ≤ q) (w : α → ℝ≥0) (f : α → E) : ‖f‖_[p, w] ≤ ‖f‖_[q, w] :=
   sorry
 

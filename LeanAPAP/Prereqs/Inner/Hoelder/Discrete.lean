@@ -1,4 +1,3 @@
-import LeanAPAP.Mathlib.Data.Real.ConjExponents
 import LeanAPAP.Prereqs.Inner.Weighted
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 

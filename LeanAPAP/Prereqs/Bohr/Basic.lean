@@ -116,9 +116,11 @@ lemma mem_chordSet_iff_norm_width : x ∈ B.chordSet ↔ ∀ ⦃ψ⦄, ψ ∈ B.
 @[simp, norm_cast] lemma coeSort_coe (B : BohrSet G) : ↥(B : Set G) = B := rfl
 
 @[simp] lemma zero_mem : 0 ∈ B.chordSet := by simp [mem_chordSet_iff_nnnorm_width]
+
+-- TODO: This lemma needs `Finite G` because we are using `AddChar G ℂ` rather than `AddChar G ℂˣ`
+-- as the dual group.
 @[simp] lemma neg_mem [Finite G] : -x ∈ B.chordSet ↔ x ∈ B.chordSet :=
-  forall₂_congr fun ψ hψ ↦ by sorry
-    -- rw [Iff.comm, ← RCLike.nnnorm_conj, map_sub, map_one, map_neg_eq_conj]
+  forall₂_congr fun ψ hψ ↦ by rw [Iff.comm, ← RCLike.nnnorm_conj, map_sub, map_one, map_neg_eq_conj]
 
 /-! ### Lattice structure -/
 

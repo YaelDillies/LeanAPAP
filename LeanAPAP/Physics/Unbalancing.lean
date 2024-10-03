@@ -1,6 +1,5 @@
 import Mathlib.Algebra.Order.Group.PosPart
 import Mathlib.Data.Complex.ExponentialBounds
-import LeanAPAP.Mathlib.Data.ENNReal.Real
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Complex
 import LeanAPAP.Prereqs.Inner.Weighted
@@ -105,7 +104,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
   set T := univ.filter fun i ↦ 3 / 4 * ε ≤ f i
   have hTP : T ⊆ P := monotone_filter_right _ fun i ↦ le_trans $ by positivity
   have : 2⁻¹ * ε ^ p ≤ ∑ i in P, ↑(ν i) * (f ^ p) i := by
-    rw [inv_mul_le_iff (zero_lt_two' ℝ), sum_filter]
+    rw [inv_mul_le_iff₀ (zero_lt_two' ℝ), sum_filter]
     convert this using 3
     rw [Pi.posPart_apply, posPart_eq_ite]
     split_ifs <;> simp [pow_sub_one_mul hp₁.pos.ne']

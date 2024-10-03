@@ -1,5 +1,4 @@
 import Mathlib.FieldTheory.Finite.Basic
-import LeanAPAP.Mathlib.Algebra.Order.Ring.Basic
 import LeanAPAP.Prereqs.Balance.Complex
 import LeanAPAP.Prereqs.Chang
 import LeanAPAP.Prereqs.Convolution.ThreeAP
@@ -193,7 +192,7 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
     calc
       (↑(finrank (ZMod q) G - finrank (ZMod q) V) : ℝ)
         ≤ ↑(finrank (ZMod q) G - finrank (ZMod q) W) := by
-        gcongr; exact Submodule.finrank_le_finrank_of_le hWV
+        gcongr; exact Submodule.finrank_mono hWV
       _ ≤ Δ'.card := sorry
       _ ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖μ T‖_[1] ^ 2 / ‖μ T‖_[2] ^ 2 / card G)⌉₊ / 2⁻¹ ^ 2⌉₊ := by
         gcongr
@@ -289,7 +288,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           (2⁻¹ : ℝ) ≤ 2 ^ 15 * 1 * 1 := by norm_num
           _ ≤ 2 ^ 15 * ε⁻¹ ^ 3 * 𝓛 γ := ?_
         gcongr
-        exact one_le_pow₀ (one_le_inv hε₀ hε₁.le) _
+        exact one_le_pow₀ (one_le_inv hε₀ hε₁.le)
       _ = 2 ^ 17 * 𝓛 γ / ε ^ 3 := by ring
   obtain ⟨A₁, A₂, hA, hA₁, hA₂⟩ : ∃ (A₁ A₂ : Finset G),
       1 - ε / 32 ≤ ∑ x ∈ s q' (ε / 16) univ univ A, (μ A₁ ○ μ A₂) x ∧
@@ -341,7 +340,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
     ap_in_ff' _ (by positivity)
     (calc
       4⁻¹ * (A.dens : ℝ) ^ (2 * q') ≤ 4⁻¹ * 1 := by
-        gcongr; exact pow_le_one _ (by positivity) $ mod_cast A.dens_le_one
+        gcongr; exact pow_le_one₀ (by positivity) $ mod_cast A.dens_le_one
       _ ≤ 2⁻¹ := by norm_num) (by positivity) (by linarith) hA₁ hA₂
   replace hV :=
     calc
@@ -362,7 +361,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           𝓛 (ε / 32 * (4⁻¹ * α ^ (2 * q'))) ^ 2 * (ε / 32)⁻¹ ^ 2 := hVdim
       _ ≤ 2 ^ 32 * (8 * q' * 𝓛 α) ^ 2 *
           (2 ^ 8 * q' * 𝓛 α / ε) ^ 2 * (ε / 32)⁻¹ ^ 2 := by
-        have : α ^ (2 * q') ≤ 1 := pow_le_one _ hα₀.le hα₁
+        have : α ^ (2 * q') ≤ 1 := pow_le_one₀ hα₀.le hα₁
         have : 4⁻¹ * α ^ (2 * q') ≤ 1 := mul_le_one (by norm_num) (by positivity) ‹_›
         have : ε / 32 * (4⁻¹ * α ^ (2 * q')) ≤ 1 := mul_le_one (by linarith) (by positivity) ‹_›
         have : 0 ≤ log (ε / 32 * (4⁻¹ * α ^ (2 * q')))⁻¹ :=
@@ -526,7 +525,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
     calc
       _ ≤ (1 : ℝ) := mod_cast dens_le_one
       _ < _ := ?_
-    rw [← inv_pos_lt_iff_one_lt_mul, lt_pow_iff_log_lt, ← div_lt_iff]
+    rw [← inv_pos_lt_iff_one_lt_mul, lt_pow_iff_log_lt, ← div_lt_iff₀]
     calc
       log α⁻¹ / log (65 / 64)
         < ⌊log α⁻¹ / log (65 / 64)⌋₊ + 1 := Nat.lt_floor_add_one _

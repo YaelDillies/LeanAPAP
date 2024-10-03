@@ -1,6 +1,5 @@
 import Mathlib.Combinatorics.Additive.Dissociation
 import LeanAPAP.Prereqs.AddChar.Basic
-import LeanAPAP.Prereqs.Expect.Complex
 
 /-!
 # Randomisation

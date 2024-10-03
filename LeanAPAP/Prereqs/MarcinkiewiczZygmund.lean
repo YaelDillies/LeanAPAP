@@ -3,6 +3,7 @@ Copyright (c) 2023 Yaël Dillies, Bhavik Mehta. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Bhavik Mehta
 -/
+import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Tactic.Positivity.Finset
@@ -39,7 +40,7 @@ private lemma step_one (hA : A.Nonempty) (f : ι → ℝ) (a : Fin n → ι)
     _ = (∑ b in B, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / B.card ^ m / B.card := by
       rw [div_div, ← _root_.pow_succ]
     _ ≤ (∑ b in B, |∑ i, (f (a i) - f (b i))| ^ (m + 1)) / B.card := by
-      gcongr; exact pow_sum_div_card_le_sum_pow _ _ fun _ _ ↦ abs_nonneg _
+      gcongr; exact pow_sum_div_card_le_sum_pow (fun _ _ ↦ abs_nonneg _) _
     _ = _ := by simp [B]
 
 private lemma step_one' (hA : A.Nonempty) (f : ι → ℝ) (hf : ∀ i, ∑ a in A ^^ n, f (a i) = 0) (m : ℕ)
@@ -227,7 +228,7 @@ theorem marcinkiewicz_zygmund (hm : m ≠ 0) (f : ι → ℝ) (hf : ∀ i, ∑ a
       simp_rw [mul_assoc, mul_sum]; rfl
   gcongr with a
   rw [← div_le_iff₀']
-  have := Real.pow_sum_div_card_le_sum_pow (f := fun i ↦ f (a i) ^ 2) univ m fun i _ ↦ ?_
+  have := pow_sum_div_card_le_sum_pow (f := fun i ↦ f (a i) ^ 2) (s := univ) (fun i _ ↦ ?_) m
   simpa only [Finset.card_fin, pow_mul] using this
   all_goals { positivity }
 
