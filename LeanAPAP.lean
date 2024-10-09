@@ -2,7 +2,7 @@ import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import LeanAPAP.Mathlib.Data.ENNReal.Basic
+import LeanAPAP.Mathlib.Data.Complex.BigOperators
 import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 import LeanAPAP.Mathlib.Tactic.Positivity
@@ -12,7 +12,6 @@ import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.AddChar.Basic
 import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
-import LeanAPAP.Prereqs.Balance.Complex
 import LeanAPAP.Prereqs.Bohr.Arc
 import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular

@@ -91,7 +91,7 @@ variable {G : Type*} [Fintype G] {A S : Finset G} {f : G → ℂ} {x ε K : ℝ}
 local notation "𝓛" x => 1 + log (min 1 x)⁻¹
 
 private lemma curlog_pos (hx₀ : 0 < x) : 0 < 𝓛 x := by
-  have : 0 ≤ log (min 1 x)⁻¹ := log_nonneg $ one_le_inv (by positivity) inf_le_left
+  have : 0 ≤ log (min 1 x)⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 inf_le_left
   positivity
 
 section
@@ -433,7 +433,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
   have hm₀ : 0 < m := curlog_pos (by positivity)
   have hm₁ : 1 ≤ ⌈m⌉₊ := Nat.one_le_iff_ne_zero.2 $ by positivity
   obtain ⟨T, hKT, hT⟩ := almost_periodicity (ε / exp 1) (by positivity)
-    (div_le_one_of_le (hε₁.trans $ one_le_exp zero_le_one) $ by positivity) ⌈m⌉₊ (𝟭 B) hK₂ hK
+    (div_le_one_of_le₀ (hε₁.trans $ one_le_exp zero_le_one) $ by positivity) ⌈m⌉₊ (𝟭 B) hK₂ hK
   norm_cast at hT
   set M : ℕ := 2 * ⌈m⌉₊
   have hM₀ : (M : ℝ≥0) ≠ 0 := by positivity
@@ -481,13 +481,13 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
       ≤ r ^ (-(M : ℝ)⁻¹) :=
         rpow_le_rpow_of_nonpos (by positivity) inf_le_right $ neg_nonpos.2 $ by positivity
     _ ≤ r ^ (-(1 + log r⁻¹)⁻¹) :=
-        rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left $ neg_le_neg $ inv_le_inv_of_le
+        rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left $ neg_le_neg $ inv_anti₀
           (by positivity) $ (Nat.le_ceil _).trans $
             mod_cast Nat.le_mul_of_pos_left _ (by positivity)
     _ ≤ r ^ (-(0 + log r⁻¹)⁻¹) := by
       obtain hr | hr : r = 1 ∨ r < 1 := inf_le_left.eq_or_lt
       · simp [hr]
-      have : 0 < log r⁻¹ := log_pos <| one_lt_inv (by positivity) hr
+      have : 0 < log r⁻¹ := log_pos <| (one_lt_inv₀ (by positivity)).2 hr
       exact rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left (by gcongr; exact zero_le_one)
     _ = r ^ (log r)⁻¹ := by simp [inv_neg]
     _ ≤ exp 1 := rpow_inv_log_le_exp_one
@@ -499,7 +499,7 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
       K ^ (-4096 * ⌈𝓛 (C.card / B.card)⌉ * k ^ 2/ ε ^ 2) * S.card ≤ T.card ∧
       ‖μ T ∗^ k ∗ (μ_[ℂ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
   obtain ⟨T, hKT, hT⟩ := linfty_almost_periodicity (ε / k) (by positivity)
-    (div_le_one_of_le (hε₁.trans $ mod_cast Nat.one_le_iff_ne_zero.2 hk) $ by positivity) hK₂ hK
+    (div_le_one_of_le₀ (hε₁.trans $ mod_cast Nat.one_le_iff_ne_zero.2 hk) $ by positivity) hK₂ hK
     _ _ hB hC
   refine ⟨T, by simpa only [div_pow, div_div_eq_mul_div] using hKT, ?_⟩
   set F := μ_[ℂ] A ∗ 𝟭 B ∗ μ C

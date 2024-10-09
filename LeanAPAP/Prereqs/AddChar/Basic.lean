@@ -71,7 +71,7 @@ noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
   @Fintype.ofFinite _ (AddChar.linearIndependent G R).finite
 
 @[simp] lemma card_addChar_le [Fintype G] : card (AddChar G R) ≤ card G := by
-  simpa only [FiniteDimensional.finrank_fintype_fun_eq_card] using
+  simpa only [Module.finrank_fintype_fun_eq_card] using
     (AddChar.linearIndependent G R).fintype_card_le_finrank
 
 end RCLike

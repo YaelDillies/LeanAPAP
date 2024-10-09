@@ -1,5 +1,5 @@
 import Mathlib.FieldTheory.Finite.Basic
-import LeanAPAP.Prereqs.Balance.Complex
+import LeanAPAP.Mathlib.Data.Complex.BigOperators
 import LeanAPAP.Prereqs.Chang
 import LeanAPAP.Prereqs.Convolution.ThreeAP
 import LeanAPAP.Prereqs.FourierTransform.Convolution
@@ -16,7 +16,7 @@ set_option linter.haveLet 0
 
 attribute [-simp] Real.log_inv
 
-open FiniteDimensional Fintype Function MeasureTheory RCLike Real
+open Fintype Function MeasureTheory Module RCLike Real
 open Finset hiding card
 open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise
 
@@ -28,13 +28,13 @@ local notation "𝓛" x:arg => 1 + log x⁻¹
 private lemma one_le_curlog (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 1 ≤ 𝓛 x := by
   obtain rfl | hx₀ := hx₀.eq_or_lt
   · simp
-  have : 0 ≤ log x⁻¹ := log_nonneg $ one_le_inv (by positivity) hx₁
+  have : 0 ≤ log x⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 hx₁
   linarith
 
 private lemma curlog_pos (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 0 < 𝓛 x := by
   obtain rfl | hx₀ := hx₀.eq_or_lt
   · simp
-  have : 0 ≤ log x⁻¹ := log_nonneg $ one_le_inv (by positivity) hx₁
+  have : 0 ≤ log x⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 hx₁
   positivity
 
 private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻¹ ^ (𝓛 x)⁻¹ ≤ exp 1 := by
@@ -42,7 +42,7 @@ private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻�
   · simp; positivity
   obtain rfl | hx₁ := hx₁.eq_or_lt
   · simp
-  have hx := one_lt_inv hx₀ hx₁
+  have hx := (one_lt_inv₀ hx₀).2 hx₁
   calc
     x⁻¹ ^ (𝓛 x)⁻¹ ≤ x⁻¹ ^ (log x⁻¹)⁻¹ := by
       gcongr
@@ -59,11 +59,11 @@ private lemma curlog_mul_le (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy₀ : 0 < y) (h
   calc
     log x⁻¹ - (x⁻¹ - 1) ≤ 0 := sub_nonpos.2 $ log_le_sub_one_of_pos $ by positivity
     _ ≤ (x⁻¹ - 1) * log y⁻¹ :=
-      mul_nonneg (sub_nonneg.2 $ one_le_inv hx₀ hx₁) $ log_nonneg $ one_le_inv hy₀ hy₁
+      mul_nonneg (sub_nonneg.2 $ (one_le_inv₀ hx₀).2 hx₁) $ log_nonneg $ (one_le_inv₀ hy₀).2 hy₁
 
 private lemma curlog_div_le (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy : 1 ≤ y) :
     𝓛 (x / y) ≤ y * 𝓛 x := by
-  simpa [div_eq_inv_mul] using curlog_mul_le (by positivity) (inv_le_one hy) hx₀ hx₁
+  simpa [div_eq_inv_mul] using curlog_mul_le (by positivity) (inv_le_one_of_one_le₀ hy) hx₀ hx₁
 
 private lemma curlog_rpow_le' (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy₀ : 0 < y) (hy₁ : y ≤ 1) :
     𝓛 (x ^ y) ≤ y⁻¹ * 𝓛 x := by
@@ -71,9 +71,10 @@ private lemma curlog_rpow_le' (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy₀ : 0 < y) 
     rw [← sub_nonneg] at h ⊢
     exact h.trans_eq (by rw [← inv_rpow, log_rpow]; ring; all_goals positivity)
   calc
-    1 - y⁻¹ ≤ 0 := sub_nonpos.2 $ one_le_inv hy₀ hy₁
+    1 - y⁻¹ ≤ 0 := sub_nonpos.2 $ (one_le_inv₀ hy₀).2 hy₁
     _ ≤ (y⁻¹ - y) * log x⁻¹ :=
-      mul_nonneg (sub_nonneg.2 $ hy₁.trans $ one_le_inv hy₀ hy₁) $ log_nonneg $ one_le_inv hx₀ hx₁
+      mul_nonneg (sub_nonneg.2 $ hy₁.trans $ (one_le_inv₀ hy₀).2 hy₁) $
+        log_nonneg $ (one_le_inv₀ hx₀).2 hx₁
 
 private lemma curlog_rpow_le (hx₀ : 0 < x) (hy : 1 ≤ y) : 𝓛 (x ^ y) ≤ y * 𝓛 x := by
   rw [← inv_rpow, log_rpow, mul_one_add]
@@ -91,7 +92,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
   set p := 2 * ⌈𝓛 γ⌉₊
   have hp : 1 < p :=
     Nat.succ_le_iff.1 (le_mul_of_one_le_right zero_le' $ Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁)
-  have hp' : (p⁻¹ : ℝ≥0) < 1 := inv_lt_one $ mod_cast hp
+  have hp' : (p⁻¹ : ℝ≥0) < 1 := inv_lt_one_of_one_lt₀ $ mod_cast hp
   have hp'' : (p : ℝ≥0).IsConjExponent _ := .conjExponent $ mod_cast hp
   rw [mul_comm, ← div_div, div_le_iff₀ (zero_lt_two' ℝ)]
   calc
@@ -115,7 +116,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     congr
     any_goals positivity
     exact ENNReal.natCast_ne_top _
-  · have : 1 ≤ γ⁻¹ := one_le_inv hγ hγ₁
+  · have : 1 ≤ γ⁻¹ := (one_le_inv₀ hγ).2 hγ₁
     have : 0 ≤ log γ⁻¹ := log_nonneg this
     calc
       γ ^ (-(↑p)⁻¹ : ℝ) = √(γ⁻¹ ^ ((↑⌈1 + log γ⁻¹⌉₊)⁻¹ : ℝ)) := by
@@ -142,8 +143,9 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
   have hA₁ : A₁.Nonempty := by simpa using hα₀.trans_le hαA₁
   have hA₂ : A₂.Nonempty := by simpa using hα₀.trans_le hαA₂
   have hα₁ : α ≤ 1 := hαA₁.trans $ mod_cast A₁.dens_le_one
-  have : 0 ≤ log α⁻¹ := log_nonneg $ one_le_inv hα₀ hα₁
-  have : 0 ≤ log (ε * α)⁻¹ := log_nonneg $ one_le_inv (by positivity) $ mul_le_one hε₁ hα₀.le hα₁
+  have : 0 ≤ log α⁻¹ := log_nonneg $ (one_le_inv₀ hα₀).2 hα₁
+  have : 0 ≤ log (ε * α)⁻¹ :=
+    log_nonneg $ (one_le_inv₀ (by positivity)).2 $ mul_le_one₀ hε₁ hα₀.le hα₁
   obtain rfl | hS := S.eq_empty_or_nonempty
   · exact ⟨⊤, inferInstance, by simp [hε₀.le]; positivity⟩
   have hA₁ : σ[A₁, univ] ≤ α⁻¹ :=
@@ -156,7 +158,7 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
       ε * α / 4 ≤ ε * 1 / 4 := by gcongr
       _ ≤ 1 := by linarith
   obtain ⟨T, hTcard, hTε⟩ := AlmostPeriodicity.linfty_almost_periodicity_boosted ε hε₀ hε₁ k
-    (by positivity) ((le_inv (by positivity) (by positivity)).2 hα₂) hA₁ univ_nonempty S A₂ hS hA₂
+    (by positivity) (le_inv_of_le_inv₀ (by positivity) hα₂) hA₁ univ_nonempty S A₂ hS hA₂
   have hT : 0 < (T.card : ℝ) := hTcard.trans_lt' (by positivity)
   replace hT : T.Nonempty := by simpa using hT
   let Δ := largeSpec (μ T) 2⁻¹
@@ -186,7 +188,7 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
                 Nat.ceil_le_two_mul <| two_inv_lt_one.le.trans <| one_le_curlog (by positivity) sorry
               _ ≤ 2 * (4 * 𝓛 (ε * α)) := by
                 gcongr
-                exact curlog_div_le (by positivity) (mul_le_one hε₁ hα₀.le hα₁) (by norm_num)
+                exact curlog_div_le (by positivity) (mul_le_one₀ hε₁ hα₀.le hα₁) (by norm_num)
               _ = 2 ^ 3 * 𝓛 (ε * α) := by ring
         _ = 2 ^ 19 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 := by ring_nf
     calc
@@ -250,7 +252,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
     ∃ p' : ℕ, p' ≤ 2 ^ 10 * (ε / 2)⁻¹ ^ 2 * p ∧
       1 + ε / 2 / 2 ≤ ‖card G • (f ○ f) + 1‖_[p', μ univ] := by
     refine unbalancing _ (mul_ne_zero two_ne_zero (Nat.ceil_pos.2 $ curlog_pos hγ.le hγ₁).ne')
-      (ε / 2) (by positivity) (div_le_one_of_le (hε₁.le.trans $ by norm_num) $ by norm_num)
+      (ε / 2) (by positivity) (div_le_one_of_le₀ (hε₁.le.trans $ by norm_num) $ by norm_num)
       (card G • (balance (μ A) ○ balance (μ A))) (sqrt (card G) • balance (μ A)) (μ univ) ?_ ?_ ?_
     · ext a : 1
       simp [smul_dconv, dconv_smul, smul_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
@@ -268,7 +270,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
   have : 0 < log (64 / ε) := log_pos $ (one_lt_div hε₀).2 (by linarith)
   have : 1 ≤ 𝓛 γ := one_le_curlog hγ.le hγ₁
   have : 0 < q' := by positivity
-  have : 1 ≤ ε⁻¹ := one_le_inv hε₀ hε₁.le
+  have : 1 ≤ ε⁻¹ := (one_le_inv₀ hε₀).2 hε₁.le
   have :=
     calc
       (q' : ℝ) ≤ ↑(2 * ⌈2 ^ 10 * (ε / 2)⁻¹ ^ 2 * p + 2 ^ 8 * ε⁻¹ ^ 2 * (64 / ε)⌉₊) := by
@@ -288,7 +290,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           (2⁻¹ : ℝ) ≤ 2 ^ 15 * 1 * 1 := by norm_num
           _ ≤ 2 ^ 15 * ε⁻¹ ^ 3 * 𝓛 γ := ?_
         gcongr
-        exact one_le_pow₀ (one_le_inv hε₀ hε₁.le)
+        exact one_le_pow₀ ((one_le_inv₀ hε₀).2 hε₁.le)
       _ = 2 ^ 17 * 𝓛 γ / ε ^ 3 := by ring
   obtain ⟨A₁, A₂, hA, hA₁, hA₂⟩ : ∃ (A₁ A₂ : Finset G),
       1 - ε / 32 ≤ ∑ x ∈ s q' (ε / 16) univ univ A, (μ A₁ ○ μ A₂) x ∧
@@ -301,7 +303,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           gcongr
           · norm_num
           · norm_num
-          · exact one_le_inv hε₀ hε₁.le
+          · exact (one_le_inv₀ hε₀).2 hε₁.le
           · norm_num
         _ ≤ ⌈2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊ := Nat.le_ceil _
         _ = ↑(1 * ⌈0 + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊) := by rw [one_mul, zero_add]
@@ -362,12 +364,12 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
       _ ≤ 2 ^ 32 * (8 * q' * 𝓛 α) ^ 2 *
           (2 ^ 8 * q' * 𝓛 α / ε) ^ 2 * (ε / 32)⁻¹ ^ 2 := by
         have : α ^ (2 * q') ≤ 1 := pow_le_one₀ hα₀.le hα₁
-        have : 4⁻¹ * α ^ (2 * q') ≤ 1 := mul_le_one (by norm_num) (by positivity) ‹_›
-        have : ε / 32 * (4⁻¹ * α ^ (2 * q')) ≤ 1 := mul_le_one (by linarith) (by positivity) ‹_›
+        have : 4⁻¹ * α ^ (2 * q') ≤ 1 := mul_le_one₀ (by norm_num) (by positivity) ‹_›
+        have : ε / 32 * (4⁻¹ * α ^ (2 * q')) ≤ 1 := mul_le_one₀ (by linarith) (by positivity) ‹_›
         have : 0 ≤ log (ε / 32 * (4⁻¹ * α ^ (2 * q')))⁻¹ :=
-          log_nonneg $ one_le_inv (by positivity) ‹_›
-        have : 0 ≤ log (4⁻¹ * α ^ (2 * q'))⁻¹ := log_nonneg $ one_le_inv (by positivity) ‹_›
-        have : 0 ≤ log (α ^ (2 * q'))⁻¹ := log_nonneg $ one_le_inv (by positivity) ‹_›
+          log_nonneg $ (one_le_inv₀ (by positivity)).2 ‹_›
+        have : 0 ≤ log (4⁻¹ * α ^ (2 * q'))⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 ‹_›
+        have : 0 ≤ log (α ^ (2 * q'))⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 ‹_›
         have :=
           calc
             𝓛 (4⁻¹ * α ^ (2 * q')) ≤ 4⁻¹⁻¹ * 𝓛 (α ^ (2 * q')) :=
@@ -434,7 +436,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
   have : NeZero q := ⟨by positivity⟩
   have : Fact q.Prime := ⟨hq⟩
   have hq' : Odd q := hq.odd_of_ne_two $ by rintro rfl; simp at hq₃
-  have : 1 ≤ α⁻¹ := one_le_inv (by positivity) (by simp [α])
+  have : 1 ≤ α⁻¹ := (one_le_inv₀ (by positivity)).2 (by simp [α])
   have hα₀ : 0 < α := by positivity
   have : 0 ≤ log α⁻¹ := log_nonneg ‹_›
   have : 0 < 𝓛 α := by positivity
@@ -525,13 +527,13 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
     calc
       _ ≤ (1 : ℝ) := mod_cast dens_le_one
       _ < _ := ?_
-    rw [← inv_pos_lt_iff_one_lt_mul, lt_pow_iff_log_lt, ← div_lt_iff₀]
+    rw [← inv_lt_iff_one_lt_mul₀, lt_pow_iff_log_lt, ← div_lt_iff₀]
     calc
       log α⁻¹ / log (65 / 64)
         < ⌊log α⁻¹ / log (65 / 64)⌋₊ + 1 := Nat.lt_floor_add_one _
       _ = ⌊(log (65 / 64) + log α⁻¹) / log (65 / 64)⌋₊ := by
         rw [add_comm (log _), ← div_add_one aux.ne', Nat.floor_add_one, Nat.cast_succ]
-        exact div_nonneg (log_nonneg $ one_le_inv (by positivity) (by simp [α])) aux.le
+        exact div_nonneg (log_nonneg $ (one_le_inv₀ (by positivity)).2 (by simp [α])) aux.le
       _ ≤ ⌊𝓛 α / log (65 / 64)⌋₊ := by
         gcongr
         calc
@@ -555,7 +557,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
         _ = 2 ^ 148 * (log (65 / 64)) ⁻¹ * 𝓛 α ^ 9 := by ring
         _ ≤ 2 ^ 148 * 2 ^ 7 * 𝓛 α ^ 9 := by
           gcongr
-          rw [inv_le ‹_› (by positivity)]
+          refine inv_le_of_inv_le₀ (by positivity) ?_
           calc
             (2 ^ 7)⁻¹ ≤ 1 - (65 / 64)⁻¹ := by norm_num
             _ ≤ log (65 / 64) := one_sub_inv_le_log_of_pos (by positivity)

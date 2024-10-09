@@ -124,7 +124,7 @@ lemma claim_two :
     rw [Real.sq_sqrt]
     exact dconv_nonneg (R := ℝ) indicate_nonneg indicate_nonneg s -- why do I need the annotation??
   have := sum_mul_sq_le_sq_mul_sq univ f (fun s ↦ f s * (A ∩ (s +ᵥ B)).card)
-  refine div_le_of_nonneg_of_le_mul (by positivity) ?_ ?_
+  refine div_le_of_le_mul₀ (by positivity) ?_ ?_
   · refine sum_nonneg fun i _ ↦ ?_
     -- indicate nonneg should be a positivity lemma
     exact mul_nonneg (dconv_nonneg indicate_nonneg indicate_nonneg _) (by positivity)

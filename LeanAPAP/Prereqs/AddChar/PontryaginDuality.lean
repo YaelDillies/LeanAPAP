@@ -142,7 +142,7 @@ variable (α) [Finite α]
 /-- Complex-valued characters of a finite abelian group `α` form a basis of `α → ℂ`. -/
 def complexBasis : Basis (AddChar α ℂ) ℂ (α → ℂ) :=
   basisOfLinearIndependentOfCardEqFinrank (AddChar.linearIndependent _ _) $ by
-    cases nonempty_fintype α; rw [card_eq, FiniteDimensional.finrank_fintype_fun_eq_card]
+    cases nonempty_fintype α; rw [card_eq, Module.finrank_fintype_fun_eq_card]
 
 @[simp, norm_cast]
 lemma coe_complexBasis : ⇑(complexBasis α) = ((⇑) : AddChar α ℂ → α → ℂ) := by
