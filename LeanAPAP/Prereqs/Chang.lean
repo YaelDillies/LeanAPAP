@@ -1,6 +1,5 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalities
-import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.Rudin
@@ -20,7 +19,7 @@ local notation "𝓛" x:arg => 1 + log x⁻¹
 private lemma curlog_pos (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 0 < 𝓛 x := by
   obtain rfl | hx₀ := hx₀.eq_or_lt
   · simp
-  have : 0 ≤ log x⁻¹ := log_nonneg $ one_le_inv (by positivity) hx₁
+  have : 0 ≤ log x⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 hx₁
   positivity
 
 private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻¹ ^ (𝓛 x)⁻¹ ≤ exp 1 := by
@@ -28,7 +27,7 @@ private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻�
   · simp; positivity
   obtain rfl | hx₁ := hx₁.eq_or_lt
   · simp
-  have hx := one_lt_inv hx₀ hx₁
+  have hx := (one_lt_inv₀ hx₀).2 hx₁
   calc
     x⁻¹ ^ (𝓛 x)⁻¹ ≤ x⁻¹ ^ (log x⁻¹)⁻¹ := by
       gcongr
@@ -80,7 +79,7 @@ local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 private lemma α_le_one (f : G → ℂ) : ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G ≤ 1 := by
-  refine div_le_one_of_le (div_le_of_nonneg_of_le_mul ?_ ?_ ?_) ?_
+  refine div_le_one_of_le₀ (div_le_of_le_mul₀ ?_ ?_ ?_) ?_
   any_goals positivity
   rw [dL1Norm_eq_sum_nnnorm, dL2Norm_sq_eq_sum_nnnorm, ← NNReal.coe_le_coe]
   push_cast
@@ -190,7 +189,7 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
       rw [div_self hη.ne', one_pow, one_mul]
     _ = _ := by ring
   refine le_mul_of_one_le_right (by positivity) ?_
-  rw [← inv_pos_le_iff_one_le_mul']
+  rw [← inv_le_iff_one_le_mul₀']
   calc
     α⁻¹ = exp (0 + log α⁻¹) := by rw [zero_add, exp_log]; norm_cast; positivity
     _ ≤ exp ⌈0 + log α⁻¹⌉₊ := by gcongr; exact Nat.le_ceil _

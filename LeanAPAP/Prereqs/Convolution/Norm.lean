@@ -1,7 +1,7 @@
 import Mathlib.Algebra.Order.Star.Conjneg
+import Mathlib.Analysis.RCLike.Inner
 import Mathlib.Data.Real.StarOrdered
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
-import LeanAPAP.Prereqs.Inner.Weighted
 import LeanAPAP.Prereqs.LpNorm.Discrete.Basic
 
 /-!

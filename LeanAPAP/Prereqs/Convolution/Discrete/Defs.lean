@@ -353,13 +353,16 @@ namespace Complex
 variable (f g : G → ℝ) (n : ℕ) (a : G)
 
 @[simp, norm_cast]
-lemma coe_conv : (↑((f ∗ g) a) : ℂ) = ((↑) ∘ f ∗ (↑) ∘ g) a := RCLike.coe_conv _ _ _
+lemma ofReal_conv : (↑((f ∗ g) a) : ℂ) = ((↑) ∘ f ∗ (↑) ∘ g) a := RCLike.coe_conv _ _ _
 
 @[simp, norm_cast]
-lemma coe_dconv : (↑((f ○ g) a) : ℂ) = ((↑) ∘ f ○ (↑) ∘ g) a := RCLike.coe_dconv _ _ _
+lemma ofReal_dconv : (↑((f ○ g) a) : ℂ) = ((↑) ∘ f ○ (↑) ∘ g) a := RCLike.coe_dconv _ _ _
 
-@[simp] lemma coe_comp_conv : ((↑) : ℝ → ℂ) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g := funext $ coe_conv _ _
-@[simp] lemma coe_comp_dconv : ((↑) : ℝ → ℂ) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g := funext $ coe_dconv _ _
+@[simp] lemma ofReal_comp_conv : ((↑) : ℝ → ℂ) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g :=
+  funext $ ofReal_conv _ _
+
+@[simp] lemma ofReal_comp_dconv : ((↑) : ℝ → ℂ) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g :=
+  funext $ ofReal_dconv _ _
 
 end Complex
 
@@ -372,8 +375,11 @@ lemma coe_conv : (↑((f ∗ g) a) : ℝ) = ((↑) ∘ f ∗ (↑) ∘ g) a := m
 @[simp, norm_cast]
 lemma coe_dconv : (↑((f ○ g) a) : ℝ) = ((↑) ∘ f ○ (↑) ∘ g) a := by simp [dconv_apply, coe_sum]
 
-@[simp] lemma coe_comp_conv : ((↑) : _ → ℝ) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g := funext $ coe_conv _ _
-@[simp] lemma coe_comp_dconv : ((↑) : _ → ℝ) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g := funext $ coe_dconv _ _
+@[simp] lemma coe_comp_conv : ((↑) : _ → ℝ) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g :=
+  funext $ coe_conv _ _
+
+@[simp] lemma coe_comp_dconv : ((↑) : _ → ℝ) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g :=
+  funext $ coe_dconv _ _
 
 end NNReal
 
@@ -468,7 +474,7 @@ end CommSemiring
 namespace NNReal
 
 @[simp, norm_cast]
-lemma coe_iterConv (f : G → ℝ≥0) (n : ℕ) (a : G) : (↑((f ∗^ n) a) : ℝ) = ((↑) ∘ f ∗^ n) a :=
+lemma ofReal_iterConv (f : G → ℝ≥0) (n : ℕ) (a : G) : (↑((f ∗^ n) a) : ℝ) = ((↑) ∘ f ∗^ n) a :=
   map_iterConv NNReal.toRealHom _ _ _
 
 end NNReal
@@ -476,7 +482,7 @@ end NNReal
 namespace Complex
 
 @[simp, norm_cast]
-lemma coe_iterConv (f : G → ℝ) (n : ℕ) (a : G) : (↑((f ∗^ n) a) : ℂ) = ((↑) ∘ f ∗^ n) a :=
-  map_iterConv ofReal _ _ _
+lemma ofReal_iterConv (f : G → ℝ) (n : ℕ) (a : G) : (↑((f ∗^ n) a) : ℂ) = ((↑) ∘ f ∗^ n) a :=
+  map_iterConv ofRealHom _ _ _
 
 end Complex

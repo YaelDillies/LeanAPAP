@@ -1,8 +1,8 @@
 import Mathlib.Algebra.Order.Group.PosPart
+import Mathlib.Analysis.RCLike.Inner
 import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Complex
-import LeanAPAP.Prereqs.Inner.Weighted
 import LeanAPAP.Prereqs.LpNorm.Weighted
 
 /-!
@@ -219,13 +219,13 @@ lemma unbalancing' (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁
           (2⁻¹ : ℝ) ≤ 120 * 1 * 1 * 1 := by norm_num
           _ ≤ 120 * ε⁻¹ * log (3 * ε⁻¹) * p := by
             gcongr
-            · exact one_le_inv hε₀ hε₁
+            · exact (one_le_inv₀ hε₀).2 hε₁
             · rw [← log_exp 1]
               gcongr
               calc
                 exp 1 ≤ 2.7182818286 := exp_one_lt_d9.le
                 _ ≤ 3 * 1 := by norm_num
-                _ ≤ 3 * ε⁻¹ := by gcongr; exact one_le_inv hε₀ hε₁
+                _ ≤ 3 * ε⁻¹ := by gcongr; exact (one_le_inv₀ hε₀).2 hε₁
             · exact mod_cast hp
       _ ≤ 2 * (120 * ε⁻¹ * (3 * ε⁻¹) * p) := by gcongr; exact Real.log_le_self (by positivity)
       _ ≤ 2 * (2 ^ 7 * ε⁻¹ * (2 ^ 2 * ε⁻¹) * p) := by gcongr <;> norm_num
@@ -250,5 +250,5 @@ lemma unbalancing (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁ 
     (hε : ε ≤ ‖f‖_[p, μ univ]) :
     ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ ‖f + 1‖_[p', μ univ] :=
   unbalancing' p hp ε hε₀ hε₁ _ _ g h hf
-    (show _ = Complex.ofReal' ∘ NNReal.toReal ∘ μ univ by simpa using hh)
+    (show _ = Complex.ofReal ∘ NNReal.toReal ∘ μ univ by simpa using hh)
     (by simp; simp [mu_univ_eq_const, ← const_def]) (by simpa [rpow_neg, inv_rpow] using hε)

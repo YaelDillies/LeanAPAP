@@ -126,9 +126,9 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         mul_div_right_comm] using h
       positivity
     refine ⟨(lt_of_mul_lt_mul_left (hs.trans_eq' ?_) $ hg s).le, this.trans $ mul_le_of_le_one_right
-      ?_ $ div_le_one_of_le ?_ ?_, this.trans $ mul_le_of_le_one_left ?_ $ div_le_one_of_le ?_ ?_⟩
+      ?_ $ div_le_one_of_le₀ ?_ ?_, this.trans $ mul_le_of_le_one_left ?_ $ div_le_one_of_le₀ ?_ ?_⟩
     · simp_rw [A₁, A₂, g, ← card_smul_mu, smul_dconv, dconv_smul, ← Nat.cast_smul_eq_nsmul ℝ,
-        wInner_smul_left, star_trivial, mul_assoc]
+        wInner_smul_left, smul_eq_mul, star_trivial, mul_assoc]
     any_goals positivity
     all_goals exact Nat.cast_le.2 $ card_mono inter_subset_left
   rw [← sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ← sum_mul, mul_right_comm, ← hgB,
@@ -223,7 +223,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
         := ?_
     _ ≤ _ :=
       mul_le_of_le_one_left (mul_nonneg (hp.pow_nonneg _) $ hp.pow_nonneg _) $
-        mul_le_one dL1Norm_mu_le_one (NNReal.coe_nonneg _) dL1Norm_mu_le_one
+        mul_le_one₀ dL1Norm_mu_le_one (NNReal.coe_nonneg _) dL1Norm_mu_le_one
     _ ≤ _ := mul_le_mul_of_nonneg_right ?_ $ hp.pow_nonneg _
   · have : 0 ≤ μ_[ℝ] B₁ ○ μ B₂ := dconv_nonneg mu_nonneg mu_nonneg
     simp_rw [← NNReal.coe_mul, ← dL1Norm_dconv mu_nonneg mu_nonneg, dL1Norm_eq_sum_nnnorm,

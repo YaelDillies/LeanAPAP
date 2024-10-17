@@ -1,6 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
-import LeanAPAP.Mathlib.Data.ENNReal.Basic
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.Randomisation
 
@@ -83,7 +82,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
       _ ≤ 𝔼 a, |(f a).re| ^ p / p ! := by gcongr; norm_cast; exact p.factorial_le_pow
       _ ≤ 𝔼 a, exp |(f a).re| := by gcongr; exact pow_div_factorial_le_exp _ (abs_nonneg _) _
       _ ≤ _ := rudin_exp_abs_ineq f hf
-      _ ≤ 2 ^ p * exp (‖f‖ₙ_[2] ^ 2 / 2) := by gcongr; exact le_self_pow one_le_two hp₀
+      _ ≤ 2 ^ p * exp (‖f‖ₙ_[2] ^ 2 / 2) := by gcongr; exact le_self_pow₀ one_le_two hp₀
       _ = (2 * exp 2⁻¹) ^ p := by
           rw [hfp, sq_sqrt, mul_pow, ← exp_nsmul, nsmul_eq_mul, div_eq_mul_inv]; positivity
   refine le_of_pow_le_pow_left hp₀ (by positivity) ?_

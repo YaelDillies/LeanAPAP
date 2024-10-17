@@ -1,6 +1,6 @@
 import Mathlib.Algebra.BigOperators.Expect
+import Mathlib.Analysis.RCLike.Inner
 import LeanAPAP.Prereqs.Function.Indicator.Defs
-import LeanAPAP.Prereqs.Inner.Weighted
 
 open Finset RCLike
 open scoped BigOperators ComplexConjugate

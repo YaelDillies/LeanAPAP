@@ -1,6 +1,6 @@
 import Mathlib.Algebra.BigOperators.Expect
 import Mathlib.Algebra.Group.AddChar
-import LeanAPAP.Prereqs.Inner.Weighted
+import Mathlib.Analysis.RCLike.Inner
 
 open Finset hiding card
 open Fintype (card)
@@ -34,8 +34,8 @@ end Semifield
 section RCLike
 variable [RCLike R] [Fintype G]
 
-lemma wInner_compact_self (ψ : AddChar G R) : ⟪(ψ : G → R), ψ⟫ₙ_[R] = 1 := by
-  simp [wInner_compact_eq_expect, ψ.norm_apply, RCLike.conj_mul]
+lemma wInner_cWeight_self (ψ : AddChar G R) : ⟪(ψ : G → R), ψ⟫ₙ_[R] = 1 := by
+  simp [wInner_cWeight_eq_expect, ψ.norm_apply, RCLike.conj_mul]
 
 end RCLike
 end AddGroup
@@ -46,32 +46,32 @@ variable [AddCommGroup G]
 section RCLike
 variable [RCLike R] {ψ₁ ψ₂ : AddChar G R}
 
-lemma wInner_compact_eq_boole [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
+lemma wInner_cWeight_eq_boole [Fintype G] (ψ₁ ψ₂ : AddChar G R) :
     ⟪(ψ₁ : G → R), ψ₂⟫ₙ_[R] = if ψ₁ = ψ₂ then 1 else 0 := by
   split_ifs with h
-  · rw [h, wInner_compact_self]
+  · rw [h, wInner_cWeight_self]
   have : ψ₁⁻¹ * ψ₂ ≠ 1 := by rwa [Ne, inv_mul_eq_one]
-  simp_rw [wInner_compact_eq_expect, RCLike.inner_apply, ← inv_apply_eq_conj]
+  simp_rw [wInner_cWeight_eq_expect, RCLike.inner_apply, ← inv_apply_eq_conj]
   simpa [map_neg_eq_inv] using expect_eq_zero_iff_ne_zero.2 this
 
-lemma wInner_compact_eq_zero_iff_ne [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫ₙ_[R] = 0 ↔ ψ₁ ≠ ψ₂ := by
-  rw [wInner_compact_eq_boole, one_ne_zero.ite_eq_right_iff]
+lemma wInner_cWeight_eq_zero_iff_ne [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫ₙ_[R] = 0 ↔ ψ₁ ≠ ψ₂ := by
+  rw [wInner_cWeight_eq_boole, one_ne_zero.ite_eq_right_iff]
 
-lemma wInner_compact_eq_one_iff_eq [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫ₙ_[R] = 1 ↔ ψ₁ = ψ₂ := by
-  rw [wInner_compact_eq_boole, one_ne_zero.ite_eq_left_iff]
+lemma wInner_cWeight_eq_one_iff_eq [Fintype G] : ⟪(ψ₁ : G → R), ψ₂⟫ₙ_[R] = 1 ↔ ψ₁ = ψ₂ := by
+  rw [wInner_cWeight_eq_boole, one_ne_zero.ite_eq_left_iff]
 
 variable (G R)
 
 protected lemma linearIndependent [Finite G] : LinearIndependent R ((⇑) : AddChar G R → G → R) := by
   cases nonempty_fintype G
-  exact linearIndependent_of_ne_zero_of_wInner_compact_eq_zero AddChar.coe_ne_zero fun ψ₁ ψ₂ ↦
-    wInner_compact_eq_zero_iff_ne.2
+  exact linearIndependent_of_ne_zero_of_wInner_cWeight_eq_zero AddChar.coe_ne_zero fun ψ₁ ψ₂ ↦
+    wInner_cWeight_eq_zero_iff_ne.2
 
 noncomputable instance instFintype [Finite G] : Fintype (AddChar G R) :=
   @Fintype.ofFinite _ (AddChar.linearIndependent G R).finite
 
 @[simp] lemma card_addChar_le [Fintype G] : card (AddChar G R) ≤ card G := by
-  simpa only [FiniteDimensional.finrank_fintype_fun_eq_card] using
+  simpa only [Module.finrank_fintype_fun_eq_card] using
     (AddChar.linearIndependent G R).fintype_card_le_finrank
 
 end RCLike

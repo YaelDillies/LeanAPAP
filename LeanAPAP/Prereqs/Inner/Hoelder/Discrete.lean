@@ -1,4 +1,4 @@
-import LeanAPAP.Prereqs.Inner.Weighted
+import Mathlib.Analysis.RCLike.Inner
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 
 /-! # Inner product -/
@@ -48,7 +48,7 @@ lemma wInner_one_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α →
 /-- **Hölder's inequality**, binary case. -/
 lemma abs_wInner_one_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     |⟪f, g⟫_[ℝ]| ≤ ‖f‖_[p] * ‖g‖_[q] :=
-  (abs_wInner_le_wInner_abs zero_le_one).trans $
+  (abs_wInner_le zero_le_one).trans $
     (wInner_one_le_dLpNorm_mul_dLpNorm hpq _ _).trans_eq $ by simp_rw [dLpNorm_abs]
 
 end Real

@@ -32,17 +32,18 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
   ext; simp [wInner_sub_right, cft_apply]
 
 @[simp] lemma cft_const (a : ℂ) (hψ : ψ ≠ 0) : cft (const α a) ψ = 0 := by
-  simp only [cft_apply, wInner_compact_eq_expect, inner_apply, const_apply, ← expect_mul,
+  simp only [cft_apply, wInner_cWeight_eq_expect, inner_apply, const_apply, ← expect_mul,
     ← map_expect, expect_eq_zero_iff_ne_zero.2 hψ, map_zero, zero_mul]
 
-@[simp] lemma cft_smul {𝕝 : Type*} [CommSemiring 𝕝] [Algebra 𝕝 ℂ] [IsScalarTower 𝕝 ℂ ℂ] (c : 𝕝)
-    (f : α → ℂ) : cft (c • f) = c • cft f := by ext; simp [wInner_smul_right, cft_apply]
+@[simp] lemma cft_smul {𝕝 : Type*} [CommSemiring 𝕝] [StarRing 𝕝] [Algebra 𝕝 ℂ] [StarModule 𝕝 ℂ]
+    [IsScalarTower 𝕝 ℂ ℂ] (c : 𝕝) (f : α → ℂ) :  cft (c • f) = c • cft f := by
+  ext; simp [wInner_smul_right, cft_apply]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma wInner_one_cft (f g : α → ℂ) : ⟪cft f, cft g⟫_[ℂ] = ⟪f, g⟫ₙ_[ℂ] := by
   classical
   unfold cft
-  simp_rw [wInner_one_eq_sum, wInner_compact_eq_expect, inner_apply, map_expect, map_mul,
+  simp_rw [wInner_one_eq_sum, wInner_cWeight_eq_expect, inner_apply, map_expect, map_mul,
     starRingEnd_self_apply, expect_mul, mul_expect, ← expect_sum_comm,
     mul_mul_mul_comm _ (conj $ f _), ← sum_mul, ← AddChar.inv_apply_eq_conj, ← map_neg_eq_inv,
     ← map_add_eq_mul, AddChar.sum_apply_eq_ite]
@@ -52,11 +53,11 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
 @[simp] lemma dL2Norm_cft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
     ‖cft f‖_[2] = ‖f‖ₙ_[2] :=
   (sq_eq_sq (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
-    push_cast; simpa only [RCLike.wInner_compact_self, wInner_one_self] using wInner_one_cft f f
+    push_cast; simpa only [RCLike.wInner_cWeight_self, wInner_one_self] using wInner_one_cft f f
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma cft_inversion (f : α → ℂ) (a : α) : ∑ ψ, cft f ψ * ψ a = f a := by
-  classical simp_rw [cft, wInner_compact_eq_expect, inner_apply, expect_mul, ← expect_sum_comm,
+  classical simp_rw [cft, wInner_cWeight_eq_expect, inner_apply, expect_mul, ← expect_sum_comm,
     mul_right_comm _ (f _), ← sum_mul, ← AddChar.inv_apply_eq_conj, inv_mul_eq_div,
     ← map_sub_eq_div, AddChar.sum_apply_eq_ite, sub_eq_zero, ite_mul, zero_mul,
     Fintype.expect_ite_eq]
@@ -70,7 +71,7 @@ lemma dft_cft_doubleDualEmb (f : α → ℂ) (a : α) : dft (cft f) (doubleDualE
     map_neg_eq_inv, AddChar.inv_apply_eq_conj, doubleDualEmb_apply]
 
 lemma cft_dft_doubleDualEmb (f : α → ℂ) (a : α) : cft (dft f) (doubleDualEmb a) = f (-a) := by
-  simp only [← dft_inversion f (-a), mul_comm (conj _), cft_apply, wInner_compact_eq_expect,
+  simp only [← dft_inversion f (-a), mul_comm (conj _), cft_apply, wInner_cWeight_eq_expect,
     inner_apply, map_neg_eq_inv, AddChar.inv_apply_eq_conj, doubleDualEmb_apply]
 
 lemma dft_cft (f : α → ℂ) : dft (cft f) = f ∘ doubleDualEquiv.symm ∘ Neg.neg :=
@@ -85,16 +86,16 @@ lemma cft_injective : Injective (cft : (α → ℂ) → AddChar α ℂ → ℂ) 
   funext fun a ↦ (cft_inversion _ _).symm.trans $ by rw [h, cft_inversion]
 
 lemma cft_inv (ψ : AddChar α ℂ) (hf : IsSelfAdjoint f) : cft f ψ⁻¹ = conj (cft f ψ) := by
-  simp_rw [cft_apply, wInner_compact_eq_expect, inner_apply, map_expect, AddChar.inv_apply',
+  simp_rw [cft_apply, wInner_cWeight_eq_expect, inner_apply, map_expect, AddChar.inv_apply',
     map_mul, AddChar.inv_apply_eq_conj, Complex.conj_conj, (hf.apply _).conj_eq]
 
 @[simp]
 lemma cft_conj (f : α → ℂ) (ψ : AddChar α ℂ) : cft (conj f) ψ = conj (cft f ψ⁻¹) := by
-  simp only [cft_apply, wInner_compact_eq_expect, inner_apply, map_expect, map_mul, ← inv_apply',
+  simp only [cft_apply, wInner_cWeight_eq_expect, inner_apply, map_expect, map_mul, ← inv_apply',
     ← inv_apply_eq_conj, inv_inv, Pi.conj_apply]
 
 lemma cft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft (conjneg f) ψ = conj (cft f ψ) := by
-  simp only [cft_apply, wInner_compact_eq_expect, inner_apply, conjneg_apply, map_expect, map_mul,
+  simp only [cft_apply, wInner_cWeight_eq_expect, inner_apply, conjneg_apply, map_expect, map_mul,
     RCLike.conj_conj]
   refine Fintype.expect_equiv (Equiv.neg _) _ _ fun i ↦ ?_
   simp only [Equiv.neg_apply, ← inv_apply_eq_conj, ← inv_apply', inv_apply]
@@ -107,14 +108,14 @@ lemma cft_conjneg (f : α → ℂ) : cft (conjneg f) = conj (cft f) := funext $ 
 
 lemma cft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime n) :
     cft (dilate f n) ψ = cft f (ψ ^ n) := by
-  simp_rw [cft_apply, wInner_compact_eq_expect, dilate]
+  simp_rw [cft_apply, wInner_cWeight_eq_expect, dilate]
   rw [← Nat.card_eq_fintype_card] at hn
   refine (Fintype.expect_bijective _ hn.nsmul_right_bijective _ _  ?_).symm
   simp only [pow_apply, ← map_nsmul_eq_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
 
 @[simp] lemma cft_trivNChar [DecidableEq α] : cft (trivNChar : α → ℂ) = 1 := by
   ext
-  simp [trivChar_apply, cft_apply, wInner_compact_eq_expect, ← map_expect, card_univ, NNRat.smul_def]
+  simp [trivChar_apply, cft_apply, wInner_cWeight_eq_expect, ← map_expect, card_univ, NNRat.smul_def]
 
 @[simp] lemma cft_one : cft (1 : α → ℂ) = trivChar :=
   dft_injective $ by classical rw [dft_trivChar, dft_cft, Pi.one_comp]
@@ -122,11 +123,11 @@ lemma cft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime 
 variable [DecidableEq α]
 
 @[simp] lemma cft_indicate_zero (s : Finset α) : cft (𝟭 s) 0 = s.dens := by
-  simp [cft_apply, wInner_compact_eq_expect, inner_apply, expect_indicate, AddChar.zero_apply,
+  simp [cft_apply, wInner_cWeight_eq_expect, inner_apply, expect_indicate, AddChar.zero_apply,
     map_one, one_mul, dens, NNRat.smul_def (K := ℂ), div_eq_inv_mul]
 
 lemma cft_cconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : cft (f ∗ₙ g) ψ = cft f ψ * cft g ψ := by
-  simp_rw [cft, wInner_compact_eq_expect, inner_apply, cconv_eq_expect_sub', mul_expect, expect_mul,
+  simp_rw [cft, wInner_cWeight_eq_expect, inner_apply, cconv_eq_expect_sub', mul_expect, expect_mul,
     ← expect_product', univ_product_univ]
   refine Fintype.expect_equiv ((Equiv.prodComm _ _).trans $
     ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_

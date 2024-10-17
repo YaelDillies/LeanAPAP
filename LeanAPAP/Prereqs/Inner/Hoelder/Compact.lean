@@ -13,17 +13,17 @@ variable {ι κ 𝕜 : Type*} [Fintype ι]
 namespace RCLike
 variable [RCLike 𝕜] {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι] {f : ι → 𝕜}
 
-@[simp] lemma wInner_compact_self (f : ι → 𝕜) :
+@[simp] lemma wInner_cWeight_self (f : ι → 𝕜) :
     ⟪f, f⟫ₙ_[𝕜] = ((‖f‖ₙ_[2] : ℝ) : 𝕜) ^ 2 := by
   simp_rw [← algebraMap.coe_pow, ← NNReal.coe_pow]
-  simp [cL2Norm_sq_eq_expect_nnnorm, wInner_compact_eq_expect, RCLike.conj_mul]
+  simp [cL2Norm_sq_eq_expect_nnnorm, wInner_cWeight_eq_expect, RCLike.conj_mul]
 
 lemma cL1Norm_mul (f g : ι → 𝕜) : ‖f * g‖ₙ_[1] = ⟪fun i ↦ ‖f i‖, fun i ↦ ‖g i‖⟫ₙ_[ℝ] := by
-  simp [wInner_compact_eq_expect, cL1Norm_eq_expect_nnnorm]
+  simp [wInner_cWeight_eq_expect, cL1Norm_eq_expect_nnnorm]
 
 /-- **Cauchy-Schwarz inequality** -/
-lemma wInner_compact_le_cL2Norm_mul_cL2Norm (f g : ι → ℝ) : ⟪f, g⟫ₙ_[ℝ] ≤ ‖f‖ₙ_[2] * ‖g‖ₙ_[2] := by
-  simp only [wInner_compact_eq_smul_wInner_one, cL2Norm_eq_expect_nnnorm, ← NNReal.coe_mul, expect,
+lemma wInner_cWeight_le_cL2Norm_mul_cL2Norm (f g : ι → ℝ) : ⟪f, g⟫ₙ_[ℝ] ≤ ‖f‖ₙ_[2] * ‖g‖ₙ_[2] := by
+  simp only [wInner_cWeight_eq_smul_wInner_one, cL2Norm_eq_expect_nnnorm, ← NNReal.coe_mul, expect,
     NNReal.coe_nnqsmul, ← NNRat.cast_smul_eq_nnqsmul ℝ≥0, smul_eq_mul, ← NNReal.mul_rpow,
     mul_mul_mul_comm, ← sq]
   simp only [NNReal.mul_rpow, ← dL2Norm_eq_sum_nnnorm, card_univ]
@@ -45,12 +45,12 @@ lemma cL1Norm_mul_of_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : ‖f * g‖ₙ_[1] =
   convert cL1Norm_mul f g using 2 <;> ext a <;> refine (norm_of_nonneg ?_).symm; exacts [hf _, hg _]
 
 /-- **Hölder's inequality**, binary case. -/
-lemma wInner_compact_le_cLpNorm_mul_cLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
+lemma wInner_cWeight_le_cLpNorm_mul_cLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     ⟪f, g⟫ₙ_[ℝ] ≤ ‖f‖ₙ_[p] * ‖g‖ₙ_[q] := by
   have hp := hpq.ne_zero
   have hq := hpq.symm.ne_zero
   norm_cast at hp hq
-  rw [wInner_compact_eq_expect, expect_eq_sum_div_card, cLpNorm_eq_expect_nnnorm hp,
+  rw [wInner_cWeight_eq_expect, expect_eq_sum_div_card, cLpNorm_eq_expect_nnnorm hp,
     cLpNorm_eq_expect_nnnorm hq, expect_eq_sum_div_card, expect_eq_sum_div_card,
     NNReal.div_rpow, NNReal.div_rpow, ← NNReal.coe_mul, div_mul_div_comm, ← NNReal.rpow_add',
     hpq.coe.inv_add_inv_conj, NNReal.rpow_one]
@@ -61,10 +61,10 @@ lemma wInner_compact_le_cLpNorm_mul_cLpNorm (hpq : p.IsConjExponent q) (f g : α
   · simp [hpq.coe.inv_add_inv_conj]
 
 /-- **Hölder's inequality**, binary case. -/
-lemma abs_wInner_compact_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
+lemma abs_wInner_cWeight_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     |⟪f, g⟫ₙ_[ℝ]| ≤ ‖f‖ₙ_[p] * ‖g‖ₙ_[q] :=
-  (abs_wInner_le_wInner_abs fun _ ↦ by dsimp; positivity).trans $
-    (wInner_compact_le_cLpNorm_mul_cLpNorm hpq _ _).trans_eq $ by simp_rw [cLpNorm_abs]
+  (abs_wInner_le fun _ ↦ by dsimp; positivity).trans $
+    (wInner_cWeight_le_cLpNorm_mul_cLpNorm hpq _ _).trans_eq $ by simp_rw [cLpNorm_abs]
 
 end Real
 
@@ -72,17 +72,17 @@ section Hoelder
 variable {α : Type*} {mα : MeasurableSpace α} [DiscreteMeasurableSpace α] [Fintype α] [RCLike 𝕜]
   {p q : ℝ≥0} {f g : α → 𝕜}
 
-lemma norm_wInner_compact_le (f g : α → 𝕜) :
+lemma norm_wInner_cWeight_le (f g : α → 𝕜) :
     ‖⟪f, g⟫ₙ_[𝕜]‖₊ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫ₙ_[ℝ] := by
-  simpa [wInner_compact_eq_expect, norm_mul]
+  simpa [wInner_cWeight_eq_expect, norm_mul]
     using norm_expect_le (K := ℝ) (f := fun i ↦ conj (f i) * g i)
 
 /-- **Hölder's inequality**, binary case. -/
-lemma nnnorm_wInner_compact_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
+lemma nnnorm_wInner_cWeight_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
     ‖⟪f, g⟫ₙ_[𝕜]‖₊ ≤ ‖f‖ₙ_[p] * ‖g‖ₙ_[q] :=
   calc
-    _ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫ₙ_[ℝ] := norm_wInner_compact_le _ _
-    _ ≤ ‖fun a ↦ ‖f a‖‖ₙ_[p] * ‖fun a ↦ ‖g a‖‖ₙ_[q] := wInner_compact_le_cLpNorm_mul_cLpNorm hpq _ _
+    _ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫ₙ_[ℝ] := norm_wInner_cWeight_le _ _
+    _ ≤ ‖fun a ↦ ‖f a‖‖ₙ_[p] * ‖fun a ↦ ‖g a‖‖ₙ_[q] := wInner_cWeight_le_cLpNorm_mul_cLpNorm hpq _ _
     _ = ‖f‖ₙ_[p] * ‖g‖ₙ_[q] := by simp_rw [cLpNorm_norm]
 
 /-- **Hölder's inequality**, binary case. -/
@@ -97,7 +97,7 @@ lemma cLpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ 
   push_cast
   rw [cL1Norm_mul_of_nonneg, mul_rpow, ← NNReal.coe_rpow, ← NNReal.coe_rpow, cLpNorm_rpow',
     cLpNorm_rpow', ← ENNReal.coe_div, ← ENNReal.coe_div]
-  refine wInner_compact_le_cLpNorm_mul_cLpNorm ⟨?_, ?_⟩ _ _
+  refine wInner_cWeight_le_cLpNorm_mul_cLpNorm ⟨?_, ?_⟩ _ _
   · norm_cast
     rw [div_eq_mul_inv, ← hpqr, mul_add, mul_inv_cancel₀ hp]
     exact lt_add_of_pos_right _ (by positivity)

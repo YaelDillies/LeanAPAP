@@ -37,7 +37,7 @@ end NNReal
 namespace Complex
 
 @[simp, norm_cast] lemma ofReal_indicate (s : Finset α) (x : α) : ↑(𝟭_[ℝ] s x) = 𝟭_[ℂ] s x :=
-  map_indicate ofReal _ _
+  map_indicate ofRealHom _ _
 
 @[simp] lemma ofReal_comp_indicate (s : Finset α) : (↑) ∘ 𝟭_[ℝ] s = 𝟭_[ℂ] s := by
   ext; exact ofReal_indicate _ _

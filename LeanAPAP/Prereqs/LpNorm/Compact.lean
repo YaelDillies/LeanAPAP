@@ -1,11 +1,7 @@
-import Mathlib.Algebra.Order.BigOperators.Expect
 import Mathlib.Algebra.Star.Conjneg
-import Mathlib.Data.Finset.Density
 import Mathlib.Data.Fintype.Order
-import Mathlib.Probability.ConditionalProbability
-import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
-import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.Function.Indicator.Defs
+import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.NNLpNorm
 
 /-!
@@ -28,7 +24,7 @@ section NormedAddCommGroup
 variable [NormedAddCommGroup E] {p q : ℝ≥0∞} {f g h : α → E}
 
 /-- The Lp norm of a function with the compact normalisation. -/
-noncomputable def cLpNorm (p : ℝ≥0∞) (f : α → E) : ℝ≥0 := nnLpNorm f p .count[|Set.univ]
+noncomputable def cLpNorm (p : ℝ≥0∞) (f : α → E) : ℝ≥0 := nnLpNorm f p (uniformOn .univ)
 
 notation "‖" f "‖ₙ_[" p "]" => cLpNorm p f
 
@@ -126,13 +122,13 @@ end DiscreteMeasurableSpace
 variable [Fintype α]
 
 @[simp] lemma cLpNorm_const [Nonempty α] {p : ℝ≥0∞} (hp : p ≠ 0) (a : E) :
-    ‖fun _i : α ↦ a‖ₙ_[p] = ‖a‖₊ := by simp [cLpNorm, *]
+    ‖fun _i : α ↦ a‖ₙ_[p] = ‖a‖₊ := by simp [cLpNorm, uniformOn, *]
 
 section NormedField
 variable [NormedField 𝕜] {p : ℝ≥0∞} {f g : α → 𝕜}
 
-@[simp] lemma cLpNorm_one [Nonempty α] (hp : p ≠ 0) :
-    ‖(1 : α → 𝕜)‖ₙ_[p] = 1 := by simp [cLpNorm, *]
+@[simp] lemma cLpNorm_one [Nonempty α] (hp : p ≠ 0) : ‖(1 : α → 𝕜)‖ₙ_[p] = 1 := by
+  simp [cLpNorm, uniformOn, *]
 
 end NormedField
 
@@ -140,16 +136,16 @@ variable [DiscreteMeasurableSpace α]
 
 lemma cLpNorm_eq_expect_norm' (hp₀ : p ≠ 0) (hp : p ≠ ∞) (f : α → E) :
     ‖f‖ₙ_[p] = (𝔼 i, ‖f i‖ ^ p.toReal) ^ p.toReal⁻¹ := by
-  simp [cLpNorm, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete, one_div, ← mul_sum,
+  simp [cLpNorm, uniformOn, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete,
     integral_fintype, tsum_eq_sum' (s := univ) (by simp), ENNReal.coe_rpow_of_nonneg, cond_apply,
-    expect_eq_sum_div_card, div_eq_inv_mul]
+    expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum]
 
 lemma cLpNorm_eq_expect_nnnorm' (hp₀ : p ≠ 0) (hp : p ≠ ∞) (f : α → E) :
     ‖f‖ₙ_[p] = (𝔼 i, ‖f i‖₊ ^ p.toReal) ^ p.toReal⁻¹ := by
   ext
-  simp [cLpNorm, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete, one_div, ← mul_sum,
+  simp [cLpNorm, uniformOn, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete,
     integral_fintype, tsum_eq_sum' (s := univ) (by simp), ENNReal.coe_rpow_of_nonneg, cond_apply,
-    expect_eq_sum_div_card, div_eq_inv_mul]
+    expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum]
 
 lemma cLpNorm_toNNReal_eq_expect_norm {p : ℝ} (hp : 0 < p) (f : α → E) :
     ‖f‖ₙ_[p.toNNReal] = (𝔼 i, ‖f i‖ ^ p) ^ p⁻¹ := by
@@ -212,7 +208,7 @@ lemma cLinftyNorm_eq_iSup_norm (f : α → E) : ‖f‖ₙ_[∞] = ⨆ i, ‖f i
   · simp [cLpNorm, nnLinftyNorm_eq_essSup]
 
 @[simp] lemma cLpNorm_eq_zero (hp : p ≠ 0) : ‖f‖ₙ_[p] = 0 ↔ f = 0 := by
-  simp [cLpNorm, nnLpNorm_eq_zero .of_discrete hp, ae_eq_top.2, cond_apply, Set.finite_univ]
+  simp [cLpNorm, uniformOn, nnLpNorm_eq_zero .of_discrete hp, ae_eq_top.2, cond_apply]
 
 @[simp] lemma cLpNorm_pos (hp : p ≠ 0) : 0 < ‖f‖ₙ_[p] ↔ f ≠ 0 :=
   pos_iff_ne_zero.trans (cLpNorm_eq_zero hp).not

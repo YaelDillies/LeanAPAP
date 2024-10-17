@@ -2,17 +2,15 @@ import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import LeanAPAP.Mathlib.Data.ENNReal.Basic
-import LeanAPAP.Mathlib.MeasureTheory.Function.EssSup
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+import LeanAPAP.Mathlib.Probability.ConditionalProbability
+import LeanAPAP.Mathlib.Probability.UniformOn
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
 import LeanAPAP.Prereqs.AddChar.Basic
-import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
-import LeanAPAP.Prereqs.Balance.Complex
 import LeanAPAP.Prereqs.Bohr.Arc
 import LeanAPAP.Prereqs.Bohr.Basic
 import LeanAPAP.Prereqs.Bohr.Regular
@@ -34,7 +32,6 @@ import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.Inner.Function
 import LeanAPAP.Prereqs.Inner.Hoelder.Compact
 import LeanAPAP.Prereqs.Inner.Hoelder.Discrete
-import LeanAPAP.Prereqs.Inner.Weighted
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.LpNorm.Compact
 import LeanAPAP.Prereqs.LpNorm.Discrete.Basic

@@ -1,5 +1,5 @@
 import Mathlib.Algebra.BigOperators.Balance
-import LeanAPAP.Prereqs.AddChar.MeasurableSpace
+import Mathlib.MeasureTheory.Constructions.AddChar
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Defs
@@ -36,14 +36,16 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
   simp only [dft_apply, wInner_one_eq_sum, inner_apply, const_apply, ← sum_mul, ← map_sum,
     sum_eq_zero_iff_ne_zero.2 hψ, map_zero, zero_mul]
 
-@[simp] lemma dft_smul {𝕝 : Type*} [CommSemiring 𝕝] [Algebra 𝕝 ℂ] [IsScalarTower 𝕝 ℂ ℂ] (c : 𝕝)
-    (f : α → ℂ) : dft (c • f) = c • dft f := by ext; simp [wInner_smul_right, dft_apply]
+@[simp]
+lemma dft_smul {𝕝 : Type*} [CommSemiring 𝕝] [StarRing 𝕝] [Algebra 𝕝 ℂ] [StarModule 𝕝 ℂ]
+    [IsScalarTower 𝕝 ℂ ℂ] (c : 𝕝) (f : α → ℂ) : dft (c • f) = c • dft f := by
+  ext; simp [wInner_smul_right, dft_apply]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
-@[simp] lemma wInner_compact_dft (f g : α → ℂ) : ⟪dft f, dft g⟫ₙ_[ℂ] = ⟪f, g⟫_[ℂ] := by
+@[simp] lemma wInner_cWeight_dft (f g : α → ℂ) : ⟪dft f, dft g⟫ₙ_[ℂ] = ⟪f, g⟫_[ℂ] := by
   classical
   unfold dft
-  simp_rw [wInner_one_eq_sum, wInner_compact_eq_expect, inner_apply, map_sum, map_mul,
+  simp_rw [wInner_one_eq_sum, wInner_cWeight_eq_expect, inner_apply, map_sum, map_mul,
     starRingEnd_self_apply, sum_mul, mul_sum, expect_sum_comm, mul_mul_mul_comm _ (conj $ f _),
     ← expect_mul, ← AddChar.inv_apply_eq_conj, ← map_neg_eq_inv, ← map_add_eq_mul,
     AddChar.expect_apply_eq_ite, add_neg_eq_zero, boole_mul, Fintype.sum_ite_eq]
@@ -52,7 +54,7 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
 @[simp] lemma cL2Norm_dft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
     ‖dft f‖ₙ_[2] = ‖f‖_[2] :=
   (sq_eq_sq (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
-    push_cast; simpa only [RCLike.wInner_compact_self, wInner_one_self] using wInner_compact_dft f f
+    push_cast; simpa only [RCLike.wInner_cWeight_self, wInner_one_self] using wInner_cWeight_dft f f
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a := by

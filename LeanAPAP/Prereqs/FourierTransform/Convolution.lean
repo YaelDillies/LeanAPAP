@@ -1,4 +1,3 @@
-import LeanAPAP.Prereqs.AddChar.MeasurableSpace
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Convolution.Compact
 import LeanAPAP.Prereqs.Function.Indicator.Defs
@@ -52,11 +51,11 @@ lemma dLpNorm_conv_le_dLpNorm_dconv (hn₀ : n ≠ 0) (hn : Even n) (f : G → �
 -- TODO: Can we unify with `cLpNorm_cconv_le_cLpNorm_cdconv`?
 lemma cLpNorm_cconv_le_cLpNorm_cdconv' (hn₀ : n ≠ 0) (hn : Even n) (f : G → ℝ) :
     ‖f ∗ₙ f‖ₙ_[n] ≤ ‖f ○ₙ f‖ₙ_[n] := by
-  simpa only [← Complex.coe_comp_cconv, ← Complex.coe_comp_cdconv, Complex.cLpNorm_coe_comp] using
-    cLpNorm_cconv_le_cLpNorm_cdconv hn₀ hn ((↑) ∘ f)
+  simpa only [← Complex.ofReal_comp_cconv, ← Complex.ofReal_comp_cdconv, Complex.cLpNorm_coe_comp]
+    using cLpNorm_cconv_le_cLpNorm_cdconv hn₀ hn ((↑) ∘ f)
 
 -- TODO: Can we unify with `dLpNorm_conv_le_dLpNorm_dconv`?
 lemma dLpNorm_conv_le_dLpNorm_dconv' (hn₀ : n ≠ 0) (hn : Even n) (f : G → ℝ) :
     ‖f ∗ f‖_[n] ≤ ‖f ○ f‖_[n] := by
-  simpa only [← Complex.coe_comp_conv, ← Complex.coe_comp_dconv, Complex.dLpNorm_coe_comp] using
-    dLpNorm_conv_le_dLpNorm_dconv hn₀ hn ((↑) ∘ f)
+  simpa only [← Complex.ofReal_comp_conv, ← Complex.ofReal_comp_dconv, Complex.dLpNorm_coe_comp]
+    using dLpNorm_conv_le_dLpNorm_dconv hn₀ hn ((↑) ∘ f)

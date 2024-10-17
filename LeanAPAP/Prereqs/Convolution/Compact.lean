@@ -415,11 +415,11 @@ lemma coe_cconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℂ) 
 @[simp, norm_cast]
 lemma coe_cdconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) a := RCLike.coe_cdconv _ _ _
 
-@[simp]
-lemma coe_comp_cconv : ofReal' ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℂ) := funext $ coe_cconv _ _
+@[simp] lemma ofReal_comp_cconv : ofReal ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℂ) :=
+  funext $ coe_cconv _ _
 
-@[simp]
-lemma coe_comp_cdconv : ofReal' ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) := funext $ coe_cdconv _ _
+@[simp] lemma ofReal_comp_cdconv : ofReal ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) :=
+  funext $ coe_cdconv _ _
 
 end Complex
 
