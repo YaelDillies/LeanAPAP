@@ -126,7 +126,7 @@ variable [OrderedSemiring β] {s : Finset α}
 @[simp] lemma indicate_nonneg : 0 ≤ 𝟭_[β] s := fun a ↦ by rw [indicate_apply]; split_ifs <;> simp
 
 @[simp] lemma indicate_pos [Nontrivial β] : 0 < 𝟭_[β] s ↔ s.Nonempty := by
-  simp [indicate_apply, Pi.lt_def, Function.funext_iff, lt_iff_le_and_ne, @eq_comm β 0,
+  simp [indicate_apply, Pi.lt_def, funext_iff, lt_iff_le_and_ne, @eq_comm β 0,
     Finset.Nonempty]
 
 protected alias ⟨_, Finset.Nonempty.indicate_pos⟩ := indicate_pos
@@ -166,7 +166,7 @@ variable [CharZero β] {a : α}
 lemma mu_apply_ne_zero : μ_[β] s a ≠ 0 ↔ a ∈ s := mu_apply_eq_zero.not_left
 
 @[simp] lemma mu_eq_zero : μ_[β] s = 0 ↔ s = ∅ := by
-  simp [Function.funext_iff, eq_empty_iff_forall_not_mem]
+  simp [funext_iff, eq_empty_iff_forall_not_mem]
 
 lemma mu_ne_zero : μ_[β] s ≠ 0 ↔ s.Nonempty := mu_eq_zero.not.trans nonempty_iff_ne_empty.symm
 

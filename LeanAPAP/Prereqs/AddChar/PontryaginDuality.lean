@@ -101,7 +101,7 @@ def mkZModAux {ι : Type} [DecidableEq ι] (n : ι → ℕ) (u : ∀ i, ZMod (n 
 
 lemma mkZModAux_injective {ι : Type} [DecidableEq ι] {n : ι → ℕ} (hn : ∀ i, n i ≠ 0) :
     Injective (mkZModAux n) :=
-  AddChar.directSum_injective.comp fun f g h ↦ by simpa [Function.funext_iff, hn] using h
+  AddChar.directSum_injective.comp fun f g h ↦ by simpa [funext_iff, hn] using h
 
 /-- The circle-valued characters of a finite abelian group are the same as its complex-valued
 characters. -/
