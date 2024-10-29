@@ -36,7 +36,7 @@ end CommSemiring
 section Semifield
 variable [Fintype ι] [DecidableEq ι] [Semiring β] [Module ℚ≥0 β]
 
-lemma expect_indicate (s : Finset ι) : 𝔼 x, 𝟭_[β] s x = s.card /ℚ Fintype.card ι := by
+lemma expect_indicate (s : Finset ι) : 𝔼 x, 𝟭_[β] s x = #s /ℚ Fintype.card ι := by
   simp only [expect_univ, indicate]
   rw [← sum_filter, filter_mem_eq_inter, univ_inter, sum_const, Nat.smul_one_eq_cast]
 

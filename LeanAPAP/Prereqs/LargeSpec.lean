@@ -12,7 +12,7 @@ variable {G : Type*} [AddCommGroup G] [Fintype G] [MeasurableSpace G] {f : G →
 
 /-- The `η`-large spectrum of a function. -/
 noncomputable def largeSpec (f : G → ℂ) (η : ℝ) : Finset (AddChar G ℂ) :=
-  univ.filter fun ψ ↦ η * ‖f‖_[1] ≤ ‖dft f ψ‖
+  {ψ | η * ‖f‖_[1] ≤ ‖dft f ψ‖}
 
 @[simp] lemma mem_largeSpec : ψ ∈ largeSpec f η ↔ η * ‖f‖_[1] ≤ ‖dft f ψ‖ := by simp [largeSpec]
 

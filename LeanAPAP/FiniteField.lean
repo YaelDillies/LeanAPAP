@@ -158,7 +158,7 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
       _ ≤ 1 := by linarith
   obtain ⟨T, hTcard, hTε⟩ := AlmostPeriodicity.linfty_almost_periodicity_boosted ε hε₀ hε₁ k
     (by positivity) (le_inv_of_le_inv₀ (by positivity) hα₂) hA₁ univ_nonempty S A₂ hS hA₂
-  have hT : 0 < (T.card : ℝ) := hTcard.trans_lt' (by positivity)
+  have hT : 0 < (#T : ℝ) := hTcard.trans_lt' (by positivity)
   replace hT : T.Nonempty := by simpa using hT
   let Δ := largeSpec (μ T) 2⁻¹
   let V : Submodule (ZMod q) G := AddSubgroup.toZModSubmodule _ $ ⨅ γ ∈ Δ, γ.toAddMonoidHom.ker
@@ -170,9 +170,9 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
     have hWV : W ≤ V := by sorry
     have :=
       calc
-        log T.dens⁻¹ ≤ log (α⁻¹ ^ (-4096 * ⌈𝓛 (min 1 (A₂.card / S.card))⌉ * k ^ 2 / ε ^ 2))⁻¹ := by
+        log T.dens⁻¹ ≤ log (α⁻¹ ^ (-4096 * ⌈𝓛 (min 1 (#A₂ / #S))⌉ * k ^ 2 / ε ^ 2))⁻¹ := by
           gcongr; rwa [nnratCast_dens, le_div_iff₀]; positivity
-        _ = 2 ^ 12 * log α⁻¹ * ⌈𝓛 (min 1 (A₂.card / S.card))⌉ * k ^ 2 / ε ^ 2 := by
+        _ = 2 ^ 12 * log α⁻¹ * ⌈𝓛 (min 1 (#A₂ / #S))⌉ * k ^ 2 / ε ^ 2 := by
           rw [log_inv, log_rpow (by positivity)]; ring_nf
         _ ≤ 2 ^ 12 * log α⁻¹ * ⌈𝓛 (min 1 A₂.dens)⌉ * k ^ 2 / ε ^ 2 := by
           rw [nnratCast_dens, ← card_univ]; gcongr; exact S.subset_univ
@@ -194,7 +194,7 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
       (↑(finrank (ZMod q) G - finrank (ZMod q) V) : ℝ)
         ≤ ↑(finrank (ZMod q) G - finrank (ZMod q) W) := by
         gcongr; exact Submodule.finrank_mono hWV
-      _ ≤ Δ'.card := sorry
+      _ ≤ #Δ' := sorry
       _ ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖μ T‖_[1] ^ 2 / ‖μ T‖_[2] ^ 2 / card G)⌉₊ / 2⁻¹ ^ 2⌉₊ := by
         gcongr
       _ = ⌈2 ^ 7 * exp 1 ^ 2 * ⌈𝓛 T.dens⌉₊⌉₊ := by

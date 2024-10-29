@@ -119,7 +119,7 @@ lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime 
 
 variable [DecidableEq α]
 
-@[simp] lemma dft_indicate_zero (A : Finset α) : dft (𝟭 A) 0 = A.card := by
+@[simp] lemma dft_indicate_zero (A : Finset α) : dft (𝟭 A) 0 = #A := by
   simp only [dft_apply, wInner_one_eq_sum, inner_apply, sum_indicate, AddChar.zero_apply, map_one,
     one_mul]
 

@@ -61,9 +61,9 @@ variable (β)
 
 end Nontrivial
 
-lemma sum_indicate [Fintype α] (s : Finset α) : ∑ x, 𝟭_[β] s x = s.card := by simp [indicate_apply]
+lemma sum_indicate [Fintype α] (s : Finset α) : ∑ x, 𝟭_[β] s x = #s := by simp [indicate_apply]
 
-lemma card_eq_sum_indicate [Fintype α] (s : Finset α) : s.card = ∑ x, 𝟭_[ℕ] s x :=
+lemma card_eq_sum_indicate [Fintype α] (s : Finset α) : #s = ∑ x, 𝟭_[ℕ] s x :=
   (sum_indicate _ _).symm
 
 section AddGroup
@@ -126,7 +126,7 @@ variable [OrderedSemiring β] {s : Finset α}
 @[simp] lemma indicate_nonneg : 0 ≤ 𝟭_[β] s := fun a ↦ by rw [indicate_apply]; split_ifs <;> simp
 
 @[simp] lemma indicate_pos [Nontrivial β] : 0 < 𝟭_[β] s ↔ s.Nonempty := by
-  simp [indicate_apply, Pi.lt_def, Function.funext_iff, lt_iff_le_and_ne, @eq_comm β 0,
+  simp [indicate_apply, Pi.lt_def, funext_iff, lt_iff_le_and_ne, @eq_comm β 0,
     Finset.Nonempty]
 
 protected alias ⟨_, Finset.Nonempty.indicate_pos⟩ := indicate_pos
@@ -139,13 +139,13 @@ section DivisionSemiring
 variable [DivisionSemiring β] [DivisionSemiring γ] {s : Finset α}
 
 /-- The normalised indicate of a set. -/
-def mu (s : Finset α) : α → β := (s.card : β)⁻¹ • 𝟭 s
+def mu (s : Finset α) : α → β := (#s : β)⁻¹ • 𝟭 s
 
 notation "μ " => mu
 
 notation "μ_[" β "] " => @mu _ β _ _
 
-lemma mu_apply (x : α) : μ s x = (s.card : β)⁻¹ * ite (x ∈ s) 1 0 := rfl
+lemma mu_apply (x : α) : μ s x = (#s : β)⁻¹ * ite (x ∈ s) 1 0 := rfl
 
 @[simp] lemma mu_empty : (μ ∅ : α → β) = 0 := by ext; simp [mu]
 
@@ -166,7 +166,7 @@ variable [CharZero β] {a : α}
 lemma mu_apply_ne_zero : μ_[β] s a ≠ 0 ↔ a ∈ s := mu_apply_eq_zero.not_left
 
 @[simp] lemma mu_eq_zero : μ_[β] s = 0 ↔ s = ∅ := by
-  simp [Function.funext_iff, eq_empty_iff_forall_not_mem]
+  simp [funext_iff, eq_empty_iff_forall_not_mem]
 
 lemma mu_ne_zero : μ_[β] s ≠ 0 ↔ s.Nonempty := mu_eq_zero.not.trans nonempty_iff_ne_empty.symm
 
@@ -179,7 +179,7 @@ end Nontrivial
 
 variable (β)
 
-lemma card_smul_mu [CharZero β] (s : Finset α) : s.card • μ_[β] s = 𝟭 s := by
+lemma card_smul_mu [CharZero β] (s : Finset α) : #s • μ_[β] s = 𝟭 s := by
   ext x : 1
   rw [Pi.smul_apply, mu_apply, indicate_apply, nsmul_eq_mul]
   split_ifs with h
@@ -188,7 +188,7 @@ lemma card_smul_mu [CharZero β] (s : Finset α) : s.card • μ_[β] s = 𝟭 s
     exact ⟨_, h⟩
   · rw [mul_zero, mul_zero]
 
-lemma card_smul_mu_apply [CharZero β] (s : Finset α) (x : α) : s.card • μ_[β] s x = 𝟭 s x :=
+lemma card_smul_mu_apply [CharZero β] (s : Finset α) (x : α) : #s • μ_[β] s x = 𝟭 s x :=
   congr_fun (card_smul_mu β _) _
 
 @[simp] lemma sum_mu [CharZero β] [Fintype α] (hs : s.Nonempty) : ∑ x, μ_[β] s x = 1 := by

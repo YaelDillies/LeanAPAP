@@ -18,33 +18,33 @@ variable {ι G 𝕜 E R : Type*} [Fintype ι] {mι : MeasurableSpace ι} [Discre
 section Indicator
 variable [RCLike R] [DecidableEq ι] {s : Finset ι} {p : ℝ≥0}
 
-lemma dLpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖_[p] ^ (p : ℝ) = s.card := by
+lemma dLpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖_[p] ^ (p : ℝ) = #s := by
   have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) =
     ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := fun x ↦ by split_ifs <;> simp
   simp [dLpNorm_rpow_eq_sum_nnnorm, hp, indicate_apply, apply_ite nnnorm, -sum_const, card_eq_sum_ones,
     sum_boole, this, zero_rpow, filter_mem_eq_inter]
 
-lemma dLpNorm_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖_[p] = s.card ^ (p⁻¹ : ℝ) := by
+lemma dLpNorm_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖_[p] = #s ^ (p⁻¹ : ℝ) := by
   refine (NNReal.eq_rpow_inv_iff ?_).2 (dLpNorm_rpow_indicate ?_ _) <;> positivity
 
 lemma dLpNorm_pow_indicate {p : ℕ} (hp : p ≠ 0) (s : Finset ι) :
-    ‖𝟭_[R] s‖_[p] ^ (p : ℝ) = s.card := by
+    ‖𝟭_[R] s‖_[p] ^ (p : ℝ) = #s := by
   simpa using dLpNorm_rpow_indicate (Nat.cast_ne_zero.2 hp) s
 
-lemma dL2Norm_sq_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[2] ^ 2 = s.card := by
+lemma dL2Norm_sq_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[2] ^ 2 = #s := by
   simpa using dLpNorm_pow_indicate two_ne_zero s
 
-@[simp] lemma dL2Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[2] = NNReal.sqrt s.card := by
+@[simp] lemma dL2Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[2] = NNReal.sqrt #s := by
   rw [eq_comm, NNReal.sqrt_eq_iff_eq_sq, dL2Norm_sq_indicate]
 
-@[simp] lemma dL1Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[1] = s.card := by
+@[simp] lemma dL1Norm_indicate (s : Finset ι) : ‖𝟭_[R] s‖_[1] = #s := by
   simpa using dLpNorm_pow_indicate one_ne_zero s
 
-lemma dLpNorm_mu (hp : 1 ≤ p) (hs : s.Nonempty) : ‖μ_[R] s‖_[p] = s.card ^ ((p : ℝ)⁻¹ - 1) := by
-  rw [mu, dLpNorm_const_smul (s.card⁻¹ : R) (𝟭_[R] s), dLpNorm_indicate, nnnorm_inv,
+lemma dLpNorm_mu (hp : 1 ≤ p) (hs : s.Nonempty) : ‖μ_[R] s‖_[p] = #s ^ ((p : ℝ)⁻¹ - 1) := by
+  rw [mu, dLpNorm_const_smul ((#s)⁻¹ : R) (𝟭_[R] s), dLpNorm_indicate, nnnorm_inv,
     RCLike.nnnorm_natCast, inv_mul_eq_div, ← NNReal.rpow_sub_one] <;> positivity
 
-lemma dLpNorm_mu_le (hp : 1 ≤ p) : ‖μ_[R] s‖_[p] ≤ s.card ^ (p⁻¹ - 1 : ℝ) := by
+lemma dLpNorm_mu_le (hp : 1 ≤ p) : ‖μ_[R] s‖_[p] ≤ #s ^ (p⁻¹ - 1 : ℝ) := by
   obtain rfl | hs := s.eq_empty_or_nonempty
   · simp
   · exact (dLpNorm_mu hp hs).le
@@ -54,7 +54,7 @@ lemma dLpNorm_mu_le (hp : 1 ≤ p) : ‖μ_[R] s‖_[p] ≤ s.card ^ (p⁻¹ - 1
 
 lemma dL1Norm_mu_le_one : ‖μ_[R] s‖_[1] ≤ 1 := by simpa using dLpNorm_mu_le le_rfl
 
-@[simp] lemma dL2Norm_mu (hs : s.Nonempty) : ‖μ_[R] s‖_[2] = s.card ^ (-2⁻¹ : ℝ) := by
+@[simp] lemma dL2Norm_mu (hs : s.Nonempty) : ‖μ_[R] s‖_[2] = #s ^ (-2⁻¹ : ℝ) := by
   have : (2⁻¹ - 1 : ℝ) = -2⁻¹ := by norm_num
   simpa [sqrt_eq_rpow, this] using dLpNorm_mu one_le_two (R := R) hs
 

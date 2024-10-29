@@ -55,7 +55,7 @@ end Mathlib.Meta.Positivity
 
 lemma AddDissociated.boringEnergy_le [DecidableEq G] {s : Finset G}
     (hs : AddDissociated (s : Set G)) (n : ℕ) :
-    boringEnergy n s ≤ changConst ^ n * n ^ n * s.card ^ n := by
+    boringEnergy n s ≤ changConst ^ n * n ^ n * #s ^ n := by
   obtain rfl | hn := eq_or_ne n 0
   · simp
   calc
@@ -87,14 +87,14 @@ private lemma α_le_one (f : G → ℂ) : ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / ca
 
 lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x ≠ 0 → 1 ≤ ν x)
     (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0) :
-    ↑Δ.card ^ (2 * m) * (η ^ (2 * m) * (‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2)) ≤
+    #Δ ^ (2 * m) * (η ^ (2 * m) * (‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2)) ≤
       energy m Δ (dft fun a ↦ ν a) := by
   obtain rfl | hf := eq_or_ne f 0
   · simp
   choose c norm_c hc using fun γ ↦ RCLike.exists_norm_eq_mul_self (dft f γ)
   have :=
     calc
-      η * ‖f‖_[1] * Δ.card ≤ ∑ γ in Δ, ‖dft f γ‖ := ?_
+      η * ‖f‖_[1] * #Δ ≤ ∑ γ in Δ, ‖dft f γ‖ := ?_
       _ ≤ ‖∑ x, f x * ∑ γ in Δ, c γ * conj (γ x)‖ := ?_
       _ ≤ ∑ x, ‖f x * ∑ γ in Δ, c γ * conj (γ x)‖ := (norm_sum_le _ _)
       _ = ∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ := by simp_rw [norm_mul]
@@ -156,7 +156,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
 open scoped ComplexOrder
 
 lemma spec_hoelder (hη : 0 ≤ η) (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0) :
-    Δ.card ^ (2 * m) * (η ^ (2 * m) * (‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G)) ≤ boringEnergy m Δ := by
+    #Δ ^ (2 * m) * (η ^ (2 * m) * (‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G)) ≤ boringEnergy m Δ := by
   have hG : (0 : ℝ) < card G := by positivity
   simpa [boringEnergy, mul_assoc, ← Pi.one_def, ← mul_div_right_comm, ← mul_div_assoc,
     div_le_iff₀ hG, energy_nsmul, -nsmul_eq_mul, ← nsmul_eq_mul'] using
@@ -165,10 +165,10 @@ lemma spec_hoelder (hη : 0 ≤ η) (hΔ : Δ ⊆ largeSpec f η) (hm : m ≠ 0)
 /-- **Chang's lemma**. -/
 lemma chang (hf : f ≠ 0) (hη : 0 < η) :
     ∃ Δ, Δ ⊆ largeSpec f η ∧
-      Δ.card ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G)⌉₊ / η ^ 2⌉₊ ∧
+      #Δ ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G)⌉₊ / η ^ 2⌉₊ ∧
       largeSpec f η ⊆ Δ.addSpan := by
   refine exists_subset_addSpan_card_le_of_forall_addDissociated fun Δ hΔη hΔ ↦ ?_
-  obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ Δ.card
+  obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ #Δ
   · simp [hΔ']
   let α := ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G
   have : 0 < α := by positivity
@@ -176,16 +176,16 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
   have hβ : 0 < β := Nat.ceil_pos.2 (curlog_pos (by positivity) $ α_le_one _)
   have : 0 < ‖f‖_[1] := by positivity
   refine le_of_pow_le_pow_left hβ.ne' zero_le' $ Nat.cast_le.1 $ le_of_mul_le_mul_right ?_
-    (by positivity : 0 < Δ.card ^ β * (η ^ (2 * β) * α))
+    (by positivity : 0 < #Δ ^ β * (η ^ (2 * β) * α))
   push_cast
   rw [← mul_assoc, ← pow_add, ← two_mul]
   refine ((spec_hoelder hη.le hΔη hβ.ne').trans $ hΔ.boringEnergy_le _).trans ?_
   refine le_trans ?_ $ mul_le_mul_of_nonneg_right (pow_le_pow_left ?_ (Nat.le_ceil _) _) ?_
   rw [mul_right_comm, div_pow, mul_pow, mul_pow, exp_one_pow, ← pow_mul, mul_div_assoc]
   calc
-    _ = (changConst * Δ.card * β) ^ β := by ring
-    _ ≤ (changConst * Δ.card * β) ^ β * (α * exp β) := ?_
-    _ ≤ (changConst * Δ.card * β) ^ β * ((η / η) ^ (2 * β) * α * exp β) := by
+    _ = (changConst * #Δ * β) ^ β := by ring
+    _ ≤ (changConst * #Δ * β) ^ β * (α * exp β) := ?_
+    _ ≤ (changConst * #Δ * β) ^ β * ((η / η) ^ (2 * β) * α * exp β) := by
       rw [div_self hη.ne', one_pow, one_mul]
     _ = _ := by ring
   refine le_mul_of_one_le_right (by positivity) ?_

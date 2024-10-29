@@ -22,30 +22,30 @@ local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 private lemma step_one (hA : A.Nonempty) (f : ι → ℝ) (a : Fin n → ι)
     (hf : ∀ i, ∑ a in A ^^ n, f (a i) = 0) :
     |∑ i, f (a i)| ^ (m + 1) ≤
-      (∑ b in A ^^ n, |∑ i, (f (a i) - f (b i))| ^ (m + 1)) / A.card ^ n := by
+      (∑ b in A ^^ n, |∑ i, (f (a i) - f (b i))| ^ (m + 1)) / #A ^ n := by
   let B := A ^^ n
   calc
     |∑ i, f (a i)| ^ (m + 1)
-      = |∑ i, (f (a i) - (∑ b in B, f (b i)) / B.card)| ^ (m + 1) := by
+      = |∑ i, (f (a i) - (∑ b in B, f (b i)) / #B)| ^ (m + 1) := by
       simp only [hf, sub_zero, zero_div]
-    _ = |(∑ b in B, ∑ i, (f (a i) - f (b i))) / B.card| ^ (m + 1) := by
+    _ = |(∑ b in B, ∑ i, (f (a i) - f (b i))) / #B| ^ (m + 1) := by
       simp only [sum_sub_distrib]
       rw [sum_const, sub_div, sum_comm, sum_div, nsmul_eq_mul, card_piFinset, prod_const,
         Finset.card_univ, Fintype.card_fin, Nat.cast_pow, mul_div_cancel_left₀]
       positivity
-    _ = |∑ b in B, ∑ i, (f (a i) - f (b i))| ^ (m + 1) / B.card ^ (m + 1) := by
+    _ = |∑ b in B, ∑ i, (f (a i) - f (b i))| ^ (m + 1) / #B ^ (m + 1) := by
       rw [abs_div, div_pow, Nat.abs_cast]
-    _ ≤ (∑ b in B, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / B.card ^ (m + 1) := by
+    _ ≤ (∑ b in B, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / #B ^ (m + 1) := by
       gcongr; exact IsAbsoluteValue.abv_sum _ _ _
-    _ = (∑ b in B, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / B.card ^ m / B.card := by
+    _ = (∑ b in B, |∑ i, (f (a i) - f (b i))|) ^ (m + 1) / #B ^ m / #B := by
       rw [div_div, ← _root_.pow_succ]
-    _ ≤ (∑ b in B, |∑ i, (f (a i) - f (b i))| ^ (m + 1)) / B.card := by
+    _ ≤ (∑ b in B, |∑ i, (f (a i) - f (b i))| ^ (m + 1)) / #B := by
       gcongr; exact pow_sum_div_card_le_sum_pow (fun _ _ ↦ abs_nonneg _) _
     _ = _ := by simp [B]
 
 private lemma step_one' (hA : A.Nonempty) (f : ι → ℝ) (hf : ∀ i, ∑ a in A ^^ n, f (a i) = 0) (m : ℕ)
     (a : Fin n → ι) :
-    |∑ i, f (a i)| ^ m ≤ (∑ b in A ^^ n, |∑ i, (f (a i) - f (b i))| ^ m) / A.card ^ n := by
+    |∑ i, f (a i)| ^ m ≤ (∑ b in A ^^ n, |∑ i, (f (a i) - f (b i))| ^ m) / #A ^ n := by
   cases m
   · simp only [_root_.pow_zero, sum_const, prod_const, Nat.smul_one_eq_cast, Finset.card_fin,
       card_piFinset, ← Nat.cast_pow]
@@ -162,14 +162,14 @@ private lemma step_eight {f : ι → ℝ} {a b : Fin n → ι} :
 
 private lemma end_step {f : ι → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
     (∑ a in A ^^ n, ∑ b in A ^^ n, ∑ k in piAntidiag univ m,
-      ↑(multinomial univ fun i ↦ 2 * k i) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) / A.card ^ n
+      ↑(multinomial univ fun i ↦ 2 * k i) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) / #A ^ n
         ≤ (4 * m) ^ m * ∑ a in A ^^ n, (∑ i, f (a i) ^ 2) ^ m := by
   let B := A ^^ n
   calc
     (∑ a in B, ∑ b in B, ∑ k : Fin n → ℕ in piAntidiag univ m,
-      (multinomial univ fun i ↦ 2 * k i : ℝ) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) / A.card ^ n
+      (multinomial univ fun i ↦ 2 * k i : ℝ) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) / #A ^ n
     _ ≤ (∑ a in B, ∑ b in B, m ^ m * 2 ^ (m + (m - 1)) *
-          ((∑ i, f (a i) ^ 2) ^ m + (∑ i, f (b i) ^ 2) ^ m) : ℝ) / A.card ^ n := by
+          ((∑ i, f (a i) ^ 2) ^ m + (∑ i, f (b i) ^ 2) ^ m) : ℝ) / #A ^ n := by
       gcongr; exact step_six.trans $ step_seven.trans step_eight
     _ = _ := by
       simp only [mul_add, sum_add_distrib, sum_const, nsmul_eq_mul, ← mul_sum]
@@ -194,7 +194,7 @@ theorem marcinkiewicz_zygmund' (m : ℕ) (f : ι → ℝ) (hf : ∀ i, ∑ a in 
   let B := A ^^ n
   calc
     ∑ a in B, (∑ i, f (a i)) ^ (2 * m)
-      ≤ ∑ a in A ^^ n, (∑ b in B, |∑ i, (f (a i) - f (b i))| ^ (2 * m))/ A.card ^ n := by
+      ≤ ∑ a in A ^^ n, (∑ b in B, |∑ i, (f (a i) - f (b i))| ^ (2 * m))/ #A ^ n := by
       gcongr; simpa [pow_mul, sq_abs] using step_one' hA f hf (2 * m) _
     _ ≤ _ := ?_
   rw [← sum_div]

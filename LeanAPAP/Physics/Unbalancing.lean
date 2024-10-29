@@ -28,7 +28,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : g ○ g = f) (hν : h ○ h = (↑
   simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
   simp_rw [dconv_apply h, mul_sum]
   --TODO: Please make `conv` work here :(
-  have : ∀ x, ∀ yz ∈ univ.filter fun yz : G × G ↦ yz.1 - yz.2 = x,
+  have : ∀ x, ∀ yz ∈ ({yz : G × G | yz.1 - yz.2 = x} : Finset _),
     conj ((g ○ g) x) ^ k * (h yz.1 * conj (h yz.2)) =
       conj ((g ○ g) (yz.1 - yz.2)) ^ k * (h yz.1 * conj (h yz.2)) := by
     simp only [mem_filter, mem_univ, true_and]
@@ -100,8 +100,8 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
         pow_sub_one_mul hp₁.pos.ne', NNReal.smul_def, smul_eq_mul]
     · simp [wInner_one_eq_sum, ← sum_add_distrib, ← mul_add, ← pow_sub_one_mul hp₁.pos.ne' (f _),
         mul_sum, mul_left_comm (2 : ℝ), add_abs_eq_two_nsmul_posPart]
-  set P := univ.filter fun i ↦ 0 ≤ f i
-  set T := univ.filter fun i ↦ 3 / 4 * ε ≤ f i
+  set P : Finset _ := {i | 0 ≤ f i}
+  set T : Finset _ := {i | 3 / 4 * ε ≤ f i}
   have hTP : T ⊆ P := monotone_filter_right _ fun i ↦ le_trans $ by positivity
   have : 2⁻¹ * ε ^ p ≤ ∑ i in P, ↑(ν i) * (f ^ p) i := by
     rw [inv_mul_le_iff₀ (zero_lt_two' ℝ), sum_filter]

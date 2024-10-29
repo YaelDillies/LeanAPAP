@@ -52,7 +52,7 @@ section CommSemiring
 variable [CommSemiring R] {f g : G → R}
 
 lemma indicate_conv_indicate_eq_sum (s t : Finset G) (a : G) :
-    (𝟭_[R] s ∗ 𝟭 t) a = ((s ×ˢ t).filter fun x : G × G ↦ x.1 + x.2 = a).card := by
+    (𝟭_[R] s ∗ 𝟭 t) a = #{x ∈ s ×ˢ t | x.1 + x.2 = a} := by
   simp only [conv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, sum_boole]
   simp_rw [← mem_product, filter_univ_mem]
 
@@ -63,7 +63,7 @@ lemma conv_indicate (f : G → R) (s : Finset G) : f ∗ 𝟭 s = ∑ a ∈ s, �
   ext; simp [conv_eq_sum_sub, indicate_apply]
 
 lemma indicate_conv_indicate_eq_card_vadd_inter_neg (s t : Finset G) (a : G) :
-    (𝟭_[R] s ∗ 𝟭 t) a = ((-a +ᵥ s) ∩ -t).card := by
+    (𝟭_[R] s ∗ 𝟭 t) a = #((-a +ᵥ s) ∩ -t) := by
   rw [← card_neg, neg_inter]
   simp [conv_indicate, indicate, inter_comm, ← filter_mem_eq_inter, ← neg_vadd_mem_iff,
     ← sub_eq_add_neg]
@@ -71,7 +71,7 @@ lemma indicate_conv_indicate_eq_card_vadd_inter_neg (s t : Finset G) (a : G) :
 variable [StarRing R]
 
 lemma indicate_dconv_indicate_apply (s t : Finset G) (a : G) :
-    (𝟭_[R] s ○ 𝟭 t) a = ((s ×ˢ t).filter fun x : G × G ↦ x.1 - x.2 = a).card := by
+    (𝟭_[R] s ○ 𝟭 t) a = #{x ∈ s ×ˢ t | x.1 - x.2 = a} := by
   simp only [dconv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, sum_boole,
     apply_ite conj, map_one, map_zero, Pi.conj_apply]
   simp_rw [← mem_product, filter_univ_mem]
@@ -90,10 +90,10 @@ variable [Semifield R]
 @[simp] lemma mu_univ_conv_mu_univ : μ_[R] (univ : Finset G) ∗ μ univ = μ univ := by
   ext; cases eq_or_ne (card G : R) 0 <;> simp [mu_apply, conv_eq_sum_add, card_univ, *]
 
-lemma mu_conv (s : Finset G) (f : G → R) : μ s ∗ f = (s.card : R)⁻¹ • ∑ a ∈ s, τ a f := by
+lemma mu_conv (s : Finset G) (f : G → R) : μ s ∗ f = (#s : R)⁻¹ • ∑ a ∈ s, τ a f := by
   simp [mu, indicate_conv, smul_conv]
 
-lemma conv_mu (f : G → R) (s : Finset G) : f ∗ μ s = (s.card : R)⁻¹ • ∑ a ∈ s, τ a f := by
+lemma conv_mu (f : G → R) (s : Finset G) : f ∗ μ s = (#s : R)⁻¹ • ∑ a ∈ s, τ a f := by
   simp [mu, conv_indicate, conv_smul]
 
 variable [StarRing R]
@@ -102,10 +102,10 @@ variable [StarRing R]
   ext; cases eq_or_ne (card G : R) 0 <;> simp [mu_apply, dconv_eq_sum_add, card_univ, *]
 
 lemma mu_dconv (s : Finset G) (f : G → R) :
-    μ s ○ f = (s.card : R)⁻¹ • ∑ a ∈ s, τ a (conjneg f) := by
+    μ s ○ f = (#s : R)⁻¹ • ∑ a ∈ s, τ a (conjneg f) := by
   simp [mu, indicate_dconv, smul_dconv]
 
-lemma dconv_mu (f : G → R) (s : Finset G) : f ○ μ s = (s.card : R)⁻¹ • ∑ a ∈ s, τ (-a) f := by
+lemma dconv_mu (f : G → R) (s : Finset G) : f ○ μ s = (#s : R)⁻¹ • ∑ a ∈ s, τ (-a) f := by
   simp [mu, dconv_indicate, dconv_smul]
 
 end Semifield
@@ -150,7 +150,7 @@ section CommSemiring
 variable [CommSemiring R] {f g : G → R} {n : ℕ}
 
 lemma indicate_iterConv_apply (s : Finset G) (n : ℕ) (a : G) :
-    (𝟭_[R] s ∗^ n) a = ((s ^^ n).filter fun x : Fin n → G ↦ ∑ i, x i = a).card := by
+    (𝟭_[R] s ∗^ n) a = #{x ∈ s ^^ n | ∑ i, x i = a} := by
   induction' n with n ih generalizing a
   · simp [apply_ite card, eq_comm]
   simp_rw [iterConv_succ', conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite,

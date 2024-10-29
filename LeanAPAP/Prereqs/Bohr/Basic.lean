@@ -2,7 +2,7 @@ import Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 
 open AddChar Function
-open scoped NNReal ENNReal
+open scoped NNReal ENNReal Finset
 
 /-- A *Bohr set* `B` on an additive group `G` is a finite set of characters of `G`, called the
 *frequencies*, along with an extended non-negative real number for each frequency `ψ`, called the
@@ -233,9 +233,9 @@ noncomputable instance [Finite G] : CompletelyDistribLattice (BohrSet G) :=
 /-! ### Width, frequencies, rank -/
 
 /-- The rank of a Bohr set is the number of characters which have finite width. -/
-def rank (B : BohrSet G) : ℕ := B.frequencies.card
+def rank (B : BohrSet G) : ℕ := #B.frequencies
 
-@[simp] lemma card_frequencies (B : BohrSet G) : B.frequencies.card = B.rank := rfl
+@[simp] lemma card_frequencies (B : BohrSet G) : #B.frequencies = B.rank := rfl
 
 /-! ### Dilation -/
 
