@@ -248,13 +248,13 @@ private lemma cLpNorm_pos_of_pos {α E : Type*} {_ : MeasurableSpace α} [Discre
 @[positivity ‖_‖ₙ_[_]] def evalcLpNorm : PositivityExt where eval {u} α _z _p e := do
   match u, α, e with
   | 0, ~q(ℝ≥0), ~q(@cLpNorm $ι $E $instιmeas $instEnorm $p $f) =>
-    let pp ← (← core q(inferInstance) q(inferInstance) p).toNonzero _ _
+    let some pp := (← core q(inferInstance) q(inferInstance) p).toNonzero _ _ | failure
     try
       let _pE ← synthInstanceQ q(PartialOrder $E)
       assumeInstancesCommute
       let _ ← synthInstanceQ q(Fintype $ι)
       let _ ← synthInstanceQ q(DiscreteMeasurableSpace $ι)
-      let pf ← (← core q(inferInstance) q(inferInstance) f).toNonzero _ _
+      let some pf := (← core q(inferInstance) q(inferInstance) f).toNonzero _ _ | failure
       return .positive q(cLpNorm_pos_of_ne_zero $pp $pf)
     catch _ =>
       assumeInstancesCommute

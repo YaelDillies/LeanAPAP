@@ -124,14 +124,14 @@ lemma mem_chordSet_iff_norm_width : x ∈ B.chordSet ↔ ∀ ⦃ψ⦄, ψ ∈ B.
 
 /-! ### Lattice structure -/
 
-noncomputable instance : Sup (BohrSet G) where
-  sup B₁ B₂ :=
+noncomputable instance : Max (BohrSet G) where
+  max B₁ B₂ :=
     { frequencies := B₁.frequencies ∩ B₂.frequencies,
       ewidth := fun ψ => B₁.ewidth ψ ⊔ B₂.ewidth ψ,
       mem_frequencies := fun ψ => by simp [mem_frequencies] }
 
-noncomputable instance : Inf (BohrSet G) where
-  inf B₁ B₂ :=
+noncomputable instance : Min (BohrSet G) where
+  min B₁ B₂ :=
     { frequencies := B₁.frequencies ∪ B₂.frequencies,
       ewidth := fun ψ => B₁.ewidth ψ ⊓ B₂.ewidth ψ,
       mem_frequencies := fun ψ => by simp [mem_frequencies] }

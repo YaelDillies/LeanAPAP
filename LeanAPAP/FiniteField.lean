@@ -120,7 +120,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     calc
       γ ^ (-(↑p)⁻¹ : ℝ) = √(γ⁻¹ ^ ((↑⌈1 + log γ⁻¹⌉₊)⁻¹ : ℝ)) := by
         rw [rpow_neg hγ.le, inv_rpow hγ.le]
-        unfold_let p
+        unfold p
         push_cast
         rw [mul_inv_rev, rpow_mul, sqrt_eq_rpow, one_div, inv_rpow] <;> positivity
       _ ≤ √(γ⁻¹ ^ ((1 + log γ⁻¹)⁻¹ : ℝ)) := by gcongr; assumption; exact Nat.le_ceil _
@@ -262,7 +262,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
   let q' : ℕ := 2 * ⌈p' + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊
   have : 0 < 𝓛 γ := curlog_pos hγ.le hγ₁
   have hα₀ : 0 < α := by positivity
-  have hα₁ : α ≤ 1 := by unfold_let α; exact mod_cast A.dens_le_one
+  have hα₁ : α ≤ 1 := by unfold α; exact mod_cast A.dens_le_one
   have : 0 < p := by positivity
   have : 0 < log (6 / ε) := log_pos $ (one_lt_div hε₀).2 (by linarith)
   have : 0 < p' := pos_iff_ne_zero.2 $ by rintro rfl; simp at unbalancing; linarith
@@ -273,9 +273,9 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
   have :=
     calc
       (q' : ℝ) ≤ ↑(2 * ⌈2 ^ 10 * (ε / 2)⁻¹ ^ 2 * p + 2 ^ 8 * ε⁻¹ ^ 2 * (64 / ε)⌉₊) := by
-        unfold_let q'; gcongr; exact log_le_self (by positivity)
+        unfold q'; gcongr; exact log_le_self (by positivity)
       _ = 2 * ⌈2 ^ 13 * ε⁻¹ ^ 2 * ⌈𝓛 γ⌉₊ + 2 ^ 14 * ε⁻¹ ^ 3 * 1⌉₊ := by
-        unfold_let p; push_cast; ring_nf
+        unfold p; push_cast; ring_nf
       _ ≤ 2 * ⌈2 ^ 13 * ε⁻¹ ^ 3 * (2 * 𝓛 γ) + 2 ^ 14 * ε⁻¹ ^ 3 * 𝓛 γ⌉₊ := by
         gcongr
         · assumption
@@ -306,13 +306,13 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           · norm_num
         _ ≤ ⌈2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊ := Nat.le_ceil _
         _ = ↑(1 * ⌈0 + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊) := by rw [one_mul, zero_add]
-        _ ≤ q' := by unfold_let q'; gcongr; norm_num; positivity) hA₀
+        _ ≤ q' := by unfold q'; gcongr; norm_num; positivity) hA₀
   have :=
     calc
       p' = 1 * ⌈(p' + 0 : ℝ)⌉₊ := by simp
-      _ ≤ q' := by unfold_let q'; gcongr; norm_num; positivity
+      _ ≤ q' := by unfold q'; gcongr; norm_num; positivity
   have : card G • (f ○ f) + 1 = card G • (μ A ○ μ A) := by
-    unfold_let f
+    unfold f
     rw [← balance_dconv, balance, smul_sub, smul_const, Fintype.card_smul_expect]
     simp [sum_dconv, hA₀]
   have :=

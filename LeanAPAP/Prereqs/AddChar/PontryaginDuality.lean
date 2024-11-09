@@ -1,5 +1,5 @@
 import Mathlib.Algebra.DirectSum.AddChar
-import Mathlib.GroupTheory.FiniteAbelian
+import Mathlib.GroupTheory.FiniteAbelian.Basic
 import LeanAPAP.Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import LeanAPAP.Prereqs.AddChar.Basic
 

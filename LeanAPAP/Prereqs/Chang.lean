@@ -53,8 +53,8 @@ example : 0 < changConst := by positivity
 
 end Mathlib.Meta.Positivity
 
-lemma AddDissociated.boringEnergy_le [DecidableEq G] {s : Finset G}
-    (hs : AddDissociated (s : Set G)) (n : ℕ) :
+lemma AddDissociated.boringEnergy_le [MeasurableSpace G] [DiscreteMeasurableSpace G] [DecidableEq G]
+    {s : Finset G} (hs : AddDissociated (s : Set G)) (n : ℕ) :
     boringEnergy n s ≤ changConst ^ n * n ^ n * #s ^ n := by
   obtain rfl | hn := eq_or_ne n 0
   · simp
@@ -193,5 +193,5 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
   calc
     α⁻¹ = exp (0 + log α⁻¹) := by rw [zero_add, exp_log]; norm_cast; positivity
     _ ≤ exp ⌈0 + log α⁻¹⌉₊ := by gcongr; exact Nat.le_ceil _
-    _ ≤ exp β := by unfold_let β; gcongr; exact zero_le_one
+    _ ≤ exp β := by unfold β; gcongr; exact zero_le_one
   all_goals positivity

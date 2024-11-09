@@ -45,8 +45,8 @@ lemma boringEnergy_eq (n : ℕ) (s : Finset G) : boringEnergy n s = ∑ x, (𝟭
 @[simp] lemma boringEnergy_one (s : Finset G) : boringEnergy 1 s = #s := by
   simp [boringEnergy_eq, indicate_apply]
 
-lemma cLpNorm_dft_indicate_pow (n : ℕ) (s : Finset G) :
-    ‖dft (𝟭 s)‖ₙ_[↑(2 * n)] ^ (2 * n) = boringEnergy n s := by
+lemma cLpNorm_dft_indicate_pow [MeasurableSpace G] [DiscreteMeasurableSpace G] (n : ℕ)
+    (s : Finset G) : ‖dft (𝟭 s)‖ₙ_[↑(2 * n)] ^ (2 * n) = boringEnergy n s := by
   obtain rfl | hn := n.eq_zero_or_pos
   · simp
   refine Complex.ofReal_injective ?_
@@ -63,7 +63,8 @@ lemma cLpNorm_dft_indicate_pow (n : ℕ) (s : Finset G) :
       Nat.cast_eq_zero, Fintype.card_ne_zero, or_false, sq, Complex.ofReal_iterConv,
       (((indicate_isSelfAdjoint _).iterConv _).apply _).conj_eq, Complex.ofReal_comp_indicate]
 
-lemma cL2Norm_dft_indicate (s : Finset G) : ‖dft (𝟭 s)‖ₙ_[2] = sqrt #s := by
+lemma cL2Norm_dft_indicate [MeasurableSpace G] [DiscreteMeasurableSpace G] (s : Finset G) :
+    ‖dft (𝟭 s)‖ₙ_[2] = sqrt #s := by
   rw [eq_comm, sqrt_eq_iff_eq_sq, eq_comm]
   simpa using cLpNorm_dft_indicate_pow 1 s
   all_goals positivity
