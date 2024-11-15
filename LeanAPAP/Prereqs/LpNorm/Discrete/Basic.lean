@@ -1,6 +1,6 @@
+import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import LeanAPAP.Prereqs.Function.Indicator.Defs
-import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 
 /-!
@@ -8,7 +8,7 @@ import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 -/
 
 open Finset Function Real
-open scoped BigOperators ComplexConjugate ENNReal NNReal
+open scoped BigOperators ComplexConjugate ENNReal NNReal translate
 
 namespace MeasureTheory
 variable {ι G 𝕜 E R : Type*} [Fintype ι] {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι]

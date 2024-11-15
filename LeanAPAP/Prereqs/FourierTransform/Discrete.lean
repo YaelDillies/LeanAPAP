@@ -1,7 +1,8 @@
 import Mathlib.Algebra.BigOperators.Balance
+import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
 import Mathlib.MeasureTheory.Constructions.AddChar
-import LeanAPAP.Prereqs.AddChar.PontryaginDuality
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
+import LeanAPAP.Prereqs.Function.Dilate
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Inner.Hoelder.Compact
 
@@ -13,7 +14,7 @@ Fourier inversion formula for it.
 -/
 
 open AddChar Finset Fintype Function MeasureTheory RCLike
-open scoped BigOperators ComplexConjugate ComplexOrder
+open scoped BigOperators ComplexConjugate ComplexOrder translate
 
 variable {α γ : Type*} [AddCommGroup α] [Fintype α] {f : α → ℂ} {ψ : AddChar α ℂ} {n : ℕ}
 
@@ -53,7 +54,7 @@ lemma dft_smul {𝕝 : Type*} [CommSemiring 𝕝] [StarRing 𝕝] [Algebra 𝕝 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma cL2Norm_dft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
     ‖dft f‖ₙ_[2] = ‖f‖_[2] :=
-  (sq_eq_sq (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
+  (sq_eq_sq₀ (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
     push_cast; simpa only [RCLike.wInner_cWeight_self, wInner_one_self] using wInner_cWeight_dft f f
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/

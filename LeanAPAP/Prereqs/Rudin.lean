@@ -1,7 +1,7 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
+import Mathlib.Combinatorics.Additive.Randomisation
 import LeanAPAP.Prereqs.FourierTransform.Compact
-import LeanAPAP.Prereqs.Randomisation
 
 /-!
 # Rudin's inequality
@@ -85,7 +85,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
       _ ≤ 2 ^ p * exp (‖f‖ₙ_[2] ^ 2 / 2) := by gcongr; exact le_self_pow₀ one_le_two hp₀
       _ = (2 * exp 2⁻¹) ^ p := by
           rw [hfp, sq_sqrt, mul_pow, ← exp_nsmul, nsmul_eq_mul, div_eq_mul_inv]; positivity
-  refine le_of_pow_le_pow_left hp₀ (by positivity) ?_
+  refine le_of_pow_le_pow_left₀ hp₀ (by positivity) ?_
   rwa [hfp, mul_assoc, mul_self_sqrt, mul_pow, ← div_le_iff₀, ← div_pow]
   all_goals positivity
 

@@ -1,4 +1,4 @@
-import LeanAPAP.Prereqs.AddChar.PontryaginDuality
+import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
 import LeanAPAP.Prereqs.Convolution.Compact
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Inner.Hoelder.Compact
@@ -16,7 +16,7 @@ set_option pp.piBinderTypes false
 
 lemma cLpNorm_cconv_le_cLpNorm_cdconv (hn₀ : n ≠ 0) (hn : Even n) (f : G → ℂ) :
     ‖f ∗ₙ f‖ₙ_[n] ≤ ‖f ○ₙ f‖ₙ_[n] := by
-  refine le_of_pow_le_pow_left hn₀ (by positivity) ?_
+  refine le_of_pow_le_pow_left₀ hn₀ (by positivity) ?_
   obtain ⟨k, rfl⟩ := hn.two_dvd
   simp only [ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, false_or] at hn₀
   refine Complex.le_of_eq_sum_of_eq_sum_norm (fun ψ : (Fin k → AddChar G ℂ) × (Fin k → AddChar G ℂ)

@@ -175,7 +175,7 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
   set β := ⌈𝓛 α⌉₊
   have hβ : 0 < β := Nat.ceil_pos.2 (curlog_pos (by positivity) $ α_le_one _)
   have : 0 < ‖f‖_[1] := by positivity
-  refine le_of_pow_le_pow_left hβ.ne' zero_le' $ Nat.cast_le.1 $ le_of_mul_le_mul_right ?_
+  refine le_of_pow_le_pow_left₀ hβ.ne' zero_le' $ Nat.cast_le.1 $ le_of_mul_le_mul_right ?_
     (by positivity : 0 < #Δ ^ β * (η ^ (2 * β) * α))
   push_cast
   rw [← mul_assoc, ← pow_add, ← two_mul]

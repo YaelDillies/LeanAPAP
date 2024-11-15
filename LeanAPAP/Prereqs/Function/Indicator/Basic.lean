@@ -1,14 +1,14 @@
 import Mathlib.Algebra.AddTorsor
 import Mathlib.Algebra.BigOperators.Expect
+import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Data.Fintype.Lattice
 import Mathlib.Data.NNRat.Order
-import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 
 open Finset Function
 open Fintype (card)
-open scoped BigOperators ComplexConjugate Pointwise
+open scoped BigOperators ComplexConjugate Pointwise translate
 
 local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
 

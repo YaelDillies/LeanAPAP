@@ -1,4 +1,3 @@
-import LeanAPAP.Prereqs.AddChar.Basic
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.FourierTransform.Discrete
 import LeanAPAP.Prereqs.Function.Indicator.Complex

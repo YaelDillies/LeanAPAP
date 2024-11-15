@@ -1,6 +1,6 @@
+import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Prereqs.Function.Translate
 
 /-!
 # Convolution
@@ -33,7 +33,7 @@ Multiplicativise? Probably ugly and not very useful.
 -/
 
 open Finset Fintype Function
-open scoped ComplexConjugate NNReal Pointwise NNRat
+open scoped ComplexConjugate NNReal Pointwise translate
 
 variable {G H R S : Type*} [DecidableEq G] [AddCommGroup G]
 

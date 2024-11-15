@@ -12,7 +12,7 @@ convolution inequality.
 -/
 
 open Finset Function MeasureTheory RCLike Real
-open scoped ComplexConjugate ENNReal NNReal Pointwise
+open scoped ComplexConjugate ENNReal NNReal Pointwise translate
 
 variable {ι 𝕜 : Type*} [Fintype ι] [DecidableEq ι] [AddCommGroup ι]
 

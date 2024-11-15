@@ -52,7 +52,7 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma dL2Norm_cft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
     ‖cft f‖_[2] = ‖f‖ₙ_[2] :=
-  (sq_eq_sq (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
+  (sq_eq_sq₀ (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
     push_cast; simpa only [RCLike.wInner_cWeight_self, wInner_one_self] using wInner_one_cft f f
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
@@ -156,7 +156,7 @@ lemma cft_cdconv (f g : α → ℂ) : cft (f ○ₙ g) = cft f * conj (cft g) :=
 -- lemma dL2Norm_iterCconv (f : α → ℂ) (n : ℕ) : ‖f ∗^ₙ n‖ₙ_[2] = ‖f ^ n‖_[2] := by
 --   rw [← dL2Norm_cft, cft_iterCconv, ← ENNReal.coe_two, dLpNorm_pow]
 --   norm_cast
---   refine (sq_eq_sq (by positivity) $ by positivity).1 ?_
+--   refine (sq_eq_sq₀ (by positivity) $ by positivity).1 ?_
 --   rw [← ENNReal.coe_two, dLpNorm_pow, ← pow_mul', ← Complex.ofReal_inj]
 --   push_cast
 --   simp_rw [pow_mul, ← Complex.mul_conj', conj_iterConv_apply, mul_pow]

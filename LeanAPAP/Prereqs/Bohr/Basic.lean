@@ -1,5 +1,5 @@
 import Mathlib.Analysis.Complex.Basic
-import LeanAPAP.Prereqs.AddChar.PontryaginDuality
+import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
 
 open AddChar Function
 open scoped NNReal ENNReal Finset

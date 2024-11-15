@@ -1,5 +1,5 @@
+import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
-import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 
 /-!
@@ -7,7 +7,7 @@ import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 -/
 
 open Finset Function Real MeasureTheory
-open scoped ComplexConjugate ENNReal NNReal
+open scoped ComplexConjugate ENNReal NNReal translate
 
 variable {α 𝕜 E : Type*} [MeasurableSpace α]
 

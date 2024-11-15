@@ -1,7 +1,7 @@
+import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Data.Fintype.Order
 import LeanAPAP.Prereqs.Function.Indicator.Defs
-import LeanAPAP.Prereqs.Function.Translate
 import LeanAPAP.Prereqs.NNLpNorm
 
 /-!
@@ -11,7 +11,7 @@ import LeanAPAP.Prereqs.NNLpNorm
 open Finset hiding card
 open Function ProbabilityTheory Real
 open Fintype (card)
-open scoped BigOperators ComplexConjugate ENNReal NNReal
+open scoped BigOperators ComplexConjugate ENNReal NNReal translate
 
 local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 

@@ -1,6 +1,7 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Additive.DoublingConst
 import Mathlib.Data.Complex.ExponentialBounds
+import Mathlib.Tactic.Bound
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Inner.Hoelder.Discrete
@@ -11,7 +12,7 @@ import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 -/
 
 open MeasureTheory
-open scoped Pointwise Combinatorics.Additive
+open scoped Pointwise Combinatorics.Additive translate
 
 namespace Finset
 variable {α : Type*} [DecidableEq α] {s : Finset α} {k : ℕ}
@@ -246,7 +247,7 @@ lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
   refine this.trans_eq ?_
   rw [l]
   congr with a : 3
-  refine pow_le_pow_iff_left ?_ ?_ ?_ <;> positivity
+  refine pow_le_pow_iff_left₀ ?_ ?_ ?_ <;> positivity
 
 variable [DiscreteMeasurableSpace G]
 
@@ -374,13 +375,7 @@ lemma T_bound (hK₂ : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) 
   rw [Nat.cast_add_one, ← le_sub_iff_add_le, hk']
   refine (Nat.ceil_lt_add_one ?_).le.trans ?_
   · positivity
-  have : (1 : ℝ) ≤ 128 * (m / ε ^ 2) := by
-    rw [div_eq_mul_one_div]
-    refine one_le_mul_of_one_le_of_one_le (by norm_num1) ?_
-    refine one_le_mul_of_one_le_of_one_le (Nat.one_le_cast.2 hm) ?_
-    refine one_le_one_div (by positivity) ?_
-    rw [sq_le_one_iff hε.le]
-    exact hε'
+  have : (1 : ℝ) ≤ 128 * (m / ε ^ 2) := by rw [div_eq_mul_one_div]; bound
   rw [mul_div_assoc, mul_div_assoc]
   linarith only [this]
 
