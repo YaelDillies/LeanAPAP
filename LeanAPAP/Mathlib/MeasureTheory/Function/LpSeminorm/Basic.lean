@@ -1,4 +1,6 @@
+import Mathlib.Data.Fintype.Order
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+import LeanAPAP.Mathlib.Order.LiminfLimsup
 
 noncomputable section
 
@@ -21,19 +23,16 @@ lemma eLpNorm_lt_top_of_finite [Finite α] [IsFiniteMeasure μ] : eLpNorm f p μ
   · simp
   obtain rfl | hp := eq_or_ne p ∞
   · simp only [eLpNorm_exponent_top, eLpNormEssSup_lt_top_iff_isBoundedUnder]
-    sorry
+    exact .le_of_finite
   rw [eLpNorm_lt_top_iff_lintegral_rpow_nnnorm_lt_top hp₀ hp]
   refine IsFiniteMeasure.lintegral_lt_top_of_bounded_to_ennreal μ ?_
-  sorry
+  simp_rw [← ENNReal.coe_rpow_of_nonneg _ ENNReal.toReal_nonneg]
+  norm_cast
+  exact Finite.exists_le _
 
 @[simp] lemma Memℒp.of_discrete [DiscreteMeasurableSpace α] [Finite α] [IsFiniteMeasure μ] :
-    Memℒp f p μ := by
-  refine ⟨.of_finite, ?_⟩
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_nnnorm_lt_top]
-  refine IsFiniteMeasure.lintegral_lt_top_of_bounded_to_ennreal μ ?f_bdd
-  sorry
-  sorry
-  sorry
+    Memℒp f p μ :=
+  let ⟨C, hC⟩ := Finite.exists_le (‖f ·‖₊); .of_bound .of_finite C <| .of_forall hC
 
 @[simp] lemma eLpNorm_of_isEmpty [IsEmpty α] (f : α → E) (p : ℝ≥0∞) : eLpNorm f p μ = 0 := by
   simp [Subsingleton.elim f 0]
