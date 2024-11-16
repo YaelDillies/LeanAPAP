@@ -27,13 +27,13 @@ local notation "𝓛" x:arg => 1 + log x⁻¹
 private lemma one_le_curlog (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 1 ≤ 𝓛 x := by
   obtain rfl | hx₀ := hx₀.eq_or_lt
   · simp
-  have : 0 ≤ log x⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 hx₁
+  have : 0 ≤ log x⁻¹ := by bound
   linarith
 
 private lemma curlog_pos (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 0 < 𝓛 x := by
   obtain rfl | hx₀ := hx₀.eq_or_lt
   · simp
-  have : 0 ≤ log x⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 hx₁
+  have : 0 ≤ log x⁻¹ := by bound
   positivity
 
 private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻¹ ^ (𝓛 x)⁻¹ ≤ exp 1 := by
@@ -57,8 +57,7 @@ private lemma curlog_mul_le (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy₀ : 0 < y) (h
     exact h.trans_eq (by rw [mul_inv, log_mul]; ring; all_goals positivity)
   calc
     log x⁻¹ - (x⁻¹ - 1) ≤ 0 := sub_nonpos.2 $ log_le_sub_one_of_pos $ by positivity
-    _ ≤ (x⁻¹ - 1) * log y⁻¹ :=
-      mul_nonneg (sub_nonneg.2 $ (one_le_inv₀ hx₀).2 hx₁) $ log_nonneg $ (one_le_inv₀ hy₀).2 hy₁
+    _ ≤ (x⁻¹ - 1) * log y⁻¹ := mul_nonneg (sub_nonneg.2 $ (one_le_inv₀ hx₀).2 hx₁) $ by bound
 
 private lemma curlog_div_le (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy : 1 ≤ y) :
     𝓛 (x / y) ≤ y * 𝓛 x := by
@@ -71,9 +70,7 @@ private lemma curlog_rpow_le' (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy₀ : 0 < y) 
     exact h.trans_eq (by rw [← inv_rpow, log_rpow]; ring; all_goals positivity)
   calc
     1 - y⁻¹ ≤ 0 := sub_nonpos.2 $ (one_le_inv₀ hy₀).2 hy₁
-    _ ≤ (y⁻¹ - y) * log x⁻¹ :=
-      mul_nonneg (sub_nonneg.2 $ hy₁.trans $ (one_le_inv₀ hy₀).2 hy₁) $
-        log_nonneg $ (one_le_inv₀ hx₀).2 hx₁
+    _ ≤ (y⁻¹ - y) * log x⁻¹ := mul_nonneg (sub_nonneg.2 $ hy₁.trans $ by bound) $ by bound
 
 private lemma curlog_rpow_le (hx₀ : 0 < x) (hy : 1 ≤ y) : 𝓛 (x ^ y) ≤ y * 𝓛 x := by
   rw [← inv_rpow, log_rpow, mul_one_add]
@@ -116,7 +113,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     any_goals positivity
     exact ENNReal.natCast_ne_top _
   · have : 1 ≤ γ⁻¹ := (one_le_inv₀ hγ).2 hγ₁
-    have : 0 ≤ log γ⁻¹ := log_nonneg this
+    have : 0 ≤ log γ⁻¹ := by bound
     calc
       γ ^ (-(↑p)⁻¹ : ℝ) = √(γ⁻¹ ^ ((↑⌈1 + log γ⁻¹⌉₊)⁻¹ : ℝ)) := by
         rw [rpow_neg hγ.le, inv_rpow hγ.le]
@@ -142,9 +139,8 @@ lemma ap_in_ff (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (hε
   have hA₁ : A₁.Nonempty := by simpa using hα₀.trans_le hαA₁
   have hA₂ : A₂.Nonempty := by simpa using hα₀.trans_le hαA₂
   have hα₁ : α ≤ 1 := hαA₁.trans $ mod_cast A₁.dens_le_one
-  have : 0 ≤ log α⁻¹ := log_nonneg $ (one_le_inv₀ hα₀).2 hα₁
-  have : 0 ≤ log (ε * α)⁻¹ :=
-    log_nonneg $ (one_le_inv₀ (by positivity)).2 $ mul_le_one₀ hε₁ hα₀.le hα₁
+  have : 0 ≤ log α⁻¹ := by bound
+  have : 0 ≤ log (ε * α)⁻¹ := by bound
   obtain rfl | hS := S.eq_empty_or_nonempty
   · exact ⟨⊤, inferInstance, by simp [hε₀.le]; positivity⟩
   have hA₁ : σ[A₁, univ] ≤ α⁻¹ :=
@@ -362,13 +358,12 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           𝓛 (ε / 32 * (4⁻¹ * α ^ (2 * q'))) ^ 2 * (ε / 32)⁻¹ ^ 2 := hVdim
       _ ≤ 2 ^ 32 * (8 * q' * 𝓛 α) ^ 2 *
           (2 ^ 8 * q' * 𝓛 α / ε) ^ 2 * (ε / 32)⁻¹ ^ 2 := by
-        have : α ^ (2 * q') ≤ 1 := pow_le_one₀ hα₀.le hα₁
-        have : 4⁻¹ * α ^ (2 * q') ≤ 1 := mul_le_one₀ (by norm_num) (by positivity) ‹_›
-        have : ε / 32 * (4⁻¹ * α ^ (2 * q')) ≤ 1 := mul_le_one₀ (by linarith) (by positivity) ‹_›
-        have : 0 ≤ log (ε / 32 * (4⁻¹ * α ^ (2 * q')))⁻¹ :=
-          log_nonneg $ (one_le_inv₀ (by positivity)).2 ‹_›
-        have : 0 ≤ log (4⁻¹ * α ^ (2 * q'))⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 ‹_›
-        have : 0 ≤ log (α ^ (2 * q'))⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 ‹_›
+        have : α ^ (2 * q') ≤ 1 := by bound
+        have : 4⁻¹ * α ^ (2 * q') ≤ 1 := by bound
+        have : ε / 32 * (4⁻¹ * α ^ (2 * q')) ≤ 1 := by bound
+        have : 0 ≤ log (ε / 32 * (4⁻¹ * α ^ (2 * q')))⁻¹ := by bound
+        have : 0 ≤ log (4⁻¹ * α ^ (2 * q'))⁻¹ := by bound
+        have : 0 ≤ log (α ^ (2 * q'))⁻¹ := by bound
         have :=
           calc
             𝓛 (4⁻¹ * α ^ (2 * q')) ≤ 4⁻¹⁻¹ * 𝓛 (α ^ (2 * q')) :=
@@ -532,7 +527,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
         < ⌊log α⁻¹ / log (65 / 64)⌋₊ + 1 := Nat.lt_floor_add_one _
       _ = ⌊(log (65 / 64) + log α⁻¹) / log (65 / 64)⌋₊ := by
         rw [add_comm (log _), ← div_add_one aux.ne', Nat.floor_add_one, Nat.cast_succ]
-        exact div_nonneg (log_nonneg $ (one_le_inv₀ (by positivity)).2 (by simp [α])) aux.le
+        bound
       _ ≤ ⌊𝓛 α / log (65 / 64)⌋₊ := by
         gcongr
         calc

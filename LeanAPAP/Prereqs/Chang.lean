@@ -1,5 +1,7 @@
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalities
+import Mathlib.Tactic.Bound
+import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.Rudin
@@ -19,7 +21,7 @@ local notation "𝓛" x:arg => 1 + log x⁻¹
 private lemma curlog_pos (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 0 < 𝓛 x := by
   obtain rfl | hx₀ := hx₀.eq_or_lt
   · simp
-  have : 0 ≤ log x⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 hx₁
+  have : 0 ≤ log x⁻¹ := by bound
   positivity
 
 private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻¹ ^ (𝓛 x)⁻¹ ≤ exp 1 := by
@@ -38,7 +40,7 @@ private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻�
 
 noncomputable def changConst : ℝ := 32 * exp 1
 
-lemma one_lt_changConst : 1 < changConst := one_lt_mul (by norm_num) $ one_lt_exp_iff.2 one_pos
+lemma one_lt_changConst : 1 < changConst := by unfold changConst; bound
 
 lemma changConst_pos : 0 < changConst := zero_lt_one.trans one_lt_changConst
 

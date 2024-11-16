@@ -2,6 +2,7 @@ import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Additive.DoublingConst
 import Mathlib.Data.Complex.ExponentialBounds
 import Mathlib.Tactic.Bound
+import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Inner.Hoelder.Discrete
@@ -91,7 +92,7 @@ variable {G : Type*} [Fintype G] {A S : Finset G} {f : G → ℂ} {x ε K : ℝ}
 local notation "𝓛" x => 1 + log (min 1 x)⁻¹
 
 private lemma curlog_pos (hx₀ : 0 < x) : 0 < 𝓛 x := by
-  have : 0 ≤ log (min 1 x)⁻¹ := log_nonneg $ (one_le_inv₀ (by positivity)).2 inf_le_left
+  have : 0 ≤ log (min 1 x)⁻¹ := by bound
   positivity
 
 section
