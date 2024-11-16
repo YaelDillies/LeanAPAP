@@ -2,6 +2,7 @@ import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+import LeanAPAP.Mathlib.Order.LiminfLimsup
 import LeanAPAP.Mathlib.Probability.ConditionalProbability
 import LeanAPAP.Mathlib.Probability.UniformOn
 import LeanAPAP.Mathlib.Tactic.Positivity
@@ -22,7 +23,6 @@ import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.FourierTransform.Convolution
 import LeanAPAP.Prereqs.FourierTransform.Discrete
-import LeanAPAP.Prereqs.Function.Dilate
 import LeanAPAP.Prereqs.Function.Indicator.Basic
 import LeanAPAP.Prereqs.Function.Indicator.Complex
 import LeanAPAP.Prereqs.Function.Indicator.Defs

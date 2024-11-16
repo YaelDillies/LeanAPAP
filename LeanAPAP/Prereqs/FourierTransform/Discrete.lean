@@ -2,7 +2,6 @@ import Mathlib.Algebra.BigOperators.Balance
 import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
 import Mathlib.MeasureTheory.Constructions.AddChar
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
-import LeanAPAP.Prereqs.Function.Dilate
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.Inner.Hoelder.Compact
 
@@ -104,13 +103,6 @@ lemma dft_comp_neg_apply (f : α → ℂ) (ψ : AddChar α ℂ) :
 
 @[simp] lemma dft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : dft (balance f) ψ = dft f ψ := by
   simp only [balance, Pi.sub_apply, dft_sub, dft_const _ hψ, sub_zero]
-
-lemma dft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime n) :
-    dft (dilate f n) ψ = dft f (ψ ^ n) := by
-  simp_rw [dft_apply, wInner_one_eq_sum, dilate]
-  rw [← Nat.card_eq_fintype_card] at hn
-  refine (Fintype.sum_bijective _ hn.nsmul_right_bijective _ _  ?_).symm
-  simp only [pow_apply, ← map_nsmul_eq_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
 
 @[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
   ext; simp [trivChar_apply, dft_apply, wInner_one_eq_sum, ← map_sum]

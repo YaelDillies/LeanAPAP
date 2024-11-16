@@ -106,13 +106,6 @@ lemma cft_conjneg (f : α → ℂ) : cft (conjneg f) = conj (cft f) := funext $ 
 @[simp] lemma cft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : cft (balance f) ψ = cft f ψ := by
   simp only [balance, Pi.sub_apply, cft_sub, cft_const _ hψ, sub_zero]
 
-lemma cft_dilate (f : α → ℂ) (ψ : AddChar α ℂ) (hn : (card α).Coprime n) :
-    cft (dilate f n) ψ = cft f (ψ ^ n) := by
-  simp_rw [cft_apply, wInner_cWeight_eq_expect, dilate]
-  rw [← Nat.card_eq_fintype_card] at hn
-  refine (Fintype.expect_bijective _ hn.nsmul_right_bijective _ _  ?_).symm
-  simp only [pow_apply, ← map_nsmul_eq_pow, zmod_val_inv_nsmul_nsmul hn, forall_const]
-
 @[simp] lemma cft_trivNChar [DecidableEq α] : cft (trivNChar : α → ℂ) = 1 := by
   ext
   simp [trivChar_apply, cft_apply, wInner_cWeight_eq_expect, ← map_expect, card_univ, NNRat.smul_def]
