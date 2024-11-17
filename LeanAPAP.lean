@@ -3,8 +3,6 @@ import LeanAPAP.FiniteField
 import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Mathlib.Order.LiminfLimsup
-import LeanAPAP.Mathlib.Probability.ConditionalProbability
 import LeanAPAP.Mathlib.Probability.UniformOn
 import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity

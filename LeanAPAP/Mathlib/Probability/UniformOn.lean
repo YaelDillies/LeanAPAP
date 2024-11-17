@@ -1,5 +1,4 @@
 import Mathlib.Probability.UniformOn
-import LeanAPAP.Mathlib.Probability.ConditionalProbability
 
 namespace ProbabilityTheory
 variable {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω] {s : Set Ω}

@@ -1,6 +1,5 @@
 import Mathlib.Data.Fintype.Order
 import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Mathlib.Order.LiminfLimsup
 
 noncomputable section
 
