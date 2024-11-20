@@ -230,7 +230,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
       nnnorm_of_nonneg (this _), NNReal.coe_sum, sum_mul, mul_pow]
     simp
   calc
-    (1 - ε) ^ p ≤ exp (-ε) ^ p := pow_le_pow_left (sub_nonneg.2 hε₁) (one_sub_le_exp_neg _) _
+    (1 - ε) ^ p ≤ exp (-ε) ^ p := by gcongr; exacts [sub_nonneg.2 hε₁, one_sub_le_exp_neg _]
     _ = exp (-(ε * p)) := by rw [← neg_mul, exp_mul, rpow_natCast]
     _ ≤ exp (-log (2 / δ)) :=
       (exp_monotone $ neg_le_neg $ (inv_mul_le_iff₀ $ by positivity).1 hpε)
@@ -249,7 +249,7 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
       (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤
         4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / #A ^ (2 * p) := by
       rw [mul_div_assoc, ← div_pow]
-      refine mul_le_mul_of_nonneg_left (pow_le_pow_left (by positivity) ?_ _) (by norm_num)
+      gcongr
       rw [nnratCast_dens, le_div_iff₀, ← mul_div_right_comm]
       calc
         _ = (‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] : ℝ) := by

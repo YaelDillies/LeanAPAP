@@ -229,7 +229,7 @@ lemma ap_in_ff' (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε) (h�
           |∑ x ∈ S, (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x - ∑ x ∈ S, (μ A₁ ○ μ A₂) x| ≤ ε := by
   simpa [← conjneg_mu] using ap_in_ff (q := q) S (A₂ := -A₂) hα₀ hα₂ hε₀ hε₁ hαA₁ (by simpa)
 
-set_option maxHeartbeats 300000 in
+set_option maxHeartbeats 400000 in
 lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q) (hq : q.Prime)
     (hε₀ : 0 < ε) (hε₁ : ε < 1) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     (hAC : ε ≤ |card G * ⟪μ_[ℝ] A ∗ μ A, μ C⟫_[ℝ] - 1|) :
@@ -406,7 +406,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
           wInner_one_dconv_eq_conv_wInner_one, ← dconv_wInner_one_eq_wInner_one_conv,
           ← conj_wInner_symm]
         simp [wInner_one_eq_sum, inner_apply, smul_sum, mul_assoc]
-      _ ≤ card G • (‖μ_[ℝ] (Set.toFinset V) ∗ μ A‖_[∞] * ‖μ A ∗ μ A₂ ○ μ A₁‖_[1]) := by
+      _ ≤ card G • (‖μ_[ℝ] (Set.toFinset V) ∗ μ A‖_[∞] * ‖μ_[ℝ] A ∗ μ A₂ ○ μ A₁‖_[1]) := by
         gcongr; exact wInner_one_le_dLpNorm_mul_dLpNorm .top_one _ _
       _ = _ := by
         have : 0 < (4 : ℝ)⁻¹ * A.dens ^ (2 * q') := by positivity

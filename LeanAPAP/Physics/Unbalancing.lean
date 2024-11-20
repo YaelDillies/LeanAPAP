@@ -119,7 +119,9 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
       _ ≤ 4⁻¹ * ε ^ p * ∑ i, (ν i : ℝ) := ?_
       _ = 4⁻¹ * ε ^ p := by norm_cast; simp [hν₁]
     · simp only [mem_sdiff, mem_filter, mem_univ, true_and, not_le, P, T] at hi
-      exact mul_le_mul_of_nonneg_left (pow_le_pow_left hi.1 hi.2.le _) (by positivity)
+      cases hi
+      dsimp
+      gcongr
     · refine mul_le_mul (mul_le_mul_of_nonneg_right (le_trans (pow_le_pow_of_le_one ?_ ?_ hp) ?_)
         ?_) (sum_le_univ_sum_of_nonneg fun i ↦ ?_) ?_ ?_ <;>
         first
@@ -171,7 +173,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
       all_goals positivity
     any_goals positivity
     calc
-      _ ≤ (1 / 3 : ℝ) ^ p := pow_le_pow_left ?_ (div_le_div_of_nonneg_right hε₁ ?_) _
+      _ ≤ (1 / 3 : ℝ) ^ p := by gcongr
       _ ≤ (1 / 3) ^ 5 := pow_le_pow_of_le_one ?_ ?_ hp
       _ ≤ _ := ?_
     any_goals positivity

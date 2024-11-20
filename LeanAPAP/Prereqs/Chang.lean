@@ -112,7 +112,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
     exact le_abs_self _
   · norm_cast
     exact hm.bot_lt
-  replace this := pow_le_pow_left (by positivity) this m
+  replace this := pow_le_pow_left₀ (by positivity) this m
   simp_rw [mul_pow] at this
   rw [rpow_inv_natCast_pow _ hm, ← rpow_mul_natCast, one_sub_mul,
     inv_mul_cancel₀, ← Nat.cast_pred, rpow_natCast, mul_assoc, mul_left_comm, ← pow_sub_one_mul,
@@ -126,9 +126,10 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
         hfν _ hfx
   replace this :=
     calc
-      _ ≤ (∑ x, ‖f x‖ * sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2 :=
-          pow_le_pow_left (by positivity)
-            (this.trans $ sum_le_sum fun x _ ↦ mul_le_mul_of_nonneg_right (hfν _) $ by positivity) _
+      (‖f‖_[1] * (η ^ m * #Δ ^ m)) ^ 2
+        ≤ (∑ x, ‖f x‖ * ‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ m) ^ 2 := by gcongr
+      _ ≤ (∑ x, ‖f x‖ * sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2 := by
+        gcongr with x; exact hfν _
       _ = (∑ x, ‖f x‖ * (sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m)) ^ 2 := by
         simp_rw [mul_assoc]
       _ ≤ (∑ x, ‖f x‖ ^ 2) * ∑ x, (sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2 :=
@@ -182,7 +183,7 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
   push_cast
   rw [← mul_assoc, ← pow_add, ← two_mul]
   refine ((spec_hoelder hη.le hΔη hβ.ne').trans $ hΔ.boringEnergy_le _).trans ?_
-  refine le_trans ?_ $ mul_le_mul_of_nonneg_right (pow_le_pow_left ?_ (Nat.le_ceil _) _) ?_
+  refine le_trans ?_ $ mul_le_mul_of_nonneg_right (pow_le_pow_left₀ ?_ (Nat.le_ceil _) _) ?_
   rw [mul_right_comm, div_pow, mul_pow, mul_pow, exp_one_pow, ← pow_mul, mul_div_assoc]
   calc
     _ = (changConst * #Δ * β) ^ β := by ring

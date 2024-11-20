@@ -109,22 +109,16 @@ lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hk : 64 * m / ε ^ 2 ≤ k) :
   rw [mul_pow (2 : ℝ), ← hmeq, ← dLpNorm_pow_eq_sum_norm hm' f, ← mul_assoc, ← mul_assoc,
     mul_right_comm _ (#A ^ k : ℝ), mul_right_comm _ (#A ^ k : ℝ),
     mul_right_comm _ (#A ^ k : ℝ)]
+  rw [div_le_iff₀' (by positivity)] at hk
   gcongr ?_ * _ * _
-  rw [mul_assoc (_ ^ m : ℝ), ← pow_succ, Nat.sub_add_cancel hm, pow_mul, pow_mul, ← mul_pow,
-    ← mul_pow]
-  have : (1 / 2 : ℝ) ^ m ≤ 1 / 2 := by
-    have :=
-      pow_le_pow_of_le_one (show (0 : ℝ) ≤ 1 / 2 by norm_num) (show (1 / 2 : ℝ) ≤ 1 by norm_num) hm
-    rwa [pow_one] at this
-  refine (mul_le_mul_of_nonneg_right this (by positivity)).trans' ?_
-  rw [← mul_pow]
-  refine pow_le_pow_left (by positivity) ?_ _
-  rw [mul_right_comm, mul_comm _ ε, mul_pow, ← mul_assoc, sq (k : ℝ), ← mul_assoc]
-  refine mul_le_mul_of_nonneg_right ?_ (Nat.cast_nonneg k)
-  rw [mul_right_comm, div_mul_eq_mul_div, one_mul, div_mul_eq_mul_div, le_div_iff₀' (zero_lt_two' ℝ),
-    ← div_le_iff₀', ← mul_assoc]
-  · norm_num1; exact hk
-  positivity
+  calc
+    (8 * m : ℝ) ^ m * k ^ (m - 1) * k * 2 ^ (2 * m)
+      = (8 * m) ^ m * 2 ^ (2 * m) * (k ^ (m - 1) * k) := by ring
+    _ = (64 * m * k / 2) ^ m := by rw [pow_sub_one_mul (by omega), pow_mul, ← mul_pow]; ring
+    _ ≤ (ε ^ 2 * k * k / 2) ^ m := by gcongr
+    _ = (k * ε) ^ (2 * m) / 2 ^ m := by ring_nf
+    _ ≤ (k * ε) ^ (2 * m) / 2 ^ 1 := by gcongr; norm_num
+    _ = 1 / 2 * (k * ε) ^ (2 * m) := by ring
 
 end
 
@@ -353,32 +347,27 @@ lemma T_bound (hK₂ : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) 
     rw [hk, div_pow, div_div_eq_mul_div, mul_right_comm]
     congr 3
     norm_num
-  have hK : 0 < K := by positivity
+  have hK₀ : 0 < K := by positivity
   have : (0 : ℝ) < Ac ^ k := by positivity
   refine le_of_mul_le_mul_left ?_ this
-  have : (Ac : ℝ) ^ k ≤ K * Lc := by
-    rw [div_le_iff₀'] at h₂
-    refine h₂.trans (mul_le_mul_of_nonneg_right hK₂ (Nat.cast_nonneg _))
-    exact zero_lt_two
-  rw [neg_mul, neg_div, Real.rpow_neg hK.le, mul_left_comm,
-    inv_mul_le_iff₀ (Real.rpow_pos_of_pos hK _)]
-  refine (mul_le_mul_of_nonneg_right this (Nat.cast_nonneg _)).trans ?_
-  rw [mul_assoc]
-  rw [← @Nat.cast_le ℝ, Nat.cast_mul] at h₁
-  refine (mul_le_mul_of_nonneg_left h₁ hK.le).trans ?_
-  rw [Nat.cast_mul, ← mul_assoc, ← mul_assoc, Nat.cast_pow]
-  refine mul_le_mul_of_nonneg_right ?_ (Nat.cast_nonneg _)
-  refine (mul_le_mul_of_nonneg_left (pow_le_pow_left (Nat.cast_nonneg _) h₃ k) hK.le).trans ?_
-  rw [mul_pow, ← mul_assoc, ← pow_succ']
-  refine mul_le_mul_of_nonneg_right ?_ (pow_nonneg (Nat.cast_nonneg _) _)
-  rw [← Real.rpow_natCast]
-  refine Real.rpow_le_rpow_of_exponent_le (one_le_two.trans hK₂) ?_
-  rw [Nat.cast_add_one, ← le_sub_iff_add_le, hk']
-  refine (Nat.ceil_lt_add_one ?_).le.trans ?_
-  · positivity
-  have : (1 : ℝ) ≤ 128 * (m / ε ^ 2) := by rw [div_eq_mul_one_div]; bound
-  rw [mul_div_assoc, mul_div_assoc]
-  linarith only [this]
+  rw [neg_mul, neg_div, Real.rpow_neg hK₀.le, mul_left_comm, inv_mul_le_iff₀ (by positivity)]
+  calc
+    (Ac ^ k * Sc : ℝ)
+      = 2 * (Ac ^ k / 2) * Sc := by ring
+    _ ≤ K * Lc * Sc := by gcongr
+    _ = K * ↑(Lc * Sc) := by push_cast; ring
+    _ ≤ K * ↑(ASc ^ k * Tc) := by gcongr
+    _ = K * ASc ^ k * Tc := by push_cast; ring
+    _ ≤ K * (K * Ac) ^ k * Tc := by gcongr
+    _ = K ^ (k + 1 : ℝ) * Ac ^ k * Tc := by norm_cast; push_cast; ring
+    _ ≤ K ^ (512 * m / ε ^ 2) * Ac ^ k * Tc := ?_
+    _ = K ^ (512 * m / ε ^ 2) * (Ac ^ k * Tc) := by ring
+  gcongr
+  · linarith
+  rw [← le_sub_iff_add_le, hk', mul_div_assoc, mul_div_assoc]
+  have h₄ := Nat.ceil_lt_add_one (a := 256 * (m / ε ^ 2)) (by positivity)
+  have h₅ : (1 : ℝ) ≤ 128 * (m / ε ^ 2) := by rw [div_eq_mul_one_div]; bound
+  linear_combination h₄ + 2 * h₅
 
 -- trivially true for other reasons for big ε
 lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (f : G → ℂ)
@@ -440,7 +429,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
           gcongr
           · exact one_le_two.trans hK₂
           calc
-            _ ≤ 2.7182818286 ^ 2 := pow_le_pow_left (by positivity) exp_one_lt_d9.le _
+            _ ≤ (2.7182818286 : ℝ) ^ 2 := by gcongr; exact exp_one_lt_d9.le
             _ ≤ _ := by norm_num
       _ = _ := by simp [div_div_eq_mul_div, ← mul_div_right_comm, mul_right_comm, div_pow]
       _ ≤ _ := hKT

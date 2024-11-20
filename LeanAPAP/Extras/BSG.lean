@@ -226,7 +226,7 @@ lemma test_case {E A B : ℕ} {K : ℝ} (hK : 0 < K) (hE : K⁻¹ * (A ^ 2 * B) 
     (hA : 0 < A) (hB : 0 < B) :
     A / (Real.sqrt 2 * K) ≤ Real.sqrt 2⁻¹ * (E / (A * B)) := by
   rw [inv_mul_le_iff₀ hK] at hE
-  rw [mul_div_assoc', div_le_div_iff, ← mul_assoc, ← sq]
+  rw [mul_div_assoc', div_le_div_iff₀, ← mul_assoc, ← sq]
   rotate_left
   · positivity
   · positivity
@@ -251,7 +251,7 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K) (hE : K⁻¹ * (#A ^ 2 * #
     refine this.trans' ?_
     -- I'd like automation to handle the rest of this
     rw [inv_mul_le_iff₀ hK] at hE
-    rw [mul_div_assoc', div_le_div_iff, ← mul_assoc, ← sq]
+    rw [mul_div_assoc', div_le_div_iff₀, ← mul_assoc, ← sq]
     rotate_left
     · positivity
     · positivity
