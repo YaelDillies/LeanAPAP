@@ -9,7 +9,7 @@ import LeanAPAP.Prereqs.LpNorm.Weighted
 -/
 
 open Finset Fintype Function MeasureTheory RCLike Real
-open scoped ENNReal NNReal Pointwise
+open scoped ENNReal NNReal Pointwise mu
 
 variable {G : Type*} [DecidableEq G] [Fintype G] [AddCommGroup G] {p : ℕ} {B₁ B₂ A : Finset G}
   {ε δ : ℝ}

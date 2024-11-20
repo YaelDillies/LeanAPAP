@@ -17,7 +17,7 @@ attribute [-simp] Real.log_inv
 
 open Fintype Function MeasureTheory Module RCLike Real
 open Finset hiding card
-open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise
+open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise mu
 
 universe u
 variable {G : Type u} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {x y γ ε : ℝ}

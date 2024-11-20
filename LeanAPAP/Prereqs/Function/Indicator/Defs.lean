@@ -141,9 +141,10 @@ variable [DivisionSemiring β] [DivisionSemiring γ] {s : Finset α}
 /-- The normalised indicate of a set. -/
 def mu (s : Finset α) : α → β := (#s : β)⁻¹ • 𝟭 s
 
-notation "μ " => mu
+scoped[mu] notation "μ " => mu
+scoped[mu] notation "μ_[" β "] " => @mu _ β _ _
 
-notation "μ_[" β "] " => @mu _ β _ _
+open scoped mu
 
 lemma mu_apply (x : α) : μ s x = (#s : β)⁻¹ * ite (x ∈ s) 1 0 := rfl
 
@@ -226,6 +227,8 @@ lemma mu_inv (s : Finset α) (a : α) : μ_[β] s⁻¹ a = μ s a⁻¹ := by sim
 end Group
 
 end DivisionSemiring
+
+open scoped mu
 
 section Semifield
 variable (β) [Semifield β] [StarRing β] {s : Finset α}

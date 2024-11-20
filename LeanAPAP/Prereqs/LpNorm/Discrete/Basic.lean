@@ -8,7 +8,7 @@ import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 -/
 
 open Finset Function Real
-open scoped BigOperators ComplexConjugate ENNReal NNReal translate
+open scoped BigOperators ComplexConjugate ENNReal NNReal translate mu
 
 namespace MeasureTheory
 variable {ι G 𝕜 E R : Type*} [Fintype ι] {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι]

@@ -9,7 +9,7 @@ import LeanAPAP.Prereqs.Function.Indicator.Defs
 -/
 
 open Finset Fintype Function RCLike
-open scoped Pointwise
+open scoped Pointwise mu
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G] {s : Finset G}
 

@@ -8,7 +8,7 @@ import LeanAPAP.Prereqs.Function.Indicator.Defs
 
 open Finset Function
 open Fintype (card)
-open scoped BigOperators ComplexConjugate Pointwise translate
+open scoped BigOperators ComplexConjugate Pointwise translate mu
 
 local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
 

@@ -3,7 +3,7 @@ import Mathlib.Analysis.RCLike.Inner
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 
 open Finset RCLike
-open scoped BigOperators ComplexConjugate
+open scoped BigOperators ComplexConjugate mu
 
 variable {ι 𝕜 : Type*} [Fintype ι] [DecidableEq ι] [RCLike 𝕜]
 

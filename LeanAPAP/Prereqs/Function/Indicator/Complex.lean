@@ -5,7 +5,7 @@ import LeanAPAP.Prereqs.Function.Indicator.Defs
 
 open Finset Function
 open Fintype (card)
-open scoped ComplexConjugate Pointwise NNRat
+open scoped ComplexConjugate Pointwise NNRat mu
 
 /-! ### Indicator -/
 

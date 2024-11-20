@@ -37,7 +37,7 @@ Multiplicativise? Probably ugly and not very useful.
 local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 
 open Finset Fintype Function
-open scoped BigOperators ComplexConjugate NNReal Pointwise translate
+open scoped BigOperators ComplexConjugate NNReal Pointwise translate mu
 
 variable {G R γ : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
 

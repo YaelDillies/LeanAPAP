@@ -13,7 +13,7 @@ import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 -/
 
 open MeasureTheory
-open scoped Pointwise Combinatorics.Additive translate
+open scoped Pointwise Combinatorics.Additive translate mu
 
 namespace Finset
 variable {α : Type*} [DecidableEq α] {s : Finset α} {k : ℕ}

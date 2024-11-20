@@ -12,7 +12,7 @@ import LeanAPAP.Prereqs.LpNorm.Weighted
 open Finset hiding card
 open Fintype (card)
 open Function MeasureTheory RCLike Real
-open scoped ComplexConjugate ComplexOrder NNReal ENNReal
+open scoped ComplexConjugate ComplexOrder NNReal ENNReal mu
 
 variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
   {ν : G → ℝ≥0} {f : G → ℝ} {g h : G → ℂ} {ε : ℝ} {p : ℕ}
