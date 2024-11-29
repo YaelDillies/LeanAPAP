@@ -1,10 +1,6 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
-import LeanAPAP.Mathlib.Algebra.Order.GroupWithZero.Unbundled
-import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import LeanAPAP.Mathlib.Probability.UniformOn
-import LeanAPAP.Mathlib.Tactic.Positivity
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
@@ -18,6 +14,7 @@ import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Convolution.Order
 import LeanAPAP.Prereqs.Convolution.ThreeAP
+import LeanAPAP.Prereqs.DummyPositivity
 import LeanAPAP.Prereqs.Energy
 import LeanAPAP.Prereqs.FourierTransform.Compact
 import LeanAPAP.Prereqs.FourierTransform.Convolution

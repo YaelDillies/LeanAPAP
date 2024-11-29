@@ -1,9 +1,5 @@
-import Mathlib.Algebra.BigOperators.Expect
-import Mathlib.Algebra.Order.Module.Rat
-import Mathlib.Analysis.Normed.Group.Constructions
 import Mathlib.MeasureTheory.Integral.Bochner
 import Mathlib.Tactic.Positivity.Finset
-import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 
 open Filter
 open scoped BigOperators ComplexConjugate ENNReal NNReal
@@ -184,11 +180,11 @@ lemma nnLpNorm_mono_real {g : α → ℝ} (hg : Memℒp g p μ) (h : ∀ x, ‖f
 
 lemma nnLpNorm_smul_measure_of_ne_zero {f : α → E} {c : ℝ≥0} (hc : c ≠ 0) :
     nnLpNorm f p (c • μ) = c ^ p.toReal⁻¹ • nnLpNorm f p μ := by
-  simp [nnLpNorm, eLpNorm_smul_measure_of_ne_zero'' hc f p μ]
+  simp [nnLpNorm, eLpNorm_smul_measure_of_ne_zero' hc f p μ]
 
 lemma nnLpNorm_smul_measure_of_ne_top (hp : p ≠ ∞) {f : α → E} (c : ℝ≥0) :
     nnLpNorm f p (c • μ) = c ^ p.toReal⁻¹ • nnLpNorm f p μ := by
-  simp [nnLpNorm, eLpNorm_smul_measure_of_ne_top'' hp]
+  simp [nnLpNorm, eLpNorm_smul_measure_of_ne_top' hp]
 
 @[simp] lemma nnLpNorm_conj {K : Type*} [RCLike K] (f : α → K) (p : ℝ≥0∞) (μ : Measure α) :
     nnLpNorm (conj f) p μ = nnLpNorm f p μ := by simp [← nnLpNorm_norm]
