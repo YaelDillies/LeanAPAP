@@ -45,6 +45,7 @@ lemma ae_le_nnLinftyNorm (hf : Memℒp f ∞ μ) : ∀ᵐ x ∂μ, ‖f x‖₊ 
 lemma nnLinftyNorm_eq_essSup (hf : Memℒp f ∞ μ) : nnLpNorm f ∞ μ = essSup (‖f ·‖₊) μ := by
   refine ENNReal.coe_injective ?_
   rw [coe_nnLpNorm_eq_eLpNorm hf, ENNReal.coe_essSup, eLpNorm_exponent_top, eLpNormEssSup]
+  simp_rw [enorm_eq_nnnorm]
   exact ⟨_, ae_le_nnLinftyNorm hf⟩
 
 @[simp] lemma nnLpNorm_zero (p : ℝ≥0∞) (μ : Measure α) :

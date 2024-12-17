@@ -233,7 +233,7 @@ lemma unbalancing' (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁
       _ ≤ 2 * (2 ^ 7 * ε⁻¹ * (2 ^ 2 * ε⁻¹) * p) := by gcongr <;> norm_num
       _ = 2 ^ 10 * ε⁻¹ ^ 2 * p := by ring
   calc
-    _ ≤ ↑‖f + 1‖_[.ofReal (24 / ε * log (3 / ε) * ↑(2 * p + 3)), ν] :=
+    1 + ε / 2 ≤ ↑‖f + 1‖_[.ofReal (24 / ε * log (3 / ε) * ↑(2 * p + 3)), ν] :=
       unbalancing'' (2 * p + 3) this ((even_two_mul _).add_odd $ by decide) hε₀ hε₁ hf hν hν₁ $
         hε.trans $ wLpNorm_mono_right
           (Nat.cast_le.2 $ le_add_of_le_left $ le_mul_of_one_le_left' one_le_two) _ _
