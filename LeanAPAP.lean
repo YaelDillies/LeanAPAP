@@ -1,6 +1,8 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
+import LeanAPAP.Mathlib.MeasureTheory.Function.LpSpace
+import LeanAPAP.Mathlib.MeasureTheory.Integral.Bochner
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
@@ -32,4 +34,5 @@ import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 import LeanAPAP.Prereqs.LpNorm.Weighted
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 import LeanAPAP.Prereqs.NNLpNorm
+import LeanAPAP.Prereqs.NewMarcinkiewiczZygmund
 import LeanAPAP.Prereqs.Rudin
