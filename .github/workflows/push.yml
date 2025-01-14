@@ -1,3 +1,5 @@
+name: Build Lean project
+
 on:
   push:
     branches:
@@ -30,19 +32,14 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+
+      - name: Copy README.md to website/index.md
+        run: cp README.md website/index.md
 
       - name: Print files to upstream
         run: |
-          grep -r --files-without-match 'import LeanAPAP' LeanAPAP | sort > 1.txt
-          grep -r --files-with-match 'sorry' LeanAPAP | sort > 2.txt
-          mkdir -p docs/_includes
-          comm -23 1.txt 2.txt | sed -e 's/^\(.*\)$/- [`\1`](https:\/\/github.com\/YaelDillies\/LeanAPAP\/blob\/master\/\1)/' > docs/_includes/files_to_upstream.md
-          rm 1.txt 2.txt
-
-      - name: Count sorries
-        run: python scripts/count_sorry.py
+          mkdir -p website/_includes
+          python3 scripts/upstreaming_dashboard.py
 
       - name: Install elan
         run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.5.0
@@ -53,61 +50,54 @@ jobs:
       - name: Build project
         run: ~/.elan/bin/lake build LeanAPAP
 
-      - name: Cache mathlib docs
+      - name: Cache dependencies docs
         uses: actions/cache@v3
         with:
-          path: |
-            .lake/build/doc/Init
-            .lake/build/doc/Lake
-            .lake/build/doc/Lean
-            .lake/build/doc/Std
-            .lake/build/doc/Mathlib
-            .lake/build/doc/declarations
+          path: docbuild/.lake/build/doc
           key: MathlibDoc-${{ hashFiles('lake-manifest.json') }}
           restore-keys: |
             MathlibDoc-
 
       - name: Build documentation
-        run: ~/.elan/bin/lake -R -Kenv=dev build LeanAPAP:docs
+        working-directory: docbuild
+        run: |
+          ~/.elan/bin/lake exe cache get || true
+          ~/.elan/bin/lake build LeanAPAP:docs
 
-      - name: Build blueprint and copy to `docs/blueprint`
+      - name: Build blueprint and copy to `website/blueprint`
         uses: xu-cheng/texlive-action@v2
         with:
-          docker_image: ghcr.io/xu-cheng/texlive-full:20231201
+          scheme: full
           run: |
             apk update
             apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
             git config --global --add safe.directory $GITHUB_WORKSPACE
             git config --global --add safe.directory `pwd`
-            python3 -m venv env
-            source env/bin/activate
-            pip install --upgrade pip requests wheel
-            pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
-            pip install leanblueprint
-            leanblueprint pdf
-            cp blueprint/print/print.pdf docs/blueprint.pdf
-            leanblueprint web
-            cp -r blueprint/web docs/blueprint
+            python3 -m pip install --upgrade pip requests wheel
+            python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
+            pip install -r blueprint/requirements.txt
+            python3 -m pip install invoke
+            inv all
 
-      - name: Move documentation to `docs/docs`
+      - name: Copy documentation to `website/docs`
         run: |
-          mv .lake/build/doc docs/docs
+          mv docbuild/.lake/build/doc website/docs
 
       - name: Bundle dependencies
         uses: ruby/setup-ruby@v1
         with:
-          working-directory: docs
-          ruby-version: "3.0"  # Specify Ruby version
-          bundler-cache: true  # Enable caching for bundler
+          working-directory: website
+          ruby-version: "3.0" # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-      - name: Build website using Jekyll
-        working-directory: docs
-        run: JEKYLL_ENV=production bundle exec jekyll build  # Note this will also copy the blueprint and API doc into docs/_site
+      - name: Bundle website
+        working-directory: website
+        run: JEKYLL_ENV=production bundle exec jekyll build
 
       - name: Upload docs & blueprint artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: docs/_site
+          path: website/_site
 
       - name: Deploy to GitHub Pages
         id: deployment
@@ -119,4 +109,4 @@ jobs:
 
       - name: Make sure the cache works
         run: |
-          mv docs/docs .lake/build/doc
+          mv website/docs docbuild/.lake/build/doc

@@ -57,13 +57,6 @@ The Lean code is contained in the directory `LeanAPAP`. The subdirectories are:
 * `FiniteField`: The proof steps specific to the finite field case
 * `Integer`: The proof steps specific to the integer case
 
-### Current progress
-
-The project is not yet finished. The following table details live which files are unfinished, and
-how many 'sorries' (unproven statements) remain in each file.
-
-{% include sorries.md %}
-
 ## What next?
 
 Almost periodicity is nowadays a standard tool in additive combinatorics. The version we formalised is sufficient for many applications. In particular, it gives one of the best known bounds on Freiman's theorem. As a side goal, we might tackle Freiman's theorem.
@@ -72,9 +65,7 @@ The discrete convolution/Lp norm/Fourier transform material belongs in mathlib a
 
 On top of the new developments, there are many basic lemmas needed for this project that are currently missing from mathlib.
 
-Here is the list of files that do not depend on any other LeanAPAP file, indicating they are good candidates for upstreaming to mathlib:
-
-{% include files_to_upstream.md %}
+See the [upstreaming dashboard](https://yaeldillies.github.io/LeanCamCombi/upstreaming) for more information.
 
 ## Build the Lean files
 
