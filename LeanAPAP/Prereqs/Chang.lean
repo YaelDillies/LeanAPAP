@@ -170,7 +170,7 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
       #Δ ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G)⌉₊ / η ^ 2⌉₊ ∧
       largeSpec f η ⊆ Δ.addSpan := by
   refine exists_subset_addSpan_card_le_of_forall_addDissociated fun Δ hΔη hΔ ↦ ?_
-  obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ #Δ
+  obtain hΔ' | hΔ' := eq_zero_or_pos #Δ
   · simp [hΔ']
   let α := ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G
   have : 0 < α := by positivity

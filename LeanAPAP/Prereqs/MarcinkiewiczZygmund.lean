@@ -27,7 +27,7 @@ private lemma step_one (hA : A.Nonempty) (f : ι → ℝ) (a : Fin n → ι)
   calc
     |∑ i, f (a i)| ^ (m + 1)
       = |∑ i, (f (a i) - (∑ b ∈ B, f (b i)) / #B)| ^ (m + 1) := by
-      simp only [hf, sub_zero, zero_div]
+      simp only [B, hf, sub_zero, zero_div]
     _ = |(∑ b ∈ B, ∑ i, (f (a i) - f (b i))) / #B| ^ (m + 1) := by
       simp only [sum_sub_distrib]
       rw [sum_const, sub_div, sum_comm, sum_div, nsmul_eq_mul, card_piFinset, prod_const,
@@ -72,18 +72,18 @@ private lemma step_two_aux (A : Finset ι) (f : ι → ℝ) (ε : Fin n → ℝ)
     intro xy
     exact (fun i ↦ if ε i = 1 then xy.1 i else xy.2 i, fun i ↦ if ε i = 1 then xy.2 i else xy.1 i)
   have h₁ : ∀ a ∈ (A ^^ n) ×ˢ (A ^^ n), swapper a ∈ (A ^^ n) ×ˢ (A ^^ n) := by
-    simp only [mem_product, and_imp, mem_piFinset, ← forall_and]
+    simp only [mem_product, and_imp, mem_piFinset, ← forall_and, swapper]
     intro a h i
     split_ifs
     · exact h i
     · exact (h i).symm
   have h₂ : ∀ a ∈ (A ^^ n) ×ˢ (A ^^ n), swapper (swapper a) = a := fun a _ ↦ by
-    ext <;> simp only <;> split_ifs <;> rfl
+    ext <;> simp only [swapper] <;> split_ifs <;> rfl
   refine sum_nbij' swapper swapper h₁ h₁ h₂ h₂ ?_
   · rintro ⟨a, b⟩ _
     congr with i : 1
-    simp only [Pi.mul_apply, Pi.sub_apply, Function.comp_apply]
     simp only [mem_piFinset, mem_insert, mem_singleton] at hε
+    simp only [Pi.mul_apply, Pi.sub_apply, Function.comp_apply, swapper]
     split_ifs with h
     · simp [h]
     rw [(hε i).resolve_right h]
@@ -171,6 +171,7 @@ private lemma end_step {f : ι → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
         add_assoc, Nat.sub_add_cancel hm, pow_add, ← mul_pow, ← mul_pow, card_piFinset, prod_const,
         Finset.card_univ, Fintype.card_fin, Nat.cast_pow, mul_div_cancel_left₀]
       norm_num
+      dsimp [B]
       positivity
 
 namespace Real

@@ -128,7 +128,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     refine ⟨(lt_of_mul_lt_mul_left (hs.trans_eq' ?_) $ hg s).le, this.trans $ mul_le_of_le_one_right
       ?_ $ div_le_one_of_le₀ ?_ ?_, this.trans $ mul_le_of_le_one_left ?_ $ div_le_one_of_le₀ ?_ ?_⟩
     · simp_rw [A₁, A₂, g, ← card_smul_mu, smul_dconv, dconv_smul, ← Nat.cast_smul_eq_nsmul ℝ,
-        wInner_smul_left, smul_eq_mul, star_trivial, mul_assoc]
+        wInner_smul_left, smul_eq_mul, star_trivial, mul_assoc, A₁, A₂]
     any_goals positivity
     all_goals exact Nat.cast_le.2 $ card_mono inter_subset_left
   rw [← sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ← sum_mul, mul_right_comm, ← hgB,
@@ -156,7 +156,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         := sum_lt_sum_of_nonempty ⟨s, mem_filter.2 ⟨mem_univ _, hs.symm⟩⟩ ?_
     _ ≤ ∑ s, M * sqrt (g s) := sum_le_univ_sum_of_nonneg fun s ↦ by positivity
     _ = M * (∑ s, sqrt #(A₁ s) * sqrt #(A₂ s))
-        := by simp_rw [mul_sum, sqrt_mul $ Nat.cast_nonneg _]
+        := by simp_rw [mul_sum, g, sqrt_mul $ Nat.cast_nonneg _]
     _ ≤ M * (sqrt (∑ s, #(A₁ s)) * sqrt (∑ s, #(A₂ s))) := by
       gcongr; exact sum_sqrt_mul_sqrt_le _ fun i ↦ by positivity fun i ↦ by positivity
     _ = _ := ?_
