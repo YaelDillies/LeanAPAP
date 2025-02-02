@@ -36,7 +36,7 @@ jobs:
       - name: Copy README.md to website/index.md
         run: cp README.md website/index.md
 
-      - name: Print files to upstream
+      - name: Upstreaming dashboard
         run: |
           mkdir -p website/_includes
           python3 scripts/upstreaming_dashboard.py
@@ -49,6 +49,12 @@ jobs:
 
       - name: Build project
         run: ~/.elan/bin/lake build LeanAPAP
+
+      - name: File dependencies
+        run: |
+          sudo apt-get update
+          sudo apt install graphviz -y
+          ~/.elan/bin/lake exe graph website/file_deps.pdf
 
       - name: Cache dependencies docs
         uses: actions/cache@v3
@@ -95,17 +101,13 @@ jobs:
         run: JEKYLL_ENV=production bundle exec jekyll build
 
       - name: Upload docs & blueprint artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: website/_site
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
-
-      # - name: Check declarations
-      #   run: |
-      #       ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
+        uses: actions/deploy-pages@v4
 
       - name: Make sure the cache works
         run: |
