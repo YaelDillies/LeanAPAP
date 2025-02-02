@@ -15,11 +15,11 @@ noncomputable def nnLpNorm (f : α → E) (p : ℝ≥0∞) (μ : Measure α) : �
 lemma coe_nnLpNorm_eq_eLpNorm (hf : Memℒp f p μ) : nnLpNorm f p μ = eLpNorm f p μ := by
   rw [nnLpNorm, ENNReal.coe_toNNReal hf.eLpNorm_ne_top]
 
--- TODO: Rename `eLpNorm_eq_lintegral_rpow_nnnorm` to `eLpNorm_eq_lintegral_nnnorm_rpow_toReal`
+-- TODO: Rename `eLpNorm_eq_lintegral_rpow_enorm` to `eLpNorm_eq_lintegral_rpow_enorm_toReal`
 lemma coe_nnLpNorm_eq_integral_norm_rpow_toReal (hp₀ : p ≠ 0) (hp : p ≠ ∞)
-    (hf : AEMeasurable (fun x ↦ (‖f x‖₊ : ℝ≥0∞) ^ p.toReal) μ) :
+    (hf : AEMeasurable (fun x ↦ ‖f x‖ₑ ^ p.toReal) μ) :
     nnLpNorm f p μ = (∫ x, ‖f x‖ ^ p.toReal ∂μ) ^ p.toReal⁻¹ := by
-  rw [nnLpNorm, eLpNorm_eq_lintegral_rpow_nnnorm hp₀ hp, ENNReal.coe_toNNReal_eq_toReal,
+  rw [nnLpNorm, eLpNorm_eq_lintegral_rpow_enorm hp₀ hp, ENNReal.coe_toNNReal_eq_toReal,
     ← ENNReal.toReal_rpow, ← integral_toReal hf]
   simp [← ENNReal.toReal_rpow]
   · exact .of_forall fun x ↦ ENNReal.rpow_lt_top_of_nonneg (by positivity) (by simp)
@@ -30,7 +30,7 @@ lemma coe_nnLpNorm_nnreal_eq_integral_norm_rpow {p : ℝ≥0} (hp : p ≠ 0)
     nnLpNorm f p μ = (∫ x, ‖f x‖ ^ (p : ℝ) ∂μ) ^ (p⁻¹ : ℝ) := by
   rw [coe_nnLpNorm_eq_integral_norm_rpow_toReal (by positivity) (by simp) hf]; simp
 
-lemma coe_nnLpNorm_one_eq_integral_norm (hf : AEMeasurable (fun x ↦ ‖f x‖₊) μ) :
+lemma coe_nnLpNorm_one_eq_integral_norm (hf : AEMeasurable (fun x ↦ ‖f x‖ₑ) μ) :
     nnLpNorm f 1 μ = ∫ x, ‖f x‖ ∂μ := by
   rw [coe_nnLpNorm_eq_integral_norm_rpow_toReal one_ne_zero ENNReal.coe_ne_top (by simpa using hf)]
   simp

@@ -10,7 +10,7 @@ open scoped Nat
 variable {G : Type*} [AddCommGroup G] {s : Finset G}
 
 def energy (n : ℕ) (s : Finset G) (ν : G → ℂ) : ℝ :=
-  ∑ γ in piFinset fun _ : Fin n ↦ s, ∑ δ in piFinset fun _ : Fin n ↦ s, ‖ν (∑ i, γ i - ∑ i, δ i)‖
+  ∑ γ ∈ piFinset fun _ : Fin n ↦ s, ∑ δ ∈ piFinset fun _ : Fin n ↦ s, ‖ν (∑ i, γ i - ∑ i, δ i)‖
 
 @[simp]
 lemma energy_nonneg (n : ℕ) (s : Finset G) (ν : G → ℂ) : 0 ≤ energy n s ν := by

@@ -461,8 +461,8 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
       (B.dens < (65 / 64 : ℝ) ^ i * α →
         2⁻¹ ≤ card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
     induction' i with i ih hi
-    · exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp, hA,
-        by simp, by simp [α, nnratCast_dens, Fintype.card_subtype, subset_iff]⟩
+    · exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp [n], hA,
+        by simp [α], by simp [α, nnratCast_dens, Fintype.card_subtype, subset_iff]⟩
     obtain ⟨V, _, _, _, _, B, hV, hB, hαβ, hBV⟩ := ih
     obtain hB' | hB' := le_or_lt 2⁻¹ (card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
     · exact ⟨V, inferInstance, inferInstance, inferInstance, inferInstance, B,
@@ -486,7 +486,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
         _ ≤ ‖(𝟭_[ℝ] B ∗ μ (V' : Set V).toFinset) x‖ := hx
         _ = B'.dens := ?_
       rw [mu, conv_smul, Pi.smul_apply, indicate_conv_indicate_eq_card_vadd_inter_neg,
-        norm_of_nonneg (by positivity), nnratCast_dens, card_preimage, smul_eq_mul, inv_mul_eq_div]
+        Real.norm_of_nonneg (by positivity), nnratCast_dens, card_preimage, smul_eq_mul, inv_mul_eq_div]
       congr 2
       · congr 1 with x
         simp

@@ -105,10 +105,10 @@ section CommSemiring
 variable [CommSemiring β]
 
 lemma indicate_inf_apply [Fintype α] (s : Finset ι) (t : ι → Finset α) (x : α) :
-    𝟭_[β] (s.inf t) x = ∏ i in s, 𝟭 (t i) x := by simp [indicate_apply, mem_inf, prod_boole]
+    𝟭_[β] (s.inf t) x = ∏ i ∈ s, 𝟭 (t i) x := by simp [indicate_apply, mem_inf, prod_boole]
 
 lemma indicate_inf [Fintype α] (s : Finset ι) (t : ι → Finset α) :
-    𝟭_[β] (s.inf t) = ∏ i in s, 𝟭 (t i) :=
+    𝟭_[β] (s.inf t) = ∏ i ∈ s, 𝟭 (t i) :=
   funext fun x ↦ by rw [Finset.prod_apply, indicate_inf_apply]
 
 variable [StarRing β]

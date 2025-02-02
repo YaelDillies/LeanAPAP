@@ -5,7 +5,6 @@ Authors: Yaël Dillies, Bhavik Mehta
 -/
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Probability.IdentDistrib
-import LeanAPAP.Mathlib.MeasureTheory.Integral.Bochner
 
 /-!
 # The Marcinkiewicz-Zygmund inequality

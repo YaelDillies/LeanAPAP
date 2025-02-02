@@ -1,8 +1,6 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
-import LeanAPAP.Mathlib.MeasureTheory.Function.LpSpace
-import LeanAPAP.Mathlib.MeasureTheory.Integral.Bochner
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing

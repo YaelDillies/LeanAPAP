@@ -138,7 +138,7 @@ lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
     simp only [boole_mul, indicate_apply]
     rw [← sum_filter, filter_mem_eq_inter, univ_inter, sub_self, smul_zero]
   congr with a : 1
-  simp only [sum_sub_distrib, Pi.smul_apply, sum_const, card_fin]
+  simp only [sum_sub_distrib, Pi.smul_apply, sum_const, card_fin, f']
 
 lemma big_shifts_step2 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
     (∑ x ∈ L + S.piDiag (Fin k), ∑ l ∈ L, ∑ s ∈ S.piDiag (Fin k), ite (l + s = x) (1 : ℝ) 0) ^ 2

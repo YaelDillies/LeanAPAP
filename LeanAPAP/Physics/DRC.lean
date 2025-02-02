@@ -128,7 +128,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     refine ⟨(lt_of_mul_lt_mul_left (hs.trans_eq' ?_) $ hg s).le, this.trans $ mul_le_of_le_one_right
       ?_ $ div_le_one_of_le₀ ?_ ?_, this.trans $ mul_le_of_le_one_left ?_ $ div_le_one_of_le₀ ?_ ?_⟩
     · simp_rw [A₁, A₂, g, ← card_smul_mu, smul_dconv, dconv_smul, ← Nat.cast_smul_eq_nsmul ℝ,
-        wInner_smul_left, smul_eq_mul, star_trivial, mul_assoc]
+        wInner_smul_left, smul_eq_mul, star_trivial, mul_assoc, A₁, A₂]
     any_goals positivity
     all_goals exact Nat.cast_le.2 $ card_mono inter_subset_left
   rw [← sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ← sum_mul, mul_right_comm, ← hgB,
@@ -156,7 +156,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         := sum_lt_sum_of_nonempty ⟨s, mem_filter.2 ⟨mem_univ _, hs.symm⟩⟩ ?_
     _ ≤ ∑ s, M * sqrt (g s) := sum_le_univ_sum_of_nonneg fun s ↦ by positivity
     _ = M * (∑ s, sqrt #(A₁ s) * sqrt #(A₂ s))
-        := by simp_rw [mul_sum, sqrt_mul $ Nat.cast_nonneg _]
+        := by simp_rw [mul_sum, g, sqrt_mul $ Nat.cast_nonneg _]
     _ ≤ M * (sqrt (∑ s, #(A₁ s)) * sqrt (∑ s, #(A₂ s))) := by
       gcongr; exact sum_sqrt_mul_sqrt_le _ fun i ↦ by positivity fun i ↦ by positivity
     _ = _ := ?_
@@ -172,7 +172,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
 lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p)
     (hp₂ : 2 ≤ p) (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hB : (B₁ ∩ B₂).Nonempty) (hA : A.Nonempty)
     (hf : ∃ x, x ∈ B₁ - B₂ ∧ x ∈ A - A ∧ x ∉ s p ε B₁ B₂ A) :
-    ∃ A₁, A₁ ⊆ B₁ ∧ ∃ A₂, A₂ ⊆ B₂ ∧ 1 - δ ≤ ∑ x in s p ε B₁ B₂ A, (μ A₁ ○ μ A₂) x ∧
+    ∃ A₁, A₁ ⊆ B₁ ∧ ∃ A₂, A₂ ⊆ B₂ ∧ 1 - δ ≤ ∑ x ∈ s p ε B₁ B₂ A, (μ A₁ ○ μ A₂) x ∧
         (4 : ℝ)⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / #A ^ (2 * p) ≤
             #A₁ / #B₁ ∧
           (4 : ℝ)⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / #A ^ (2 * p) ≤
@@ -196,7 +196,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
   clear hcard₁ hcard₂ aux
   rw [sub_le_comm]
   calc
-    _ = ∑ x in (s p ε B₁ B₂ A)ᶜ, (μ A₁ ○ μ A₂) x := ?_
+    _ = ∑ x ∈ (s p ε B₁ B₂ A)ᶜ, (μ A₁ ○ μ A₂) x := ?_
     _ = ⟪μ_[ℝ] A₁ ○ μ A₂, (↑) ∘ 𝟭_[ℝ≥0] ((s (↑p) ε B₁ B₂ A)ᶜ)⟫_[ℝ] := by
       simp [wInner_one_eq_sum, -mem_compl, -mem_s, apply_ite NNReal.toReal, indicate_apply]
     _ ≤ _ := (le_div_iff₀ $ dLpNorm_conv_pos hp₀.ne' hB hA).2 h
@@ -207,8 +207,8 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
   simp only [apply_ite NNReal.toReal, indicate_apply, NNReal.coe_one, NNReal.coe_zero, mul_boole,
     Fintype.sum_ite_mem, mul_div_right_comm]
   calc
-    ∑ x in (s p ε B₁ B₂ A)ᶜ, (μ B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p ≤
-        ∑ x in (s p ε B₁ B₂ A)ᶜ,
+    ∑ x ∈ (s p ε B₁ B₂ A)ᶜ, (μ B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p ≤
+        ∑ x ∈ (s p ε B₁ B₂ A)ᶜ,
           (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p := by
       gcongr with x hx
       · exact Pi.le_def.1 (dconv_nonneg (R := ℝ) mu_nonneg mu_nonneg) x
@@ -240,7 +240,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
 /-- Special case of `sifting` when `B₁ = B₂ = univ`. -/
 lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p) (hp₂ : 2 ≤ p)
     (hpε : ε⁻¹ * log (2 / δ) ≤ p) (hA : A.Nonempty) :
-    ∃ A₁ A₂, 1 - δ ≤ ∑ x in s p ε univ univ A, (μ A₁ ○ μ A₂) x ∧
+    ∃ A₁ A₂, 1 - δ ≤ ∑ x ∈ s p ε univ univ A, (μ A₁ ○ μ A₂) x ∧
         (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤ A₁.dens ∧
           (4 : ℝ)⁻¹ * A.dens ^ (2 * p) ≤ A₂.dens := by
   by_cases hf : ∃ x, x ∈ A - A ∧ (𝟭 A ○ 𝟭 A) x ≤ (1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ]

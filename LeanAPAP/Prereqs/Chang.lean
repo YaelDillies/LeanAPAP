@@ -95,13 +95,13 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
   choose c norm_c hc using fun γ ↦ RCLike.exists_norm_eq_mul_self (dft f γ)
   have :=
     calc
-      η * ‖f‖_[1] * #Δ ≤ ∑ γ in Δ, ‖dft f γ‖ := ?_
-      _ ≤ ‖∑ x, f x * ∑ γ in Δ, c γ * conj (γ x)‖ := ?_
-      _ ≤ ∑ x, ‖f x * ∑ γ in Δ, c γ * conj (γ x)‖ := (norm_sum_le _ _)
-      _ = ∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ := by simp_rw [norm_mul]
+      η * ‖f‖_[1] * #Δ ≤ ∑ γ ∈ Δ, ‖dft f γ‖ := ?_
+      _ ≤ ‖∑ x, f x * ∑ γ ∈ Δ, c γ * conj (γ x)‖ := ?_
+      _ ≤ ∑ x, ‖f x * ∑ γ ∈ Δ, c γ * conj (γ x)‖ := (norm_sum_le _ _)
+      _ = ∑ x, ‖f x‖ * ‖∑ γ ∈ Δ, c γ * conj (γ x)‖ := by simp_rw [norm_mul]
       _ ≤ _ := inner_le_weight_mul_Lp_of_nonneg _ (p := m) ?_ _ _ (fun _ ↦ norm_nonneg _)
             fun _ ↦ norm_nonneg _
-      _ = ‖f‖_[1] ^ (1 - (m : ℝ)⁻¹) * (∑ x, ‖f x‖ * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ (m⁻¹ : ℝ) :=
+      _ = ‖f‖_[1] ^ (1 - (m : ℝ)⁻¹) * (∑ x, ‖f x‖ * ‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ m) ^ (m⁻¹ : ℝ) :=
         by simp_rw [dL1Norm_eq_sum_norm, rpow_natCast]
   rotate_left
   · rw [← nsmul_eq_mul']
@@ -127,22 +127,22 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
     calc
       (‖f‖_[1] * (η ^ m * #Δ ^ m)) ^ 2
         ≤ (∑ x, ‖f x‖ * ‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ m) ^ 2 := by gcongr
-      _ ≤ (∑ x, ‖f x‖ * sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2 := by
+      _ ≤ (∑ x, ‖f x‖ * sqrt (ν x) * ‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ m) ^ 2 := by
         gcongr with x; exact hfν _
-      _ = (∑ x, ‖f x‖ * (sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m)) ^ 2 := by
+      _ = (∑ x, ‖f x‖ * (sqrt (ν x) * ‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ m)) ^ 2 := by
         simp_rw [mul_assoc]
-      _ ≤ (∑ x, ‖f x‖ ^ 2) * ∑ x, (sqrt (ν x) * ‖∑ γ in Δ, c γ * conj (γ x)‖ ^ m) ^ 2 :=
+      _ ≤ (∑ x, ‖f x‖ ^ 2) * ∑ x, (sqrt (ν x) * ‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ m) ^ 2 :=
         sum_mul_sq_le_sq_mul_sq _ _ _
-      _ ≤ ‖f‖_[2] ^ 2 * ∑ x, ν x * (‖∑ γ in Δ, c γ * conj (γ x)‖ ^ 2) ^ m := by
+      _ ≤ ‖f‖_[2] ^ 2 * ∑ x, ν x * (‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ 2) ^ m := by
         simp_rw [dL2Norm_sq_eq_sum_norm, mul_pow, sq_sqrt (NNReal.coe_nonneg _), pow_right_comm]; rfl
   rw [mul_rotate', mul_left_comm, mul_pow, mul_pow, ← pow_mul', ← pow_mul', ← div_le_iff₀',
     mul_div_assoc, mul_div_assoc] at this
   calc
     _ ≤ _ := this
     _ = ‖(_ : ℂ)‖ := Eq.symm $ RCLike.norm_of_nonneg $ sum_nonneg fun _ _ ↦ by positivity
-    _ = ‖∑ γ in Δ ^^ m, ∑ δ in Δ ^^ m,
+    _ = ‖∑ γ ∈ Δ ^^ m, ∑ δ ∈ Δ ^^ m,
           (∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ := ?_
-    _ ≤ ∑ γ in Δ ^^ m, ∑ δ in Δ ^^ m,
+    _ ≤ ∑ γ ∈ Δ ^^ m, ∑ δ ∈ Δ ^^ m,
           ‖(∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ :=
       (norm_sum_le _ _).trans $ sum_le_sum fun _ _ ↦ norm_sum_le _ _
     _ = _ := by simp [energy, norm_c, -Complex.norm_eq_abs, norm_prod]
@@ -170,7 +170,7 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
       #Δ ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G)⌉₊ / η ^ 2⌉₊ ∧
       largeSpec f η ⊆ Δ.addSpan := by
   refine exists_subset_addSpan_card_le_of_forall_addDissociated fun Δ hΔη hΔ ↦ ?_
-  obtain hΔ' | hΔ' := @eq_zero_or_pos _ _ #Δ
+  obtain hΔ' | hΔ' := eq_zero_or_pos #Δ
   · simp [hΔ']
   let α := ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G
   have : 0 < α := by positivity
