@@ -1,6 +1,9 @@
 import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Analysis.Complex.Basic
+import LeanAPAP.Mathlib.Analysis.Convolution
+import LeanAPAP.Mathlib.Analysis.NormedSpace.OperatorNorm.Mul
+import LeanAPAP.Mathlib.MeasureTheory.Group.Measure
 
 /-!
 # Convolution
@@ -32,15 +35,16 @@ point in time.
 Multiplicativise? Probably ugly and not very useful.
 -/
 
-open Finset Fintype Function
+open Finset Fintype Function MeasureTheory
 open scoped ComplexConjugate NNReal Pointwise translate
 
-variable {G H R S : Type*} [DecidableEq G] [AddCommGroup G]
+namespace Analysis.Discrete
+variable {G H R S : Type*} [AddCommGroup G]
 
 /-! ### Trivial character -/
 
 section CommSemiring
-variable [CommSemiring R]
+variable [DecidableEq G] [CommSemiring R]
 
 /-- The trivial character. -/
 def trivChar : G → R := fun a ↦ if a = 0 then 1 else 0
@@ -56,38 +60,48 @@ variable [StarRing R]
 
 end CommSemiring
 
-variable [Fintype G]
-
 /-! ### Convolution -/
 
-section CommSemiring
-variable [CommSemiring R] {f g : G → R}
+section NormedRing
+variable [NormedRing R] [NormedSpace ℝ R] [IsScalarTower ℝ R R] [SMulCommClass ℝ R R]
+  [MeasurableSpace G] {f g : G → R}
 
-/-- Convolution -/
-def conv (f g : G → R) : G → R := fun a ↦ ∑ x : G × G with x.1 + x.2 = a , f x.1 * g x.2
+/-- Discrete convolution -/
+noncomputable abbrev conv (f g : G → R) : G → R := convolution f g (.mul ℝ _) .count
 
-infixl:71 " ∗ " => conv
+scoped infixl:71 " ∗ " => conv
 
-lemma conv_apply (f g : G → R) (a : G) :
-    (f ∗ g) a = ∑ x : G × G with x.1 + x.2 = a, f x.1 * g x.2 := rfl
+-- lemma conv_apply (f g : G → R) (a : G) :
+--     (f ∗ g) a = ∑ x : G × G with x.1 + x.2 = a, f x.1 * g x.2 := rfl
 
-@[simp] lemma conv_zero (f : G → R) : f ∗ 0 = 0 := by ext; simp [conv_apply]
-@[simp] lemma zero_conv (f : G → R) : 0 ∗ f = 0 := by ext; simp [conv_apply]
-
-lemma conv_add (f g h : G → R) : f ∗ (g + h) = f ∗ g + f ∗ h := by
-  ext; simp [conv_apply, mul_add, sum_add_distrib]
-
-lemma add_conv (f g h : G → R) : (f + g) ∗ h = f ∗ h + g ∗ h := by
-  ext; simp [conv_apply, add_mul, sum_add_distrib]
+lemma conv_zero (f : G → R) : f ∗ 0 = 0 := convolution_zero
+lemma zero_conv (f : G → R) : 0 ∗ f = 0 := zero_convolution
 
 lemma smul_conv [DistribSMul H R] [IsScalarTower H R R] (c : H) (f g : G → R) :
-    c • f ∗ g = c • (f ∗ g) := by ext a; simp [conv_apply, smul_sum, smul_mul_assoc]
+    c • f ∗ g = c • (f ∗ g) := by rw [conv, smul_convolution]
 
 lemma conv_smul [DistribSMul H R] [SMulCommClass H R R] (c : H) (f g : G → R) :
-    f ∗ c • g = c • (f ∗ g) := by ext a; simp [conv_apply, smul_sum, mul_smul_comm]
+    f ∗ c • g = c • (f ∗ g) := convolution_smul
+
+lemma mul_smul_conv_comm [Monoid H] [DistribMulAction H R] [IsScalarTower H R R]
+    [SMulCommClass H R R] (c d : H) (f g : G → R) : (c * d) • (f ∗ g) = c • f ∗ d • g := by
+  rw [smul_conv, conv_smul, mul_smul]
 
 alias smul_conv_assoc := smul_conv
 alias smul_conv_left_comm := conv_smul
+
+section Discrete
+variable [Finite G] [MeasurableSingletonClass G]
+
+lemma conv_add (f g h : G → R) : f ∗ (g + h) = f ∗ g + f ∗ h :=
+  ConvolutionExists.distrib_add .of_finite .of_finite
+
+lemma add_conv (f g h : G → R) : (f + g) ∗ h = f ∗ h + g ∗ h :=
+  ConvolutionExists.add_distrib .of_finite .of_finite
+
+end Discrete
+
+variable [MeasurableAdd G] [MeasurableNeg G]
 
 @[simp] lemma translate_conv (a : G) (f g : G → R) : τ a f ∗ g = τ a (f ∗ g) :=
   funext fun b ↦ sum_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
@@ -97,12 +111,15 @@ alias smul_conv_left_comm := conv_smul
   funext fun b ↦ sum_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
     (by simp [← add_sub_assoc]) (by simp)
 
-lemma conv_comm (f g : G → R) : f ∗ g = g ∗ f :=
-  funext fun a ↦ sum_equiv (Equiv.prodComm _ _) (by simp [add_comm]) $ by simp [mul_comm]
+end NormedRing
 
-lemma mul_smul_conv_comm [Monoid H] [DistribMulAction H R] [IsScalarTower H R R]
-    [SMulCommClass H R R] (c d : H) (f g : G → R) : (c * d) • (f ∗ g) = c • f ∗ d • g := by
-  rw [smul_conv, conv_smul, mul_smul]
+section NormedCommRing
+variable [NormedCommRing R] [NormedSpace ℝ R] [IsScalarTower ℝ R R] [SMulCommClass ℝ R R]
+  [MeasurableSpace G] {f g : G → R}
+
+variable [MeasurableAdd G] [MeasurableNeg G]
+
+lemma conv_comm (f g : G → R) : f ∗ g = g ∗ f := .trans (by simp) (convolution_flip _)
 
 lemma conv_assoc (f g h : G → R) : f ∗ g ∗ h = f ∗ (g ∗ h) := by
   ext a
