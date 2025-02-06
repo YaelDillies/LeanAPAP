@@ -2,7 +2,6 @@ import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Mathlib.Analysis.Convolution
-import LeanAPAP.Mathlib.Analysis.NormedSpace.OperatorNorm.Mul
 import LeanAPAP.Mathlib.MeasureTheory.Group.Measure
 
 /-!
@@ -121,11 +120,9 @@ variable [MeasurableAdd G] [MeasurableNeg G]
 
 lemma conv_comm (f g : G → R) : f ∗ g = g ∗ f := .trans (by simp) (convolution_flip _)
 
-lemma conv_assoc (f g h : G → R) : f ∗ g ∗ h = f ∗ (g ∗ h) := by
-  ext a
-  simp only [sum_mul, mul_sum, conv_apply, Finset.sum_sigma']
-  apply sum_nbij' (fun ⟨(_b, c), (d, e)⟩ ↦ ⟨(d, e + c), (e, c)⟩)
-    (fun ⟨(b, _c), (d, e)⟩ ↦ ⟨(b + d, e), (b, d)⟩) <;> aesop (add simp [add_assoc, mul_assoc])
+lemma conv_assoc [MeasurableSingletonClass G] [Countable G] [CompleteSpace R] (f g h : G → R) :
+    f ∗ g ∗ h = f ∗ (g ∗ h) :=
+  convolution_assoc'' _ _ _ _ mul_assoc .of_discrete _ _ _ _ _
 
 lemma conv_right_comm (f g h : G → R) : f ∗ g ∗ h = f ∗ h ∗ g := by
   rw [conv_assoc, conv_assoc, conv_comm g]
@@ -490,18 +487,12 @@ lemma conjneg_iterConv (f : G → R) : ∀ n, conjneg (f ∗^ n) = conjneg f ∗
 
 end CommSemiring
 
-namespace NNReal
-
 @[simp, norm_cast]
-lemma ofReal_iterConv (f : G → ℝ≥0) (n : ℕ) (a : G) : (↑((f ∗^ n) a) : ℝ) = ((↑) ∘ f ∗^ n) a :=
+lemma nnrealToReal_iterConv (f : G → ℝ≥0) (n : ℕ) (a : G) : (↑((f ∗^ n) a) : ℝ) = ((↑) ∘ f ∗^ n) a :=
   map_iterConv NNReal.toRealHom _ _ _
 
-end NNReal
-
-namespace Complex
-
 @[simp, norm_cast]
-lemma ofReal_iterConv (f : G → ℝ) (n : ℕ) (a : G) : (↑((f ∗^ n) a) : ℂ) = ((↑) ∘ f ∗^ n) a :=
-  map_iterConv ofRealHom _ _ _
+lemma complexOfReal_iterConv (f : G → ℝ) (n : ℕ) (a : G) : (↑((f ∗^ n) a) : ℂ) = ((↑) ∘ f ∗^ n) a :=
+  map_iterConv Complex.ofRealHom _ _ _
 
-end Complex
+end Analysis.Discrete

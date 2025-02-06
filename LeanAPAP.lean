@@ -2,6 +2,10 @@ import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Analysis.Convolution
+import LeanAPAP.Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
+import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
+import LeanAPAP.Mathlib.MeasureTheory.Measure.Typeclasses
+import LeanAPAP.Mathlib.MeasureTheory.OuterMeasure.Basic
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
