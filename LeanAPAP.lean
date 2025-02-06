@@ -1,6 +1,12 @@
 import LeanAPAP.Extras.BSG
 import LeanAPAP.FiniteField
 import LeanAPAP.Integer
+import LeanAPAP.Mathlib.Analysis.Convolution
+import LeanAPAP.Mathlib.Analysis.NormedSpace.OperatorNorm.Mul
+import LeanAPAP.Mathlib.Data.Set.Card
+import LeanAPAP.Mathlib.MeasureTheory.Group.Measure
+import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
+import LeanAPAP.Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
