@@ -5,8 +5,8 @@ variable {α β : Type*} {_ : MeasurableSpace α} [TopologicalSpace β] [Countab
   [MeasurableSingletonClass α] {f : α → β}
 
 -- TODO: Replace, make args implicit
-alias StronglyMeasurable.of_subsingleton_cod := Subsingleton.stronglyMeasurable
-alias StronglyMeasurable.of_subsingleton_dom := Subsingleton.stronglyMeasurable'
+@[nontriviality] alias StronglyMeasurable.of_subsingleton_cod := Subsingleton.stronglyMeasurable
+@[nontriviality] alias StronglyMeasurable.of_subsingleton_dom := Subsingleton.stronglyMeasurable'
 
 -- TODO: Replace `StronglyMeasurable.of_finite`
 lemma StronglyMeasurable.of_discrete : StronglyMeasurable f := by
