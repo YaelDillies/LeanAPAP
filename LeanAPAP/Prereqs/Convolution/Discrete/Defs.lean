@@ -1,10 +1,11 @@
 import LeanAPAP.Mathlib.Analysis.Convolution
+import LeanAPAP.Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 import LeanAPAP.Mathlib.MeasureTheory.Group.Measure
+import LeanAPAP.Mathlib.MeasureTheory.Integral.Bochner
 import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Data.NNReal.Star
-
 
 /-!
 # Convolution
@@ -65,15 +66,13 @@ end CommSemiring
 
 section NormedRing
 variable [NormedRing R] [NormedSpace ℝ R] [IsScalarTower ℝ R R] [SMulCommClass ℝ R R]
+  [NormedRing S] [NormedSpace ℝ S] [IsScalarTower ℝ S S] [SMulCommClass ℝ S S]
   [MeasurableSpace G] {f g : G → R}
 
 /-- Discrete convolution -/
 noncomputable abbrev conv (f g : G → R) : G → R := convolution f g (.mul ℝ _) .count
 
 scoped infixl:71 " ∗ " => conv
-
--- lemma conv_apply (f g : G → R) (a : G) :
---     (f ∗ g) a = ∑ x : G × G with x.1 + x.2 = a, f x.1 * g x.2 := rfl
 
 lemma conv_zero (f : G → R) : f ∗ 0 = 0 := convolution_zero
 lemma zero_conv (f : G → R) : 0 ∗ f = 0 := zero_convolution
@@ -91,17 +90,7 @@ lemma mul_smul_conv_comm [Monoid H] [DistribMulAction H R] [IsScalarTower H R R]
 alias smul_conv_assoc := smul_conv
 alias smul_conv_left_comm := conv_smul
 
-section Discrete
-variable [Finite G] [MeasurableSingletonClass G]
-
-lemma conv_add (f g h : G → R) : f ∗ (g + h) = f ∗ g + f ∗ h :=
-  ConvolutionExists.distrib_add .of_finite .of_finite
-
-lemma add_conv (f g h : G → R) : (f + g) ∗ h = f ∗ h + g ∗ h :=
-  ConvolutionExists.add_distrib .of_finite .of_finite
-
-end Discrete
-
+section MeasurableGroup
 variable [MeasurableAdd G] [MeasurableNeg G]
 
 @[simp] lemma translate_conv (a : G) (f g : G → R) : τ a f ∗ g = τ a (f ∗ g) :=
@@ -112,47 +101,20 @@ variable [MeasurableAdd G] [MeasurableNeg G]
   funext fun b ↦ sum_equiv ((Equiv.refl _).prodCongr <| Equiv.subRight a)
     (by simp [← add_sub_assoc]) (by simp)
 
-end NormedRing
+end MeasurableGroup
 
-section NormedCommRing
-variable [NormedCommRing R] [NormedSpace ℝ R] [IsScalarTower ℝ R R] [SMulCommClass ℝ R R]
-  [MeasurableSpace G] {f g : G → R}
+section Fintype
+variable [CompleteSpace R] [Fintype G] [MeasurableSingletonClass G]
 
-variable [MeasurableAdd G] [MeasurableNeg G]
-
-lemma conv_comm (f g : G → R) : f ∗ g = g ∗ f := .trans (by simp) (convolution_flip _)
-
-lemma conv_assoc [MeasurableSingletonClass G] [Countable G] [CompleteSpace R] (f g h : G → R) :
-    f ∗ g ∗ h = f ∗ (g ∗ h) :=
-  convolution_assoc'' _ _ _ _ mul_assoc .of_discrete _ _ _ _ _
-
-lemma conv_right_comm (f g h : G → R) : f ∗ g ∗ h = f ∗ h ∗ g := by
-  rw [conv_assoc, conv_assoc, conv_comm g]
-
-lemma conv_left_comm (f g h : G → R) : f ∗ (g ∗ h) = g ∗ (f ∗ h) := by
-  rw [← conv_assoc, ← conv_assoc, conv_comm g]
-
-lemma conv_rotate (f g h : G → R) : f ∗ g ∗ h = g ∗ h ∗ f := by rw [conv_assoc, conv_comm]
-lemma conv_rotate' (f g h : G → R) : f ∗ (g ∗ h) = g ∗ (h ∗ f) := by rw [conv_comm, ← conv_assoc]
-
-lemma conv_conv_conv_comm (f g h i : G → R) : f ∗ g ∗ (h ∗ i) = f ∗ h ∗ (g ∗ i) := by
-  rw [conv_assoc, conv_assoc, conv_left_comm g]
-
-lemma map_conv [CommSemiring S] (m : R →+* S) (f g : G → R) (a : G) :
-    m ((f ∗ g) a) = (m ∘ f ∗ m ∘ g) a := by simp [conv_apply, map_sum, map_mul]
-
-lemma comp_conv [CommSemiring S] (m : R →+* S) (f g : G → R) : m ∘ (f ∗ g) = m ∘ f ∗ m ∘ g :=
-  funext <| map_conv _ _ _
+lemma conv_eq_sum_sub' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f t * g (a - t) := by
+  simp [conv, convolution]
 
 lemma conv_eq_sum_sub (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (a - t) * g t := by
-  rw [conv_apply]; apply sum_nbij' Prod.snd (fun b ↦ (a - b, b)) <;> aesop
+  simp [conv, convolution]
 
 lemma conv_eq_sum_add (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (a + t) * g (-t) :=
   (conv_eq_sum_sub _ _ _).trans <| Fintype.sum_equiv (Equiv.neg _) _ _ fun t ↦ by
     simp only [sub_eq_add_neg, Equiv.neg_apply, neg_neg]
-
-lemma conv_eq_sum_sub' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f t * g (a - t) := by
-  rw [conv_comm, conv_eq_sum_sub]; simp_rw [mul_comm]
 
 lemma conv_eq_sum_add' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (-t) * g (a + t) := by
   rw [conv_comm, conv_eq_sum_add]; simp_rw [mul_comm]
@@ -168,6 +130,60 @@ lemma sum_conv_mul (f g h : G → R) : ∑ a, (f ∗ g) a * h a = ∑ a, ∑ b, 
 
 lemma sum_conv (f g : G → R) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a := by
   simpa only [Fintype.sum_mul_sum, Pi.one_apply, mul_one] using sum_conv_mul f g 1
+
+lemma conv_apply (f g : G → R) (a : G) :
+    (f ∗ g) a = ∑ x : G × G with x.1 + x.2 = a, f x.1 * g x.2 := by
+  simp [conv, convolution]
+  rw [integral_count]
+
+end Fintype
+
+section Finite
+variable [Finite G] [MeasurableSingletonClass G]
+
+lemma conv_add (f g h : G → R) : f ∗ (g + h) = f ∗ g + f ∗ h :=
+  ConvolutionExists.distrib_add .of_finite .of_finite
+
+lemma add_conv (f g h : G → R) : (f + g) ∗ h = f ∗ h + g ∗ h :=
+  ConvolutionExists.add_distrib .of_finite .of_finite
+
+variable [CompleteSpace R]
+
+lemma conv_assoc (f g h : G → R) : f ∗ g ∗ h = f ∗ (g ∗ h) :=
+  convolution_assoc'' _ _ _ _ mul_assoc .of_discrete .of_discrete .of_discrete
+    (.of_forall fun _ ↦ .of_finite) (.of_forall fun _ ↦ .of_finite) .of_finite
+
+end Finite
+
+lemma map_conv
+    (m : R →+* S) (f g : G → R) (a : G) : m ((f ∗ g) a) = (m ∘ f ∗ m ∘ g) a := by
+  simp [conv_apply, map_sum, map_mul]
+
+lemma comp_conv [CommSemiring S] (m : R →+* S) (f g : G → R) : m ∘ (f ∗ g) = m ∘ f ∗ m ∘ g :=
+  funext $ map_conv _ _ _
+
+end NormedRing
+
+section NormedCommRing
+variable [NormedCommRing R] [NormedSpace ℝ R] [IsScalarTower ℝ R R] [SMulCommClass ℝ R R]
+  [MeasurableSpace G] {f g : G → R}
+
+lemma conv_comm [MeasurableAdd G] [MeasurableNeg G] (f g : G → R) : f ∗ g = g ∗ f :=
+  .trans (by simp) (convolution_flip _)
+
+variable [MeasurableSingletonClass G] [Finite G] [CompleteSpace R]
+
+lemma conv_right_comm (f g h : G → R) : f ∗ g ∗ h = f ∗ h ∗ g := by
+  rw [conv_assoc, conv_assoc, conv_comm g]
+
+lemma conv_left_comm (f g h : G → R) : f ∗ (g ∗ h) = g ∗ (f ∗ h) := by
+  rw [← conv_assoc, ← conv_assoc, conv_comm g]
+
+lemma conv_rotate (f g h : G → R) : f ∗ g ∗ h = g ∗ h ∗ f := by rw [conv_assoc, conv_comm]
+lemma conv_rotate' (f g h : G → R) : f ∗ (g ∗ h) = g ∗ (h ∗ f) := by rw [conv_comm, ← conv_assoc]
+
+lemma conv_conv_conv_comm (f g h i : G → R) : f ∗ g ∗ (h ∗ i) = f ∗ h ∗ (g ∗ i) := by
+  rw [conv_assoc, conv_assoc, conv_left_comm g]
 
 @[simp] lemma conv_const (f : G → R) (b : R) : f ∗ const _ b = const _ ((∑ x, f x) * b) := by
   ext; simp [conv_eq_sum_sub', sum_mul]
@@ -326,7 +342,7 @@ lemma support_dconv_subset (f g : G → R) : support (f ○ g) ⊆ support f - s
 end CommSemiring
 
 section CommRing
-variable [CommRing R]
+variable [NorRing R]
 
 @[simp] lemma conv_neg (f g : G → R) : f ∗ -g = -(f ∗ g) := by ext; simp [conv_apply]
 @[simp] lemma neg_conv (f g : G → R) : -f ∗ g = -(f ∗ g) := by ext; simp [conv_apply]
