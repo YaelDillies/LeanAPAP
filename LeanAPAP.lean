@@ -3,8 +3,10 @@ import LeanAPAP.FiniteField
 import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Analysis.Convolution
 import LeanAPAP.Mathlib.Data.Set.Card
+import LeanAPAP.Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 import LeanAPAP.Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
 import LeanAPAP.Mathlib.MeasureTheory.Group.Measure
+import LeanAPAP.Mathlib.MeasureTheory.Integral.Bochner
 import LeanAPAP.Mathlib.MeasureTheory.Measure.Count
 import LeanAPAP.Mathlib.MeasureTheory.Measure.Typeclasses
 import LeanAPAP.Mathlib.MeasureTheory.OuterMeasure.Basic
