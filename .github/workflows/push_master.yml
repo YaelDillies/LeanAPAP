@@ -70,20 +70,20 @@ jobs:
           ~/.elan/bin/lake exe cache get || true
           ~/.elan/bin/lake build LeanAPAP:docs
 
-      - name: Build blueprint and copy to `website/blueprint`
-        uses: xu-cheng/texlive-action@v2
-        with:
-          scheme: full
-          run: |
-            apk update
-            apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
-            git config --global --add safe.directory $GITHUB_WORKSPACE
-            git config --global --add safe.directory `pwd`
-            python3 -m pip install --upgrade pip requests wheel
-            python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
-            pip install -r blueprint/requirements.txt
-            python3 -m pip install invoke
-            inv all
+      # - name: Build blueprint and copy to `website/blueprint`
+      #   uses: xu-cheng/texlive-action@v2
+      #   with:
+      #     scheme: full
+      #     run: |
+      #       apk update
+      #       apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
+      #       git config --global --add safe.directory $GITHUB_WORKSPACE
+      #       git config --global --add safe.directory `pwd`
+      #       python3 -m pip install --upgrade pip requests wheel
+      #       python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
+      #       pip install -r blueprint/requirements.txt
+      #       python3 -m pip install invoke
+      #       inv all
 
       - name: Copy documentation to `website/docs`
         run: |
