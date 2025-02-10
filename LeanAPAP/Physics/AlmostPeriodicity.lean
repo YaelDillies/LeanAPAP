@@ -2,8 +2,10 @@ import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Combinatorics.Additive.DoublingConst
 import Mathlib.Data.Complex.ExponentialBounds
 import Mathlib.Tactic.Bound
+import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
+import LeanAPAP.Prereqs.Function.Indicator.Complex
 import LeanAPAP.Prereqs.Inner.Hoelder.Discrete
 import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 
@@ -404,16 +406,24 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
   have := just_the_triangle_inequality ha ht hk.bot_lt hm
   rwa [neg_neg, mul_div_cancel₀ _ (two_ne_zero' ℝ)] at this
 
+lemma almost_periodicity' (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (f : G → ℝ)
+    (hK₂ : 2 ≤ K) (hK : σ[A, S] ≤ K) :
+    ∃ T : Finset G,
+      K ^ (-512 * m / ε ^ 2 : ℝ) * S.card ≤ T.card ∧
+        ∀ t ∈ T, ‖τ t (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ ε * ‖f‖_[2 * m] := by
+  simpa [← Complex.ofReal_comp_mu, ← Complex.coe_comp_conv, ← comp_translate,
+    ← Complex.coe_comp_sub] using almost_periodicity ε hε hε' m ((↑) ∘ f) hK₂ hK
+
 theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hK₂ : 2 ≤ K)
     (hK : σ[A, S] ≤ K) (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
     ∃ T : Finset G,
       K ^ (-4096 * ⌈𝓛 (#C / #B)⌉ / ε ^ 2) * #S ≤ #T ∧
-      ∀ t ∈ T, ‖τ t (μ_[ℂ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
+      ∀ t ∈ T, ‖τ t (μ_[ℝ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
   let r : ℝ := min 1 (#C / #B)
   set m : ℝ := 𝓛 (#C / #B)
   have hm₀ : 0 < m := curlog_pos (by positivity)
   have hm₁ : 1 ≤ ⌈m⌉₊ := Nat.one_le_iff_ne_zero.2 $ by positivity
-  obtain ⟨T, hKT, hT⟩ := almost_periodicity (ε / exp 1) (by positivity)
+  obtain ⟨T, hKT, hT⟩ := almost_periodicity' (ε / exp 1) (by positivity)
     (div_le_one_of_le₀ (hε₁.trans $ one_le_exp zero_le_one) $ by positivity) ⌈m⌉₊ (𝟭 B) hK₂ hK
   norm_cast at hT
   set M : ℕ := 2 * ⌈m⌉₊
@@ -432,22 +442,22 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
             _ ≤ _ := by norm_num
       _ = _ := by simp [div_div_eq_mul_div, ← mul_div_right_comm, mul_right_comm, div_pow]
       _ ≤ _ := hKT
-  set F : G → ℂ := τ t (μ A ∗ 𝟭 B) - μ A ∗ 𝟭 B
+  set F : G → ℝ := τ t (μ A ∗ 𝟭 B) - μ A ∗ 𝟭 B
   have (x) :=
     calc
-      (τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℂ) x
+      (τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℝ) x
         = (F ∗ μ C) x := by simp [sub_conv, F]
       _ = ∑ y, F y * μ C (x - y) := conv_eq_sum_sub' ..
       _ = ∑ y, F y * μ (x +ᵥ -C) y := by simp [neg_add_eq_sub]
   rw [dLinftyNorm_eq_iSup_norm]
   refine ciSup_le fun x ↦ ?_
   calc
-    ‖(τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℂ) x‖
+    ‖(τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℝ) x‖
       = ‖∑ y, F y * μ (x +ᵥ -C) y‖ := by rw [this]
     _ ≤ ∑ y, ‖F y * μ (x +ᵥ -C) y‖ := norm_sum_le _ _
     _ = ‖F * μ (x +ᵥ -C)‖_[1] := by rw [dL1Norm_eq_sum_norm]; rfl
-    _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := dL1Norm_mul_le hM _ _
-    _ ≤ ε / exp 1 * #B ^ (M : ℝ)⁻¹ * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := by
+    _ ≤ ‖F‖_[M] * ‖μ_[ℝ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := dL1Norm_mul_le hM _ _
+    _ ≤ ε / exp 1 * #B ^ (M : ℝ)⁻¹ * ‖μ_[ℝ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := by
         gcongr
         simpa only [← ENNReal.coe_natCast, dLpNorm_indicate hM₀] using hT _ ht
     _ = ε * ((#C / #B) ^ (-(M : ℝ)⁻¹) / exp 1) := by
@@ -478,12 +488,12 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
     (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :
     ∃ T : Finset G,
       K ^ (-4096 * ⌈𝓛 (#C / #B)⌉ * k ^ 2/ ε ^ 2) * #S ≤ #T ∧
-      ‖μ T ∗^ k ∗ (μ_[ℂ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
+      ‖μ T ∗^ k ∗ (μ_[ℝ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
   obtain ⟨T, hKT, hT⟩ := linfty_almost_periodicity (ε / k) (by positivity)
     (div_le_one_of_le₀ (hε₁.trans $ mod_cast Nat.one_le_iff_ne_zero.2 hk) $ by positivity) hK₂ hK
     _ _ hB hC
   refine ⟨T, by simpa only [div_pow, div_div_eq_mul_div] using hKT, ?_⟩
-  set F := μ_[ℂ] A ∗ 𝟭 B ∗ μ C
+  set F := μ_[ℝ] A ∗ 𝟭 B ∗ μ C
   have hT' : T.Nonempty := by
     have : (0 : ℝ) < #T := hKT.trans_lt' $ by positivity
     simpa [card_pos] using this
