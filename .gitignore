@@ -14,4 +14,3 @@ src/list_decls.lean
 src/.noisy_files
 /build
 /lake-packages/*
-docs/_includes/sorries.md
