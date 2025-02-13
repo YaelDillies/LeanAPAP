@@ -12,7 +12,7 @@ variable {α E : Type*} {m : MeasurableSpace α} {p : ℝ≥0∞} {q : ℝ} {μ 
 `essSup ‖f‖ μ` for `p = ∞`. -/
 noncomputable def nnLpNorm (f : α → E) (p : ℝ≥0∞) (μ : Measure α) : ℝ≥0 := (eLpNorm f p μ).toNNReal
 
-lemma coe_nnLpNorm_eq_eLpNorm (hf : Memℒp f p μ) : nnLpNorm f p μ = eLpNorm f p μ := by
+lemma coe_nnLpNorm_eq_eLpNorm (hf : MemLp f p μ) : nnLpNorm f p μ = eLpNorm f p μ := by
   rw [nnLpNorm, ENNReal.coe_toNNReal hf.eLpNorm_ne_top]
 
 -- TODO: Rename `eLpNorm_eq_lintegral_rpow_enorm` to `eLpNorm_eq_lintegral_rpow_enorm_toReal`
@@ -39,10 +39,10 @@ lemma coe_nnLpNorm_one_eq_integral_norm (hf : AEMeasurable (fun x ↦ ‖f x‖�
 @[simp] lemma nnLpNorm_measure_zero (f : α → E) : nnLpNorm f p (0 : Measure α) = 0 := by
   simp [nnLpNorm]
 
-lemma ae_le_nnLinftyNorm (hf : Memℒp f ∞ μ) : ∀ᵐ x ∂μ, ‖f x‖₊ ≤ nnLpNorm f ⊤ μ := by
+lemma ae_le_nnLinftyNorm (hf : MemLp f ∞ μ) : ∀ᵐ x ∂μ, ‖f x‖₊ ≤ nnLpNorm f ⊤ μ := by
   simp_rw [← ENNReal.coe_le_coe, coe_nnLpNorm_eq_eLpNorm hf]; exact ae_le_eLpNormEssSup
 
-lemma nnLinftyNorm_eq_essSup (hf : Memℒp f ∞ μ) : nnLpNorm f ∞ μ = essSup (‖f ·‖₊) μ := by
+lemma nnLinftyNorm_eq_essSup (hf : MemLp f ∞ μ) : nnLpNorm f ∞ μ = essSup (‖f ·‖₊) μ := by
   refine ENNReal.coe_injective ?_
   rw [coe_nnLpNorm_eq_eLpNorm hf, ENNReal.coe_essSup, eLpNorm_exponent_top, eLpNormEssSup]
   simp_rw [enorm_eq_nnnorm]
@@ -55,7 +55,7 @@ lemma nnLinftyNorm_eq_essSup (hf : Memℒp f ∞ μ) : nnLpNorm f ∞ μ = essSu
     nnLpNorm (fun _ ↦ 0 : α → E) p μ = 0 := by simp [nnLpNorm]
 
 @[simp]
-lemma nnLpNorm_eq_zero (hf : Memℒp f p μ) (hp : p ≠ 0) : nnLpNorm f p μ = 0 ↔ f =ᵐ[μ] 0 := by
+lemma nnLpNorm_eq_zero (hf : MemLp f p μ) (hp : p ≠ 0) : nnLpNorm f p μ = 0 ↔ f =ᵐ[μ] 0 := by
   simp [nnLpNorm, ENNReal.toNNReal_eq_zero_iff, hf.eLpNorm_ne_top, eLpNorm_eq_zero_iff hf.1 hp]
 
 @[simp] lemma nnLpNorm_of_isEmpty [IsEmpty α] (f : α → E) (p : ℝ≥0∞) : nnLpNorm f p μ = 0 := by
@@ -129,7 +129,7 @@ lemma nnLpNorm_div_natCast' [CharZero 𝕜] {n : ℕ} (hn : n ≠ 0) (f : α →
 
 end NormedField
 
-lemma nnLpNorm_add_le (hf : Memℒp f p μ) (hg : Memℒp g p μ) (hp : 1 ≤ p) :
+lemma nnLpNorm_add_le (hf : MemLp f p μ) (hg : MemLp g p μ) (hp : 1 ≤ p) :
     nnLpNorm (f + g) p μ ≤ nnLpNorm f p μ + nnLpNorm g p μ := by
   unfold nnLpNorm
   rw [← ENNReal.toNNReal_add hf.eLpNorm_ne_top hg.eLpNorm_ne_top]
@@ -137,28 +137,28 @@ lemma nnLpNorm_add_le (hf : Memℒp f p μ) (hg : Memℒp g p μ) (hp : 1 ≤ p)
   exacts [ENNReal.add_ne_top.2 ⟨hf.eLpNorm_ne_top, hg.eLpNorm_ne_top⟩,
     eLpNorm_add_le hf.aestronglyMeasurable hg.aestronglyMeasurable hp]
 
-lemma nnLpNorm_sub_le (hf : Memℒp f p μ) (hg : Memℒp g p μ) (hp : 1 ≤ p) :
+lemma nnLpNorm_sub_le (hf : MemLp f p μ) (hg : MemLp g p μ) (hp : 1 ≤ p) :
     nnLpNorm (f - g) p μ ≤ nnLpNorm f p μ + nnLpNorm g p μ := by
   simpa [sub_eq_add_neg] using nnLpNorm_add_le hf hg.neg hp
 
-lemma nnLpNorm_le_nnLpNorm_add_nnLpNorm_sub' (hf : Memℒp f p μ) (hg : Memℒp g p μ) (hp : 1 ≤ p) :
+lemma nnLpNorm_le_nnLpNorm_add_nnLpNorm_sub' (hf : MemLp f p μ) (hg : MemLp g p μ) (hp : 1 ≤ p) :
     nnLpNorm f p μ ≤ nnLpNorm g p μ + nnLpNorm (f - g) p μ := by
   simpa using nnLpNorm_add_le hg (hf.sub hg) hp
 
-lemma nnLpNorm_le_nnLpNorm_add_nnLpNorm_sub (hf : Memℒp f p μ) (hg : Memℒp g p μ) (hp : 1 ≤ p) :
+lemma nnLpNorm_le_nnLpNorm_add_nnLpNorm_sub (hf : MemLp f p μ) (hg : MemLp g p μ) (hp : 1 ≤ p) :
     nnLpNorm f p μ ≤ nnLpNorm g p μ + nnLpNorm (g - f) p μ := by
   simpa [neg_add_eq_sub] using nnLpNorm_add_le hg.neg (hg.sub hf) hp
 
-lemma nnLpNorm_le_add_nnLpNorm_add (hf : Memℒp f p μ) (hg : Memℒp g p μ) (hp : 1 ≤ p) :
+lemma nnLpNorm_le_add_nnLpNorm_add (hf : MemLp f p μ) (hg : MemLp g p μ) (hp : 1 ≤ p) :
     nnLpNorm f p μ ≤ nnLpNorm (f + g) p μ + nnLpNorm g p μ := by
   simpa using nnLpNorm_add_le (hf.add hg) hg.neg hp
 
-lemma nnLpNorm_sub_le_nnLpNorm_sub_add_nnLpNorm_sub (hf : Memℒp f p μ) (hg : Memℒp g p μ)
-    (hh : Memℒp h p μ) (hp : 1 ≤ p) :
+lemma nnLpNorm_sub_le_nnLpNorm_sub_add_nnLpNorm_sub (hf : MemLp f p μ) (hg : MemLp g p μ)
+    (hh : MemLp h p μ) (hp : 1 ≤ p) :
     nnLpNorm (f - h) p μ ≤ nnLpNorm (f - g) p μ + nnLpNorm (g - h) p μ := by
   simpa using nnLpNorm_add_le (hf.sub hg) (hg.sub hh) hp
 
-lemma nnLpNorm_sum_le {ι : Type*} {s : Finset ι} {f : ι → α → E} (hf : ∀ i ∈ s, Memℒp (f i) p μ)
+lemma nnLpNorm_sum_le {ι : Type*} {s : Finset ι} {f : ι → α → E} (hf : ∀ i ∈ s, MemLp (f i) p μ)
     (hp : 1 ≤ p) : nnLpNorm (∑ i ∈ s, f i) p μ ≤ ∑ i ∈ s, nnLpNorm (f i) p μ := by
   unfold nnLpNorm
   rw [← ENNReal.toNNReal_sum fun i hi ↦ (hf _ hi).eLpNorm_ne_top]
@@ -167,7 +167,7 @@ lemma nnLpNorm_sum_le {ι : Type*} {s : Finset ι} {f : ι → α → E} (hf : �
     eLpNorm_sum_le (fun i hi ↦ (hf _ hi).aestronglyMeasurable) hp]
 
 lemma nnLpNorm_expect_le [Module ℚ≥0 E] [NormedSpace ℝ E] {ι : Type*} {s : Finset ι}
-    {f : ι → α → E} (hf : ∀ i ∈ s, Memℒp (f i) p μ) (hp : 1 ≤ p) :
+    {f : ι → α → E} (hf : ∀ i ∈ s, MemLp (f i) p μ) (hp : 1 ≤ p) :
     nnLpNorm (𝔼 i ∈ s, f i) p μ ≤ 𝔼 i ∈ s, nnLpNorm (f i) p μ  :=  by
   obtain rfl | hs := s.eq_empty_or_nonempty
   · simp
@@ -175,7 +175,7 @@ lemma nnLpNorm_expect_le [Module ℚ≥0 E] [NormedSpace ℝ E] {ι : Type*} {s 
   rw [Nat.cast_smul_eq_nsmul, ← nnLpNorm_nsmul, Finset.card_smul_expect]
   exact nnLpNorm_sum_le hf hp
 
-lemma nnLpNorm_mono_real {g : α → ℝ} (hg : Memℒp g p μ) (h : ∀ x, ‖f x‖ ≤ g x) :
+lemma nnLpNorm_mono_real {g : α → ℝ} (hg : MemLp g p μ) (h : ∀ x, ‖f x‖ ≤ g x) :
     nnLpNorm f p μ ≤ nnLpNorm g p μ :=
   ENNReal.toNNReal_mono (hg.eLpNorm_ne_top) (eLpNorm_mono_real h)
 

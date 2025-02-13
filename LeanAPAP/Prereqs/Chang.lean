@@ -145,7 +145,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
     _ ≤ ∑ γ ∈ Δ ^^ m, ∑ δ ∈ Δ ^^ m,
           ‖(∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ :=
       (norm_sum_le _ _).trans $ sum_le_sum fun _ _ ↦ norm_sum_le _ _
-    _ = _ := by simp [energy, norm_c, -Complex.norm_eq_abs, norm_prod]
+    _ = _ := by simp [energy, norm_c, norm_prod]
   · push_cast
     simp_rw [← RCLike.conj_mul, dft_apply, wInner_one_eq_sum, inner_apply, map_sum, map_mul,
       RCLike.conj_conj, mul_pow, sum_pow', sum_mul, mul_sum, @sum_comm _ _ G,

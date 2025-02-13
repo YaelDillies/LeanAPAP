@@ -3,6 +3,7 @@ Copyright (c) 2023 Yaël Dillies, Bhavik Mehta. All rights reserved.
 Released under Apache 2.0 license as described ∈ the file LICENSE.
 Authors: Yaël Dillies, Bhavik Mehta
 -/
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Data.Nat.Choose.Multinomial
@@ -109,7 +110,7 @@ private lemma step_three (f : ι → ℝ) :
       ∑ a ∈ A ^^ n, ∑ b ∈ A ^^ n, ∑ k ∈ piAntidiag univ (2 * m),
           (multinomial univ k * ∏ t, (f (a t) - f (b t)) ^ k t) *
             ∑ ε ∈ ({-1, 1} : Finset ℝ)^^n, ∏ t, ε t ^ k t := by
-  simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A ^^ n), ← Complex.abs_pow, sum_pow_eq_sum_piAntidiag]
+  simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A ^^ n), ← Complex.norm_pow, sum_pow_eq_sum_piAntidiag]
   refine sum_congr rfl fun a _ ↦ ?_
   refine sum_congr rfl fun b _ ↦ ?_
   simp only [mul_pow, prod_mul_distrib, @sum_comm _ _ (Fin n → ℝ), ← mul_sum, ← sum_mul]

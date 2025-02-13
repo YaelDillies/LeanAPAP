@@ -45,7 +45,7 @@ constant than `marcinkiewicz_zygmund`. -/
 theorem marcinkiewicz_zygmund_symmetric
     (iIndepFun_X : iIndepFun (fun _ ↦ mE) X μ)
     (identDistrib_neg_X : ∀ i, IdentDistrib (X i) (-X i) μ μ)
-    (memℒp_X : ∀ i ∈ A, Memℒp (X i) (2 * m) μ) :
+    (MemLp_X : ∀ i ∈ A, MemLp (X i) (2 * m) μ) :
     ∫ ω, ‖∑ i ∈ A, X i ω‖ ^ (2 * m) ∂μ ≤
       marcinkiewiczZygmundSymmConst (2 * m) * ∫ ω, (∑ i ∈ A, ‖X i ω‖ ^ 2) ^ m ∂μ := by
   have : DecidableEq ι := Classical.decEq _
@@ -171,7 +171,7 @@ For symmetric random variables, `marcinkiewicz_zygmund` provides a slightly bett
 theorem marcinkiewicz_zygmund
     (iIndepFun_X : iIndepFun (fun _ ↦ ‹_›) X μ)
     (integral_X : ∀ i, ∫ ω, X i ω ∂μ = 0)
-    (memℒp_X : ∀ i ∈ A, Memℒp (X i) (2 * m) μ) :
+    (MemLp_X : ∀ i ∈ A, MemLp (X i) (2 * m) μ) :
     ∫ ω, ‖∑ i ∈ A, X i ω‖ ^ (2 * m) ∂μ ≤
       marcinkiewiczZygmundConst (2 * m) * ∫ ω, (∑ i ∈ A, ‖X i ω‖ ^ 2) ^ m ∂μ := by
   let X₁ i : Ω × Ω → E := X i ∘ Prod.fst

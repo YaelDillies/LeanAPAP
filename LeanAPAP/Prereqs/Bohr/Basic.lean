@@ -21,7 +21,6 @@ structure BohrSet (G : Type*) [AddCommGroup G] where
   ewidth : AddChar G ℂ → ℝ≥0∞
   mem_frequencies : ∀ ψ, ψ ∈ frequencies ↔ ewidth ψ < ⊤
 
-attribute [-simp] Complex.norm_eq_abs -- just to make my life easier
 namespace BohrSet
 variable {G : Type*} [AddCommGroup G] {B : BohrSet G} {ψ : AddChar G ℂ} {x : G}
 
