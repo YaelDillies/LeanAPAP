@@ -106,7 +106,7 @@ lemma mul_smul_conv_comm [Monoid H] [DistribMulAction H R] [IsScalarTower H R R]
 
 lemma conv_assoc (f g h : G → R) : f ∗ g ∗ h = f ∗ (g ∗ h) := by
   ext a
-  simp only [sum_mul, mul_sum, conv_apply, sum_sigma']
+  simp only [sum_mul, mul_sum, conv_apply, Finset.sum_sigma']
   apply sum_nbij' (fun ⟨(_b, c), (d, e)⟩ ↦ ⟨(d, e + c), (e, c)⟩)
     (fun ⟨(b, _c), (d, e)⟩ ↦ ⟨(b + d, e), (b, d)⟩) <;> aesop (add simp [add_assoc, mul_assoc])
 

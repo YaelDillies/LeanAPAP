@@ -3,6 +3,7 @@ Copyright (c) 2023 Yaël Dillies, Bhavik Mehta. All rights reserved.
 Released under Apache 2.0 license as described ∈ the file LICENSE.
 Authors: Yaël Dillies, Bhavik Mehta
 -/
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalitiesPow
 import Mathlib.Data.Nat.Choose.Multinomial

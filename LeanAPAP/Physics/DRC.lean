@@ -141,7 +141,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     refine lt_mul_of_one_lt_left (sum_pos (fun s hs ↦ (h _ (mem_filter.1 hs).2).trans_lt' $
       by positivity) ?_) one_lt_two
     rw [← sum_filter_ne_zero] at hgB
-    exact nonempty_of_sum_ne_zero $ hgB.trans_ne $ sorry -- by positivity
+    exact nonempty_of_sum_ne_zero $ hgB.trans_ne $ by positivity
   push_neg at h
   obtain ⟨s, hs⟩ := h
   suffices h : (2 : ℝ) * ∑ s with g s < M ^ 2, g s < ∑ s, g s by
@@ -188,9 +188,8 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
     simp_rw [nonempty_iff_ne_empty]
     rintro rfl
     simp [pow_mul', (zero_lt_four' ℝ).not_le, inv_mul_le_iff₀ (zero_lt_four' ℝ), mul_assoc,
-      div_nonpos_iff, mul_nonpos_iff, (pow_pos (dLpNorm_conv_pos hp₀.ne' hB hA) 2).not_le] at h
-    norm_cast at h
-    simp [hp₀, hp₀.ne', hA.ne_empty] at h
+      div_nonpos_iff, mul_nonpos_iff, (pow_pos (dLpNorm_conv_pos hp₀.ne' hB hA) 2).not_le,
+      hp₀, hp₀.ne', hA.ne_empty] at h
   have hA₁ : A₁.Nonempty := aux _ _ hcard₁
   have hA₂ : A₂.Nonempty := aux _ _ hcard₂
   clear hcard₁ hcard₂ aux
