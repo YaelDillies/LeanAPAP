@@ -1,4 +1,4 @@
-import Mathlib.Algebra.AddTorsor
+import Mathlib.Algebra.AddTorsor.Defs
 import Mathlib.Algebra.BigOperators.Expect
 import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
