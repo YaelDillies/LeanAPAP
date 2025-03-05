@@ -48,8 +48,8 @@ lemma wInner_one_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α →
 /-- **Hölder's inequality**, binary case. -/
 lemma abs_wInner_one_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     |⟪f, g⟫_[ℝ]| ≤ ‖f‖_[p] * ‖g‖_[q] :=
-  (abs_wInner_le zero_le_one).trans $
-    (wInner_one_le_dLpNorm_mul_dLpNorm hpq _ _).trans_eq $ by simp_rw [dLpNorm_abs]
+  (abs_wInner_le zero_le_one).trans <|
+    (wInner_one_le_dLpNorm_mul_dLpNorm hpq _ _).trans_eq <| by simp_rw [dLpNorm_abs]
 
 end Real
 
@@ -58,7 +58,7 @@ variable {α : Type*} {mα : MeasurableSpace α} [DiscreteMeasurableSpace α] [F
   {p q : ℝ≥0} {f g : α → 𝕜}
 
 lemma norm_wInner_one_le (f g : α → 𝕜) : ‖⟪f, g⟫_[𝕜]‖₊ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫_[ℝ] :=
-  (norm_sum_le _ _).trans $ by simp [wInner_one_eq_sum]
+  (norm_sum_le _ _).trans <| by simp [wInner_one_eq_sum]
 
 /-- **Hölder's inequality**, binary case. -/
 lemma nnnorm_wInner_one_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
@@ -78,18 +78,19 @@ lemma dLpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ 
   have : (‖(f * g) ·‖ ^ (r : ℝ)) = (‖f ·‖ ^ (r : ℝ)) * (‖g ·‖ ^ (r : ℝ)) := by
     ext; simp [mul_rpow, abs_mul]
   rw [dLpNorm_eq_dL1Norm_rpow, NNReal.rpow_inv_le_iff_of_pos, this, ← NNReal.coe_le_coe]
+  any_goals positivity
   push_cast
   rw [dL1Norm_mul_of_nonneg, mul_rpow, ← NNReal.coe_rpow, ← NNReal.coe_rpow, dLpNorm_rpow',
     dLpNorm_rpow', ← ENNReal.coe_div, ← ENNReal.coe_div]
+  any_goals intro a; dsimp
+  any_goals positivity
+  any_goals simp
   refine wInner_one_le_dLpNorm_mul_dLpNorm (NNReal.IsConjExponent.coe_ennreal ⟨?_, ?_⟩) _ _
   · norm_cast
     rw [div_eq_mul_inv, ← hpqr, mul_add, mul_inv_cancel₀ hp]
     exact lt_add_of_pos_right _ (by positivity)
   · norm_cast
     simp [div_eq_mul_inv, hpqr, ← mul_add, hr]
-  any_goals intro a; dsimp
-  any_goals positivity
-  all_goals simp
 
 /-- **Hölder's inequality**, binary case. -/
 lemma dL1Norm_mul_le (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
@@ -110,7 +111,7 @@ lemma dLpNorm_prod_le {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {p : ι →
   rw [sum_cons, ← inv_inv (∑ _ ∈ _, _ : ℝ≥0)] at hpq
   refine (dLpNorm_mul_le (hp _) (inv_ne_zero (sum_pos (fun _ _ ↦ ?_) hs).ne') _ hpq _ _).trans
     (mul_le_mul_left' (ih hs _ (inv_inv _).symm) _)
-  exact pos_iff_ne_zero.2 (inv_ne_zero $ hp _)
+  exact pos_iff_ne_zero.2 (inv_ne_zero <| hp _)
 
 end Hoelder
 end MeasureTheory

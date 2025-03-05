@@ -85,7 +85,7 @@ lemma cconv_apply_eq_smul_conv (f g : G → R) (a : G) :
   refine card_nbij' (fun b ↦ (b, a - b)) Prod.fst ?_ ?_ ?_ ?_ <;> simp [eq_sub_iff_add_eq', eq_comm]
 
 lemma cconv_eq_smul_conv (f g : G → R) : f ∗ₙ g = (f ∗ g) /ℚ Fintype.card G :=
-  funext $ cconv_apply_eq_smul_conv _ _
+  funext <| cconv_apply_eq_smul_conv _ _
 
 @[simp] lemma cconv_zero (f : G → R) : f ∗ₙ 0 = 0 := by ext; simp [cconv_apply]
 @[simp] lemma zero_cconv (f : G → R) : 0 ∗ₙ f = 0 := by ext; simp [cconv_apply]
@@ -112,11 +112,11 @@ alias smul_cconv_assoc := smul_cconv
 alias smul_cconv_left_comm := cconv_smul
 
 @[simp] lemma translate_cconv (a : G) (f g : G → R) : τ a f ∗ₙ g = τ a (f ∗ₙ g) :=
-  funext fun b ↦ expect_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
+  funext fun b ↦ expect_equiv ((Equiv.subRight a).prodCongr <| Equiv.refl _)
     (by simp [sub_add_eq_add_sub]) (by simp)
 
 @[simp] lemma cconv_translate (a : G) (f g : G → R) : f ∗ₙ τ a g = τ a (f ∗ₙ g) :=
-  funext fun b ↦ expect_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
+  funext fun b ↦ expect_equiv ((Equiv.refl _).prodCongr <| Equiv.subRight a)
     (by simp [← add_sub_assoc]) (by simp)
 
 lemma cconv_comm (f g : G → R) : f ∗ₙ g = g ∗ₙ f :=
@@ -143,7 +143,7 @@ lemma map_cconv [Semifield S] [CharZero S] (m : R →+* S) (f g : G → R) (a : 
   simp_rw [cconv_apply, map_expect, map_mul, Function.comp_apply]
 
 lemma comp_cconv [Semifield S] [CharZero S] (m : R →+* S) (f g : G → R) :
-    m ∘ (f ∗ₙ g) = m ∘ f ∗ₙ m ∘ g := funext $ map_cconv _ _ _
+    m ∘ (f ∗ₙ g) = m ∘ f ∗ₙ m ∘ g := funext <| map_cconv _ _ _
 
 lemma cconv_eq_expect_sub (f g : G → R) (a : G) : (f ∗ₙ g) a = 𝔼 t, f (a - t) * g t := by
   rw [cconv_apply]
@@ -153,7 +153,7 @@ lemma cconv_eq_expect_sub (f g : G → R) (a : G) : (f ∗ₙ g) a = 𝔼 t, f (
   all_goals aesop
 
 lemma cconv_eq_expect_add (f g : G → R) (a : G) : (f ∗ₙ g) a = 𝔼 t, f (a + t) * g (-t) :=
-  (cconv_eq_expect_sub _ _ _).trans $ Fintype.expect_equiv (Equiv.neg _) _ _ fun t ↦ by
+  (cconv_eq_expect_sub _ _ _).trans <| Fintype.expect_equiv (Equiv.neg _) _ _ fun t ↦ by
     simp only [sub_eq_add_neg, Equiv.neg_apply, neg_neg]
 
 lemma cconv_eq_expect_sub' (f g : G → R) (a : G) : (f ∗ₙ g) a = 𝔼 t, f t * g (a - t) := by
@@ -163,7 +163,7 @@ lemma cconv_eq_expect_add' (f g : G → R) (a : G) : (f ∗ₙ g) a = 𝔼 t, f 
   rw [cconv_comm, cconv_eq_expect_add]; simp_rw [mul_comm]
 
 lemma cconv_apply_add (f g : G → R) (a b : G) : (f ∗ₙ g) (a + b) = 𝔼 t, f (a + t) * g (b - t) :=
-  (cconv_eq_expect_sub _ _ _).trans $ Fintype.expect_equiv (Equiv.subLeft b) _ _ fun t ↦ by
+  (cconv_eq_expect_sub _ _ _).trans <| Fintype.expect_equiv (Equiv.subLeft b) _ _ fun t ↦ by
     simp [add_sub_assoc, ← sub_add]
 
 lemma expect_cconv_mul (f g h : G → R) :
@@ -209,7 +209,7 @@ lemma cdconv_apply_eq_smul_dconv (f g : G → R) (a : G) :
   refine card_nbij' (fun b ↦ (a + b, b)) Prod.snd ?_ ?_ ?_ ?_ <;> simp [eq_sub_iff_add_eq, eq_comm]
 
 lemma cdconv_eq_smul_dconv (f g : G → R) : (f ○ₙ g) = (f ○ g) /ℚ Fintype.card G :=
-  funext $ cdconv_apply_eq_smul_dconv _ _
+  funext <| cdconv_apply_eq_smul_dconv _ _
 
 @[simp] lemma cconv_conjneg (f g : G → R) : f ∗ₙ conjneg g = f ○ₙ g :=
   funext fun a ↦ expect_bij (fun x _ ↦ (x.1, -x.2)) (fun x hx ↦ by simpa using hx) (fun x _ ↦ rfl)
@@ -220,11 +220,11 @@ lemma cdconv_eq_smul_dconv (f g : G → R) : (f ○ₙ g) = (f ○ g) /ℚ Finty
   rw [← cconv_conjneg, conjneg_conjneg]
 
 @[simp] lemma translate_cdconv (a : G) (f g : G → R) : τ a f ○ₙ g = τ a (f ○ₙ g) :=
-  funext fun b ↦ expect_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
+  funext fun b ↦ expect_equiv ((Equiv.subRight a).prodCongr <| Equiv.refl _)
     (by simp [sub_right_comm _ a]) (by simp)
 
 @[simp] lemma cdconv_translate (a : G) (f g : G → R) : f ○ₙ τ a g = τ (-a) (f ○ₙ g) :=
-  funext fun b ↦ expect_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
+  funext fun b ↦ expect_equiv ((Equiv.refl _).prodCongr <| Equiv.subRight a)
     (by simp [sub_sub_eq_add_sub, ← sub_add_eq_add_sub]) (by simp)
 
 @[simp] lemma conj_cconv (f g : G → R) : conj (f ∗ₙ g) = conj f ∗ₙ conj g :=
@@ -234,10 +234,10 @@ lemma cdconv_eq_smul_dconv (f g : G → R) : (f ○ₙ g) = (f ○ g) /ℚ Finty
   simp_rw [← cconv_conjneg, conj_cconv, conjneg_conj]
 
 lemma IsSelfAdjoint.cconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ∗ₙ g) :=
-  (conj_cconv _ _).trans $ congr_arg₂ _ hf hg
+  (conj_cconv _ _).trans <| congr_arg₂ _ hf hg
 
 lemma IsSelfAdjoint.cdconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ○ₙ g) :=
-  (conj_cdconv _ _).trans $ congr_arg₂ _ hf hg
+  (conj_cdconv _ _).trans <| congr_arg₂ _ hf hg
 
 @[simp]lemma conjneg_cconv (f g : G → R) : conjneg (f ∗ₙ g) = conjneg f ∗ₙ conjneg g := by
   funext a
@@ -399,10 +399,10 @@ variable {𝕜 : Type} [RCLike 𝕜] (f g : G → ℝ) (a : G)
   simp [cdconv_apply, ofReal_expect]
 
 @[simp]
-lemma coe_comp_cconv : ofReal ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → 𝕜) := funext $ coe_cconv _ _
+lemma coe_comp_cconv : ofReal ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → 𝕜) := funext <| coe_cconv _ _
 
 @[simp]
-lemma coe_comp_cdconv : ofReal ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → 𝕜) := funext $ coe_cdconv _ _
+lemma coe_comp_cdconv : ofReal ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → 𝕜) := funext <| coe_cdconv _ _
 
 end RCLike
 
@@ -416,10 +416,10 @@ lemma coe_cconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℂ) 
 lemma coe_cdconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) a := RCLike.coe_cdconv _ _ _
 
 @[simp] lemma ofReal_comp_cconv : ofReal ∘ (f ∗ₙ g) = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℂ) :=
-  funext $ coe_cconv _ _
+  funext <| coe_cconv _ _
 
 @[simp] lemma ofReal_comp_cdconv : ofReal ∘ (f ○ₙ g) = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℂ) :=
-  funext $ coe_cdconv _ _
+  funext <| coe_cdconv _ _
 
 end Complex
 
@@ -433,10 +433,10 @@ lemma coe_cconv : (f ∗ₙ g) a = ((↑) ∘ f ∗ₙ (↑) ∘ g : G → ℝ) 
 lemma coe_cdconv : (f ○ₙ g) a = ((↑) ∘ f ○ₙ (↑) ∘ g : G → ℝ) a := by simp [cdconv_apply, coe_expect]
 
 @[simp]
-lemma coe_comp_cconv : ((↑) : _ → ℝ) ∘ (f ∗ₙ g) = (↑) ∘ f ∗ₙ (↑) ∘ g := funext $ coe_cconv _ _
+lemma coe_comp_cconv : ((↑) : _ → ℝ) ∘ (f ∗ₙ g) = (↑) ∘ f ∗ₙ (↑) ∘ g := funext <| coe_cconv _ _
 
 @[simp]
-lemma coe_comp_cdconv : ((↑) : _ → ℝ) ∘ (f ○ₙ g) = (↑) ∘ f ○ₙ (↑) ∘ g := funext $ coe_cdconv _ _
+lemma coe_comp_cdconv : ((↑) : _ → ℝ) ∘ (f ○ₙ g) = (↑) ∘ f ○ₙ (↑) ∘ g := funext <| coe_cdconv _ _
 
 end NNReal
 
@@ -493,14 +493,14 @@ lemma expect_iterCconv (f : G → R) : ∀ n, 𝔼 a, (f ∗^ₙ n) a = (𝔼 a,
 
 @[simp] lemma iterCconv_trivNChar : ∀ n, (trivNChar : G → R) ∗^ₙ n = trivNChar
   | 0 => rfl
-  | _n + 1 => (cconv_trivNChar _).trans $ iterCconv_trivNChar _
+  | _n + 1 => (cconv_trivNChar _).trans <| iterCconv_trivNChar _
 
 lemma support_iterCconv_subset (f : G → R) : ∀ n, support (f ∗^ₙ n) ⊆ n • support f
   | 0 => by
     simp only [iterCconv_zero, zero_smul, support_subset_iff, Ne, ite_eq_right_iff, exists_prop,
       not_forall, Set.mem_zero, and_imp, forall_eq, eq_self_iff_true, imp_true_iff, trivNChar_apply]
   | n + 1 =>
-    (support_cconv_subset _ _).trans $ Set.add_subset_add_right $ support_iterCconv_subset _ _
+    (support_cconv_subset _ _).trans <| Set.add_subset_add_right <| support_iterCconv_subset _ _
 
 lemma map_iterCconv [Semifield S] [CharZero S] (m : R →+* S) (f : G → R) (a : G)
     (n : ℕ) : m ((f ∗^ₙ n) a) = (m ∘ f ∗^ₙ n) a := congr_fun (comp_iterCconv m _ _) _
@@ -520,11 +520,12 @@ lemma iterCconv_cdconv_distrib (f g : G → R) : ∀ n, (f ○ₙ g) ∗^ₙ n =
   | n + 1 => by simp_rw [iterCconv_succ, iterCconv_cdconv_distrib, cconv_cdconv_cconv_comm]
 
 -- lemma indicate_iterCconv_apply (s : Finset G) (n : ℕ) (a : G) :
---     (𝟭_[ℝ] s ∗^ₙ n) a = ((piFinset fun _i ↦ s).filter fun x : Fin n → G ↦ ∑ i, x i = a).card := by
+--     (𝟭_[ℝ] s ∗^ₙ n) a = #{x ∈ piFinset fun _i ↦ s | ∑ i, x i = a} := by
 --   induction' n with n ih generalizing a
 --   · simp [apply_ite card, eq_comm]
---   simp_rw [iterCconv_succ, cconv_eq_expect_sub', ih, indicate_apply, boole_mul, expect_ite, filter_univ_mem,
---     expect_const_zero, add_zero, ← Nat.cast_expect, ← Finset.card_sigma, Nat.cast_inj]
+--   simp_rw [iterCconv_succ, cconv_eq_expect_sub', ih, indicate_apply, boole_mul, expect_ite,
+--     filter_univ_mem, expect_const_zero, add_zero, ← Nat.cast_expect, ← Finset.card_sigma,
+--     Nat.cast_inj]
 --   refine Finset.card_bij (fun f _ ↦ Fin.cons f.1 f.2) _ _ _
 --   · simp only [Fin.expect_cons, eq_sub_iff_add_eq', mem_sigma, mem_filter, mem_piFinset, and_imp]
 --     refine fun bf hb hf ha ↦ ⟨Fin.cases _ _, ha⟩

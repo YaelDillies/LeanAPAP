@@ -18,7 +18,7 @@ variable [NormedAddCommGroup E] {p q : ℝ≥0∞} {w : α → ℝ≥0} {f g h :
 
 /-- The weighted Lp norm of a function. -/
 noncomputable def wLpNorm (p : ℝ≥0∞) (w : α → ℝ≥0) (f : α → E) : ℝ≥0 :=
-  nnLpNorm f p $ .sum fun i ↦ w i • .dirac i
+  nnLpNorm f p <| .sum fun i ↦ w i • .dirac i
 
 notation "‖" f "‖_[" p ", " w "]" => wLpNorm p w f
 

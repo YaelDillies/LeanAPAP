@@ -158,7 +158,7 @@ lemma claim_four (ab : G × G) :
   refine this.trans_eq ?_
   congr 1
   simp only [dconv_eq_sum_add]
-  exact Fintype.sum_equiv (Equiv.subLeft b) _ _ $ by simp
+  exact Fintype.sum_equiv (Equiv.subLeft b) _ _ <| by simp
 
 lemma claim_five {H : Finset (G × G)} (hH : H ⊆ A ×ˢ A) :
     ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s * #((A ∩ (s +ᵥ B)) ×ˢ (A ∩ (s +ᵥ B)) ∩ H) ≤
@@ -410,15 +410,15 @@ theorem BSG₂ {K : ℝ} (hK : 0 ≤ K) (hB : B.Nonempty) (hAB : K⁻¹ * (#A ^ 
   · exact ⟨∅, by simp, ∅, by simp⟩
   · obtain ⟨s, A', hA, h⟩ := BSG_aux hK (by simpa [card_pos]) (by simpa [card_pos]) hAB
     refine ⟨A', hA.trans (inter_subset_left ..), -s +ᵥ A' ,?_, ?_⟩
-    calc
-      -s +ᵥ A' ⊆ -s +ᵥ (A ∩ (s +ᵥ B)) := vadd_finset_subset_vadd_finset hA
-      _ ⊆ -s +ᵥ (s +ᵥ B) := vadd_finset_subset_vadd_finset (inter_subset_right ..)
-      _ = B := neg_vadd_vadd ..
-    refine ⟨h.1, (card_vadd_finset (-s) A') ▸ h.1, ?_⟩
-    convert h.2 using 2
-    simp only [sub_eq_add_neg, neg_vadd_finset_distrib, neg_neg]
-    rw [add_vadd_comm]
-    apply card_vadd_finset
+    · calc
+        -s +ᵥ A' ⊆ -s +ᵥ (A ∩ (s +ᵥ B)) := vadd_finset_subset_vadd_finset hA
+        _ ⊆ -s +ᵥ (s +ᵥ B) := vadd_finset_subset_vadd_finset (inter_subset_right ..)
+        _ = B := neg_vadd_vadd ..
+    · refine ⟨h.1, (card_vadd_finset (-s) A') ▸ h.1, ?_⟩
+      convert h.2 using 2
+      simp only [sub_eq_add_neg, neg_vadd_finset_distrib, neg_neg]
+      rw [add_vadd_comm]
+      apply card_vadd_finset
 
 theorem BSG_self {K : ℝ} (hK : 0 ≤ K) (hA : A.Nonempty) (hAK : K⁻¹ * #A ^ 3 ≤ E[A]) :
     ∃ A' ⊆ A, (2 ^ 4)⁻¹ * K⁻¹ * #A ≤ #A' ∧ #(A' - A') ≤ 2 ^ 10 * K ^ 5 * #A := by

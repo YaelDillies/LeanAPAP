@@ -13,8 +13,8 @@ This file proves the Marcinkiewicz-Zygmund inequality.
 
 The Marcinkiewicz-Zygmund inequality states that, if `X₁, ... Xₐ ∈ L^p` are independent random
 variables of mean zero valued in some inner product space, then the `L^p`-norm of `X₁ + ... + Xₐ` is
-at most `Cₚ` times the `L^(p/2)`-norm of `|X₁|² + ... + |Xₐ|²`, where `Cₚ` is a constant depending on
-`p` alone.
+at most `Cₚ` times the `L^(p/2)`-norm of `|X₁|² + ... + |Xₐ|²`, where `Cₚ` is a constant depending
+on `p` alone.
 
 ## Notation
 
@@ -61,8 +61,8 @@ theorem marcinkiewicz_zygmund_symmetric
   -- Now, let the calculation begin...
   calc
     ∫ ω, ‖∑ i ∈ A, X i ω‖ ^ (2 * m) ∂μ
-    -- Expand out the power of the sum into a sum over families of indices `i₁, ..., iₙ, j₁, ..., jₙ`
-    -- of `∏ k, ⟨X iₖ, X jₖ⟩`. Push the integral inside the sum.
+    -- Expand out the power of the sum into a sum over families of indices
+    -- `i₁, ..., iₙ, j₁, ..., jₙ` of `∏ k, ⟨X iₖ, X jₖ⟩`. Push the integral inside the sum.
     _ = ∑ I ∈ A ×ˢ A ^^ m, ∫ ω, ∏ k, inner (X (I k).1 ω) (X (I k).2 ω) ∂μ := by
       simp_rw [pow_mul, ← real_inner_self_eq_norm_sq, sum_inner, inner_sum, ← sum_product',
         Finset.sum_pow', integral_finset_sum _ integrable_prod_inner_X]

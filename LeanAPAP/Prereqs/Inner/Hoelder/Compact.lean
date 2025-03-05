@@ -54,17 +54,18 @@ lemma wInner_cWeight_le_cLpNorm_mul_cLpNorm (hpq : p.IsConjExponent q) (f g : α
     cLpNorm_eq_expect_nnnorm hq, expect_eq_sum_div_card, expect_eq_sum_div_card,
     NNReal.div_rpow, NNReal.div_rpow, ← NNReal.coe_mul, div_mul_div_comm, ← NNReal.rpow_add',
     hpq.coe.inv_add_inv_conj, NNReal.rpow_one]
+  swap
+  · simp [hpq.coe.inv_add_inv_conj]
   push_cast
   gcongr
   rw [← dLpNorm_eq_sum_norm hp, ← dLpNorm_eq_sum_norm hq, ← wInner_one_eq_sum]
   exact wInner_one_le_dLpNorm_mul_dLpNorm hpq.coe_ennreal _ _
-  · simp [hpq.coe.inv_add_inv_conj]
 
 /-- **Hölder's inequality**, binary case. -/
 lemma abs_wInner_cWeight_le_dLpNorm_mul_dLpNorm (hpq : p.IsConjExponent q) (f g : α → ℝ) :
     |⟪f, g⟫ₙ_[ℝ]| ≤ ‖f‖ₙ_[p] * ‖g‖ₙ_[q] :=
-  (abs_wInner_le fun _ ↦ by dsimp; positivity).trans $
-    (wInner_cWeight_le_cLpNorm_mul_cLpNorm hpq _ _).trans_eq $ by simp_rw [cLpNorm_abs]
+  (abs_wInner_le fun _ ↦ by dsimp; positivity).trans <|
+    (wInner_cWeight_le_cLpNorm_mul_cLpNorm hpq _ _).trans_eq <| by simp_rw [cLpNorm_abs]
 
 end Real
 
@@ -94,17 +95,18 @@ lemma cLpNorm_mul_le (hp : p ≠ 0) (hq : q ≠ 0) (r : ℝ≥0) (hpqr : p⁻¹ 
   have : (‖(f * g) ·‖ ^ (r : ℝ)) = (‖f ·‖ ^ (r : ℝ)) * (‖g ·‖ ^ (r : ℝ)) := by
     ext; simp [mul_rpow, abs_mul]
   rw [cLpNorm_eq_cL1Norm_rpow, NNReal.rpow_inv_le_iff_of_pos, this, ← NNReal.coe_le_coe]
+  any_goals positivity
   push_cast
   rw [cL1Norm_mul_of_nonneg, mul_rpow, ← NNReal.coe_rpow, ← NNReal.coe_rpow, cLpNorm_rpow',
     cLpNorm_rpow', ← ENNReal.coe_div, ← ENNReal.coe_div]
+  any_goals intro a; dsimp
+  any_goals positivity
   refine wInner_cWeight_le_cLpNorm_mul_cLpNorm ⟨?_, ?_⟩ _ _
   · norm_cast
     rw [div_eq_mul_inv, ← hpqr, mul_add, mul_inv_cancel₀ hp]
     exact lt_add_of_pos_right _ (by positivity)
   · norm_cast
     simp [div_eq_mul_inv, hpqr, ← mul_add, hr]
-  any_goals intro a; dsimp
-  all_goals positivity
 
 /-- **Hölder's inequality**, binary case. -/
 lemma cL1Norm_mul_le (hpq : p.IsConjExponent q) (f g : α → 𝕜) :
@@ -125,7 +127,7 @@ lemma cLpNorm_prod_le {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {p : ι →
   rw [sum_cons, ← inv_inv (∑ _ ∈ _, _ : ℝ≥0)] at hpq
   refine (cLpNorm_mul_le (hp _) (inv_ne_zero (sum_pos (fun _ _ ↦ ?_) hs).ne') _ hpq _ _).trans
     (mul_le_mul_left' (ih hs _ (inv_inv _).symm) _)
-  exact pos_iff_ne_zero.2 (inv_ne_zero $ hp _)
+  exact pos_iff_ne_zero.2 (inv_ne_zero <| hp _)
 
 end Hoelder
 end MeasureTheory

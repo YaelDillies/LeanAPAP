@@ -18,7 +18,7 @@ variable {α : Type*} [Fintype α] [AddCommGroup α] {p : ℕ}
 variable [MeasurableSpace α] [DiscreteMeasurableSpace α]
 
 /-- **Rudin's inequality**, exponential form. -/
-lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
+lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated <| support <| cft f) :
     𝔼 a, exp (f a).re ≤ exp (‖f‖ₙ_[2] ^ 2 / 2) := by
   have (z : ℂ) : exp (re z) ≤ cosh ‖z‖ + re (z / ‖z‖) * sinh ‖z‖ :=
     calc
@@ -44,22 +44,22 @@ lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
     _ ≤ 𝔼 a, ∏ ψ, (cosh ‖cft f ψ‖ + (c ψ * sinh ‖cft f ψ‖ * ψ a).re) :=
         expect_le_expect fun _ _ ↦ this _
     _ = ∏ ψ, cosh ‖cft f ψ‖ :=
-        AddDissociated.randomisation _ _ $ by simpa [-Complex.ofReal_sinh, hc₀]
+        AddDissociated.randomisation _ _ <| by simpa [-Complex.ofReal_sinh, hc₀]
     _ ≤ ∏ ψ, exp (‖cft f ψ‖ ^ 2 / 2) :=
         prod_le_prod (fun _ _ ↦ by positivity) fun _ _ ↦ cosh_le_exp_half_sq _
     _ = _ := by simp_rw [← exp_sum, ← sum_div, ← dL2Norm_cft, dL2Norm_sq_eq_sum_norm]
 
 /-- **Rudin's inequality**, exponential form with absolute values. -/
-lemma rudin_exp_abs_ineq (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
+lemma rudin_exp_abs_ineq (f : α → ℂ) (hf : AddDissociated <| support <| cft f) :
     𝔼 a, exp |(f a).re| ≤ 2 * exp (‖f‖ₙ_[2] ^ 2 / 2) := by
   calc
     _ ≤ 𝔼 a, (exp (f a).re + exp (-f a).re) := expect_le_expect fun _ _ ↦ exp_abs_le _
     _ = 𝔼 a, exp (f a).re + 𝔼 a, exp ((-f) a).re := by simp [expect_add_distrib]
     _ ≤ exp (‖f‖ₙ_[2] ^ 2 / 2) + exp (‖-f‖ₙ_[2] ^ 2 / 2) :=
-        add_le_add (rudin_exp_ineq f hf) (rudin_exp_ineq (-f) $ by simpa using hf)
+        add_le_add (rudin_exp_ineq f hf) (rudin_exp_ineq (-f) <| by simpa using hf)
     _ = _ := by simp [two_mul]
 
-private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
+private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated <| support <| cft f) :
     ‖re ∘ f‖ₙ_[p] ≤ 2 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] := by
   wlog hfp : ‖f‖ₙ_[2] = sqrt p with H
   · obtain rfl | hf := eq_or_ne f 0
@@ -88,7 +88,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
   all_goals positivity
 
 /-- **Rudin's inequality**, usual form. -/
-lemma rudin_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support $ cft f) :
+lemma rudin_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated <| support <| cft f) :
     ‖f‖ₙ_[p] ≤ 4 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] := by
   have hp₁ : (1 : ℝ≥0∞) ≤ p := by exact_mod_cast one_le_two.trans hp
   calc
@@ -103,7 +103,7 @@ lemma rudin_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated $ support 
         ext a : 1
         simp
     _ ≤ 2 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] + 2 * exp 2⁻¹ * sqrt p * ‖(-I) • f‖ₙ_[2]
-      := add_le_add (rudin_ineq_aux hp _ hf) $ rudin_ineq_aux hp _ $ by
+      := add_le_add (rudin_ineq_aux hp _ hf) <| rudin_ineq_aux hp _ <| by
         rwa [cft_smul, support_const_smul_of_ne_zero]; simp
     _ = 4 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] := by
         rw [cLpNorm_const_smul, nnnorm_neg, Complex.nnnorm_I, one_mul]; ring

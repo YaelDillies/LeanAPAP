@@ -32,7 +32,7 @@ lemma indicate_inter_apply (s t : Finset α) (x : α) : 𝟭_[β] (s ∩ t) x = 
   simp [indicate_apply, ← ite_and, and_comm]
 
 lemma indicate_inter (s t : Finset α) : 𝟭_[β] (s ∩ t) = 𝟭 s * 𝟭 t :=
-  funext $ indicate_inter_apply _ _
+  funext <| indicate_inter_apply _ _
 
 lemma map_indicate (f : β →+* γ) (s : Finset α) (x : α) : f (𝟭 s x) = 𝟭 s x :=
   RingHom.map_ite_one_zero _ _
@@ -256,8 +256,8 @@ open Lean Meta Qq Function
 
 -- private alias ⟨_, mu_pos_of_nonempty⟩ := mu_pos
 -- #check indicate
--- /-- Extension for the `positivity` tactic: an indicator is nonnegative, and positive if its support
--- is nonempty. -/
+-- /-- Extension for the `positivity` tactic: an indicator is nonnegative, and positive if its
+-- support is nonempty. -/
 -- @[positivity indicate _]
 -- def evalIndicate : PositivityExt where eval {u π} zπ pπ e := do
 --   let u1 ← mkFreshLevelMVar

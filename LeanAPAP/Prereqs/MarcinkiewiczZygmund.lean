@@ -165,15 +165,15 @@ private lemma end_step {f : ι → ℝ} (hm : 1 ≤ m) (hA : A.Nonempty) :
       (multinomial univ fun i ↦ 2 * k i : ℝ) * ∏ t, (f (a t) - f (b t)) ^ (2 * k t)) / #A ^ n
     _ ≤ (∑ a ∈ B, ∑ b ∈ B, m ^ m * 2 ^ (m + (m - 1)) *
           ((∑ i, f (a i) ^ 2) ^ m + (∑ i, f (b i) ^ 2) ^ m) : ℝ) / #A ^ n := by
-      gcongr; exact step_six.trans $ step_seven.trans step_eight
+      gcongr; exact step_six.trans <| step_seven.trans step_eight
     _ = _ := by
       simp only [mul_add, sum_add_distrib, sum_const, nsmul_eq_mul, ← mul_sum]
       rw [← mul_add, ← two_mul, ← mul_assoc 2, ← mul_assoc 2, mul_right_comm 2, ← _root_.pow_succ',
         add_assoc, Nat.sub_add_cancel hm, pow_add, ← mul_pow, ← mul_pow, card_piFinset, prod_const,
         Finset.card_univ, Fintype.card_fin, Nat.cast_pow, mul_div_cancel_left₀]
-      norm_num
-      dsimp [B]
-      positivity
+      · norm_num
+        dsimp [B]
+      · positivity
 
 namespace Real
 
@@ -232,10 +232,9 @@ theorem marcinkiewicz_zygmund (hm : m ≠ 0) (f : ι → ℝ) (hf : ∀ i, ∑ a
     _ ≤ (4 * ↑(m + 1)) ^ (m + 1) * n ^ m * ∑ a ∈ A ^^ n, ∑ i, f (a i) ^ (2 * (m + 1)) := by
       simp_rw [mul_assoc, mul_sum]; rfl
   gcongr with a
-  rw [← div_le_iff₀']
-  have := pow_sum_div_card_le_sum_pow (f := fun i ↦ f (a i) ^ 2) (s := univ) (fun i _ ↦ ?_) m
-  simpa only [Finset.card_fin, pow_mul] using this
-  all_goals { positivity }
+  rw [← div_le_iff₀' (by positivity)]
+  simpa only [Finset.card_fin, pow_mul] using
+    pow_sum_div_card_le_sum_pow (f := fun i ↦ f (a i) ^ 2) (s := univ) (fun i _ ↦ by positivity) m
 
 end Real
 

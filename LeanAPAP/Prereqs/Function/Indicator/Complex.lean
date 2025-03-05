@@ -50,7 +50,7 @@ namespace Complex
 variable (s : Finset α) (a : α)
 
 @[simp, norm_cast] lemma ofReal_mu : ↑(μ_[ℝ] s a) = μ_[ℂ] s a := map_mu (algebraMap ℝ ℂ) ..
-@[simp] lemma ofReal_comp_mu : (↑) ∘ μ_[ℝ] s = μ_[ℂ] s := funext $ ofReal_mu _
+@[simp] lemma ofReal_comp_mu : (↑) ∘ μ_[ℝ] s = μ_[ℂ] s := funext <| ofReal_mu _
 
 end Complex
 
@@ -58,7 +58,7 @@ namespace RCLike
 variable {𝕜 : Type*} [RCLike 𝕜] (s : Finset α) (a : α)
 
 @[simp, norm_cast] lemma coe_mu : ↑(μ_[ℝ] s a) = μ_[𝕜] s a := map_mu (algebraMap ℝ 𝕜) _ _
-@[simp] lemma coe_comp_mu : (↑) ∘ μ_[ℝ] s = μ_[𝕜] s := funext $ coe_mu _
+@[simp] lemma coe_comp_mu : (↑) ∘ μ_[ℝ] s = μ_[𝕜] s := funext <| coe_mu _
 
 end RCLike
 
@@ -68,6 +68,6 @@ open scoped NNReal
 @[simp, norm_cast]
 lemma coe_mu (s : Finset α) (x : α) : ↑(μ_[ℝ≥0] s x) = μ_[ℝ] s x := map_mu NNReal.toRealHom _ _
 
-@[simp] lemma coe_comp_mu (s : Finset α) : (↑) ∘ μ_[ℝ≥0] s = μ_[ℝ] s := funext $ coe_mu _
+@[simp] lemma coe_comp_mu (s : Finset α) : (↑) ∘ μ_[ℝ≥0] s = μ_[ℝ] s := funext <| coe_mu _
 
 end NNReal

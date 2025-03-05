@@ -224,10 +224,9 @@ lemma cLpNorm_two_mul_sum_pow {ι : Type*} {n : ℕ} (hn : n ≠ 0) (s : Finset 
   calc
     _ = 𝔼 a, (‖∑ i ∈ s, f i a‖ : ℂ) ^ (2 * n) := by
       norm_cast
-      rw [← cLpNorm_pow_eq_expect_norm]
+      rw [← cLpNorm_pow_eq_expect_norm (by positivity)]
       simp_rw [← sum_apply]
       norm_cast
-      positivity
     _ = 𝔼 a, (∑ i ∈ s, conj (f i a)) ^ n * (∑ j ∈ s, f j a) ^ n := by
       simp_rw [pow_mul, ← Complex.conj_mul', mul_pow, map_sum]
     _ = _ := by simp_rw [sum_pow', sum_mul_sum, expect_sum_comm]
@@ -308,9 +307,8 @@ lemma cLpNorm_pow (hp : p ≠ 0) {q : ℕ} (hq : q ≠ 0) (f : α → ℂ) :
   dsimp
   rw [← NNReal.rpow_natCast_mul, ← mul_comm, ← ENNReal.coe_natCast, ← ENNReal.coe_mul,
     ← NNReal.coe_natCast, ← NNReal.coe_mul, cLpNorm_rpow_eq_expect_nnnorm hp,
-    cLpNorm_rpow_eq_expect_nnnorm]
+    cLpNorm_rpow_eq_expect_nnnorm (by positivity)]
   simp [← NNReal.rpow_natCast_mul]
-  positivity
 
 lemma cL1Norm_rpow (hq : q ≠ 0) (hf : 0 ≤ f) : ‖f ^ (q : ℝ)‖ₙ_[1] = ‖f‖ₙ_[q] ^ (q : ℝ) := by
   simpa only [ENNReal.coe_one, one_mul] using cLpNorm_rpow one_ne_zero hq hf
@@ -330,8 +328,8 @@ lemma cLpNorm_eq_cL1Norm_rpow (hp : p ≠ 0) (f : α → 𝕜) :
 
 lemma cLpNorm_rpow' (hp : p ≠ 0) (hq : q ≠ 0) (f : α → 𝕜) :
     ‖f‖ₙ_[p] ^ (q : ℝ) = ‖(fun a ↦ ‖f a‖) ^ (q : ℝ)‖ₙ_[p / q] := by
-  rw [← ENNReal.coe_div hq, cLpNorm_rpow (div_ne_zero hp hq) hq (fun _ ↦ norm_nonneg _), cLpNorm_norm,
-    ← ENNReal.coe_mul, div_mul_cancel₀ _ hq]
+  rw [← ENNReal.coe_div hq, cLpNorm_rpow (div_ne_zero hp hq) hq (fun _ ↦ norm_nonneg _),
+    cLpNorm_norm, ← ENNReal.coe_mul, div_mul_cancel₀ _ hq]
 
 end Hoelder
 
@@ -420,9 +418,11 @@ lemma cLpNorm_translate_sum_sub_le [NormedAddCommGroup E] (hp : 1 ≤ p) {ι : T
   calc
     _ = ‖τ (∑ j ∈ s, a j) (τ (a i) f - f) + (τ (∑ j ∈ s, a j) f - f)‖ₙ_[p] := by
         rw [sum_cons, translate_add', translate_sub_right, sub_add_sub_cancel]
-    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖ₙ_[p] + ‖(τ (∑ j ∈ s, a j) f - f)‖ₙ_[p] := cLpNorm_add_le hp
+    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖ₙ_[p] + ‖(τ (∑ j ∈ s, a j) f - f)‖ₙ_[p] :=
+      cLpNorm_add_le hp
     _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖ₙ_[p] + ∑ j ∈ s, ‖(τ (a j) f - f)‖ₙ_[p] :=
         add_le_add_left hs _
     _ = _ := by rw [cLpNorm_translate, sum_cons]
 
 end cLpNorm
+end MeasureTheory

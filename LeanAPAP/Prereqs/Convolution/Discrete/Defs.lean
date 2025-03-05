@@ -90,15 +90,15 @@ alias smul_conv_assoc := smul_conv
 alias smul_conv_left_comm := conv_smul
 
 @[simp] lemma translate_conv (a : G) (f g : G → R) : τ a f ∗ g = τ a (f ∗ g) :=
-  funext fun b ↦ sum_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
+  funext fun b ↦ sum_equiv ((Equiv.subRight a).prodCongr <| Equiv.refl _)
     (by simp [sub_add_eq_add_sub]) (by simp)
 
 @[simp] lemma conv_translate (a : G) (f g : G → R) : f ∗ τ a g = τ a (f ∗ g) :=
-  funext fun b ↦ sum_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
+  funext fun b ↦ sum_equiv ((Equiv.refl _).prodCongr <| Equiv.subRight a)
     (by simp [← add_sub_assoc]) (by simp)
 
 lemma conv_comm (f g : G → R) : f ∗ g = g ∗ f :=
-  funext fun a ↦ sum_equiv (Equiv.prodComm _ _) (by simp [add_comm]) $ by simp [mul_comm]
+  funext fun a ↦ sum_equiv (Equiv.prodComm _ _) (by simp [add_comm]) <| by simp [mul_comm]
 
 lemma mul_smul_conv_comm [Monoid H] [DistribMulAction H R] [IsScalarTower H R R]
     [SMulCommClass H R R] (c d : H) (f g : G → R) : (c * d) • (f ∗ g) = c • f ∗ d • g := by
@@ -126,13 +126,13 @@ lemma map_conv [CommSemiring S] (m : R →+* S) (f g : G → R) (a : G) :
     m ((f ∗ g) a) = (m ∘ f ∗ m ∘ g) a := by simp [conv_apply, map_sum, map_mul]
 
 lemma comp_conv [CommSemiring S] (m : R →+* S) (f g : G → R) : m ∘ (f ∗ g) = m ∘ f ∗ m ∘ g :=
-  funext $ map_conv _ _ _
+  funext <| map_conv _ _ _
 
 lemma conv_eq_sum_sub (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (a - t) * g t := by
   rw [conv_apply]; apply sum_nbij' Prod.snd (fun b ↦ (a - b, b)) <;> aesop
 
 lemma conv_eq_sum_add (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (a + t) * g (-t) :=
-  (conv_eq_sum_sub _ _ _).trans $ Fintype.sum_equiv (Equiv.neg _) _ _ fun t ↦ by
+  (conv_eq_sum_sub _ _ _).trans <| Fintype.sum_equiv (Equiv.neg _) _ _ fun t ↦ by
     simp only [sub_eq_add_neg, Equiv.neg_apply, neg_neg]
 
 lemma conv_eq_sum_sub' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f t * g (a - t) := by
@@ -142,7 +142,7 @@ lemma conv_eq_sum_add' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (-t) * g
   rw [conv_comm, conv_eq_sum_add]; simp_rw [mul_comm]
 
 lemma conv_apply_add (f g : G → R) (a b : G) : (f ∗ g) (a + b) = ∑ t, f (a + t) * g (b - t) :=
-  (conv_eq_sum_sub _ _ _).trans $ Fintype.sum_equiv (Equiv.subLeft b) _ _ fun t ↦ by
+  (conv_eq_sum_sub _ _ _).trans <| Fintype.sum_equiv (Equiv.subLeft b) _ _ fun t ↦ by
     simp [add_sub_assoc, ← sub_add]
 
 lemma sum_conv_mul (f g h : G → R) : ∑ a, (f ∗ g) a * h a = ∑ a, ∑ b, f a * g b * h (a + b) := by
@@ -196,15 +196,15 @@ lemma dconv_smul [Star H] [DistribSMul H R] [SMulCommClass H R R] [StarModule H 
   ext; simp [dconv_apply, smul_sum, mul_smul_comm, starRingEnd_apply, star_smul]
 
 @[simp] lemma translate_dconv (a : G) (f g : G → R) : τ a f ○ g = τ a (f ○ g) :=
-  funext fun b ↦ sum_equiv ((Equiv.subRight a).prodCongr $ Equiv.refl _)
+  funext fun b ↦ sum_equiv ((Equiv.subRight a).prodCongr <| Equiv.refl _)
     (by simp [sub_right_comm _ a]) (by simp)
 
 @[simp] lemma dconv_translate (a : G) (f g : G → R) : f ○ τ a g = τ (-a) (f ○ g) :=
-  funext fun b ↦ sum_equiv ((Equiv.refl _).prodCongr $ Equiv.subRight a)
+  funext fun b ↦ sum_equiv ((Equiv.refl _).prodCongr <| Equiv.subRight a)
     (by simp [sub_sub_eq_add_sub, ← sub_add_eq_add_sub]) (by simp)
 
 @[simp] lemma conv_conjneg (f g : G → R) : f ∗ conjneg g = f ○ g :=
-  funext fun a ↦ sum_equiv ((Equiv.refl _).prodCongr $ Equiv.neg _) (by simp) (by simp)
+  funext fun a ↦ sum_equiv ((Equiv.refl _).prodCongr <| Equiv.neg _) (by simp) (by simp)
 
 @[simp] lemma dconv_conjneg (f g : G → R) : f ○ conjneg g = f ∗ g := by
   rw [← conv_conjneg, conjneg_conjneg]
@@ -222,10 +222,10 @@ lemma dconv_smul [Star H] [DistribSMul H R] [SMulCommClass H R R] [StarModule H 
   funext <| conj_dconv_apply _ _
 
 lemma IsSelfAdjoint.conv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ∗ g) :=
-  (conj_conv _ _).trans $ congr_arg₂ _ hf hg
+  (conj_conv _ _).trans <| congr_arg₂ _ hf hg
 
 lemma IsSelfAdjoint.dconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ○ g) :=
-  (conj_dconv _ _).trans $ congr_arg₂ _ hf hg
+  (conj_dconv _ _).trans <| congr_arg₂ _ hf hg
 
 @[simp]lemma conjneg_conv (f g : G → R) : conjneg (f ∗ g) = conjneg f ∗ conjneg g := by
   funext a
@@ -264,7 +264,7 @@ lemma map_dconv (f g : G → ℝ≥0) (a : G) : (↑((f ○ g) a) : ℝ) = ((↑
     Function.comp_apply]
 
 lemma comp_dconv (f g : G → ℝ≥0) : ((↑) ∘ (f ○ g) : G → ℝ) = (↑) ∘ f ○ (↑) ∘ g :=
-  funext $ map_dconv _ _
+  funext <| map_dconv _ _
 
 lemma dconv_eq_sum_sub (f g : G → R) (a : G) : (f ○ g) a = ∑ t, f (a - t) * conj (g (-t)) := by
   simp [← conv_conjneg, conv_eq_sum_sub]
@@ -344,8 +344,10 @@ lemma coe_conv : (↑((f ∗ g) a) : 𝕜) = ((↑) ∘ f ∗ (↑) ∘ g) a :=
 @[simp, norm_cast]
 lemma coe_dconv : (↑((f ○ g) a) : 𝕜) = ((↑) ∘ f ○ (↑) ∘ g) a := by simp [dconv_apply, coe_sum]
 
-@[simp] lemma coe_comp_conv : ((↑) : ℝ → 𝕜) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g := funext $ coe_conv _ _
-@[simp] lemma coe_comp_dconv : ((↑) : ℝ → 𝕜) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g := funext $ coe_dconv _ _
+@[simp] lemma coe_comp_conv : ((↑) : ℝ → 𝕜) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g := funext <| coe_conv _ _
+
+@[simp]
+lemma coe_comp_dconv : ((↑) : ℝ → 𝕜) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g := funext <| coe_dconv _ _
 
 end RCLike
 
@@ -359,10 +361,10 @@ lemma ofReal_conv : (↑((f ∗ g) a) : ℂ) = ((↑) ∘ f ∗ (↑) ∘ g) a :
 lemma ofReal_dconv : (↑((f ○ g) a) : ℂ) = ((↑) ∘ f ○ (↑) ∘ g) a := RCLike.coe_dconv _ _ _
 
 @[simp] lemma ofReal_comp_conv : ((↑) : ℝ → ℂ) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g :=
-  funext $ ofReal_conv _ _
+  funext <| ofReal_conv _ _
 
 @[simp] lemma ofReal_comp_dconv : ((↑) : ℝ → ℂ) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g :=
-  funext $ ofReal_dconv _ _
+  funext <| ofReal_dconv _ _
 
 end Complex
 
@@ -376,10 +378,10 @@ lemma coe_conv : (↑((f ∗ g) a) : ℝ) = ((↑) ∘ f ∗ (↑) ∘ g) a := m
 lemma coe_dconv : (↑((f ○ g) a) : ℝ) = ((↑) ∘ f ○ (↑) ∘ g) a := by simp [dconv_apply, coe_sum]
 
 @[simp] lemma coe_comp_conv : ((↑) : _ → ℝ) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g :=
-  funext $ coe_conv _ _
+  funext <| coe_conv _ _
 
 @[simp] lemma coe_comp_dconv : ((↑) : _ → ℝ) ∘ (f ○ g) = (↑) ∘ f ○ (↑) ∘ g :=
-  funext $ coe_dconv _ _
+  funext <| coe_dconv _ _
 
 end NNReal
 
@@ -439,14 +441,14 @@ lemma sum_iterConv (f : G → R) : ∀ n, ∑ a, (f ∗^ n) a = (∑ a, f a) ^ n
 
 @[simp] lemma iterConv_trivChar : ∀ n, (trivChar : G → R) ∗^ n = trivChar
   | 0 => rfl
-  | _n + 1 => (conv_trivChar _).trans $ iterConv_trivChar _
+  | _n + 1 => (conv_trivChar _).trans <| iterConv_trivChar _
 
 lemma support_iterConv_subset (f : G → R) : ∀ n, support (f ∗^ n) ⊆ n • support f
   | 0 => by
     simp only [iterConv_zero, zero_smul, support_subset_iff, Ne, ite_eq_right_iff, not_forall,
       exists_prop, Set.mem_zero, and_imp, forall_eq, eq_self_iff_true, imp_true_iff, trivChar_apply]
   | n + 1 =>
-    (support_conv_subset _ _).trans $ Set.add_subset_add_right $ support_iterConv_subset _ _
+    (support_conv_subset _ _).trans <| Set.add_subset_add_right <| support_iterConv_subset _ _
 
 variable [StarRing R]
 
@@ -462,7 +464,7 @@ lemma iterConv_dconv_distrib (f g : G → R) : ∀ n, (f ○ g) ∗^ n = f ∗^ 
     conj ((f ∗^ n) a) = (conj f ∗^ n) a := congr_fun (conj_iterConv _ _) _
 
 lemma IsSelfAdjoint.iterConv (hf : IsSelfAdjoint f) (n : ℕ) : IsSelfAdjoint (f ∗^ n) :=
-  (conj_iterConv _ _).trans $ congr_arg (· ∗^ n) hf
+  (conj_iterConv _ _).trans <| congr_arg (· ∗^ n) hf
 
 @[simp]
 lemma conjneg_iterConv (f : G → R) : ∀ n, conjneg (f ∗^ n) = conjneg f ∗^ n

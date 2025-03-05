@@ -21,7 +21,7 @@ lemma coe_nnLpNorm_eq_integral_norm_rpow_toReal (hp₀ : p ≠ 0) (hp : p ≠ �
     nnLpNorm f p μ = (∫ x, ‖f x‖ ^ p.toReal ∂μ) ^ p.toReal⁻¹ := by
   rw [nnLpNorm, eLpNorm_eq_lintegral_rpow_enorm hp₀ hp, ENNReal.coe_toNNReal_eq_toReal,
     ← ENNReal.toReal_rpow, ← integral_toReal hf]
-  simp [← ENNReal.toReal_rpow]
+  · simp [← ENNReal.toReal_rpow]
   · exact .of_forall fun x ↦ ENNReal.rpow_lt_top_of_nonneg (by positivity) (by simp)
 
 -- TODO: Rename `coe_eLpNorm_nnreal_eq_lintegral_norm_rpow`
@@ -45,8 +45,8 @@ lemma ae_le_nnLinftyNorm (hf : MemLp f ∞ μ) : ∀ᵐ x ∂μ, ‖f x‖₊ �
 lemma nnLinftyNorm_eq_essSup (hf : MemLp f ∞ μ) : nnLpNorm f ∞ μ = essSup (‖f ·‖₊) μ := by
   refine ENNReal.coe_injective ?_
   rw [coe_nnLpNorm_eq_eLpNorm hf, ENNReal.coe_essSup, eLpNorm_exponent_top, eLpNormEssSup]
-  simp_rw [enorm_eq_nnnorm]
-  exact ⟨_, ae_le_nnLinftyNorm hf⟩
+  · simp_rw [enorm_eq_nnnorm]
+  · exact ⟨_, ae_le_nnLinftyNorm hf⟩
 
 @[simp] lemma nnLpNorm_zero (p : ℝ≥0∞) (μ : Measure α) :
     nnLpNorm (0 : α → E) p μ = 0 := by simp [nnLpNorm]
@@ -171,7 +171,7 @@ lemma nnLpNorm_expect_le [Module ℚ≥0 E] [NormedSpace ℝ E] {ι : Type*} {s 
     nnLpNorm (𝔼 i ∈ s, f i) p μ ≤ 𝔼 i ∈ s, nnLpNorm (f i) p μ  :=  by
   obtain rfl | hs := s.eq_empty_or_nonempty
   · simp
-  refine (le_inv_smul_iff_of_pos $ by positivity).2 ?_
+  refine (le_inv_smul_iff_of_pos <| by positivity).2 ?_
   rw [Nat.cast_smul_eq_nsmul, ← nnLpNorm_nsmul, Finset.card_smul_expect]
   exact nnLpNorm_sum_le hf hp
 

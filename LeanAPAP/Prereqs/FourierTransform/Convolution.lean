@@ -12,8 +12,6 @@ open scoped BigOperators ComplexConjugate ComplexOrder
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G] [MeasurableSpace G]
   [DiscreteMeasurableSpace G] {ψ : AddChar G ℂ} {n : ℕ}
 
-set_option pp.piBinderTypes false
-
 lemma cLpNorm_cconv_le_cLpNorm_cdconv (hn₀ : n ≠ 0) (hn : Even n) (f : G → ℂ) :
     ‖f ∗ₙ f‖ₙ_[n] ≤ ‖f ○ₙ f‖ₙ_[n] := by
   refine le_of_pow_le_pow_left₀ hn₀ (by positivity) ?_

@@ -53,10 +53,9 @@ lemma cLpNorm_dft_indicate_pow [MeasurableSpace G] [DiscreteMeasurableSpace G] (
     _ = ⟪dft (𝟭 s ∗^ n), dft (𝟭 s ∗^ n)⟫ₙ_[ℂ] := ?_
     _ = ⟪𝟭 s ∗^ n, 𝟭 s ∗^ n⟫_[ℂ] := wInner_cWeight_dft _ _
     _ = _ := ?_
-  · rw [cLpNorm_pow_eq_expect_norm]
+  · rw [cLpNorm_pow_eq_expect_norm (by positivity)]
     simp_rw [pow_mul', ← norm_pow _ n, Complex.ofReal_expect, Complex.ofReal_pow,
       ← Complex.conj_mul', wInner_cWeight_eq_expect, inner_apply, dft_iterConv_apply]
-    positivity
   · simp only [wInner_one_eq_sum, inner_apply, boringEnergy_eq, Complex.ofReal_mul,
       Complex.ofReal_natCast, Complex.ofReal_sum, Complex.ofReal_pow, mul_eq_mul_left_iff,
       Nat.cast_eq_zero, Fintype.card_ne_zero, or_false, sq, Complex.ofReal_iterConv,
@@ -64,6 +63,5 @@ lemma cLpNorm_dft_indicate_pow [MeasurableSpace G] [DiscreteMeasurableSpace G] (
 
 lemma cL2Norm_dft_indicate [MeasurableSpace G] [DiscreteMeasurableSpace G] (s : Finset G) :
     ‖dft (𝟭 s)‖ₙ_[2] = sqrt #s := by
-  rw [eq_comm, sqrt_eq_iff_eq_sq, eq_comm]
+  rw [eq_comm, sqrt_eq_iff_eq_sq (by positivity) (by positivity), eq_comm]
   simpa using cLpNorm_dft_indicate_pow 1 s
-  all_goals positivity

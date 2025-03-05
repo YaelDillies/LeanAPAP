@@ -220,10 +220,9 @@ lemma dLpNorm_two_mul_sum_pow {ι : Type*} {n : ℕ} (hn : n ≠ 0) (s : Finset 
   calc
     _ = ∑ a, (‖∑ i ∈ s, f i a‖ : ℂ) ^ (2 * n) := by
       norm_cast
-      rw [← dLpNorm_pow_eq_sum_norm]
+      rw [← dLpNorm_pow_eq_sum_norm (by positivity)]
       simp_rw [← sum_apply]
       norm_cast
-      positivity
     _ = ∑ a, (∑ i ∈ s, conj (f i a)) ^ n * (∑ j ∈ s, f j a) ^ n := by
       simp_rw [pow_mul, ← Complex.conj_mul', mul_pow, map_sum]
     _ = _ := by simp_rw [sum_pow', sum_mul_sum, sum_comm (s := univ)]
@@ -301,9 +300,9 @@ lemma dLpNorm_pow (hp : p ≠ 0) {q : ℕ} (hq : q ≠ 0) (f : α → ℂ) :
   refine NNReal.rpow_left_injective (NNReal.coe_ne_zero.2 hp) ?_
   dsimp
   rw [← NNReal.rpow_natCast_mul, ← mul_comm, ← ENNReal.coe_natCast, ← ENNReal.coe_mul,
-    ← NNReal.coe_natCast, ← NNReal.coe_mul, dLpNorm_rpow_eq_sum_nnnorm hp, dLpNorm_rpow_eq_sum_nnnorm]
+    ← NNReal.coe_natCast, ← NNReal.coe_mul, dLpNorm_rpow_eq_sum_nnnorm hp,
+    dLpNorm_rpow_eq_sum_nnnorm (by positivity)]
   simp [← NNReal.rpow_natCast_mul]
-  positivity
 
 lemma dL1Norm_rpow (hq : q ≠ 0) (hf : 0 ≤ f) : ‖f ^ (q : ℝ)‖_[1] = ‖f‖_[q] ^ (q : ℝ) := by
   simpa only [ENNReal.coe_one, one_mul] using dLpNorm_rpow one_ne_zero hq hf

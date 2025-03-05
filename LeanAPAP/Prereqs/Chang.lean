@@ -63,17 +63,16 @@ lemma AddDissociated.boringEnergy_le [MeasurableSpace G] [DiscreteMeasurableSpac
     _ = (‖dft (𝟭 s)‖ₙ_[↑(2 * n)] ^ (2 * n) : ℝ) := by rw [cLpNorm_dft_indicate_pow]
     _ ≤ (4 * rexp 2⁻¹ * sqrt ↑(2 * n) * ‖dft (𝟭 s)‖ₙ_[2]) ^ (2 * n) := by
         gcongr
-        refine rudin_ineq (le_mul_of_one_le_right zero_le_two $ Nat.one_le_iff_ne_zero.2 hn)
+        refine rudin_ineq (le_mul_of_one_le_right zero_le_two <| Nat.one_le_iff_ne_zero.2 hn)
           (dft (𝟭_[ℂ] s)) ?_
         rwa [cft_dft, support_comp_eq_preimage, support_indicate, Set.preimage_comp,
           Set.neg_preimage, addDissociated_neg, AddEquiv.addDissociated_preimage]
     _ = _ := by
         simp_rw [mul_pow, pow_mul, cL2Norm_dft_indicate]
-        rw [← exp_nsmul, sq_sqrt, sq_sqrt]
+        rw [← exp_nsmul, sq_sqrt (by positivity), sq_sqrt (by positivity)]
         simp_rw [← mul_pow]
         simp [changConst]
         ring_nf
-        all_goals positivity
 
 local notation:70 s:70 " ^^ " n:71 => Fintype.piFinset fun _ : Fin n ↦ s
 
@@ -105,7 +104,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
         by simp_rw [dL1Norm_eq_sum_norm, rpow_natCast]
   rotate_left
   · rw [← nsmul_eq_mul']
-    exact card_nsmul_le_sum _ _ _ fun x hx ↦ mem_largeSpec.1 $ hΔ hx
+    exact card_nsmul_le_sum _ _ _ fun x hx ↦ mem_largeSpec.1 <| hΔ hx
   · simp_rw [mul_sum, mul_comm (f _), mul_assoc (c _), @sum_comm _ _ G, ← mul_sum, ← inner_apply,
       ← wInner_one_eq_sum, ← dft_apply, ← hc, ← RCLike.ofReal_sum, RCLike.norm_ofReal]
     exact le_abs_self _
@@ -121,7 +120,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
     rintro x
     obtain hfx | hfx := eq_or_ne (f x) 0
     · simp [hfx]
-    · exact le_mul_of_one_le_right (norm_nonneg _) $ one_le_sqrt.2 $ NNReal.one_le_coe.2 $
+    · exact le_mul_of_one_le_right (norm_nonneg _) <| one_le_sqrt.2 <| NNReal.one_le_coe.2 <|
         hfν _ hfx
   replace this :=
     calc
@@ -134,17 +133,18 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       _ ≤ (∑ x, ‖f x‖ ^ 2) * ∑ x, (sqrt (ν x) * ‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ m) ^ 2 :=
         sum_mul_sq_le_sq_mul_sq _ _ _
       _ ≤ ‖f‖_[2] ^ 2 * ∑ x, ν x * (‖∑ γ ∈ Δ, c γ * conj (γ x)‖ ^ 2) ^ m := by
-        simp_rw [dL2Norm_sq_eq_sum_norm, mul_pow, sq_sqrt (NNReal.coe_nonneg _), pow_right_comm]; rfl
-  rw [mul_rotate', mul_left_comm, mul_pow, mul_pow, ← pow_mul', ← pow_mul', ← div_le_iff₀',
-    mul_div_assoc, mul_div_assoc] at this
+        simp_rw [dL2Norm_sq_eq_sum_norm, mul_pow, sq_sqrt (NNReal.coe_nonneg _), pow_right_comm]
+        rfl
+  rw [mul_rotate', mul_left_comm, mul_pow, mul_pow, ← pow_mul', ← pow_mul',
+    ← div_le_iff₀' (by positivity), mul_div_assoc, mul_div_assoc] at this
   calc
     _ ≤ _ := this
-    _ = ‖(_ : ℂ)‖ := Eq.symm $ RCLike.norm_of_nonneg $ sum_nonneg fun _ _ ↦ by positivity
+    _ = ‖(_ : ℂ)‖ := Eq.symm <| RCLike.norm_of_nonneg <| sum_nonneg fun _ _ ↦ by positivity
     _ = ‖∑ γ ∈ Δ ^^ m, ∑ δ ∈ Δ ^^ m,
           (∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ := ?_
     _ ≤ ∑ γ ∈ Δ ^^ m, ∑ δ ∈ Δ ^^ m,
           ‖(∏ i, conj (c (γ i)) * c (δ i)) * conj (dft (fun a ↦ ν a) (∑ i, γ i - ∑ i, δ i))‖ :=
-      (norm_sum_le _ _).trans $ sum_le_sum fun _ _ ↦ norm_sum_le _ _
+      (norm_sum_le _ _).trans <| sum_le_sum fun _ _ ↦ norm_sum_le _ _
     _ = _ := by simp [energy, norm_c, norm_prod]
   · push_cast
     simp_rw [← RCLike.conj_mul, dft_apply, wInner_one_eq_sum, inner_apply, map_sum, map_mul,
@@ -153,7 +153,6 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
       ← AddChar.sum_apply, mul_left_comm (Algebra.cast (ν _ : ℝ) : ℂ), ← mul_sum, ← sub_eq_add_neg,
       sum_sub_distrib, Complex.conj_ofReal, mul_comm (Algebra.cast (ν _ : ℝ) : ℂ)]
     rfl
-  positivity
 
 open scoped ComplexOrder
 
@@ -175,14 +174,15 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
   let α := ‖f‖_[1] ^ 2 / ‖f‖_[2] ^ 2 / card G
   have : 0 < α := by positivity
   set β := ⌈𝓛 α⌉₊
-  have hβ : 0 < β := Nat.ceil_pos.2 (curlog_pos (by positivity) $ α_le_one _)
+  have hβ : 0 < β := Nat.ceil_pos.2 (curlog_pos (by positivity) <| α_le_one _)
   have : 0 < ‖f‖_[1] := by positivity
-  refine le_of_pow_le_pow_left₀ hβ.ne' zero_le' $ Nat.cast_le.1 $ le_of_mul_le_mul_right ?_
+  refine le_of_pow_le_pow_left₀ hβ.ne' zero_le' <| Nat.cast_le.1 <| le_of_mul_le_mul_right ?_
     (by positivity : 0 < #Δ ^ β * (η ^ (2 * β) * α))
   push_cast
   rw [← mul_assoc, ← pow_add, ← two_mul]
-  refine ((spec_hoelder hη.le hΔη hβ.ne').trans $ hΔ.boringEnergy_le _).trans ?_
-  refine le_trans ?_ $ mul_le_mul_of_nonneg_right (pow_le_pow_left₀ ?_ (Nat.le_ceil _) _) ?_
+  refine ((spec_hoelder hη.le hΔη hβ.ne').trans <| hΔ.boringEnergy_le _).trans ?_
+  refine le_trans ?_ <| mul_le_mul_of_nonneg_right (pow_le_pow_left₀ ?_ (Nat.le_ceil _) _) ?_
+  any_goals positivity
   rw [mul_right_comm, div_pow, mul_pow, mul_pow, exp_one_pow, ← pow_mul, mul_div_assoc]
   calc
     _ = (changConst * #Δ * β) ^ β := by ring
@@ -191,9 +191,11 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
       rw [div_self hη.ne', one_pow, one_mul]
     _ = _ := by ring
   refine le_mul_of_one_le_right (by positivity) ?_
-  rw [← inv_le_iff_one_le_mul₀']
+  rw [← inv_le_iff_one_le_mul₀' (by positivity)]
   calc
-    α⁻¹ = exp (0 + log α⁻¹) := by rw [zero_add, exp_log]; norm_cast; positivity
+    α⁻¹ = exp (0 + log α⁻¹) := by
+      rw [zero_add, exp_log]
+      · norm_cast
+      · positivity
     _ ≤ exp ⌈0 + log α⁻¹⌉₊ := by gcongr; exact Nat.le_ceil _
     _ ≤ exp β := by unfold β; gcongr; exact zero_le_one
-  all_goals positivity

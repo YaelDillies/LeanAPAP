@@ -58,8 +58,8 @@ variable [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
 
 @[simp] lemma dLpNorm_trivChar (hp : p ≠ 0) : ‖(trivChar : ι → 𝕜)‖_[p] = 1 := by
   obtain _ | p := p
-  · simp only [ENNReal.none_eq_top, dLinftyNorm_eq_iSup_nnnorm, trivChar_apply, apply_ite, nnnorm_one,
-      nnnorm_zero]
+  · simp only [ENNReal.none_eq_top, dLinftyNorm_eq_iSup_nnnorm, trivChar_apply, apply_ite,
+      nnnorm_one, nnnorm_zero]
     exact IsLUB.ciSup_eq ⟨by aesop (add simp mem_upperBounds), fun x hx ↦ hx ⟨0, if_pos rfl⟩⟩
   · simp at hp
     simp [dLpNorm_eq_sum_nnnorm hp, apply_ite, hp]
@@ -94,7 +94,7 @@ lemma dLpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : ι → 𝕜) : ‖f �
     · congr with t
       rw [nnnorm_mul, mul_assoc, ← NNReal.rpow_add', add_sub_cancel, NNReal.rpow_one]
       simp
-    · have : 1 - (p : ℝ)⁻¹ ≠ 0 := sub_ne_zero.2 (inv_ne_one.2 $ NNReal.coe_ne_one.2 hp.ne').symm
+    · have : 1 - (p : ℝ)⁻¹ ≠ 0 := sub_ne_zero.2 (inv_ne_one.2 <| NNReal.coe_ne_one.2 hp.ne').symm
       simp only [abs_mul, abs_rpow_of_nonneg, NNReal.mul_rpow, rpow_nonneg, hp₀.ne', this,
         abs_norm, norm_nonneg, NNReal.rpow_inv_rpow, Ne, NNReal.coe_eq_zero, not_false_iff, one_div,
         NNReal.rpow_rpow_inv, div_inv_eq_mul, one_mul]

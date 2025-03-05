@@ -41,9 +41,9 @@ lemma reindex_count (L : Finset (Fin k → α)) (hk : k ≠ 0) (hL' : L.Nonempty
     _ = ∑ l₂ ∈ L, ∑ t : α, ite ((l₁ - fun _ ↦ t) = l₂) 1 0 := by
       refine sum_congr rfl fun l₂ hl₂ ↦ ?_
       rw [Fintype.sum_ite_eq_ite_exists]
-      simp only [mem_piDiag, mem_univ, eq_sub_iff_add_eq, true_and, sub_eq_iff_eq_add',
-        @eq_comm _ l₁]
-      rfl
+      · simp only [mem_piDiag, mem_univ, eq_sub_iff_add_eq, true_and, sub_eq_iff_eq_add',
+          @eq_comm _ l₁]
+        rfl
       rintro i j h rfl
       cases k
       · simp at hk
@@ -152,7 +152,7 @@ lemma big_shifts_step2 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
     ∑ x ∈ L, ∑ y ∈ S.piDiag (Fin k), (if x + y ∈ L + S.piDiag (Fin k) then f x y else 0) =
       ∑ x ∈ L, ∑ y ∈ S.piDiag (Fin k), f x y := by
     refine fun f ↦ sum_congr rfl fun x hx ↦ ?_
-    exact sum_congr rfl fun y hy ↦ if_pos $ add_mem_add hx hy
+    exact sum_congr rfl fun y hy ↦ if_pos <| add_mem_add hx hy
   rw [this]
   have (x y) :
       ∑ s₁ ∈ S.piDiag (Fin k), ∑ s₂ ∈ S.piDiag (Fin k), ite (y + s₂ = x + s₁) (1 : ℝ) 0 =
@@ -251,7 +251,7 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
       (8 * m) ^ m * k ^ (m - 1) * ∑ _a ∈ A ^^ k, ∑ _i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
   -- lots of the equalities about m can be automated but it's *way* slower
   have hmeq : ((2 * m : ℕ) : ℝ≥0∞) = 2 * m := by rw [Nat.cast_mul, Nat.cast_two]
-  have hm' : 1 < 2 * m := (Nat.mul_le_mul_left 2 hm).trans_lt' $ by norm_num1
+  have hm' : 1 < 2 * m := (Nat.mul_le_mul_left 2 hm).trans_lt' <| by norm_num1
   have hm'' : (1 : ℝ≥0∞) ≤ 2 * m := by rw [← hmeq, Nat.one_le_cast]; exact hm'.le
   gcongr
   refine (dLpNorm_sub_le hm'').trans ?_
@@ -413,9 +413,9 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
   let r : ℝ := min 1 (#C / #B)
   set m : ℝ := 𝓛 (#C / #B)
   have hm₀ : 0 < m := curlog_pos (by positivity)
-  have hm₁ : 1 ≤ ⌈m⌉₊ := Nat.one_le_iff_ne_zero.2 $ by positivity
+  have hm₁ : 1 ≤ ⌈m⌉₊ := Nat.one_le_iff_ne_zero.2 <| by positivity
   obtain ⟨T, hKT, hT⟩ := almost_periodicity (ε / exp 1) (by positivity)
-    (div_le_one_of_le₀ (hε₁.trans $ one_le_exp zero_le_one) $ by positivity) ⌈m⌉₊ (𝟭 B) hK₂ hK
+    (div_le_one_of_le₀ (hε₁.trans <| one_le_exp zero_le_one) <| by positivity) ⌈m⌉₊ (𝟭 B) hK₂ hK
   norm_cast at hT
   set M : ℕ := 2 * ⌈m⌉₊
   have hM₀ : (M : ℝ≥0) ≠ 0 := by positivity
@@ -454,17 +454,18 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
     _ = ε * ((#C / #B) ^ (-(M : ℝ)⁻¹) / exp 1) := by
         rw [← mul_comm_div, dLpNorm_mu hM.symm.one_le hC.neg.vadd_finset, card_vadd_finset,
           card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_natCast]
+        any_goals positivity
         push_cast
         rw [rpow_neg, rpow_neg, ← div_eq_mul_inv, inv_div_inv]
         all_goals positivity
-    _ ≤ ε := mul_le_of_le_one_right (by positivity) $ (div_le_one $ by positivity).2 ?_
+    _ ≤ ε := mul_le_of_le_one_right (by positivity) <| (div_le_one <| by positivity).2 ?_
   calc
     (#C / #B : ℝ) ^ (-(M : ℝ)⁻¹)
       ≤ r ^ (-(M : ℝ)⁻¹) :=
-        rpow_le_rpow_of_nonpos (by positivity) inf_le_right $ neg_nonpos.2 $ by positivity
+        rpow_le_rpow_of_nonpos (by positivity) inf_le_right <| neg_nonpos.2 <| by positivity
     _ ≤ r ^ (-(1 + log r⁻¹)⁻¹) :=
-        rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left $ neg_le_neg $ inv_anti₀
-          (by positivity) $ (Nat.le_ceil _).trans $
+        rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left <| neg_le_neg <| inv_anti₀
+          (by positivity) <| (Nat.le_ceil _).trans <|
             mod_cast Nat.le_mul_of_pos_left _ (by positivity)
     _ ≤ r ^ (-(0 + log r⁻¹)⁻¹) := by
       obtain hr | hr : r = 1 ∨ r < 1 := inf_le_left.eq_or_lt
@@ -481,12 +482,12 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
       K ^ (-4096 * ⌈𝓛 (#C / #B)⌉ * k ^ 2/ ε ^ 2) * #S ≤ #T ∧
       ‖μ T ∗^ k ∗ (μ_[ℂ] A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C‖_[∞] ≤ ε := by
   obtain ⟨T, hKT, hT⟩ := linfty_almost_periodicity (ε / k) (by positivity)
-    (div_le_one_of_le₀ (hε₁.trans $ mod_cast Nat.one_le_iff_ne_zero.2 hk) $ by positivity) hK₂ hK
+    (div_le_one_of_le₀ (hε₁.trans <| mod_cast Nat.one_le_iff_ne_zero.2 hk) <| by positivity) hK₂ hK
     _ _ hB hC
   refine ⟨T, by simpa only [div_pow, div_div_eq_mul_div] using hKT, ?_⟩
   set F := μ_[ℂ] A ∗ 𝟭 B ∗ μ C
   have hT' : T.Nonempty := by
-    have : (0 : ℝ) < #T := hKT.trans_lt' $ by positivity
+    have : (0 : ℝ) < #T := hKT.trans_lt' <| by positivity
     simpa [card_pos] using this
   calc
     (‖μ T ∗^ k ∗ F - F‖_[∞] : ℝ)
@@ -500,7 +501,7 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
   calc
     (‖τ (∑ i, x i) F - F‖_[⊤] : ℝ)
     _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := dLpNorm_translate_sum_sub_le le_top _ _ _
-    _ ≤ ∑ _i, ε / k := by push_cast; exact sum_le_sum fun i _ ↦ hT _ $ Fintype.mem_piFinset.1 hx _
+    _ ≤ ∑ _i, ε / k := by push_cast; exact sum_le_sum fun i _ ↦ hT _ <| Fintype.mem_piFinset.1 hx _
     _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel₀]; positivity
 
 end AlmostPeriodicity

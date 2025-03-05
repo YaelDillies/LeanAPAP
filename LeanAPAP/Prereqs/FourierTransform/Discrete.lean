@@ -46,14 +46,14 @@ lemma dft_smul {𝕝 : Type*} [CommSemiring 𝕝] [StarRing 𝕝] [Algebra 𝕝 
   classical
   unfold dft
   simp_rw [wInner_one_eq_sum, wInner_cWeight_eq_expect, inner_apply, map_sum, map_mul,
-    starRingEnd_self_apply, sum_mul, mul_sum, expect_sum_comm, mul_mul_mul_comm _ (conj $ f _),
+    starRingEnd_self_apply, sum_mul, mul_sum, expect_sum_comm, mul_mul_mul_comm _ (conj <| f _),
     ← expect_mul, ← AddChar.inv_apply_eq_conj, ← map_neg_eq_inv, ← map_add_eq_mul,
     AddChar.expect_apply_eq_ite, add_neg_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma cL2Norm_dft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
     ‖dft f‖ₙ_[2] = ‖f‖_[2] :=
-  (sq_eq_sq₀ (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
+  (sq_eq_sq₀ (zero_le _) (zero_le _)).1 <| NNReal.coe_injective <| Complex.ofReal_injective <| by
     push_cast; simpa only [RCLike.wInner_cWeight_self, wInner_one_self] using wInner_cWeight_dft f f
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
@@ -78,7 +78,7 @@ lemma dft_dft (f : α → ℂ) : dft (dft f) = card α * f ∘ doubleDualEquiv.s
       doubleDualEmb_doubleDualEquiv_symm_apply]
 
 lemma dft_injective : Injective (dft : (α → ℂ) → AddChar α ℂ → ℂ) := fun f g h ↦
-  funext fun a ↦ (dft_inversion _ _).symm.trans $ by rw [h, dft_inversion]
+  funext fun a ↦ (dft_inversion _ _).symm.trans <| by rw [h, dft_inversion]
 
 lemma dft_inv (ψ : AddChar α ℂ) (hf : IsSelfAdjoint f) : dft f ψ⁻¹ = conj (dft f ψ) := by
   simp_rw [dft_apply, wInner_one_eq_sum, inner_apply, map_sum, AddChar.inv_apply', map_mul,
@@ -96,7 +96,7 @@ lemma dft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft (conjneg f)
   simp only [Equiv.neg_apply, ← inv_apply_eq_conj, ← inv_apply', inv_apply]
 
 @[simp]
-lemma dft_conjneg (f : α → ℂ) : dft (conjneg f) = conj (dft f) := funext $ dft_conjneg_apply _
+lemma dft_conjneg (f : α → ℂ) : dft (conjneg f) = conj (dft f) := funext <| dft_conjneg_apply _
 
 lemma dft_comp_neg_apply (f : α → ℂ) (ψ : AddChar α ℂ) :
     dft (fun x ↦ f (-x)) ψ = dft f (-ψ) := Fintype.sum_equiv (Equiv.neg _) _ _ (by simp)
@@ -108,7 +108,7 @@ lemma dft_comp_neg_apply (f : α → ℂ) (ψ : AddChar α ℂ) :
   ext; simp [trivChar_apply, dft_apply, wInner_one_eq_sum, ← map_sum]
 
 @[simp] lemma dft_one : dft (1 : α → ℂ) = card α • trivChar :=
-  dft_injective $ by classical rw [dft_smul, dft_trivChar, dft_dft, Pi.one_comp, nsmul_eq_mul]
+  dft_injective <| by classical rw [dft_smul, dft_trivChar, dft_dft, Pi.one_comp, nsmul_eq_mul]
 
 variable [DecidableEq α]
 
@@ -119,8 +119,8 @@ variable [DecidableEq α]
 lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ = dft f ψ * dft g ψ := by
   simp_rw [dft, wInner_one_eq_sum, inner_apply, conv_eq_sum_sub', mul_sum, sum_mul, ← sum_product',
     univ_product_univ]
-  refine Fintype.sum_equiv ((Equiv.prodComm _ _).trans $
-    ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
+  refine Fintype.sum_equiv ((Equiv.prodComm _ _).trans <|
+    ((Equiv.refl _).prodShear Equiv.subRight).trans <| Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
   simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
     Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
   rw [mul_mul_mul_comm, ← map_mul, ← map_add_eq_mul, add_sub_cancel]
@@ -129,10 +129,10 @@ lemma dft_dconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
     dft (f ○ g) ψ = dft f ψ * conj (dft g ψ) := by
   rw [← conv_conjneg, dft_conv_apply, dft_conjneg_apply]
 
-@[simp] lemma dft_conv (f g : α → ℂ) : dft (f ∗ g) = dft f * dft g := funext $ dft_conv_apply _ _
+@[simp] lemma dft_conv (f g : α → ℂ) : dft (f ∗ g) = dft f * dft g := funext <| dft_conv_apply _ _
 
 @[simp]
-lemma dft_dconv (f g : α → ℂ) : dft (f ○ g) = dft f * conj (dft g) := funext $ dft_dconv_apply _ _
+lemma dft_dconv (f g : α → ℂ) : dft (f ○ g) = dft f * conj (dft g) := funext <| dft_dconv_apply _ _
 
 @[simp] lemma dft_iterConv (f : α → ℂ) : ∀ n, dft (f ∗^ n) = dft f ^ n
   | 0 => dft_trivChar

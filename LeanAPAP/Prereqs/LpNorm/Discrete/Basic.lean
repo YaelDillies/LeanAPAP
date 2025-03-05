@@ -21,8 +21,8 @@ variable [RCLike R] [DecidableEq ι] {s : Finset ι} {p : ℝ≥0}
 lemma dLpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖_[p] ^ (p : ℝ) = #s := by
   have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) =
     ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := fun x ↦ by split_ifs <;> simp
-  simp [dLpNorm_rpow_eq_sum_nnnorm, hp, indicate_apply, apply_ite nnnorm, -sum_const, card_eq_sum_ones,
-    sum_boole, this, zero_rpow, filter_mem_eq_inter]
+  simp [dLpNorm_rpow_eq_sum_nnnorm, hp, indicate_apply, apply_ite nnnorm, -sum_const,
+    card_eq_sum_ones, this]
 
 lemma dLpNorm_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖_[p] = #s ^ (p⁻¹ : ℝ) := by
   refine (NNReal.eq_rpow_inv_iff ?_).2 (dLpNorm_rpow_indicate ?_ _) <;> positivity
@@ -102,3 +102,4 @@ lemma dLpNorm_translate_sum_sub_le [NormedAddCommGroup E] (hp : 1 ≤ p) {ι : T
     _ = _ := by rw [dLpNorm_translate, sum_cons]
 
 end dLpNorm
+end MeasureTheory

@@ -109,7 +109,8 @@ lemma mem_chordSet_iff_nnnorm_width :
     intro h₁ h₂
     rwa [←ENNReal.coe_le_coe, coe_width h₂]
 
-lemma mem_chordSet_iff_norm_width : x ∈ B.chordSet ↔ ∀ ⦃ψ⦄, ψ ∈ B.frequencies → ‖1 - ψ x‖ ≤ B.width ψ :=
+lemma mem_chordSet_iff_norm_width :
+    x ∈ B.chordSet ↔ ∀ ⦃ψ⦄, ψ ∈ B.frequencies → ‖1 - ψ x‖ ≤ B.width ψ :=
   mem_chordSet_iff_nnnorm_width
 
 @[simp, norm_cast] lemma coeSort_coe (B : BohrSet G) : ↥(B : Set G) = B := rfl

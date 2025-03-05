@@ -45,14 +45,14 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
   unfold cft
   simp_rw [wInner_one_eq_sum, wInner_cWeight_eq_expect, inner_apply, map_expect, map_mul,
     starRingEnd_self_apply, expect_mul, mul_expect, ← expect_sum_comm,
-    mul_mul_mul_comm _ (conj $ f _), ← sum_mul, ← AddChar.inv_apply_eq_conj, ← map_neg_eq_inv,
+    mul_mul_mul_comm _ (conj <| f _), ← sum_mul, ← AddChar.inv_apply_eq_conj, ← map_neg_eq_inv,
     ← map_add_eq_mul, AddChar.sum_apply_eq_ite]
   simp [add_neg_eq_zero, card_univ, Fintype.card_ne_zero, NNRat.smul_def]
 
 /-- **Parseval-Plancherel identity** for the discrete Fourier transform. -/
 @[simp] lemma dL2Norm_cft [MeasurableSpace α] [DiscreteMeasurableSpace α] (f : α → ℂ) :
     ‖cft f‖_[2] = ‖f‖ₙ_[2] :=
-  (sq_eq_sq₀ (zero_le _) (zero_le _)).1 $ NNReal.coe_injective $ Complex.ofReal_injective $ by
+  (sq_eq_sq₀ (zero_le _) (zero_le _)).1 <| NNReal.coe_injective <| Complex.ofReal_injective <| by
     push_cast; simpa only [RCLike.wInner_cWeight_self, wInner_one_self] using wInner_one_cft f f
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
@@ -83,7 +83,7 @@ lemma cft_dft (f : α → ℂ) : cft (dft f) = f ∘ doubleDualEquiv.symm ∘ Ne
       doubleDualEmb_doubleDualEquiv_symm_apply]
 
 lemma cft_injective : Injective (cft : (α → ℂ) → AddChar α ℂ → ℂ) := fun f g h ↦
-  funext fun a ↦ (cft_inversion _ _).symm.trans $ by rw [h, cft_inversion]
+  funext fun a ↦ (cft_inversion _ _).symm.trans <| by rw [h, cft_inversion]
 
 lemma cft_inv (ψ : AddChar α ℂ) (hf : IsSelfAdjoint f) : cft f ψ⁻¹ = conj (cft f ψ) := by
   simp_rw [cft_apply, wInner_cWeight_eq_expect, inner_apply, map_expect, AddChar.inv_apply',
@@ -101,17 +101,17 @@ lemma cft_conjneg_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft (conjneg f)
   simp only [Equiv.neg_apply, ← inv_apply_eq_conj, ← inv_apply', inv_apply]
 
 @[simp]
-lemma cft_conjneg (f : α → ℂ) : cft (conjneg f) = conj (cft f) := funext $ cft_conjneg_apply _
+lemma cft_conjneg (f : α → ℂ) : cft (conjneg f) = conj (cft f) := funext <| cft_conjneg_apply _
 
 @[simp] lemma cft_balance (f : α → ℂ) (hψ : ψ ≠ 0) : cft (balance f) ψ = cft f ψ := by
   simp only [balance, Pi.sub_apply, cft_sub, cft_const _ hψ, sub_zero]
 
 @[simp] lemma cft_trivNChar [DecidableEq α] : cft (trivNChar : α → ℂ) = 1 := by
   ext
-  simp [trivChar_apply, cft_apply, wInner_cWeight_eq_expect, ← map_expect, card_univ, NNRat.smul_def]
+  simp [trivChar_apply, cft_apply, wInner_cWeight_eq_expect, ← map_expect, NNRat.smul_def]
 
 @[simp] lemma cft_one : cft (1 : α → ℂ) = trivChar :=
-  dft_injective $ by classical rw [dft_trivChar, dft_cft, Pi.one_comp]
+  dft_injective <| by classical rw [dft_trivChar, dft_cft, Pi.one_comp]
 
 variable [DecidableEq α]
 
@@ -122,8 +122,8 @@ variable [DecidableEq α]
 lemma cft_cconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : cft (f ∗ₙ g) ψ = cft f ψ * cft g ψ := by
   simp_rw [cft, wInner_cWeight_eq_expect, inner_apply, cconv_eq_expect_sub', mul_expect, expect_mul,
     ← expect_product', univ_product_univ]
-  refine Fintype.expect_equiv ((Equiv.prodComm _ _).trans $
-    ((Equiv.refl _).prodShear Equiv.subRight).trans $ Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
+  refine Fintype.expect_equiv ((Equiv.prodComm _ _).trans <|
+    ((Equiv.refl _).prodShear Equiv.subRight).trans <| Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
   simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
     Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
   rw [mul_mul_mul_comm, ← map_mul, ← map_add_eq_mul, add_sub_cancel]
@@ -133,11 +133,11 @@ lemma cft_cdconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
   rw [← cconv_conjneg, cft_cconv_apply, cft_conjneg_apply]
 
 @[simp] lemma cft_cconv (f g : α → ℂ) : cft (f ∗ₙ g) = cft f * cft g :=
-  funext $ cft_cconv_apply _ _
+  funext <| cft_cconv_apply _ _
 
 @[simp]
 lemma cft_cdconv (f g : α → ℂ) : cft (f ○ₙ g) = cft f * conj (cft g) :=
-  funext $ cft_cdconv_apply _ _
+  funext <| cft_cdconv_apply _ _
 
 @[simp] lemma cft_iterCconv (f : α → ℂ) : ∀ n, cft (f ∗^ₙ n) = cft f ^ n
   | 0 => cft_trivNChar
@@ -149,7 +149,7 @@ lemma cft_cdconv (f g : α → ℂ) : cft (f ○ₙ g) = cft f * conj (cft g) :=
 -- lemma dL2Norm_iterCconv (f : α → ℂ) (n : ℕ) : ‖f ∗^ₙ n‖ₙ_[2] = ‖f ^ n‖_[2] := by
 --   rw [← dL2Norm_cft, cft_iterCconv, ← ENNReal.coe_two, dLpNorm_pow]
 --   norm_cast
---   refine (sq_eq_sq₀ (by positivity) $ by positivity).1 ?_
+--   refine (sq_eq_sq₀ (by positivity) <| by positivity).1 ?_
 --   rw [← ENNReal.coe_two, dLpNorm_pow, ← pow_mul', ← Complex.ofReal_inj]
 --   push_cast
 --   simp_rw [pow_mul, ← Complex.mul_conj', conj_iterConv_apply, mul_pow]

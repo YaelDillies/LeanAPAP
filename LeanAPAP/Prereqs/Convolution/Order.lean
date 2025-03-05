@@ -16,7 +16,7 @@ lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
 variable [StarRing R] [StarOrderedRing R]
 
 lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
-  fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) $ star_nonneg_iff.2 $ hg _
+  fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) <| star_nonneg_iff.2 <| hg _
 
 end OrderedCommSemiring
 
@@ -28,8 +28,8 @@ variable [StrictOrderedCommSemiring R] {f g : G → R}
   refine (support_conv_subset _ _).antisymm ?_
   rintro _ ⟨a, ha, b, hb, rfl⟩
   rw [mem_support, conv_apply_add]
-  exact ne_of_gt $ sum_pos' (fun c _ ↦ mul_nonneg (hf _) $ hg _) ⟨0, mem_univ _,
-    mul_pos ((hf _).lt_of_ne' $ by simpa using ha) $ (hg _).lt_of_ne' $ by simpa using hb⟩
+  exact ne_of_gt <| sum_pos' (fun c _ ↦ mul_nonneg (hf _) <| hg _) ⟨0, mem_univ _,
+    mul_pos ((hf _).lt_of_ne' <| by simpa using ha) <| (hg _).lt_of_ne' <| by simpa using hb⟩
 
 lemma conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by
   rw [Pi.lt_def] at hf hg ⊢
@@ -37,7 +37,7 @@ lemma conv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by
   obtain ⟨hg, b, hb⟩ := hg
   refine ⟨conv_nonneg hf hg, a + b, ?_⟩
   rw [conv_apply_add]
-  exact sum_pos' (fun c _ ↦ mul_nonneg (hf _) $ hg _) ⟨0, by simpa using mul_pos ha hb⟩
+  exact sum_pos' (fun c _ ↦ mul_nonneg (hf _) <| hg _) ⟨0, by simpa using mul_pos ha hb⟩
 
 variable [StarRing R] [StarOrderedRing R]
 
