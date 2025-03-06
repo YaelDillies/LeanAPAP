@@ -1,6 +1,7 @@
 import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Analysis.Complex.Basic
+import Mathlib.Data.NNReal.Star
 
 /-!
 # Convolution

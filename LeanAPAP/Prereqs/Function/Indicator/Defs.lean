@@ -1,6 +1,6 @@
 import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 import Mathlib.Algebra.BigOperators.Pi
-import Mathlib.Algebra.Group.Pointwise.Finset.Basic
+import Mathlib.Algebra.Group.Action.Pointwise.Finset
 import Mathlib.Algebra.Order.Field.Defs
 import Mathlib.Algebra.Star.Pi
 import Mathlib.Data.Fintype.Lattice
