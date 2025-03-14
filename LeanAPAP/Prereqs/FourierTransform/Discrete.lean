@@ -33,7 +33,7 @@ lemma dft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : dft f ψ = ⟪ψ, f⟫_
   ext; simp [wInner_sub_right, dft_apply]
 
 @[simp] lemma dft_const (a : ℂ) (hψ : ψ ≠ 0) : dft (const α a) ψ = 0 := by
-  simp only [dft_apply, wInner_one_eq_sum, inner_apply, const_apply, ← sum_mul, ← map_sum,
+  simp only [dft_apply, wInner_one_eq_sum, inner_apply', const_apply, ← sum_mul, ← map_sum,
     sum_eq_zero_iff_ne_zero.2 hψ, map_zero, zero_mul]
 
 @[simp]
@@ -45,7 +45,7 @@ lemma dft_smul {𝕝 : Type*} [CommSemiring 𝕝] [StarRing 𝕝] [Algebra 𝕝 
 @[simp] lemma wInner_cWeight_dft (f g : α → ℂ) : ⟪dft f, dft g⟫ₙ_[ℂ] = ⟪f, g⟫_[ℂ] := by
   classical
   unfold dft
-  simp_rw [wInner_one_eq_sum, wInner_cWeight_eq_expect, inner_apply, map_sum, map_mul,
+  simp_rw [wInner_one_eq_sum, wInner_cWeight_eq_expect, inner_apply', map_sum, map_mul,
     starRingEnd_self_apply, sum_mul, mul_sum, expect_sum_comm, mul_mul_mul_comm _ (conj <| f _),
     ← expect_mul, ← AddChar.inv_apply_eq_conj, ← map_neg_eq_inv, ← map_add_eq_mul,
     AddChar.expect_apply_eq_ite, add_neg_eq_zero, boole_mul, Fintype.sum_ite_eq]
@@ -59,7 +59,7 @@ lemma dft_smul {𝕝 : Type*} [CommSemiring 𝕝] [StarRing 𝕝] [Algebra 𝕝 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma dft_inversion (f : α → ℂ) (a : α) : 𝔼 ψ, dft f ψ * ψ a = f a := by
   classical
-  simp_rw [dft, wInner_one_eq_sum, inner_apply, sum_mul, expect_sum_comm, mul_right_comm _ (f _),
+  simp_rw [dft, wInner_one_eq_sum, inner_apply', sum_mul, expect_sum_comm, mul_right_comm _ (f _),
     ← expect_mul, ← AddChar.inv_apply_eq_conj, inv_mul_eq_div, ← map_sub_eq_div,
     AddChar.expect_apply_eq_ite, sub_eq_zero, boole_mul, Fintype.sum_ite_eq]
 
@@ -113,7 +113,7 @@ lemma dft_comp_neg_apply (f : α → ℂ) (ψ : AddChar α ℂ) :
 variable [DecidableEq α]
 
 @[simp] lemma dft_indicate_zero (A : Finset α) : dft (𝟭 A) 0 = #A := by
-  simp only [dft_apply, wInner_one_eq_sum, inner_apply, sum_indicate, AddChar.zero_apply, map_one,
+  simp only [dft_apply, wInner_one_eq_sum, inner_apply', sum_indicate, AddChar.zero_apply, map_one,
     one_mul]
 
 lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ = dft f ψ * dft g ψ := by

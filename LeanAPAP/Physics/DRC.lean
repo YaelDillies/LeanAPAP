@@ -22,7 +22,7 @@ private lemma lemma_0 (p : ℕ) (B₁ B₂ A : Finset G) (f : G → ℝ) :
     ∑ s, ⟪𝟭_[ℝ] (B₁ ∩ c p A s) ○ 𝟭 (B₂ ∩ c p A s), f⟫_[ℝ] =
       (#B₁ * #B₂) • ∑ x, (μ_[ℝ] B₁ ○ μ B₂) x * (𝟭 A ○ 𝟭 A) x ^ p * f x := by
   simp_rw [mul_assoc]
-  simp only [wInner_one_eq_sum, inner_apply, RCLike.conj_to_real, mul_sum, sum_mul, smul_sum,
+  simp only [wInner_one_eq_sum, inner_apply', RCLike.conj_to_real, mul_sum, sum_mul, smul_sum,
     @sum_comm _ _ (Fin p → G), sum_dconv_mul, dconv_apply_sub, Fintype.sum_pow, map_indicate]
   congr with b₁
   congr with b₂
@@ -102,7 +102,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
   have hgB : ∑ s, g s = #B₁ * #B₂ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p := by
     have hAdconv : 0 ≤ 𝟭_[ℝ] A ○ 𝟭 A := dconv_nonneg indicate_nonneg indicate_nonneg
     simpa only [wLpNorm_pow_eq_sum_norm hp₀, norm_of_nonneg (hAdconv _), NNReal.smul_def,
-      NNReal.coe_dconv, NNReal.coe_comp_mu, wInner_one_eq_sum, Pi.one_apply, inner_apply,
+      NNReal.coe_dconv, NNReal.coe_comp_mu, wInner_one_eq_sum, Pi.one_apply, inner_apply',
       conj_to_real, mul_one, sum_dconv, sum_indicate, nsmul_eq_mul, Nat.cast_mul] using
       lemma_0 p B₁ B₂ A 1
   suffices ∑ s, ⟪𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s), (↑) ∘ f⟫_[ℝ] * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p
@@ -112,7 +112,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
     refine ⟨_, inter_subset_left (s₂ := c p A s), _, inter_subset_left (s₂ := c p A s), ?_⟩
     simp only [indicate_apply, mem_filter, mem_univ, true_and, boole_mul] at hs
     split_ifs at hs with h; swap
-    · simp only [zero_mul, wInner_one_eq_sum, Function.comp_apply, RCLike.inner_apply,
+    · simp only [zero_mul, wInner_one_eq_sum, Function.comp_apply, RCLike.inner_apply',
         RCLike.conj_to_real] at hs
       have : 0 ≤ 𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s) := dconv_nonneg indicate_nonneg indicate_nonneg
       -- positivity

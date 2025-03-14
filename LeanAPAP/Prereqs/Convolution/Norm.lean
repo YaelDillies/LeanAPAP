@@ -20,23 +20,22 @@ section RCLike
 variable [RCLike 𝕜] {p : ℝ≥0∞}
 
 lemma conv_eq_wInner_one (f g : ι → 𝕜) (a : ι) : (f ∗ g) a = ⟪conj f, τ a fun x ↦ g (-x)⟫_[𝕜] := by
-  simp [wInner_one_eq_sum, conv_eq_sum_sub', map_sum]
+  simp [wInner_one_eq_sum, conv_eq_sum_sub', map_sum, mul_comm]
 
 lemma dconv_eq_wInner_one (f g : ι → 𝕜) (a : ι) : (f ○ g) a = conj ⟪f, τ a g⟫_[𝕜] := by
-  simp [wInner_one_eq_sum, dconv_eq_sum_sub', map_sum]
+  simp [wInner_one_eq_sum, dconv_eq_sum_sub', map_sum, mul_comm]
 
 lemma wInner_one_dconv (f g h : ι → 𝕜) : ⟪f, g ○ h⟫_[𝕜] = ⟪conj g, conj f ∗ conj h⟫_[𝕜] := by
   calc
     _ = ∑ b, ∑ a, g a * conj (h b) * conj (f (a - b)) := by
-      simp_rw [wInner_one_eq_sum, inner_apply, mul_comm _ ((_ ○ _) _), sum_dconv_mul]
+      simp_rw [wInner_one_eq_sum, inner_apply, sum_dconv_mul]
       exact sum_comm
     _ = ∑ b, ∑ a, conj (f a) * conj (h b) * g (a + b) := by
       simp_rw [← Fintype.sum_prod_type']
       exact Fintype.sum_equiv ((Equiv.refl _).prodShear Equiv.subRight) _ _
         (by simp [mul_rotate, mul_right_comm])
     _ = _ := by
-      simp_rw [wInner_one_eq_sum, inner_apply, mul_comm _ ((_ ∗ _) _), sum_conv_mul, Pi.conj_apply,
-        RCLike.conj_conj]
+      simp_rw [wInner_one_eq_sum, inner_apply, sum_conv_mul, Pi.conj_apply, RCLike.conj_conj]
       exact sum_comm
 
 lemma wInner_one_conv (f g h : ι → 𝕜) : ⟪f, g ∗ h⟫_[𝕜] = ⟪conj g, conj f ○ conj h⟫_[𝕜] := by

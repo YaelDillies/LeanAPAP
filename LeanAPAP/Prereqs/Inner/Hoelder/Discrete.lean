@@ -14,10 +14,10 @@ variable [RCLike 𝕜] {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι] {
 @[simp] lemma wInner_one_self {_ : MeasurableSpace ι} [DiscreteMeasurableSpace ι] (f : ι → 𝕜) :
     ⟪f, f⟫_[𝕜] = ((‖f‖_[2] : ℝ) : 𝕜) ^ 2 := by
   simp_rw [← algebraMap.coe_pow, ← NNReal.coe_pow]
-  simp [dL2Norm_sq_eq_sum_nnnorm, wInner_one_eq_sum, RCLike.conj_mul]
+  simp [dL2Norm_sq_eq_sum_nnnorm, wInner_one_eq_sum, RCLike.mul_conj]
 
 lemma dL1Norm_mul (f g : ι → 𝕜) : ‖f * g‖_[1] = ⟪fun i ↦ ‖f i‖, fun i ↦ ‖g i‖⟫_[ℝ] := by
-  simp [wInner_one_eq_sum, dL1Norm_eq_sum_nnnorm]
+  simp [wInner_one_eq_sum, dL1Norm_eq_sum_nnnorm, mul_comm]
 
 /-- **Cauchy-Schwarz inequality** -/
 lemma wInner_one_le_dL2Norm_mul_dL2Norm (f g : ι → ℝ) : ⟪f, g⟫_[ℝ] ≤ ‖f‖_[2] * ‖g‖_[2] := by

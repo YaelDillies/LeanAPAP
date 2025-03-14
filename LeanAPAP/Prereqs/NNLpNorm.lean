@@ -98,7 +98,7 @@ variable {𝕜 : Type*} [NormedField 𝕜]
     nnLpNorm (1 : α → 𝕜) p μ = (μ Set.univ).toNNReal ^ (p.toReal⁻¹ : ℝ) := by
   simp [Pi.one_def, nnLpNorm_const' hp₀ hp]
 
-lemma nnLpNorm_const_smul [Module 𝕜 E] [BoundedSMul 𝕜 E] (c : 𝕜) (f : α → E) (μ : Measure α) :
+lemma nnLpNorm_const_smul [Module 𝕜 E] [IsBoundedSMul 𝕜 E] (c : 𝕜) (f : α → E) (μ : Measure α) :
     nnLpNorm (c • f) p μ = ‖c‖₊ * nnLpNorm f p μ := by simp [nnLpNorm, eLpNorm_const_smul]
 
 lemma nnLpNorm_nsmul [NormedSpace ℝ E] (n : ℕ) (f : α → E) (μ : Measure α) :

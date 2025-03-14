@@ -32,7 +32,7 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
   ext; simp [wInner_sub_right, cft_apply]
 
 @[simp] lemma cft_const (a : ℂ) (hψ : ψ ≠ 0) : cft (const α a) ψ = 0 := by
-  simp only [cft_apply, wInner_cWeight_eq_expect, inner_apply, const_apply, ← expect_mul,
+  simp only [cft_apply, wInner_cWeight_eq_expect, inner_apply', const_apply, ← expect_mul,
     ← map_expect, expect_eq_zero_iff_ne_zero.2 hψ, map_zero, zero_mul]
 
 @[simp] lemma cft_smul {𝕝 : Type*} [CommSemiring 𝕝] [StarRing 𝕝] [Algebra 𝕝 ℂ] [StarModule 𝕝 ℂ]
@@ -43,7 +43,7 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
 @[simp] lemma wInner_one_cft (f g : α → ℂ) : ⟪cft f, cft g⟫_[ℂ] = ⟪f, g⟫ₙ_[ℂ] := by
   classical
   unfold cft
-  simp_rw [wInner_one_eq_sum, wInner_cWeight_eq_expect, inner_apply, map_expect, map_mul,
+  simp_rw [wInner_one_eq_sum, wInner_cWeight_eq_expect, inner_apply', map_expect, map_mul,
     starRingEnd_self_apply, expect_mul, mul_expect, ← expect_sum_comm,
     mul_mul_mul_comm _ (conj <| f _), ← sum_mul, ← AddChar.inv_apply_eq_conj, ← map_neg_eq_inv,
     ← map_add_eq_mul, AddChar.sum_apply_eq_ite]
@@ -57,7 +57,7 @@ lemma cft_apply (f : α → ℂ) (ψ : AddChar α ℂ) : cft f ψ = ⟪ψ, f⟫�
 
 /-- **Fourier inversion** for the discrete Fourier transform. -/
 lemma cft_inversion (f : α → ℂ) (a : α) : ∑ ψ, cft f ψ * ψ a = f a := by
-  classical simp_rw [cft, wInner_cWeight_eq_expect, inner_apply, expect_mul, ← expect_sum_comm,
+  classical simp_rw [cft, wInner_cWeight_eq_expect, inner_apply', expect_mul, ← expect_sum_comm,
     mul_right_comm _ (f _), ← sum_mul, ← AddChar.inv_apply_eq_conj, inv_mul_eq_div,
     ← map_sub_eq_div, AddChar.sum_apply_eq_ite, sub_eq_zero, ite_mul, zero_mul,
     Fintype.expect_ite_eq]

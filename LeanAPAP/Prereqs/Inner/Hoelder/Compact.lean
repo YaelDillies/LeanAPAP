@@ -16,10 +16,10 @@ variable [RCLike 𝕜] {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι] {
 @[simp] lemma wInner_cWeight_self (f : ι → 𝕜) :
     ⟪f, f⟫ₙ_[𝕜] = ((‖f‖ₙ_[2] : ℝ) : 𝕜) ^ 2 := by
   simp_rw [← algebraMap.coe_pow, ← NNReal.coe_pow]
-  simp [cL2Norm_sq_eq_expect_nnnorm, wInner_cWeight_eq_expect, RCLike.conj_mul]
+  simp [cL2Norm_sq_eq_expect_nnnorm, wInner_cWeight_eq_expect, RCLike.mul_conj]
 
 lemma cL1Norm_mul (f g : ι → 𝕜) : ‖f * g‖ₙ_[1] = ⟪fun i ↦ ‖f i‖, fun i ↦ ‖g i‖⟫ₙ_[ℝ] := by
-  simp [wInner_cWeight_eq_expect, cL1Norm_eq_expect_nnnorm]
+  simp [wInner_cWeight_eq_expect, cL1Norm_eq_expect_nnnorm, mul_comm]
 
 /-- **Cauchy-Schwarz inequality** -/
 lemma wInner_cWeight_le_cL2Norm_mul_cL2Norm (f g : ι → ℝ) : ⟪f, g⟫ₙ_[ℝ] ≤ ‖f‖ₙ_[2] * ‖g‖ₙ_[2] := by
@@ -75,7 +75,7 @@ variable {α : Type*} {mα : MeasurableSpace α} [DiscreteMeasurableSpace α] [F
 
 lemma norm_wInner_cWeight_le (f g : α → 𝕜) :
     ‖⟪f, g⟫ₙ_[𝕜]‖₊ ≤ ⟪fun a ↦ ‖f a‖, fun a ↦ ‖g a‖⟫ₙ_[ℝ] := by
-  simpa [wInner_cWeight_eq_expect, norm_mul]
+  simpa [wInner_cWeight_eq_expect, norm_mul, mul_comm]
     using norm_expect_le (K := ℝ) (f := fun i ↦ conj (f i) * g i)
 
 /-- **Hölder's inequality**, binary case. -/

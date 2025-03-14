@@ -20,31 +20,28 @@ variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg' {f : G → ℂ} (hf : g ○ g = f) (hν : h ○ h = (↑) ∘ ν) (k : ℕ) :
     0 ≤ ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] := by
-  suffices
-    ⟪f ^ k, (↑) ∘ ν⟫_[ℂ] = ∑ z : Fin k → G, (‖∑ x, (∏ i, conj (g (x + z i))) * h x‖ : ℂ) ^ 2 by
-    rw [this]
-    positivity
-  rw [← hf, ← hν, wInner_one_eq_sum]
-  simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
-  simp_rw [dconv_apply h, mul_sum]
-  --TODO: Please make `conv` work here :(
-  have : ∀ x, ∀ yz ∈ ({yz : G × G | yz.1 - yz.2 = x} : Finset _),
-    conj ((g ○ g) x) ^ k * (h yz.1 * conj (h yz.2)) =
-      conj ((g ○ g) (yz.1 - yz.2)) ^ k * (h yz.1 * conj (h yz.2)) := by
-    simp only [mem_filter, mem_univ, true_and]
-    rintro _ _ rfl
-    rfl
-  refine (sum_congr rfl fun _ _ ↦ sum_congr rfl <| this _).trans ?_
+  calc
+    0 ≤ ∑ z : Fin k → G, (‖∑ x, (∏ i, conj (g (x + z i))) * h x‖ : ℂ) ^ 2 := by positivity
+    _ = ∑ x : G, ∑ yz : G × G with yz.1 - yz.2 = x,
+          h yz.1 * conj h yz.2 * conj ((g ○ g) (yz.1 - yz.2)) ^ k := ?_
+    _ = ∑ x : G, ∑ yz : G × G with yz.1 - yz.2 = x,
+          h yz.1 * conj h yz.2 * conj ((g ○ g) x) ^ k := by
+        congr! with x _ yz hyz
+        simpa using hyz
+    _ = _ := by
+      rw [← hf, ← hν, wInner_one_eq_sum]
+      simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
+      simp_rw [dconv_apply h, sum_mul]
   simp_rw [dconv_apply_sub, sum_fiberwise, ← univ_product_univ, sum_product]
   simp only [sum_pow', sum_mul_sum, map_mul, starRingEnd_self_apply, Fintype.piFinset_univ,
     ← Complex.conj_mul', sum_product, map_sum, map_prod,
     mul_mul_mul_comm (g _), ← prod_mul_distrib]
-  simp only [sum_mul, @sum_comm _ _ (Fin k → G), mul_comm (conj _), prod_mul_distrib]
+  simp only [mul_sum, @sum_comm _ _ (Fin k → G), mul_comm (conj _), prod_mul_distrib, Pi.conj_apply]
   rw [sum_comm]
   congr with x
   congr with y
   congr with z
-  rw [mul_mul_mul_comm _ _ _ (h _), mul_comm (h _)]
+  group
 
 /-- Note that we do the physical proof in order to avoid the Fourier transform. -/
 lemma pow_inner_nonneg {f : G → ℝ} (hf : g ○ g = (↑) ∘ f) (hν : h ○ h = (↑) ∘ ν) (k : ℕ) :
@@ -87,19 +84,21 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
   have : ε ^ p ≤ 2 * ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * (f⁺) i) := by
     calc
       ε ^ p ≤ ‖f‖_[p, ν] ^ p := hp₁.strictMono_pow.monotone hε
-      _ = ∑ i, ν i • ((f ^ (p - 1)) i * |f| i) := ?_
+      _ = ∑ i, ν i • ((f ^ (p - 1)) i * |f| i) := by
+        norm_cast
+        rw [wLpNorm_pow_eq_sum_nnnorm hp₁.pos.ne']
+        push_cast
+        dsimp
+        refine sum_congr rfl fun i _ ↦ ?_
+        rw [← abs_of_nonneg ((Nat.Odd.sub_odd hp₁ odd_one).pow_nonneg <| f _), abs_pow,
+          pow_sub_one_mul hp₁.pos.ne', NNReal.smul_def, smul_eq_mul]
       _ ≤ ⟪((↑) ∘ ν : G → ℝ), f ^ p⟫_[ℝ] + ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * |f| i) :=
         (le_add_of_nonneg_left <| pow_inner_nonneg hf hν _)
-      _ = _ := ?_
-    · norm_cast
-      rw [wLpNorm_pow_eq_sum_nnnorm hp₁.pos.ne']
-      push_cast
-      dsimp
-      refine sum_congr rfl fun i _ ↦ ?_
-      rw [← abs_of_nonneg ((Nat.Odd.sub_odd hp₁ odd_one).pow_nonneg <| f _), abs_pow,
-        pow_sub_one_mul hp₁.pos.ne', NNReal.smul_def, smul_eq_mul]
-    · simp [wInner_one_eq_sum, ← sum_add_distrib, ← mul_add, ← pow_sub_one_mul hp₁.pos.ne' (f _),
-        mul_sum, mul_left_comm (2 : ℝ), add_abs_eq_two_nsmul_posPart]
+      _ = ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * (f i + |f i|)) := by
+        simp [wInner_one_eq_sum, mul_add, sum_add_distrib, pow_sub_one_mul hp₁.pos.ne' (f _)]
+        simp [mul_comm]
+      _ = ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * (2 • (f i)⁺)) := by simp [add_abs_eq_two_nsmul_posPart]
+      _ = _ := by simp [mul_sum, mul_left_comm (2 : ℝ)]
   set P : Finset _ := {i | 0 ≤ f i}
   set T : Finset _ := {i | 3 / 4 * ε ≤ f i}
   have hTP : T ⊆ P := monotone_filter_right _ fun i ↦ le_trans <| by positivity

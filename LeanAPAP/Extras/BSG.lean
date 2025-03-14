@@ -42,8 +42,7 @@ private lemma oneOfPair_bound_two (hH : H ⊆ X ×ˢ X) (Hcard : (7 / 8 : ℝ) *
               ∑ x ∈ oneOfPair H X, (#{yz ∈ H | yz.1 = x} : ℝ) := by
         rw [sum_sdiff_eq_sub, sub_add]; exact filter_subset ..
        _ = ∑ x ∈ oneOfPair H X, (#{yz ∈ H | yz.1 = x} : ℝ) := by
-        rw [add_left_eq_self, sub_eq_zero, ← Nat.cast_sum, Nat.cast_inj,
-          ← card_eq_sum_card_fiberwise]
+        rw [add_eq_right, sub_eq_zero, ← Nat.cast_sum, Nat.cast_inj, ← card_eq_sum_card_fiberwise]
         exact fun x hx ↦ (mem_product.1 (hH hx)).1
        _ ≤ ∑ _x ∈ oneOfPair H X, (#X : ℝ) := by
         simp_rw [oneOfPair_mem' hH]; gcongr with i; exact filter_subset ..
@@ -374,7 +373,7 @@ lemma big_quadruple_bound {K : ℝ}
       rw [← Nat.cast_sum, ← card_eq_sum_card_fiberwise]
       · simp only [card_product, Nat.cast_mul]
         ring_nf
-      · simp
+      · simp [Set.MapsTo]
 
 theorem BSG_aux {K : ℝ} (hK : 0 < K) (hA : (0 : ℝ) < #A) (hB : (0 : ℝ) < #B)
     (hAB : K⁻¹ * (#A ^ 2 * #B) ≤ E[A, B]) :

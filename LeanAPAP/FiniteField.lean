@@ -1,3 +1,4 @@
+import Mathlib.Algebra.Group.Pointwise.Finset.Density
 import Mathlib.FieldTheory.Finite.Basic
 import LeanAPAP.Prereqs.Chang
 import LeanAPAP.Prereqs.Convolution.ThreeAP
@@ -102,7 +103,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     _ = ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈𝓛 γ⌉₊), μ univ] * γ ^ (-(p : ℝ)⁻¹) := ?_
     _ ≤ _ := mul_le_mul_of_nonneg_left ?_ <| by positivity
   · rw [← balance_conv, balance, wInner_sub_left, wInner_one_const_left, expect_conv, sum_mu ℝ hA,
-      expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, mul_one, ← mul_inv_cancel₀, ← mul_sub,
+      expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, one_mul, ← mul_inv_cancel₀, ← mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
   · rw [dLpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
     any_goals positivity
@@ -414,7 +415,9 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
         rw [← wInner_one_dconv_eq_conv_wInner_one, dconv_right_comm, conv_dconv_right_comm (μ A),
           wInner_one_dconv_eq_conv_wInner_one, ← dconv_wInner_one_eq_wInner_one_conv,
           ← conj_wInner_symm]
-        simp [wInner_one_eq_sum, inner_apply, smul_sum, mul_assoc]
+        simp [wInner_one_eq_sum, inner_apply', smul_sum, mul_assoc]
+        congr! 1
+        group
       _ ≤ card G • (‖μ_[ℝ] (Set.toFinset V) ∗ μ A‖_[∞] * ‖μ_[ℝ] A ∗ μ A₂ ○ μ A₁‖_[1]) := by
         gcongr; exact wInner_one_le_dLpNorm_mul_dLpNorm .top_one _ _
       _ = _ := by
@@ -485,7 +488,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
       exact .inl hB'.le
     obtain ⟨V', _, hVV', hv'⟩ := di_in_ff hq₃ hq (by positivity) two_inv_lt_one (by
       rwa [Finset.dens_image (Nat.Coprime.nsmul_right_bijective _)]
-      simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow) hα₀ this
+      simpa [Module.card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow) hα₀ this
     rw [dLinftyNorm_eq_iSup_norm, ← Finset.sup'_univ_eq_ciSup, Finset.le_sup'_iff] at hv'
     obtain ⟨x, -, hx⟩ := hv'
     let B' : Finset V' := (-x +ᵥ B).preimage (↑) Set.injOn_subtype_val
@@ -546,7 +549,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
           _ ≤ 1 := by norm_num
   rw [hB.wInner_one_mu_conv_mu_mu_two_smul_mu] at hBV
   swap
-  · simpa [card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow
+  · simpa [Module.card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow
   suffices h : (q ^ (n - 2 ^ 155 * 𝓛 α ^ 9) : ℝ) ≤ q ^ (n / 2) by
     rwa [rpow_le_rpow_left_iff ‹_›, sub_le_comm, sub_half, div_le_iff₀' zero_lt_two, ← mul_assoc,
       ← pow_succ'] at h
@@ -568,7 +571,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
             (2 ^ 7)⁻¹ ≤ 1 - (65 / 64)⁻¹ := by norm_num
             _ ≤ log (65 / 64) := one_sub_inv_le_log_of_pos (by positivity)
         _ = 2 ^ 155 * 𝓛 α ^ 9 := by ring
-    _ = ↑(card V) := by simp [card_eq_pow_finrank (K := ZMod q) (V := V)]
+    _ = ↑(card V) := by simp [Module.card_eq_pow_finrank (K := ZMod q) (V := V)]
     _ ≤ 2 * β⁻¹ ^ 2 := by
       rw [← natCast_card_mul_nnratCast_dens, mul_pow, mul_inv, ← mul_assoc,
         ← div_eq_mul_inv (card V : ℝ), ← zpow_one_sub_natCast₀ (by positivity)] at hBV

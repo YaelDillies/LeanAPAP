@@ -43,7 +43,7 @@ noncomputable def marcinkiewiczZygmundSymmConst (p : ℝ≥0) : ℝ := (p / 2) ^
 /-- The **Marcinkiewicz-Zygmund inequality** for symmetric random variables, with a slightly better
 constant than `marcinkiewicz_zygmund`. -/
 theorem marcinkiewicz_zygmund_symmetric
-    (iIndepFun_X : iIndepFun (fun _ ↦ mE) X μ)
+    (iIndepFun_X : iIndepFun X μ)
     (identDistrib_neg_X : ∀ i, IdentDistrib (X i) (-X i) μ μ)
     (MemLp_X : ∀ i ∈ A, MemLp (X i) (2 * m) μ) :
     ∫ ω, ‖∑ i ∈ A, X i ω‖ ^ (2 * m) ∂μ ≤
@@ -169,7 +169,7 @@ noncomputable def marcinkiewiczZygmundConst (p : ℝ≥0) : ℝ :=
 
 For symmetric random variables, `marcinkiewicz_zygmund` provides a slightly better constant. -/
 theorem marcinkiewicz_zygmund
-    (iIndepFun_X : iIndepFun (fun _ ↦ ‹_›) X μ)
+    (iIndepFun_X : iIndepFun X μ)
     (integral_X : ∀ i, ∫ ω, X i ω ∂μ = 0)
     (MemLp_X : ∀ i ∈ A, MemLp (X i) (2 * m) μ) :
     ∫ ω, ‖∑ i ∈ A, X i ω‖ ^ (2 * m) ∂μ ≤

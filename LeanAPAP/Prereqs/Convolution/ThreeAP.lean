@@ -18,7 +18,7 @@ lemma ThreeAPFree.wInner_one_mu_conv_mu_mu_two_smul_mu (hG : Odd (card G))
     ⟪μ_[ℝ] s ∗ μ s, μ (s.image (2 • ·))⟫_[ℝ] = (#s ^ 2 : ℝ)⁻¹ := by
   obtain rfl | hs' := s.eq_empty_or_nonempty
   · simp
-  simp only [wInner_one_eq_sum, inner_apply, sum_conv_mul, ← sum_product', RCLike.conj_to_real]
+  simp only [wInner_one_eq_sum, inner_apply', sum_conv_mul, ← sum_product', RCLike.conj_to_real]
   rw [← diag_union_offDiag univ, sum_union (disjoint_diag_offDiag _), sum_diag, ←
     sum_add_sum_compl s, @sum_eq_card_nsmul _ _ _ _ _ (#s ^ 3 : ℝ)⁻¹, nsmul_eq_mul,
     Finset.sum_eq_zero, Finset.sum_eq_zero, add_zero, add_zero, pow_succ', mul_inv,

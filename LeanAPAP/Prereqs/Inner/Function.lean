@@ -14,9 +14,9 @@ lemma wInner_one_indicate (f : ι → 𝕜) (s : Finset ι) : ⟪f, 𝟭 s⟫_[�
   simp [wInner_one_eq_sum, indicate_apply]
 
 lemma mu_wInner_one (s : Finset ι) (f : ι → 𝕜) : ⟪μ s, f⟫_[𝕜] = 𝔼 i ∈ s, f i := by
-  simp [wInner_one_eq_sum, indicate_apply]; simp [mu_apply, expect_eq_sum_div_card, mul_sum,
-    div_eq_inv_mul]
+  simp [wInner_one_eq_sum, indicate_apply]; simp [mu_apply, expect_eq_sum_div_card, sum_mul,
+    div_eq_mul_inv]
 
 lemma wInner_one_mu (f : ι → 𝕜) (s : Finset ι) : ⟪f, μ s⟫_[𝕜] = 𝔼 i ∈ s, conj (f i) := by
-  simp [wInner_one_eq_sum, indicate_apply, mu_apply, expect_eq_sum_div_card, sum_mul,
-    div_eq_mul_inv]
+  simp [wInner_one_eq_sum, indicate_apply, mu_apply, expect_eq_sum_div_card, mul_sum,
+    div_eq_inv_mul]
