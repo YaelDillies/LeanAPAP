@@ -31,10 +31,13 @@ jobs:
     name: Build project
     steps:
       - name: Checkout project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Copy README.md to website/index.md
         run: cp README.md website/index.md
+
+      - name: Check LeanAPAP.Mathlib only imports from Mathlib or LeanAPAP.Mathlib
+        run: python3 scripts/check_mathlib_imports.py
 
       - name: Upstreaming dashboard
         run: |
@@ -42,7 +45,7 @@ jobs:
           python3 scripts/upstreaming_dashboard.py
 
       - name: Install elan
-        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.5.0
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.15.0
 
       - name: Get cache
         run: ~/.elan/bin/lake exe cache get || true
@@ -66,20 +69,26 @@ jobs:
       - name: Build documentation
         run: scripts/build_docs.sh
 
-      # - name: Build blueprint and copy to `website/blueprint`
-      #   uses: xu-cheng/texlive-action@v2
-      #   with:
-      #     scheme: full
-      #     run: |
-      #       apk update
-      #       apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
-      #       git config --global --add safe.directory $GITHUB_WORKSPACE
-      #       git config --global --add safe.directory `pwd`
-      #       python3 -m pip install --upgrade pip requests wheel
-      #       python3 -m pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
-      #       pip install -r blueprint/requirements.txt
-      #       python3 -m pip install invoke
-      #       inv all
+      - name: Build blueprint and copy to `website/blueprint`
+        uses: xu-cheng/texlive-action@v2
+        with:
+          docker_image: ghcr.io/xu-cheng/texlive-full:20231201
+          run: |
+            # Install necessary dependencies and build the blueprint
+            apk update
+            apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
+            git config --global --add safe.directory $GITHUB_WORKSPACE
+            git config --global --add safe.directory `pwd`
+            python3 -m venv env
+            source env/bin/activate
+            pip install --upgrade pip requests wheel
+            pip install pygraphviz --global-option=build_ext --global-option="-L/usr/lib/graphviz/" --global-option="-R/usr/lib/graphviz/"
+            pip install leanblueprint
+            leanblueprint pdf
+            mkdir -p docs
+            cp blueprint/print/print.pdf website/blueprint.pdf
+            leanblueprint web
+            cp -r blueprint/web website/blueprint
 
       - name: Copy documentation to `website/docs`
         run: mv docs/build/* website/docs
