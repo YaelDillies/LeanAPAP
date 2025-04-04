@@ -35,7 +35,7 @@ lemma indicate_inter (s t : Finset α) : 𝟭_[β] (s ∩ t) = 𝟭 s * 𝟭 t :
   funext <| indicate_inter_apply _ _
 
 lemma map_indicate (f : β →+* γ) (s : Finset α) (x : α) : f (𝟭 s x) = 𝟭 s x :=
-  RingHom.map_ite_one_zero _ _
+  MonoidWithZeroHom.map_ite_one_zero _ _
 
 variable (β)
 

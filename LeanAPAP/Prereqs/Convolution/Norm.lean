@@ -78,8 +78,8 @@ lemma dLpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : ι → 𝕜) : ‖f �
   rw [← NNReal.rpow_le_rpow_iff hp₀, NNReal.mul_rpow]
   dsimp
   simp_rw [dLpNorm_rpow_eq_sum_nnnorm hp₀.ne', conv_eq_sum_sub']
-  have hpconj : (p : ℝ).IsConjExponent (1 - (p : ℝ)⁻¹)⁻¹ :=
-    ⟨hp, by simp_rw [inv_inv, add_sub_cancel]⟩
+  have hpconj : (p : ℝ).HolderConjugate (1 - (p : ℝ)⁻¹)⁻¹ :=
+    ⟨by simp, mod_cast hp₀, by simpa using inv_lt_one_of_one_lt₀ hp⟩
   have (x) : ‖∑ y, f y * g (x - y)‖₊ ^ (p : ℝ) ≤
       (∑ y, ‖f y‖₊ ^ (p : ℝ) * ‖g (x - y)‖₊) * (∑ y, ‖g (x - y)‖₊) ^ (p - 1 : ℝ) := by
     rw [← NNReal.le_rpow_inv_iff_of_pos, NNReal.mul_rpow, ← NNReal.rpow_mul, sub_one_mul,

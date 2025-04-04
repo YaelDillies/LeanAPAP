@@ -343,7 +343,7 @@ lemma coe_conv : (↑((f ∗ g) a) : 𝕜) = ((↑) ∘ f ∗ (↑) ∘ g) a :=
   map_conv (algebraMap ℝ 𝕜) _ _ _
 
 @[simp, norm_cast]
-lemma coe_dconv : (↑((f ○ g) a) : 𝕜) = ((↑) ∘ f ○ (↑) ∘ g) a := by simp [dconv_apply, coe_sum]
+lemma coe_dconv : (↑((f ○ g) a) : 𝕜) = ((↑) ∘ f ○ (↑) ∘ g) a := by simp [dconv_apply]
 
 @[simp] lemma coe_comp_conv : ((↑) : ℝ → 𝕜) ∘ (f ∗ g) = (↑) ∘ f ∗ (↑) ∘ g := funext <| coe_conv _ _
 

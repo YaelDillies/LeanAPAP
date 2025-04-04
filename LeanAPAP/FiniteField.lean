@@ -90,13 +90,14 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
   have hp : 1 < p :=
     Nat.succ_le_iff.1 (le_mul_of_one_le_right zero_le' <| Nat.ceil_pos.2 <| curlog_pos hγ.le hγ₁)
   have hp' : (p⁻¹ : ℝ≥0) < 1 := inv_lt_one_of_one_lt₀ <| mod_cast hp
-  have hp'' : (p : ℝ≥0).IsConjExponent _ := .conjExponent <| mod_cast hp
+  have hp'' : (p : ℝ≥0).HolderConjugate _ := .conjExponent <| mod_cast hp
+  have : (p : ℝ≥0∞).HolderConjugate _ := hp''.coe_ennreal
   rw [mul_comm, ← div_div, div_le_iff₀ (zero_lt_two' ℝ)]
   calc
     _ ≤ _ := div_le_div_of_nonneg_right hAC (card G).cast_nonneg
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
     _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[NNReal.conjExponent p] :=
-        abs_wInner_one_le_dLpNorm_mul_dLpNorm hp''.coe_ennreal _ _
+        abs_wInner_one_le_dLpNorm_mul_dLpNorm _ _
     _ ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-(p : ℝ)⁻¹) * γ ^ (-(p : ℝ)⁻¹)) :=
         mul_le_mul (dLpNorm_conv_le_dLpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
           (by positivity) (by positivity)
@@ -105,7 +106,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
   · rw [← balance_conv, balance, wInner_sub_left, wInner_one_const_left, expect_conv, sum_mu ℝ hA,
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, one_mul, ← mul_inv_cancel₀, ← mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
-  · rw [dLpNorm_mu hp''.symm.one_le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
+  · rw [dLpNorm_mu hp''.symm.lt.le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
     any_goals positivity
     rw [nnratCast_dens, le_div_iff₀, mul_comm] at hγC
     any_goals positivity
@@ -419,7 +420,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
         congr! 1
         group
       _ ≤ card G • (‖μ_[ℝ] (Set.toFinset V) ∗ μ A‖_[∞] * ‖μ_[ℝ] A ∗ μ A₂ ○ μ A₁‖_[1]) := by
-        gcongr; exact wInner_one_le_dLpNorm_mul_dLpNorm .top_one _ _
+        gcongr; exact wInner_one_le_dLpNorm_mul_dLpNorm _ _
       _ = _ := by
         have : 0 < (4 : ℝ)⁻¹ * A.dens ^ (2 * q') := by positivity
         replace hA₁ : A₁.Nonempty := by simpa using this.trans_le hA₁

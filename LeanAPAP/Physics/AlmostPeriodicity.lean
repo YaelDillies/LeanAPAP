@@ -420,7 +420,8 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
   set M : ℕ := 2 * ⌈m⌉₊
   have hM₀ : (M : ℝ≥0) ≠ 0 := by positivity
   have hM₁ : 1 < (M : ℝ≥0) := by norm_cast; simp [← Nat.succ_le_iff, M]; linarith
-  have hM : (M : ℝ≥0).IsConjExponent _ := .conjExponent hM₁
+  have hM : (M : ℝ≥0).HolderConjugate _ := NNReal.HolderConjugate.conjExponent hM₁
+  have : (M : ℝ≥0∞).HolderConjugate _ := hM.coe_ennreal
   refine ⟨T, ?_, fun t ht ↦ ?_⟩
   · calc
       _ = K ^(-(512 * 8) / ε ^ 2 * ⌈m⌉₊) * #S := by
@@ -447,13 +448,13 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
       = ‖∑ y, F y * μ (x +ᵥ -C) y‖ := by rw [this]
     _ ≤ ∑ y, ‖F y * μ (x +ᵥ -C) y‖ := norm_sum_le _ _
     _ = ‖F * μ (x +ᵥ -C)‖_[1] := by rw [dL1Norm_eq_sum_norm]; rfl
-    _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := dL1Norm_mul_le hM _ _
+    _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := dL1Norm_mul_le  _ _
     _ ≤ ε / exp 1 * #B ^ (M : ℝ)⁻¹ * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := by
         gcongr
         simpa only [← ENNReal.coe_natCast, dLpNorm_indicate hM₀] using hT _ ht
     _ = ε * ((#C / #B) ^ (-(M : ℝ)⁻¹) / exp 1) := by
-        rw [← mul_comm_div, dLpNorm_mu hM.symm.one_le hC.neg.vadd_finset, card_vadd_finset,
-          card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc, NNReal.coe_natCast]
+        rw [← mul_comm_div, dLpNorm_mu hM.symm.lt.le hC.neg.vadd_finset, card_vadd_finset, card_neg,
+          hM.symm.coe.inv_sub_one, div_rpow, mul_assoc]
         any_goals positivity
         push_cast
         rw [rpow_neg, rpow_neg, ← div_eq_mul_inv, inv_div_inv]

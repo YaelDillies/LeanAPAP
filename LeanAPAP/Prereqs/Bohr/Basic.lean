@@ -37,7 +37,7 @@ lemma ewidth_eq_top_iff : ψ ∉ B.frequencies ↔ B.ewidth ψ = ⊤ := by
 alias ⟨ewidth_eq_top_of_not_mem_frequencies, _⟩ := ewidth_eq_top_iff
 
 lemma width_eq_zero_of_not_mem_frequencies (hψ : ψ ∉ B.frequencies) : B.width ψ = 0 := by
-  rw [width_def, ewidth_eq_top_of_not_mem_frequencies hψ, ENNReal.top_toNNReal]
+  rw [width_def, ewidth_eq_top_of_not_mem_frequencies hψ, ENNReal.toNNReal_top]
 
 lemma ewidth_injective : Function.Injective (BohrSet.ewidth (G := G)) := by
   intro B₁ B₂ h
@@ -311,7 +311,7 @@ lemma eq_zero_of_ewidth_eq_zero {B : BohrSet G} [Finite G] (h : B.ewidth = 0) :
   apply hψ
   have hψ' : ψ ∈ B.frequencies := by simp [B.mem_frequencies, h]
   specialize hx hψ'
-  rwa [B.width_def, h, Pi.zero_apply, ENNReal.zero_toNNReal, nonpos_iff_eq_zero, nnnorm_eq_zero,
+  rwa [B.width_def, h, Pi.zero_apply, ENNReal.toNNReal_zero, nonpos_iff_eq_zero, nnnorm_eq_zero,
     sub_eq_zero, eq_comm] at hx
 
 @[simp] lemma AddChar.nnnorm_apply {α G : Type*}

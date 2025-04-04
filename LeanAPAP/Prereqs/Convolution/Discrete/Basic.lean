@@ -1,4 +1,5 @@
 import Mathlib.Algebra.BigOperators.Balance
+import Mathlib.Algebra.Group.Pointwise.Finset.BigOperators
 import Mathlib.Algebra.Module.Pi
 import Mathlib.Analysis.Complex.Basic
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
