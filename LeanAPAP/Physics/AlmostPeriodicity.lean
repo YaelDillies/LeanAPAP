@@ -3,7 +3,6 @@ import Mathlib.Combinatorics.Additive.DoublingConst
 import Mathlib.Data.Complex.ExponentialBounds
 import Mathlib.Data.Finset.CastCard
 import Mathlib.Tactic.Bound
-import LeanAPAP.Mathlib.Data.Complex.Basic
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic
 import LeanAPAP.Prereqs.Convolution.Norm
 import LeanAPAP.Prereqs.Function.Indicator.Complex
@@ -412,8 +411,8 @@ lemma almost_periodicity' (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) 
     ∃ T : Finset G,
       K ^ (-512 * m / ε ^ 2 : ℝ) * S.card ≤ T.card ∧
         ∀ t ∈ T, ‖τ t (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ ε * ‖f‖_[2 * m] := by
-  simpa [← Complex.ofReal_comp_mu, ← Complex.coe_comp_conv, ← comp_translate,
-    ← Complex.coe_comp_sub] using almost_periodicity ε hε hε' m ((↑) ∘ f) hK₂ hK
+  simpa [← Complex.ofReal_comp_mu, ← Complex.ofReal_comp_conv, ← comp_translate,
+    ← Complex.ofReal_comp_sub] using almost_periodicity ε hε hε' m ((↑) ∘ f) hK₂ hK
 
 theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hK₂ : 2 ≤ K)
     (hK : σ[A, S] ≤ K) (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty) :

@@ -2,7 +2,6 @@ import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.MeanInequalities
 import Mathlib.Tactic.Bound
 import LeanAPAP.Prereqs.Energy
-import LeanAPAP.Prereqs.Expect.MeanInequalities
 import LeanAPAP.Prereqs.LargeSpec
 import LeanAPAP.Prereqs.Rudin
 
@@ -90,7 +89,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
     calc
       η * ‖f‖ₙ_[1] * Δ.card ≤ ∑ γ ∈ Δ, ‖cft f γ‖ := by
         rw [← nsmul_eq_mul']
-        exact card_nsmul_le_sum _ _ _ fun x hx ↦ mem_largeSpec.1 $ hΔ hx
+        exact card_nsmul_le_sum _ _ _ fun x hx ↦ mem_largeSpec_iff_cft.1 <| hΔ hx
       _ ≤ |∑ i ∈ Δ, ‖cft f i‖| := le_abs_self _
       _ = ‖𝔼 x, f x * ∑ γ ∈ Δ, c γ * conj (γ x)‖ := by
         simp_rw [mul_sum, mul_comm (f _), mul_assoc (c _), expect_sum_comm, ← mul_expect,
@@ -174,10 +173,10 @@ lemma chang (hf : f ≠ 0) (hη : 0 < η) :
   let α := ‖f‖ₙ_[1] ^ 2 / ‖f‖ₙ_[2] ^ 2
   have : 0 < α := by positivity
   set β := ⌈𝓛 α⌉₊
-  have hβ : 0 < β := Nat.ceil_pos.2 $ curlog_pos (by positivity) <|
-    div_le_one_of_le (by dsimp; gcongr; exact one_le_two) (by dsimp; positivity)
+  have hβ : 0 < β := Nat.ceil_pos.2 <| curlog_pos (by positivity) <|
+    div_le_one_of_le₀ (by dsimp; gcongr; exact one_le_two) (by dsimp; positivity)
   have : 0 < ‖f‖ₙ_[1] := by positivity
-  refine le_of_pow_le_pow_left hβ.ne' zero_le' <| Nat.cast_le.1 <| le_of_mul_le_mul_right ?_
+  refine le_of_pow_le_pow_left₀ hβ.ne' zero_le' <| Nat.cast_le.1 <| le_of_mul_le_mul_right ?_
     (by positivity : 0 < Δ.card ^ β * (η ^ (2 * β) * α))
   push_cast
   rw [← mul_assoc, ← pow_add, ← two_mul]

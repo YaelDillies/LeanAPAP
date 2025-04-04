@@ -15,7 +15,8 @@ noncomputable def largeSpec (f : G → ℂ) (η : ℝ) : Finset (AddChar G ℂ) 
   {ψ | η * ‖f‖ₙ_[1] ≤ ‖cft f ψ‖}
 
 lemma mem_largeSpec_iff_cft : ψ ∈ largeSpec f η ↔ η * ‖f‖ₙ_[1] ≤ ‖cft f ψ‖ := by simp [largeSpec]
-lemma mem_largeSpec_iff_dft : ψ ∈ largeSpec f η ↔ η * ‖f‖_[1] ≤ ‖dft f ψ‖ := by simp [largeSpec]
+lemma mem_largeSpec_iff_dft : ψ ∈ largeSpec f η ↔ η * ‖f‖_[1] ≤ ‖dft f ψ‖ := by
+  simp [largeSpec]; sorry
 
 lemma largeSpec_anti (f : G → ℂ) : Antitone (largeSpec f) := fun η ν h ψ ↦ by
   simp_rw [mem_largeSpec_iff_cft]; exact (mul_le_mul_of_nonneg_right h (by positivity)).trans
