@@ -36,12 +36,7 @@ local notation a " /ℚ " q => (q : ℚ≥0)⁻¹ • a
 
 variable {G H R S : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
 
-/-!
-### Convolution of functions
-
-In this section, we define the convolution `f ∗ₙ g` and difference convolution `f ○ₙ g` of functions
-`f g : G → R`, and show how they interact.
--/
+namespace Analysis.Compact
 
 /-! ### Trivial character -/
 
