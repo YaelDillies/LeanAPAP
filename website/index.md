@@ -65,7 +65,7 @@ The discrete convolution/Lp norm/Fourier transform material belongs in mathlib a
 
 On top of the new developments, there are many basic lemmas needed for this project that are currently missing from mathlib.
 
-See the [upstreaming dashboard](https://yaeldillies.github.io/LeanCamCombi/upstreaming) for more information.
+See the [upstreaming dashboard](https://yaeldillies.github.io/LeanAPAP/upstreaming) for more information.
 
 ## Build the Lean files
 

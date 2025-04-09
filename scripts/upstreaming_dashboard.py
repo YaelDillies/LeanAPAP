@@ -42,9 +42,12 @@ def main():
             "num_sorries" : code.count("sorry"),
             "depends" : "import LeanAPAP" in code
         }
-    print(project_files)
 
-    with open("./website/_includes/ready_to_upstream.md", 'w+') as writer:
+    folder_path = "./website/_includes"
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    with open(f"{folder_path}/ready_to_upstream.md", 'w+') as writer:
         text = ""
         for file_path in project_files:
             if project_files[file_path]["num_sorries"] > 0: continue
@@ -55,7 +58,6 @@ def main():
                 if pr["title"][:4] == "perf": continue
                 if pr["is_draft"]: continue
 
-                print(pr)
                 text += f"  * "
                 text += f" ["
                 text += '<svg class="octicon octicon-git-pull-request open color-fg-open mr-1" title="Open" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"></path></svg>'
@@ -64,7 +66,7 @@ def main():
                 text +="\n"
         writer.write(text)
 
-    with open("./website/_includes/easy_to_unlock.md", 'w+') as writer:
+    with open(f"{folder_path}/easy_to_unlock.md", 'w+') as writer:
         text = ""
         for file_path in project_files:
             if project_files[file_path]["num_sorries"] == 0: continue
