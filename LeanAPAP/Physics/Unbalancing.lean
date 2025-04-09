@@ -81,7 +81,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
               (div_le_div_of_nonneg_left (by norm_num) hε₀ hε₁).trans' <| by norm_num))
           (by norm_num) ?_
     all_goals positivity
-  have : ε ^ p ≤ 2 * ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * (f⁺) i) := by
+  have : ε ^ p ≤ 2 * ∑ i, ↑(ν i) * ((f ^ (p - 1)) i * f⁺ i) := by
     calc
       ε ^ p ≤ ‖f‖_[p, ν] ^ p := hp₁.strictMono_pow.monotone hε
       _ = ∑ i, ν i • ((f ^ (p - 1)) i * |f| i) := by
