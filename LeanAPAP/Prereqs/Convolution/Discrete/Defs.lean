@@ -41,7 +41,7 @@ open Finset Fintype Function MeasureTheory
 open scoped ComplexConjugate NNReal Pointwise translate
 
 namespace Analysis.Discrete
-variable {G H R S : Type*} [AddCommGroup G]
+variable {G H K R S : Type*} [AddCommGroup G]
 
 /-! ### Trivial character -/
 
@@ -65,9 +65,32 @@ end CommSemiring
 /-! ### Convolution -/
 
 section NormedRing
-variable [NormedRing R] [NormedSpace ℝ R] [IsScalarTower ℝ R R] [SMulCommClass ℝ R R]
+variable [NormedRing R] {f g : G → R} {a b : G}
+
+/-- The convolution of `f` and `g` exists at `a` when the function `t ↦ f t * g (a - t)` is
+summable. -/
+def ConvExistsAt (f g : G → R) (a : G) : Prop := Summable fun t ↦ ‖f t * g (a - t)‖
+
+/-- The convolution of `f` and `g` exists when the function `t ↦ f t * g (a - t)` is summable
+for all `a`. -/
+def ConvExists (f g : G → R) : Prop := ∀ a, ConvExistsAt f g a
+
+@[simp] lemma ConvExistsAt.of_finite [Finite G] : ConvExistsAt f g a := Summable.of_finite
+@[simp] lemma ConvExists.of_finite [Finite G] : ConvExists f g := fun _ ↦ .of_finite
+
+variable [MeasurableSpace G] [NormedSpace ℝ R] [IsScalarTower ℝ R R] [SMulCommClass ℝ R R]
   [NormedRing S] [NormedSpace ℝ S] [IsScalarTower ℝ S S] [SMulCommClass ℝ S S]
-  [MeasurableSpace G] {f g : G → R} {a b : G}
+
+lemma convolutionExistsAt_mul_count [MeasurableSingletonClass G] :
+    ConvolutionExistsAt f g a (.mul ℝ R) .count ↔ ConvExistsAt f g a := by
+  simp [ConvolutionExistsAt, ConvExistsAt, integrable_count_iff]
+
+lemma convolutionExists_mul_count [MeasurableSingletonClass G] :
+    ConvolutionExists f g (.mul ℝ R) .count ↔ ConvExists f g := by
+  simp [ConvolutionExists, ConvExists, convolutionExistsAt_mul_count]
+
+alias ⟨_, ConvExistsAt.convolutionExistsAt⟩ := convolutionExistsAt_mul_count
+alias ⟨_, ConvExists.convolutionExists⟩ := convolutionExists_mul_count
 
 /-- Discrete convolution. -/
 noncomputable abbrev conv (f g : G → R) : G → R := convolution f g (.mul ℝ _) .count
@@ -100,27 +123,8 @@ end SMul
 @[simp] lemma translate_conv [MeasurableAdd G] (a : G) (f g : G → R) : τ a f ∗ g = τ a (f ∗ g) :=
   translate_convolution ..
 
-/-- The convolution of `f` and `g` exists at `a` when the function `t ↦ f t * g (a - t)` is
-summable. -/
-def ConvExistsAt (f g : G → R) (a : G) : Prop := Summable fun t ↦ ‖f t‖ * ‖g (a - t)‖
-
-/-- The convolution of `f` and `g` exists when the function `t ↦ f t * g (a - t)` is summable
-for all `a`. -/
-def ConvExists (f g : G → R) : Prop := ∀ a, ConvExistsAt f g a
-
-lemma convolutionExistsAt_mul_count [NormMulClass R] [MeasurableSingletonClass G] :
-    ConvolutionExistsAt f g a (.mul ℝ R) .count ↔ ConvExistsAt f g a := by
-  simp [ConvolutionExistsAt, ConvExistsAt, integrable_count_iff, norm_mul]
-
-lemma convolutionExists_mul_count [NormMulClass R] [MeasurableSingletonClass G] :
-    ConvolutionExists f g (.mul ℝ R) .count ↔ ConvExists f g := by
-  simp [ConvolutionExists, ConvExists, convolutionExistsAt_mul_count]
-
-alias ⟨_, ConvExistsAt.convolutionExistsAt⟩ := convolutionExistsAt_mul_count
-alias ⟨_, ConvExists.convolutionExists⟩ := convolutionExists_mul_count
-
 section Countable
-variable [CompleteSpace R] [NormMulClass R] [Countable G] [MeasurableSingletonClass G]
+variable [CompleteSpace R] [Countable G] [MeasurableSingletonClass G]
 
 lemma conv_eq_tsum_sub (hfg : ConvExistsAt f g a) : (f ∗ g) a = ∑' t, f t * g (a - t) := by
   simpa using integral_countable' hfg.convolutionExistsAt
@@ -128,27 +132,16 @@ lemma conv_eq_tsum_sub (hfg : ConvExistsAt f g a) : (f ∗ g) a = ∑' t, f t * 
 lemma conv_eq_tsum_sub' (hfg : ConvExistsAt f g a) : (f ∗ g) a = ∑' t, f (a - t) * g t := by
   rw [conv_eq_tsum_sub hfg]; exact tsum_equiv (.subLeft a) _ _ (by simp)
 
-lemma conv_eq_tsum_add (hfg : ConvExistsAt f g a) : (f ∗ g) a = ∑' t, f (a + t) * g (-t) := by
+lemma conv_eq_tsum_add_neg (hfg : ConvExistsAt f g a) : (f ∗ g) a = ∑' t, f (a + t) * g (-t) := by
   rw [conv_eq_tsum_sub hfg]; exact tsum_equiv (.subRight a) _ _ (by simp)
 
-lemma conv_eq_tsum_add' (hfg : ConvExistsAt f g a) : (f ∗ g) a = ∑' t, f (-t) * g (a + t) := by
+lemma conv_eq_tsum_neg_add (hfg : ConvExistsAt f g a) : (f ∗ g) a = ∑' t, f (-t) * g (a + t) := by
   rw [conv_eq_tsum_sub hfg]; exact tsum_equiv (.neg _) _ _ (by simp [sub_eq_add_neg])
 
-lemma conv_apply_add (hfg : ConvExistsAt f g (a + b)) :
+lemma conv_apply_add_eq_tsum_add_sub (hfg : ConvExistsAt f g (a + b)) :
     (f ∗ g) (a + b) = ∑' t, f (a + t) * g (b - t) := by
-  rw [conv_eq_tsum_sub hfg]; exact tsum_equiv (.subRight a) _ _ (by simp [sub_sub_eq_add_sub, add_comm])
-
-lemma sum_conv_mul (f g h : G → R) : ∑' a, (f ∗ g) a * h a = ∑' a, ∑' b, f a * g b * h (a + b) := by
-  simp_rw [conv_eq_tsum_sub, sum_mul]
-  rw [sum_comm]
-  exact sum_congr rfl fun x _ ↦ sum_equiv (.subRight x) _ _ fun y ↦ by simp
-
-lemma sum_conv (f g : G → R) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a := by
-  simpa only [Countable.sum_mul_sum, Pi.one_apply, mul_one] using sum_conv_mul f g 1
-
-lemma conv_eq_sum [DecidableEq G] (hfg : ConvExistsAt f g a) :
-    (f ∗ g) a = ∑ x : G × G with x.1 + x.2 = a, f x.1 * g x.2 := by
-  rw [conv_eq_sum_sub]; symm; apply sum_nbij' Prod.snd (fun b ↦ (a - b, b)) <;> aesop
+  rw [conv_eq_tsum_sub hfg]
+  exact tsum_equiv (.subRight a) _ _ (by simp [sub_sub_eq_add_sub, add_comm])
 
 end Countable
 
@@ -156,16 +149,16 @@ section Fintype
 variable [CompleteSpace R] [Fintype G] [MeasurableSingletonClass G]
 
 lemma conv_eq_sum_sub (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f t * g (a - t) := by
-  simp [conv, convolution, tsum_fintype]
+  simp [conv_eq_tsum_sub, tsum_fintype]
 
 lemma conv_eq_sum_sub' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (a - t) * g t := by
-  rw [conv_eq_sum_sub]; exact sum_equiv (.subLeft a) _ _ (by simp)
+  simp [conv_eq_tsum_sub', tsum_fintype]
 
-lemma conv_eq_sum_add (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (a + t) * g (-t) := by
-  rw [conv_eq_sum_sub]; exact sum_equiv (.subRight a) _ _ (by simp)
+lemma conv_eq_sum_add_neg (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (a + t) * g (-t) := by
+  simp [conv_eq_tsum_add_neg, tsum_fintype]
 
 lemma conv_eq_sum_add' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (-t) * g (a + t) := by
-  rw [conv_eq_sum_sub]; exact sum_equiv (.neg _) _ _ (by simp [sub_eq_add_neg])
+  simp [conv_eq_tsum_neg_add, tsum_fintype]
 
 lemma conv_apply_add (f g : G → R) (a b : G) : (f ∗ g) (a + b) = ∑ t, f (a + t) * g (b - t) := by
   rw [conv_eq_sum_sub]; exact sum_equiv (.subRight a) _ _ (by simp [sub_sub_eq_add_sub, add_comm])
@@ -180,7 +173,7 @@ lemma sum_conv (f g : G → R) : ∑ a, (f ∗ g) a = (∑ a, f a) * ∑ a, g a 
 
 lemma conv_eq_sum [DecidableEq G] (f g : G → R) (a : G) :
     (f ∗ g) a = ∑ x : G × G with x.1 + x.2 = a, f x.1 * g x.2 := by
-  rw [conv_eq_sum_sub]; symm; apply sum_nbij' Prod.snd (fun b ↦ (a - b, b)) <;> aesop
+  rw [conv_eq_sum_sub']; symm; apply sum_nbij' Prod.snd (fun b ↦ (a - b, b)) <;> aesop
 
 end Fintype
 
@@ -193,14 +186,15 @@ lemma conv_add (f g h : G → R) : f ∗ (g + h) = f ∗ g + f ∗ h :=
 lemma add_conv (f g h : G → R) : (f + g) ∗ h = f ∗ h + g ∗ h :=
   ConvolutionExists.add_distrib .of_finite .of_finite
 
-lemma map_conv (m : R →+* S) (f g : G → R) (a : G) : m ((f ∗ g) a) = (m ∘ f ∗ m ∘ g) a := by
+variable [CompleteSpace R] [CompleteSpace S]
+
+lemma map_conv  (m : R →+* S) (f g : G → R) (a : G) : m ((f ∗ g) a) = (m ∘ f ∗ m ∘ g) a := by
+  classical
   cases nonempty_fintype G
   simp [conv_eq_sum, map_sum, map_mul]
 
-lemma comp_conv [CommSemiring S] (m : R →+* S) (f g : G → R) : m ∘ (f ∗ g) = m ∘ f ∗ m ∘ g :=
-  funext $ map_conv _ _ _
-
-variable [CompleteSpace R]
+lemma comp_conv (m : R →+* S) (f g : G → R) : m ∘ (f ∗ g) = m ∘ f ∗ m ∘ g :=
+  funext <| map_conv _ _ _
 
 lemma conv_assoc (f g h : G → R) : f ∗ g ∗ h = f ∗ (g ∗ h) :=
   convolution_assoc'' _ _ _ _ mul_assoc .of_discrete .of_discrete .of_discrete
@@ -244,6 +238,24 @@ lemma support_conv_subset (f g : G → R) : support (f ∗ g) ⊆ support f + su
   rintro a ha
   obtain ⟨x, hx, h⟩ := exists_ne_zero_of_sum_ne_zero ha
   exact ⟨_, left_ne_zero_of_mul h, _, right_ne_zero_of_mul h, (mem_filter.1 hx).2⟩
+
+end NormedCommRing
+
+section NormedField
+variable [NormedField K] [CompleteSpace K] [NormedSpace ℝ K] [IsScalarTower ℝ K K] [Countable G]
+  [MeasurableSpace G] [MeasurableSingletonClass G] {f g : G → K} {a b : G}
+
+lemma tsum_conv_mul (hfg : ConvExists f g) (h : G → K) :
+    ∑' a, (f ∗ g) a * h a = ∑' a, ∑' b, f a * g b * h (a + b) := by
+  simp_rw [conv_eq_tsum_sub (hfg _), ← tsum_mul_right]
+  rw [tsum_comm]
+  exact tsum_congr fun x ↦ tsum_equiv (.subRight x) _ _ fun y ↦ by simp
+  sorry
+
+lemma tsum_conv (hfg : ConvExists f g) : ∑' a, (f ∗ g) a = (∑' a, f a) * ∑' a, g a := by
+  simpa only [tsum_mul_tsum, Pi.one_apply, mul_one] using tsum_conv_mul hfg 1
+
+end NormedField
 
 /-! ### Difference convolution -/
 

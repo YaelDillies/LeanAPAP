@@ -4,6 +4,8 @@ import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Analysis.Convolution
 import LeanAPAP.Mathlib.Data.Real.ConjExponents
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.NNLpNorm
+import LeanAPAP.Mathlib.MeasureTheory.Integral.Bochner.Basic
+import LeanAPAP.Mathlib.Topology.Algebra.InfiniteSum.Basic
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
