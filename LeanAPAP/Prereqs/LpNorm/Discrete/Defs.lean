@@ -1,5 +1,5 @@
+import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.NNLpNorm
 import Mathlib.Data.Fintype.Order
-import LeanAPAP.Prereqs.NNLpNorm
 
 /-!
 # Lp norms

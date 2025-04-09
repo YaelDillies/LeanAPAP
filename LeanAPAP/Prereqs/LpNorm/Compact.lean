@@ -1,8 +1,8 @@
+import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.NNLpNorm
+import LeanAPAP.Prereqs.Function.Indicator.Defs
 import Mathlib.Algebra.Group.Translate
 import Mathlib.Algebra.Star.Conjneg
 import Mathlib.Data.Fintype.Order
-import LeanAPAP.Prereqs.Function.Indicator.Defs
-import LeanAPAP.Prereqs.NNLpNorm
 
 /-!
 # Normalised Lp norms

@@ -132,7 +132,7 @@ private lemma step_six {f : ι → ℝ} {a b : Fin n → ι} :
         (multinomial univ fun a ↦ 2 * k a : ℝ) * ∏ i, (f (a i) - f (b i)) ^ (2 * k i) ≤
       m ^ m * (∑ i, (f (a i) - f (b i)) ^ 2) ^ m := by
   rw [sum_pow_eq_sum_piAntidiag, mul_sum]
-  convert sum_le_sum fun k hk ↦ _
+  refine sum_le_sum fun k hk ↦ ?_
   rw [mem_piAntidiag] at hk
   simp only [← mul_assoc, pow_mul]
   gcongr

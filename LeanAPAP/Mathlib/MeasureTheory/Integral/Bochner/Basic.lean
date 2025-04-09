@@ -1,4 +1,4 @@
-import Mathlib.MeasureTheory.Integral.Bochner
+import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 namespace MeasureTheory
 variable {α E : Type*} [NormedAddCommGroup E] [CompleteSpace E] [NormedSpace ℝ E]

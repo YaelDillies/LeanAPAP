@@ -116,7 +116,8 @@ lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hk : 64 * m / ε ^ 2 ≤ k) :
       = (8 * m) ^ m * 2 ^ (2 * m) * (k ^ (m - 1) * k) := by ring
     _ = (64 * m * k / 2) ^ m := by rw [pow_sub_one_mul (by omega), pow_mul, ← mul_pow]; ring
     _ ≤ (ε ^ 2 * k * k / 2) ^ m := by gcongr
-    _ = (k * ε) ^ (2 * m) / 2 ^ m := by ring_nf
+    -- FIXME: `ring` regression. See https://leanprover.zulipchat.com/#narrow/channel/287929-mathlib4/topic/ring.20regression.20in.20v4.2E19.2E0-rc2/with/511226890
+    _ = (k * ε) ^ (2 * m) / 2 ^ m := by ring_nf; simp_rw [one_div]
     _ ≤ (k * ε) ^ (2 * m) / 2 ^ 1 := by gcongr; norm_num
     _ = 1 / 2 * (k * ε) ^ (2 * m) := by ring
 
