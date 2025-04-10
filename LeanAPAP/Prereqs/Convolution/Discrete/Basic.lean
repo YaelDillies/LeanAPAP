@@ -54,7 +54,7 @@ variable [CommSemiring R] {f g : G → R}
 
 lemma indicate_conv_indicate_eq_sum (s t : Finset G) (a : G) :
     (𝟭_[R] s ∗ 𝟭 t) a = #{x ∈ s ×ˢ t | x.1 + x.2 = a} := by
-  simp only [conv_apply, indicate_apply, ← ite_and, filter_comm, boole_mul, sum_boole]
+  simp only [conv_eq_sum, indicate_apply, ← ite_and, filter_comm, boole_mul, sum_boole]
   simp_rw [← mem_product, filter_univ_mem]
 
 lemma indicate_conv (s : Finset G) (f : G → R) : 𝟭 s ∗ f = ∑ a ∈ s, τ a f := by

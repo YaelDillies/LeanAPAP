@@ -79,16 +79,43 @@ theorem convolution_assoc'' (hL : ∀ x y z, L₂ (L x y) z = L₃ x (L₄ y z))
 
 end Assoc
 
-section translate
-variable [AddCommGroup G]
+section reindex
+variable [AddCommGroup G] {f : G → E} {g : G → E'} {a : G}
 
-@[simp] lemma convolution_translate (a : G) (f : G → E) (g : G → E') :
+/-- This is the definition. -/
+lemma convolution_eq_integral_sub (a : G) (f : G → E) (g : G → E') :
+    (f ⋆[L, ν] g) a = ∫ t, L (f t) (g (a - t)) ∂ν := rfl
+
+lemma convolution_eq_integral_neg_add [MeasurableNeg G] [ν.IsNegInvariant] (f : G → E) (g : G → E')
+    (a : G) : (f ⋆[L, ν] g) a = ∫ t, L (f (-t)) (g (a + t)) ∂ν := by
+  rw [convolution_eq_integral_sub, ← integral_neg_eq_self]; simp
+
+variable [MeasurableAdd G] [ν.IsAddLeftInvariant]
+
+lemma convolution_eq_integral_add_neg (f : G → E) (g : G → E') (a : G) :
+    (f ⋆[L, ν] g) a = ∫ t, L (f (a + t)) (g (-t)) ∂ν := by
+  rw [convolution_eq_integral_sub, ← integral_add_left_eq_self _ a]; simp
+
+lemma convolution_apply_add (f : G → E) (g : G → E') (a b : G) :
+    (f ⋆[L, ν] g) (a + b) = ∫ t, L (f (a + t)) (g (b - t)) ∂ν := by
+  rw [convolution_eq_integral_sub, ← integral_add_left_eq_self _ a]; simp
+
+lemma convolution_eq_integral_sub' [MeasurableNeg G] [ν.IsNegInvariant] (f : G → E) (g : G → E')
+    (a : G) : (f ⋆[L, ν] g) a = ∫ t, L (f (a - t)) (g t) ∂ν := by
+  rw [convolution_eq_integral_sub, ← integral_sub_left_eq_self _ _ a]; simp
+
+end reindex
+
+section translate
+variable [AddCommGroup G] {f : G → E} {g : G → E'} {a : G}
+
+@[simp] lemma convolution_translate (f : G → E) (g : G → E') (a : G) :
     f ⋆[L, ν] τ a g = τ a (f ⋆[L, ν] g) := by
   ext b; simp [convolution, sub_right_comm]
 
-variable [MeasurableAdd G] [ν.IsAddRightInvariant]
+variable [MeasurableAdd G] [ν.IsAddLeftInvariant]
 
-@[simp] lemma translate_convolution (a : G) (f : G → E) (g : G → E') :
+@[simp] lemma translate_convolution (f : G → E) (g : G → E') (a : G) :
     τ a f ⋆[L, ν] g = τ a (f ⋆[L, ν] g) := by
   ext b; simpa using integral_sub_right_eq_self (fun t ↦ L (f t) (g (b - a - t))) a
 
