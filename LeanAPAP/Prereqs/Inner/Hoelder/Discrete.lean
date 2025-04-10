@@ -1,5 +1,5 @@
 import Mathlib.Analysis.RCLike.Inner
-import LeanAPAP.Mathlib.Data.Real.ConjExponents
+import Mathlib.Data.Real.ConjExponents
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
 
 /-! # Inner product -/
@@ -90,7 +90,7 @@ lemma dLpNorm_mul_le (p q : ℝ≥0∞) (hr₀ : r ≠ 0) [hpqr : ENNReal.Holder
   any_goals intro a; dsimp
   any_goals positivity
   any_goals simp
-  have := hpqr.holderConjugate_div_div (mod_cast hr₀) ENNReal.coe_ne_top
+  have := hpqr.holderConjugate_div_div _ _ _ (mod_cast hr₀) ENNReal.coe_ne_top
   exact wInner_one_le_dLpNorm_mul_dLpNorm _ _
 
 /-- **Hölder's inequality**, binary case. -/

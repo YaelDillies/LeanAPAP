@@ -110,7 +110,7 @@ lemma cLpNorm_mul_le (p q : ℝ≥0∞) (hr₀ : r ≠ 0) [hpqr : ENNReal.Holder
     cLpNorm_rpow']
   any_goals intro a; dsimp
   any_goals positivity
-  have := hpqr.holderConjugate_div_div (mod_cast hr₀) ENNReal.coe_ne_top
+  have := hpqr.holderConjugate_div_div _ _ _ (mod_cast hr₀) ENNReal.coe_ne_top
   exact wInner_cWeight_le_cLpNorm_mul_cLpNorm _ _
 
 /-- **Hölder's inequality**, binary case. -/
