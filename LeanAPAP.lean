@@ -4,6 +4,10 @@ import LeanAPAP.Integer
 import LeanAPAP.Mathlib.Analysis.Convolution
 import LeanAPAP.Mathlib.Data.Real.ConjExponents
 import LeanAPAP.Mathlib.MeasureTheory.Function.LpSeminorm.NNLpNorm
+import LeanAPAP.Mathlib.Topology.Algebra.Group.CompactOpen
+import LeanAPAP.Mathlib.Topology.Algebra.PontryaginDual
+import LeanAPAP.Mathlib.Topology.CompactOpen
+import LeanAPAP.Mathlib.Topology.ContinuousMap.Basic
 import LeanAPAP.Physics.AlmostPeriodicity
 import LeanAPAP.Physics.DRC
 import LeanAPAP.Physics.Unbalancing
