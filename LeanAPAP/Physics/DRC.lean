@@ -216,7 +216,7 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
     _ ≤ ∑ x, (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p := by
       gcongr
       · intros
-        exact mul_nonneg (dconv_nonneg (mu_nonneg (β := ℝ)) mu_nonneg _) <| hp.pow_nonneg _
+        exact mul_nonneg (dconv_nonneg (mu_nonneg (K := ℝ)) mu_nonneg _) <| hp.pow_nonneg _
       · exact subset_univ _
     _ = ‖μ_[ℝ] B₁‖_[1] * ‖μ_[ℝ] B₂‖_[1] * ((1 - ε) ^ p * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p)
         := ?_

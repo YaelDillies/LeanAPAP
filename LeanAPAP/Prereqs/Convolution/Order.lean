@@ -8,7 +8,7 @@ open scoped ComplexConjugate NNReal Pointwise
 variable {G R : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
 
 section OrderedCommSemiring
-variable [OrderedCommSemiring R] {f g : G → R}
+variable [CommSemiring R] [PartialOrder R] [IsOrderedRing R] {f g : G → R}
 
 lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
   fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) (hg _)
@@ -21,7 +21,7 @@ lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
 end OrderedCommSemiring
 
 section StrictOrderedCommSemiring
-variable [StrictOrderedCommSemiring R] {f g : G → R}
+variable [CommSemiring R] [PartialOrder R] [IsStrictOrderedRing R] {f g : G → R}
 
 --TODO: Those can probably be generalised to `OrderedCommSemiring` but we don't really care
 @[simp] lemma support_conv (hf : 0 ≤ f) (hg : 0 ≤ g) : support (f ∗ g) = support f + support g := by
@@ -51,7 +51,7 @@ lemma dconv_pos (hf : 0 < f) (hg : 0 < g) : 0 < f ○ g := by
 end StrictOrderedCommSemiring
 
 section OrderedCommSemiring
-variable [OrderedCommSemiring R] {f g : G → R} {n : ℕ}
+variable [CommSemiring R] [PartialOrder R] [IsOrderedRing R] {f g : G → R} {n : ℕ}
 
 @[simp] lemma iterConv_nonneg (hf : 0 ≤ f) : ∀ {n}, 0 ≤ f ∗^ n
   | 0 => fun _ ↦ by dsimp; split_ifs <;> norm_num
@@ -60,7 +60,8 @@ variable [OrderedCommSemiring R] {f g : G → R} {n : ℕ}
 end OrderedCommSemiring
 
 section StrictOrderedCommSemiring
-variable [StrictOrderedCommSemiring R] [StarRing R] [StarOrderedRing R] {f g : G → R} {n : ℕ}
+variable [CommSemiring R] [PartialOrder R] [IsStrictOrderedRing R] [StarRing R] [StarOrderedRing R]
+  {f g : G → R} {n : ℕ}
 
 @[simp] lemma iterConv_pos (hf : 0 < f) : ∀ {n}, 0 < f ∗^ n
   | 0 => Pi.lt_def.2 ⟨iterConv_nonneg hf.le, 0, by simp⟩
@@ -72,7 +73,7 @@ namespace Mathlib.Meta.Positivity
 open Lean Meta Qq Function
 
 section
-variable [OrderedCommSemiring R] {f g : G → R}
+variable [CommSemiring R] [PartialOrder R] [IsOrderedRing R] {f g : G → R}
 
 private lemma conv_nonneg_of_pos_of_nonneg (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
   conv_nonneg hf.le hg
@@ -139,7 +140,8 @@ such that `positivity` successfully recognises both `f` and `g`. -/
   | .nonzero pa => return .nonzero q(dummy_nzr_of_nzr $pa)
   | _ => return .none
 
-variable [StrictOrderedCommSemiring R] [StarRing R] [StarOrderedRing R] {f g : G → R}
+variable [CommSemiring R] [PartialOrder R] [IsStrictOrderedRing R] [StarRing R] [StarOrderedRing R]
+  {f g : G → R}
 
 example (hf : 0 < f) (hg : 0 < g) : 0 < f ∗ g := by positivity
 example (hf : 0 < f) (hg : 0 ≤ g) : 0 ≤ f ∗ g := by positivity
