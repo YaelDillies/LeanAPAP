@@ -1,4 +1,5 @@
 name = "LeanAPAP"
+keywords = ["math", "combinatorics", "additive-combinatorics", "fourier-analysis"]
 defaultTargets = ["LeanAPAP"]
 
 [leanOptions]
