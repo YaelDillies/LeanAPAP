@@ -138,14 +138,14 @@ lemma cLpNorm_eq_expect_norm' (hp₀ : p ≠ 0) (hp : p ≠ ∞) (f : α → E) 
     ‖f‖ₙ_[p] = (𝔼 i, ‖f i‖ ^ p.toReal) ^ p.toReal⁻¹ := by
   simp [cLpNorm, uniformOn, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete,
     integral_fintype, tsum_eq_sum' (s := univ) (by simp), ENNReal.coe_rpow_of_nonneg, cond_apply,
-    expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum]
+    expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum, Measure.real]
 
 lemma cLpNorm_eq_expect_nnnorm' (hp₀ : p ≠ 0) (hp : p ≠ ∞) (f : α → E) :
     ‖f‖ₙ_[p] = (𝔼 i, ‖f i‖₊ ^ p.toReal) ^ p.toReal⁻¹ := by
   ext
   simp [cLpNorm, uniformOn, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete,
     integral_fintype, tsum_eq_sum' (s := univ) (by simp), ENNReal.coe_rpow_of_nonneg, cond_apply,
-    expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum]
+    expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum, Measure.real]
 
 lemma cLpNorm_toNNReal_eq_expect_norm {p : ℝ} (hp : 0 < p) (f : α → E) :
     ‖f‖ₙ_[p.toNNReal] = (𝔼 i, ‖f i‖ ^ p) ^ p⁻¹ := by
