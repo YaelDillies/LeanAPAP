@@ -155,7 +155,7 @@ theorem marcinkiewicz_zygmund_symmetric
           simp [(mem_piAntidiag.1 hw).1, marcinkiewiczZygmundSymmConst]
     -- Put the sum back together.
     _ = marcinkiewiczZygmundSymmConst (2 * m) * ∫ ω, (∑ i ∈ A, ‖X i ω‖ ^ 2) ^ m ∂μ := by
-      simp_rw [sum_pow_eq_sum_piAntidiag, ← pow_mul, ← integral_mul_left, mul_sum, ← mul_assoc]
+      simp_rw [sum_pow_eq_sum_piAntidiag, ← pow_mul, ← integral_const_mul, mul_sum, ← mul_assoc]
       rw [integral_finset_sum]
       rintro w hw
       exact .const_mul sorry _
