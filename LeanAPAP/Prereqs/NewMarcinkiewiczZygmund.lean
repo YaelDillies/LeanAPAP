@@ -53,7 +53,7 @@ theorem marcinkiewicz_zygmund_symmetric
   have integrable_prod_norm_X I (hI : I ∈ A ×ˢ A ^^ m) :
     Integrable (fun ω ↦ ∏ k, ‖X (I k).1 ω‖ * ‖X (I k).2 ω‖) μ := sorry
   have integrable_prod_inner_X I (hI : I ∈ A ×ˢ A ^^ m) :
-    Integrable (fun ω ↦ ∏ k, inner (𝕜 := ℝ) (X (I k).1 ω) (X (I k).2 ω)) μ := sorry
+    Integrable (fun ω ↦ ∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω)) μ := sorry
   -- Call a family of indices `i₁, ..., iₙ, j₁, ..., jₙ` *even* if each `i ∈ A` appears an even
   -- number of times among the `2n` indices.
   let EvenIndex (I : Fin m → ι × ι) : Prop :=
@@ -63,12 +63,12 @@ theorem marcinkiewicz_zygmund_symmetric
     ∫ ω, ‖∑ i ∈ A, X i ω‖ ^ (2 * m) ∂μ
     -- Expand out the power of the sum into a sum over families of indices
     -- `i₁, ..., iₙ, j₁, ..., jₙ` of `∏ k, ⟨X iₖ, X jₖ⟩`. Push the integral inside the sum.
-    _ = ∑ I ∈ A ×ˢ A ^^ m, ∫ ω, ∏ k, inner (X (I k).1 ω) (X (I k).2 ω) ∂μ := by
+    _ = ∑ I ∈ A ×ˢ A ^^ m, ∫ ω, ∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω) ∂μ := by
       simp_rw [pow_mul, ← real_inner_self_eq_norm_sq, sum_inner, inner_sum, ← sum_product',
         Finset.sum_pow', integral_finset_sum _ integrable_prod_inner_X]
     -- Show that the terms coming from odd families of indices `i₁, ..., iₙ, j₁, ..., jₙ` integrate
     -- to zero.
-    _ = ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, ∏ k, inner (X (I k).1 ω) (X (I k).2 ω) ∂μ := by
+    _ = ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, ∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω) ∂μ := by
       rw [Finset.sum_filter_of_ne]
       -- Assume that `I = (i₁, ..., iₙ, j₁, ..., jₙ)` is an odd family.
       -- Say `i` appears an odd number of times in it.
@@ -89,30 +89,30 @@ theorem marcinkiewicz_zygmund_symmetric
       calc
         -- `𝔼 ∏ k, ⟨X iₖ, X jₖ⟩ = 𝔼 ∏ k, ⟨Y iₖ, Y jₖ⟩` because `𝔼 ∏ k, ⟨X iₖ, X jₖ⟩` and
         -- `∏ k, ⟨Y iₖ, Y jₖ⟩` are identically distributed.
-        ∫ ω, ∏ k, inner (X (I k).1 ω) (X (I k).2 ω) ∂μ
-        _ = ∫ ω, ∏ k, inner (Y (I k).1 ω) (Y (I k).2 ω) ∂μ := by
+        ∫ ω, ∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω) ∂μ
+        _ = ∫ ω, ∏ k, inner ℝ (Y (I k).1 ω) (Y (I k).2 ω) ∂μ := by
           refine IdentDistrib.integral_eq ?_
           sorry -- TODO: Upstream result from PFR
         -- `𝔼 ∏ k, ⟨Y iₖ, Y jₖ⟩ = -𝔼 ∏ k, ⟨X iₖ, X jₖ⟩` by the assumption that `i` appears an odd
         -- number of times in `I`.
-        _ = ∫ ω, -∏ k, inner (𝕜 := ℝ) (X (I k).1 ω) (X (I k).2 ω) ∂μ := by
+        _ = ∫ ω, -∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω) ∂μ := by
           congr with ω
           calc
-            ∏ k, inner (𝕜 := ℝ) (Y (I k).1 ω) (Y (I k).2 ω)
+            ∏ k, inner ℝ (Y (I k).1 ω) (Y (I k).2 ω)
             _ = ∏ k, (if (I k).1 = i then -1 else 1) * (if (I k).2 = i then -1 else 1) *
-                inner (X (I k).1 ω) (X (I k).2 ω) := by
+                inner ℝ (X (I k).1 ω) (X (I k).2 ω) := by
               congr! with k; split_ifs with hk₁ hk₂ hk₂ <;> simp [hk₁, hk₂, Y]
-            _ = -∏ k, inner (X (I k).1 ω) (X (I k).2 ω) := by
+            _ = -∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω) := by
               rw [prod_mul_distrib, prod_mul_distrib]
               simp [prod_ite, ← pow_add, hI']
     -- Upper bound the sum by its absolute value and push the absolute value inside.
-    _ ≤ |∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, ∏ k, inner (X (I k).1 ω) (X (I k).2 ω) ∂μ| :=
+    _ ≤ |∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, ∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω) ∂μ| :=
       le_abs_self _
-    _ ≤ ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, |∫ ω, ∏ k, inner (X (I k).1 ω) (X (I k).2 ω) ∂μ| :=
+    _ ≤ ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, |∫ ω, ∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω) ∂μ| :=
       abs_sum_le_sum_abs ..
-    _ ≤ ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, |∏ k, inner (X (I k).1 ω) (X (I k).2 ω)| ∂μ := by
+    _ ≤ ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, |∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω)| ∂μ := by
       gcongr with I; exact abs_integral_le_integral_abs
-    _ = ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, ∏ k, |inner (X (I k).1 ω) (X (I k).2 ω)| ∂μ := by
+    _ = ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, ∏ k, |inner ℝ (X (I k).1 ω) (X (I k).2 ω)| ∂μ := by
       simp_rw [abs_prod]
     -- Finish pushing the absolute value inside using Cauchy-Schwarz.
     _ ≤ ∑ I ∈ A ×ˢ A ^^ m with EvenIndex I, ∫ ω, ∏ k, ‖X (I k).1 ω‖ * ‖X (I k).2 ω‖ ∂μ := by

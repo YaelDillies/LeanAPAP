@@ -53,7 +53,7 @@ lemma cLpNorm_sub_comm (f g : α → E) (p : ℝ≥0∞) : ‖f - g‖ₙ_[p] = 
 section NormedField
 variable [NormedField 𝕜] {p : ℝ≥0∞} {f g : α → 𝕜}
 
-lemma cLpNorm_const_smul [Module 𝕜 E] [IsBoundedSMul 𝕜 E] (c : 𝕜) (f : α → E) :
+lemma cLpNorm_const_smul [Module 𝕜 E] [NormSMulClass 𝕜 E] (c : 𝕜) (f : α → E) :
     ‖c • f‖ₙ_[p] = ‖c‖₊ * ‖f‖ₙ_[p] := by simp [cLpNorm, nnLpNorm_const_smul]
 
 lemma cLpNorm_nsmul [NormedSpace ℝ E] (n : ℕ) (f : α → E) (p : ℝ≥0∞) :
