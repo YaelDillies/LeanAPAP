@@ -18,7 +18,7 @@ attribute [-simp] Real.log_inv
 
 open Fintype Function MeasureTheory Module RCLike Real
 open Finset hiding card
-open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise mu
+open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise ComplexConjugate
 
 universe u
 variable {G : Type u} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {x y γ ε : ℝ}
@@ -136,11 +136,12 @@ variable {q n : ℕ} [Module (ZMod q) G] {A₁ A₂ : Finset G} (S : Finset G) {
 lemma ap_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε)
     (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens) (hαA₂ : α ≤ A₂.dens) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
-        ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤ 2 ^ 32 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 ∧
+        ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤ 2 ^ 36 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 ∧
           |∑ x ∈ S, (μ (Set.toFinset V) ∗ μ A₁ ∗ μ A₂) x - ∑ x ∈ S, (μ A₁ ∗ μ A₂) x| ≤ ε := by
   classical
   let _ : MeasurableSpace G := ⊤
-  have : Fact (1 < q) := sorry
+  have : Fact (1 < q) := ⟨hq.one_lt⟩
+  have : Fact q.Prime := ⟨hq⟩
   have : DiscreteMeasurableSpace G := ⟨fun _ ↦ trivial⟩
   have hA₁ : A₁.Nonempty := by simpa using hα₀.trans_le hαA₁
   have hA₂ : A₂.Nonempty := by simpa using hα₀.trans_le hαA₂
@@ -158,50 +159,68 @@ lemma ap_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α �
     calc
       ε * α / 4 ≤ ε * 1 / 4 := by gcongr
       _ ≤ 1 := by linarith
-  obtain ⟨T, hTcard, hTε⟩ := AlmostPeriodicity.linfty_almost_periodicity_boosted ε hε₀ hε₁ k
-    (by positivity) (le_inv_of_le_inv₀ (by positivity) hα₂) hA₁ univ_nonempty S A₂ hS hA₂
+  obtain ⟨T, hTcard, hTε⟩ := AlmostPeriodicity.linfty_almost_periodicity_boosted (ε / 4)
+    (by positivity) (by linarith) k (by positivity) ((le_inv (by positivity) (by positivity)).2 hα₂)
+    hA₁ univ_nonempty (-S) A₂ hS.neg hA₂
   have hT : 0 < (#T : ℝ) := hTcard.trans_lt' (by positivity)
   replace hT : T.Nonempty := by simpa using hT
-  let Δ := largeSpec (μ T) 2⁻¹
+  let Δ := largeSpec (𝟭 T) 2⁻¹
   let V : Submodule (ZMod q) G := AddSubgroup.toZModSubmodule _ <| ⨅ γ ∈ Δ, γ.toAddMonoidHom.ker
   let V' : Finset G := Set.toFinset V
+  have hV' : V'.Nonempty := by simpa [V'] using V.nonempty
   refine ⟨V, inferInstance, ?_, ?_⟩
-  · obtain ⟨Δ', hΔ'Δ, hΔ'card, hfΔ'⟩ : ∃ Δ' ⊆ Δ, _ := chang (mu_ne_zero.2 hT) (by norm_num)
+  · obtain ⟨Δ', hΔ'Δ, hΔΔ', hΔ'card⟩ : ∃ Δ' ⊆ Δ, Δ ⊆ Δ'.addSpan ∧ _ :=
+      chang (indicate_ne_zero.2 hT) (by norm_num)
     let W : Submodule (ZMod q) G := AddSubgroup.toZModSubmodule _ <| ⨅ γ ∈ Δ', γ.toAddMonoidHom.ker
+    have mem_V {x} : x ∈ V ↔ ∀ γ ∈ Δ, γ x = 1 := by simp [V]
     have mem_W {x} : x ∈ W ↔ ∀ γ ∈ Δ', γ x = 1 := by simp [W]
-    have hWV : W ≤ V := by sorry
+    have hWV : W ≤ V := by
+      rintro x
+      simp only [mem_V, mem_W]
+      rintro hx γ hγ
+      obtain ⟨ℰ, hℰ, rfl⟩ := mem_addSpan.1 $ hΔΔ' hγ
+      rw [AddChar.sum_apply, Finset.prod_eq_one]
+      rintro γ hγ
+      simp [hx _ hγ]
     have :=
       calc
         log T.dens⁻¹ ≤ log (α⁻¹ ^ (-4096 * ⌈𝓛 (min 1 (#A₂ / #S))⌉ * k ^ 2 / ε ^ 2))⁻¹ := by
-          gcongr; rwa [nnratCast_dens, le_div_iff₀]; positivity
+          rw [card_neg] at hTcard
+          gcongr
+          rwa [nnratCast_dens, le_div_iff₀, ← card_univ]
+          positivity
         _ = 2 ^ 12 * log α⁻¹ * ⌈𝓛 (min 1 (#A₂ / #S))⌉ * k ^ 2 / ε ^ 2 := by
           rw [log_inv, log_rpow (by positivity)]; ring_nf
-        _ ≤ 2 ^ 12 * log α⁻¹ * ⌈𝓛 (min 1 A₂.dens)⌉ * k ^ 2 / ε ^ 2 := by
+        _ ≤ 2 ^ 16 * log α⁻¹ * ⌈𝓛 (min 1 A₂.dens)⌉ * k ^ 2 / ε ^ 2 := by
           rw [nnratCast_dens, ← card_univ]; gcongr; exact S.subset_univ
-        _ ≤ 2 ^ 12 * log α⁻¹ * ⌈𝓛 (min 1 α)⌉ * (k) ^ 2 / ε ^ 2 := by gcongr
-        _ = 2 ^ 12 * log α⁻¹ * ⌈𝓛 α⌉ * k ^ 2 / ε ^ 2 := by rw [min_eq_right hα₁]
-        _ ≤ 2 ^ 12 * 𝓛 α * (2 * 𝓛 α) * (2 ^ 3 * 𝓛 (ε * α)) ^ 2 / ε ^ 2 := by
+        _ ≤ 2 ^ 16 * log α⁻¹ * ⌈𝓛 (min 1 α)⌉ * (k) ^ 2 / ε ^ 2 := by gcongr
+        _ = 2 ^ 16 * log α⁻¹ * ⌈𝓛 α⌉ * k ^ 2 / ε ^ 2 := by rw [min_eq_right hα₁]
+        _ ≤ 2 ^ 16 * 𝓛 α * (2 * 𝓛 α) * (2 ^ 3 * 𝓛 (ε * α)) ^ 2 / ε ^ 2 := by
           gcongr
           · exact le_add_of_nonneg_left zero_le_one
           · exact Int.ceil_le_two_mul <| two_inv_lt_one.le.trans <| one_le_curlog hα₀.le hα₁
           · calc
-              k ≤ 2 * 𝓛 (ε * α / 4) :=
-                Nat.ceil_le_two_mul <| two_inv_lt_one.le.trans <| one_le_curlog (by positivity)
-                  sorry
+              k ≤ 2 * 𝓛 (ε * α / 4) := (Nat.ceil_lt_two_mul $ one_le_curlog (by positivity)
+                  ?_).le
               _ ≤ 2 * (4 * 𝓛 (ε * α)) := by
                 gcongr
                 exact curlog_div_le (by positivity) (mul_le_one₀ hε₁ hα₀.le hα₁) (by norm_num)
               _ = 2 ^ 3 * 𝓛 (ε * α) := by ring
-        _ = 2 ^ 19 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 := by ring_nf
+            calc
+              ε * α / 4 ≤ 1 * α / 4 := by gcongr
+              _ ≤ 1 := by linarith
+        _ = 2 ^ 23 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 := by ring_nf
     calc
       (↑(finrank (ZMod q) G - finrank (ZMod q) V) : ℝ)
         ≤ ↑(finrank (ZMod q) G - finrank (ZMod q) W) := by
         gcongr; exact Submodule.finrank_mono hWV
+      _ = Cardinal.toNat (Module.rank (ZMod q) (G ⧸ W)) := by
+        simp [← finrank_eq_rank, ← eq_tsub_of_add_eq W.finrank_quotient_add_finrank]
       _ ≤ #Δ' := sorry
-      _ ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖μ T‖_[1] ^ 2 / ‖μ T‖_[2] ^ 2 / card G)⌉₊ / 2⁻¹ ^ 2⌉₊ := by
+      _ ≤ ⌈changConst * exp 1 * ⌈𝓛 ↑(‖𝟭_[ℂ] T‖ₙ_[1] ^ 2 / ‖𝟭_[ℂ] T‖ₙ_[2] ^ 2)⌉₊ / 2⁻¹ ^ 2⌉₊ := by
         gcongr
       _ = ⌈2 ^ 7 * exp 1 ^ 2 * ⌈𝓛 T.dens⌉₊⌉₊ := by
-        simp [hT, ← rpow_mul_natCast, dens, changConst, -exp_one_pow, rpow_neg_one]; ring_nf
+        simp [hT, ← rpow_mul_natCast, dens, changConst, -exp_one_pow, rpow_neg_one, sq]; ring_nf
       _ ≤ ⌈2 ^ 7 * 2 ^ 3 * (2 * 𝓛 T.dens)⌉₊ := by
         gcongr
         · calc
@@ -216,20 +235,86 @@ lemma ap_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α �
             _ ≤ 2 ^ 11 * 𝓛 T.dens := by
               gcongr; exact one_le_curlog (by positivity) <| mod_cast T.dens_le_one
       _ = 2 ^ 12 * 𝓛 T.dens := by ring
-      _ ≤ 2 ^ 12 * (1 + 2 ^ 19 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2) := by gcongr
-      _ ≤ 2 ^ 12 * (2 ^ 19 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 +
-            2 ^ 19 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2) := by
+      _ ≤ 2 ^ 12 * (1 + 2 ^ 23 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2) := by gcongr
+      _ ≤ 2 ^ 12 * (2 ^ 23 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 +
+            2 ^ 23 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2) := by
         gcongr
-        sorry
-      _ = 2 ^ 32 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 := by ring
+        exact one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le
+          (one_le_mul_of_one_le_of_one_le (by norm_num) $ one_le_pow₀ (one_le_curlog hα₀.le hα₁) _)
+          $ one_le_pow₀ (one_le_curlog (by positivity) $ mul_le_one hε₁ hα₀.le hα₁) _) $
+          one_le_pow₀ (one_le_inv hε₀ hε₁) _
+      _ = 2 ^ 36 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 := by ring
   · have : ∑ x ∈ S, (μ_[ℝ] V' ∗ μ A₁ ∗ μ A₂) x = 𝔼 x ∈ V', (μ A₁ ∗ μ A₂ ○ 𝟭 S) x := by
       have : -V' = V' := by ext; simp [V']
-      rw [← mu_wInner_one, ← indicate_wInner_one, conv_rotate,
-        ← dconv_wInner_one_eq_wInner_one_conv, wInner_one_dconv_eq_conv_wInner_one, ← conv_conjneg,
+      rw [← mu_dL2Inner, ← indicate_dL2Inner, conv_rotate,
+        ← dconv_dL2Inner_eq_dL2Inner_conv, dL2Inner_dconv_eq_conv_dL2Inner, ← conv_conjneg,
         conjneg_mu, this, conv_comm]
-    have : ∑ x ∈ S, (μ_[ℝ] A₁ ∗ μ A₂) x = (μ_[ℝ] A₁ ∗ μ A₂ ○ 𝟭 S) 0 := by simp [dconv_indicate]
-    sorry
+    have : ∑ x ∈ S, (μ_[ℝ] A₁ ∗ μ A₂) x = (μ A₁ ∗ μ A₂ ○ 𝟭 S) 0 := by simp [dconv_indicate]
+    calc
+      |∑ x ∈ S, (μ_[ℝ] V' ∗ μ A₁ ∗ μ A₂) x - ∑ x ∈ S, (μ A₁ ∗ μ A₂) x|
+        = |𝔼 x ∈ V', ((μ A₁ ∗ μ A₂ ○ 𝟭 S) x - (μ A₁ ∗ μ A₂ ○ 𝟭 S) 0)| := by
+        rw [expect_sub_distrib, Finset.expect_const hV']; congr
+      _ ≤ 𝔼 x ∈ V', |((μ A₁ ∗ μ A₂ ○ 𝟭 S) x - (μ A₁ ∗ μ A₂ ○ 𝟭 S) 0)| :=
+        abs_expect_le_expect_abs ..
+      _ ≤ ε := expect_le hV' _ _ fun v hv ↦ ?_
+    suffices h : |(μ T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) v - (μ T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) 0| ≤ ε / 2 by
+      calc
+        |(μ_[ℝ] A₁ ∗ μ A₂ ○ 𝟭 S) v - (μ A₁ ∗ μ A₂ ○ 𝟭 S) 0|
+          ≤ |(μ T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) v - (μ T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) 0|
+          + |(μ T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) v - (μ A₁ ∗ μ A₂ ○ 𝟭 S) v|
+          + |(μ T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) 0 - (μ A₁ ∗ μ A₂ ○ 𝟭 S) 0| := sorry
+        _ ≤ ε / 2 + ε / 4 + ε / 4 := by
+          rw [← conjneg_indicate, conv_right_comm, conv_conjneg, ← conv_dconv_assoc, ← conv_assoc]
+            at hTε
+          gcongr <;> rw [← Real.norm_eq_abs, ← Pi.sub_apply] <;> exact norm_le_dLinftyNorm.trans hTε
+        _ = ε := by ring
+    have (x) :
+      (μ_[ℝ] T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) x =
+        𝔼 γ, cft (μ T) γ ^ k * cft (μ A₁) γ * cft (μ A₂) γ * cft (𝟭 (-S)) γ * γ x := by
+      sorry
+    calc
+      |(μ T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) v - (μ T ∗^ k ∗ μ A₁ ∗ μ A₂ ○ 𝟭 S) 0|
+        = ‖𝔼 γ, cft (μ T) γ ^ k * cft (μ A₁) γ * cft (μ A₂) γ * cft (𝟭 (-S)) γ * (γ v - 1)‖ := sorry
+      _ ≤ 𝔼 γ, ‖cft (μ T) γ ^ k * cft (μ A₁) γ * cft (μ A₂) γ * cft (𝟭 (-S)) γ * (γ v - 1)‖ :=
+        norm_expect_le (K := ℂ)
+      _ = (card G : ℝ)⁻¹ * ∑ γ ∈ Δᶜ,
+            ‖cft (μ T) γ‖ ^ k * ‖cft (μ A₁) γ * cft (μ A₂) γ‖ * ‖cft (𝟭 (-S)) γ‖ * ‖γ v - 1‖ := by
+        simp_rw [norm_mul, Fintype.expect_eq_sum_div_card, AddChar.card_eq, inv_mul_eq_div,
+          norm_pow, mul_assoc]
+        rw [← Fintype.sum_subset]
+        simp_rw [mem_compl]
+        simp [V', V] at hv
+        refine fun γ ↦ mt fun hγ ↦ ?_
+        simp [hv _ hγ]
+      _ ≤ (card G : ℝ)⁻¹ * ∑ γ ∈ Δᶜ,
+            (2⁻¹ / card T) ^ k * ‖cft (μ A₁) γ * cft (μ A₂) γ‖ * 1 * 2 := by
+        gcongr with γ hγ
+        · have : (0 : ℝ) < card G := by positivity
+          refine le_of_lt ?_
+          simpa [Δ, hT, -nsmul_eq_mul, nnratCast_dens, ← mul_div_assoc, lt_div_iff this,
+            ← card_smul_mu, -Complex.norm_eq_abs, norm_smul] using hγ
+        · calc
+            ‖cft (𝟭 (-S)) γ‖ ≤ ∑ x, ‖conj (γ x) * 𝟭 (-S) x‖ := norm_expect_le
+            _ = S.dens := by simp? [indicate_apply, apply_ite, -mem_neg']
+        · calc
+            ‖γ v - 1‖ ≤ ‖γ v‖ + ‖(1 : ℂ)‖ := norm_sub_le ..
+            _ = 2 := by simp; norm_num
+      _ = 2 * 2⁻¹ ^ k * S.dens * ∑ γ ∈ Δᶜ, ‖cft (μ A₁) γ‖ * ‖cft (μ A₂) γ‖ := by
+        simp [nnratCast_dens, mul_sum]; congr 1 with x; ring
+      _ ≤ 2 * 2⁻¹ ^ k * S.dens * ∑ γ, ‖cft (μ A₁) γ‖ * ‖cft (μ A₂) γ‖ := by
+        gcongr
+        · intros
+          positivity
+        · exact Δᶜ.subset_univ
+      _ ≤ 2 * 2⁻¹ ^ k * S.dens * (√(∑ γ, ‖cft (μ A₁) γ‖ ^ 2) * √(∑ γ, ‖cft (μ A₂) γ‖ ^ 2)) := by
+        gcongr; exact sum_mul_le_sqrt_mul_sqrt ..
+      _ = 2 * 2⁻¹ ^ k * S.dens * (√A₁.dens * √A₂.dens) := by
+        rw [← dL2Norm_sq_eq_sum_norm, ← dL2Norm_sq_eq_sum_norm]
 
+
+
+    sorry
+#exit
 lemma ap_in_ff' (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε)
     (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens) (hαA₂ : α ≤ A₂.dens) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
