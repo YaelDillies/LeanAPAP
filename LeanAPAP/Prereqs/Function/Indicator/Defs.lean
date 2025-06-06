@@ -51,7 +51,7 @@ variable {R} [Nontrivial R] {a : α}
 lemma indicate_apply_ne_zero : 𝟭_[R] s a ≠ 0 ↔ a ∈ s := one_ne_zero.ite_ne_right_iff
 
 @[simp] lemma indicate_eq_zero : 𝟭_[R] s = 0 ↔ s = ∅ := by
-  simp [funext_iff, eq_empty_iff_forall_not_mem]
+  simp [funext_iff, eq_empty_iff_forall_notMem]
 
 lemma indicate_ne_zero : 𝟭_[R] s ≠ 0 ↔ s.Nonempty := by simp [nonempty_iff_ne_empty]
 
@@ -167,7 +167,7 @@ variable [CharZero R] {a : α}
 lemma mu_apply_ne_zero : μ_[R] s a ≠ 0 ↔ a ∈ s := mu_apply_eq_zero.not_left
 
 @[simp] lemma mu_eq_zero : μ_[R] s = 0 ↔ s = ∅ := by
-  simp [funext_iff, eq_empty_iff_forall_not_mem]
+  simp [funext_iff, eq_empty_iff_forall_notMem]
 
 lemma mu_ne_zero : μ_[R] s ≠ 0 ↔ s.Nonempty := mu_eq_zero.not.trans nonempty_iff_ne_empty.symm
 
