@@ -116,7 +116,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         RCLike.conj_to_real] at hs
       have : 0 ≤ 𝟭_[ℝ] (A₁ s) ○ 𝟭 (A₂ s) := dconv_nonneg indicate_nonneg indicate_nonneg
       -- positivity
-      cases hs.not_le <|
+      cases hs.not_ge <|
         mul_nonneg (sum_nonneg fun x _ ↦ mul_nonneg (this _) <| by positivity) <| by positivity
     have : (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / #A ^ (2 * p)
       ≤ #(A₁ s) / #B₁ * (#(A₂ s) / #B₂) := by
@@ -145,7 +145,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
   push_neg at h
   obtain ⟨s, hs⟩ := h
   suffices h : (2 : ℝ) * ∑ s with g s < M ^ 2, g s < ∑ s, g s by
-    refine (le_or_lt_of_add_le_add ?_).resolve_left h.not_le
+    refine (le_or_lt_of_add_le_add ?_).resolve_left h.not_ge
     simp_rw [← not_le, ← compl_filter, ← two_mul, ← mul_add, sum_compl_add_sum]
     rfl
   rw [← lt_div_iff₀' (zero_lt_two' ℝ), div_eq_inv_mul]
@@ -187,8 +187,8 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
     c.Nonempty := by
     simp_rw [nonempty_iff_ne_empty]
     rintro rfl
-    simp [pow_mul', (zero_lt_four' ℝ).not_le, inv_mul_le_iff₀ (zero_lt_four' ℝ), mul_assoc,
-      div_nonpos_iff, mul_nonpos_iff, (pow_pos (dLpNorm_conv_pos hp₀.ne' hB hA) 2).not_le,
+    simp [pow_mul', (zero_lt_four' ℝ).not_ge, inv_mul_le_iff₀ (zero_lt_four' ℝ), mul_assoc,
+      div_nonpos_iff, mul_nonpos_iff, (pow_pos (dLpNorm_conv_pos hp₀.ne' hB hA) 2).not_ge,
       hp₀, hp₀.ne', hA.ne_empty] at h
   have hA₁ : A₁.Nonempty := aux _ _ hcard₁
   have hA₂ : A₂.Nonempty := aux _ _ hcard₂

@@ -16,7 +16,7 @@ set_option linter.haveLet 0
 
 attribute [-simp] Real.log_inv
 
-open Fintype Function MeasureTheory Module RCLike Real
+open Fintype Function Module RCLike Real
 open Finset hiding card
 open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise mu
 
@@ -97,7 +97,7 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
     _ ≤ _ := div_le_div_of_nonneg_right hAC (card G).cast_nonneg
     _ = |⟪balance (μ A) ∗ balance (μ A), μ C⟫_[ℝ]| := ?_
     _ ≤ ‖balance (μ_[ℝ] A) ∗ balance (μ A)‖_[p] * ‖μ_[ℝ] C‖_[NNReal.conjExponent p] :=
-        abs_wInner_one_le_dLpNorm_mul_dLpNorm _ _
+        MeasureTheory.abs_wInner_one_le_dLpNorm_mul_dLpNorm _ _
     _ ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[p] * (card G ^ (-(p : ℝ)⁻¹) * γ ^ (-(p : ℝ)⁻¹)) :=
         mul_le_mul (dLpNorm_conv_le_dLpNorm_dconv' (by positivity) (even_two_mul _) _) ?_
           (by positivity) (by positivity)
@@ -106,7 +106,8 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
   · rw [← balance_conv, balance, wInner_sub_left, wInner_one_const_left, expect_conv, sum_mu ℝ hA,
       expect_mu ℝ hA, sum_mu ℝ hC, conj_trivial, one_mul, one_mul, ← mul_inv_cancel₀, ← mul_sub,
       abs_mul, abs_of_nonneg, mul_div_cancel_left₀] <;> positivity
-  · rw [dLpNorm_mu hp''.symm.lt.le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast, ← mul_rpow]
+  · rw [MeasureTheory.dLpNorm_mu hp''.symm.lt.le hC, hp''.symm.coe.inv_sub_one, NNReal.coe_natCast,
+      ← mul_rpow]
     any_goals positivity
     rw [nnratCast_dens, le_div_iff₀, mul_comm] at hγC
     any_goals positivity
@@ -420,14 +421,14 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
         congr! 1
         group
       _ ≤ card G • (‖μ_[ℝ] (Set.toFinset V) ∗ μ A‖_[∞] * ‖μ_[ℝ] A ∗ μ A₂ ○ μ A₁‖_[1]) := by
-        gcongr; exact wInner_one_le_dLpNorm_mul_dLpNorm _ _
+        gcongr; exact MeasureTheory.wInner_one_le_dLpNorm_mul_dLpNorm _ _
       _ = _ := by
         have : 0 < (4 : ℝ)⁻¹ * A.dens ^ (2 * q') := by positivity
         replace hA₁ : A₁.Nonempty := by simpa using this.trans_le hA₁
         replace hA₂ : A₂.Nonempty := by simpa using this.trans_le hA₂
         rw [dL1Norm_dconv, dL1Norm_conv]
         · simp [eq_div_iff, hA₀.dens_ne_zero, hA₀, hA₁, hA₂, ← card_smul_mu, smul_conv,
-            dLpNorm_nsmul, -nsmul_eq_mul]
+            MeasureTheory.dLpNorm_nsmul, -nsmul_eq_mul]
           simp [← mul_assoc, mul_comm, conv_comm]
         · exact mu_nonneg
         · exact mu_nonneg
@@ -477,7 +478,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
     · exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp [n], hA,
         by simp [α], by simp [α, nnratCast_dens, Fintype.card_subtype, subset_iff]⟩
     obtain ⟨V, _, _, _, _, B, hV, hB, hαβ, hBV⟩ := ih
-    obtain hB' | hB' := le_or_lt 2⁻¹ (card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
+    obtain hB' | hB' := le_or_gt 2⁻¹ (card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
     · exact ⟨V, inferInstance, inferInstance, inferInstance, inferInstance, B,
         hV.trans (by gcongr; exact i.le_succ), hB, hαβ, fun _ ↦ hB'⟩
     let _ : MeasurableSpace V := ⊤
@@ -490,7 +491,8 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
     obtain ⟨V', _, hVV', hv'⟩ := di_in_ff hq₃ hq (by positivity) two_inv_lt_one (by
       rwa [Finset.dens_image (Nat.Coprime.nsmul_right_bijective _)]
       simpa [Module.card_eq_pow_finrank (K := ZMod q) (V := V), ZMod.card] using hq'.pow) hα₀ this
-    rw [dLinftyNorm_eq_iSup_norm, ← Finset.sup'_univ_eq_ciSup, Finset.le_sup'_iff] at hv'
+    rw [MeasureTheory.dLinftyNorm_eq_iSup_norm, ← Finset.sup'_univ_eq_ciSup, Finset.le_sup'_iff]
+      at hv'
     obtain ⟨x, -, hx⟩ := hv'
     let B' : Finset V' := (-x +ᵥ B).preimage (↑) Set.injOn_subtype_val
     have hβ := by
@@ -523,10 +525,10 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
         α ≤ B.dens := hαβ
         _ ≤ (1 + 64⁻¹) * B.dens := by simp [one_add_mul]; positivity
         _ ≤ B'.dens := hβ
-    · refine (h.not_le <| ?_).elim
+    · refine (h.not_ge <| ?_).elim
       calc
         (65 / 64) ^ (i + 1) * α = (1 + 64⁻¹) * ((65 / 64) ^ i * α) := by ring
-        _ ≤ (1 + 64⁻¹) * B.dens := by gcongr; simpa [hB'.not_le] using hBV
+        _ ≤ (1 + 64⁻¹) * B.dens := by gcongr; simpa [hB'.not_ge] using hBV
         _ ≤ B'.dens := hβ
   obtain ⟨V, _, _, _, _, B, hV, hB, hαβ, hBV⟩ := ind ⌊𝓛 α / log (65 / 64)⌋₊
   let β : ℝ := B.dens

@@ -210,7 +210,7 @@ lemma claim_eight (c : ℝ) (hc : 0 ≤ c) (hA : (0 : ℝ) < #A) (hB : (0 : ℝ)
           #((A ∩ (s +ᵥ B)) ×ˢ (A ∩ (s +ᵥ B)) ∩ H_choice A B c)) ≤
       c * #(A ∩ (s +ᵥ B)) ^ 2 := by
   by_contra!
-  refine (claim_seven c hc hA hB).not_lt ?_
+  refine (claim_seven c hc hA hB).not_gt ?_
   refine sum_lt_sum ?_ ?_
   · intros s _
     exact mul_le_mul_of_nonneg_left (this s).le (dconv_nonneg indicate_nonneg indicate_nonneg s)

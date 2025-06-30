@@ -12,7 +12,6 @@ import LeanAPAP.Prereqs.MarcinkiewiczZygmund
 # Almost-periodicity
 -/
 
-open MeasureTheory
 open scoped Pointwise Combinatorics.Additive translate mu
 
 namespace Finset
@@ -98,6 +97,7 @@ private lemma curlog_pos (hx₀ : 0 < x) : 0 < 𝓛 x := by
 section
 variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
+open MeasureTheory in
 lemma lemma28_end (hε : 0 < ε) (hm : 1 ≤ m) (hk : 64 * m / ε ^ 2 ≤ k) :
     (8 * m) ^ m * k ^ (m - 1) * #A ^ k * k * (2 * ‖f‖_[2 * m] : ℝ) ^ (2 * m) ≤
       1 / 2 * ((k * ε) ^ (2 * m) * ∑ i : G, ‖f i‖ ^ (2 * m)) * #A ^ k := by
@@ -247,6 +247,7 @@ lemma lemma28_markov (hε : 0 < ε) (hm : 1 ≤ m)
 
 variable [DiscreteMeasurableSpace G]
 
+open MeasureTheory in
 lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
     (8 * m) ^ m * k ^ (m - 1) * ∑ a ∈ A ^^ k, ∑ i, ‖τ (a i) f - mu A ∗ f‖_[2 * m] ^ (2 * m) ≤
       (8 * m) ^ m * k ^ (m - 1) * ∑ _a ∈ A ^^ k, ∑ _i : Fin k, (2 * ‖f‖_[2 * m]) ^ (2 * m) := by
@@ -266,6 +267,7 @@ lemma lemma28_part_two (hm : 1 ≤ m) (hA : A.Nonempty) :
   refine (dLpNorm_conv_le this.le _ _).trans ?_
   rw [dL1Norm_mu hA, mul_one]
 
+open MeasureTheory in
 lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k) :
     (#A ^ k : ℝ) / 2 ≤ #(l k m ε f A) := by
   have : 0 < k := by
@@ -304,6 +306,7 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
   refine (lemma28_end hε hm hk).trans_eq' ?_
   simp [mul_assoc, card_fin]
 
+open MeasureTheory in
 lemma just_the_triangle_inequality {t : G} {a : Fin k → G} (ha : a ∈ l k m ε f A)
     (ha' : (a + fun _ ↦ t) ∈ l k m ε f A) (hk : 0 < k) (hm : 1 ≤ m) :
     ‖τ (-t) (mu A ∗ f) - mu A ∗ f‖_[2 * m] ≤ 2 * ε * ‖f‖_[2 * m] := by
@@ -371,6 +374,7 @@ lemma T_bound (hK₂ : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ) (hk : k = ⌈(64 : ℝ) 
   linear_combination h₄ + 2 * h₅
 
 -- trivially true for other reasons for big ε
+open MeasureTheory in
 lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (f : G → ℂ)
     (hK₂ : 2 ≤ K) (hK : σ[A, S] ≤ K) :
     ∃ T : Finset G,
@@ -442,20 +446,20 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
         = (F ∗ μ C) x := by simp [sub_conv, F]
       _ = ∑ y, F y * μ C (x - y) := conv_eq_sum_sub' ..
       _ = ∑ y, F y * μ (x +ᵥ -C) y := by simp [neg_add_eq_sub]
-  rw [dLinftyNorm_eq_iSup_norm]
+  rw [MeasureTheory.dLinftyNorm_eq_iSup_norm]
   refine ciSup_le fun x ↦ ?_
   calc
     ‖(τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℂ) x‖
       = ‖∑ y, F y * μ (x +ᵥ -C) y‖ := by rw [this]
     _ ≤ ∑ y, ‖F y * μ (x +ᵥ -C) y‖ := norm_sum_le _ _
-    _ = ‖F * μ (x +ᵥ -C)‖_[1] := by rw [dL1Norm_eq_sum_norm]; rfl
-    _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := dL1Norm_mul_le  _ _
+    _ = ‖F * μ (x +ᵥ -C)‖_[1] := by rw [MeasureTheory.dL1Norm_eq_sum_norm]; rfl
+    _ ≤ ‖F‖_[M] * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := MeasureTheory.dL1Norm_mul_le  _ _
     _ ≤ ε / exp 1 * #B ^ (M : ℝ)⁻¹ * ‖μ_[ℂ] (x +ᵥ -C)‖_[NNReal.conjExponent M] := by
         gcongr
-        simpa only [← ENNReal.coe_natCast, dLpNorm_indicate hM₀] using hT _ ht
+        simpa only [← ENNReal.coe_natCast, MeasureTheory.dLpNorm_indicate hM₀] using hT _ ht
     _ = ε * ((#C / #B) ^ (-(M : ℝ)⁻¹) / exp 1) := by
-        rw [← mul_comm_div, dLpNorm_mu hM.symm.lt.le hC.neg.vadd_finset, card_vadd_finset, card_neg,
-          hM.symm.coe.inv_sub_one, div_rpow, mul_assoc]
+        rw [← mul_comm_div, MeasureTheory.dLpNorm_mu hM.symm.lt.le hC.neg.vadd_finset,
+          card_vadd_finset, card_neg, hM.symm.coe.inv_sub_one, div_rpow, mul_assoc]
         any_goals positivity
         push_cast
         rw [rpow_neg, rpow_neg, ← div_eq_mul_inv, inv_div_inv]
@@ -495,14 +499,14 @@ theorem linfty_almost_periodicity_boosted (ε : ℝ) (hε₀ : 0 < ε) (hε₁ :
     (‖μ T ∗^ k ∗ F - F‖_[∞] : ℝ)
       = ‖𝔼 a ∈ T ^^ k, (τ (∑ i, a i) F - F)‖_[∞] := by
         rw [mu_iterConv_conv, expect_sub_distrib, expect_const hT'.piFinset_const]
-    _ ≤ 𝔼 a ∈ T ^^ k, ‖τ (∑ i, a i) F - F‖_[∞] := dLpNorm_expect_le le_top
+    _ ≤ 𝔼 a ∈ T ^^ k, ‖τ (∑ i, a i) F - F‖_[∞] := MeasureTheory.dLpNorm_expect_le le_top
     _ ≤ 𝔼 _a ∈ T ^^ k, ε := ?_
     _ = ε := by rw [expect_const hT'.piFinset_const]
   push_cast
   refine expect_le_expect fun x hx ↦
   calc
     (‖τ (∑ i, x i) F - F‖_[⊤] : ℝ)
-    _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := dLpNorm_translate_sum_sub_le le_top _ _ _
+    _ ≤ ∑ i, ‖τ (x i) F - F‖_[⊤] := MeasureTheory.dLpNorm_translate_sum_sub_le le_top _ _ _
     _ ≤ ∑ _i, ε / k := by push_cast; exact sum_le_sum fun i _ ↦ hT _ <| Fintype.mem_piFinset.1 hx _
     _ = ε := by simp only [sum_const, card_fin, nsmul_eq_mul]; rw [mul_div_cancel₀]; positivity
 

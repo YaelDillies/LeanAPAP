@@ -30,7 +30,7 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : g ○ g = f) (hν : h ○ h = (↑
         simpa using hyz
     _ = _ := by
       rw [← hf, ← hν, wInner_one_eq_sum]
-      simp only [WithLp.equiv_symm_pi_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
+      simp only [PiLp.toLp_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
       simp_rw [dconv_apply h, sum_mul]
   simp_rw [dconv_apply_sub, sum_fiberwise, ← univ_product_univ, sum_product]
   simp only [sum_pow', sum_mul_sum, map_mul, starRingEnd_self_apply, Fintype.piFinset_univ,
