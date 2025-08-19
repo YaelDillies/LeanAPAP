@@ -30,12 +30,11 @@ lemma pow_inner_nonneg' {f : G → ℂ} (hf : g ○ g = f) (hν : h ○ h = (↑
         simpa using hyz
     _ = _ := by
       rw [← hf, ← hν, wInner_one_eq_sum]
-      simp only [PiLp.toLp_apply, Pi.pow_apply, RCLike.inner_apply, map_pow]
+      simp only [Pi.pow_apply, RCLike.inner_apply, map_pow]
       simp_rw [dconv_apply h, sum_mul]
   simp_rw [dconv_apply_sub, sum_fiberwise, ← univ_product_univ, sum_product]
   simp only [sum_pow', sum_mul_sum, map_mul, starRingEnd_self_apply, Fintype.piFinset_univ,
-    ← Complex.conj_mul', sum_product, map_sum, map_prod,
-    mul_mul_mul_comm (g _), ← prod_mul_distrib]
+    ← Complex.conj_mul', map_sum, map_prod]
   simp only [mul_sum, @sum_comm _ _ (Fin k → G), mul_comm (conj _), prod_mul_distrib, Pi.conj_apply]
   rw [sum_comm]
   congr with x
@@ -193,7 +192,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
         rpow_le_rpow ?_ (sum_le_sum_of_subset_of_nonneg (subset_univ _) fun i _ _ ↦ ?_) ?_
     _ = _ := by
         rw [wLpNorm_eq_sum_nnnorm (by positivity) (by simp)]
-        simp [NNReal.smul_def, hp'.ne', p', (p'_pos hp hε₀ hε₁).le]
+        simp [p', (p'_pos hp hε₀ hε₁).le]
   all_goals positivity
 
 /-- The unbalancing step. Note that we do the physical proof in order to avoid the Fourier

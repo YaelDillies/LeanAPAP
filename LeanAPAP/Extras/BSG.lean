@@ -18,15 +18,15 @@ private lemma oneOfPair_mem :
     x ∈ oneOfPair H X ↔ x ∈ X ∧ (3 / 4 : ℝ) * #X ≤ #{yz ∈ H | yz.1 = x} := mem_filter
 
 private lemma oneOfPair_mem' (hH : H ⊆ X ×ˢ X) : #{yz ∈ H | yz.1 = x} = #{c ∈ X | (x, c) ∈ H} := by
-  refine card_nbij' Prod.snd (fun c ↦ (x, c)) ?_ (by simp) (by aesop) (by simp)
-  simp (config := { contextual := true }) only [eq_comm, Prod.forall, mem_filter, and_imp, and_true]
-  exact fun a b hab _ ↦ (mem_product.1 (hH hab)).2
+  refine card_nbij' Prod.snd (fun c ↦ (x, c)) ?_ (by simp [Set.MapsTo])
+    (by aesop (add simp [Set.LeftInvOn])) (by simp [Set.LeftInvOn])
+  simpa +contextual [Set.MapsTo, eq_comm] using fun a b hab _ ↦ (mem_product.1 (hH hab)).2
 
 private lemma oneOfPair_bound_one :
     ∑ x ∈ X \ oneOfPair H X, (#{yz ∈ H | yz.1 = x} : ℝ) ≤ (3 / 4) * #X ^ 2 :=
   calc _ ≤ ∑ _x ∈ X \ oneOfPair H X, (3 / 4 : ℝ) * #X := by
         gcongr with i hi
-        simp only [oneOfPair, ← filter_not, Prod.forall, not_le, not_lt, mem_filter] at hi
+        simp only [oneOfPair, ← filter_not, not_le, mem_filter] at hi
         exact hi.2.le
        _ = #(X \ oneOfPair H X) * ((3 / 4 : ℝ) * #X) := by simp
        _ ≤ #X * ((3 / 4 : ℝ) * #X) := by gcongr; exact sdiff_subset
@@ -72,13 +72,8 @@ lemma quadruple_bound_right {a b : α} (H : Finset (α × α)) (X : Finset α) (
         fun ⟨⟨a₁, a₂⟩, a₃, a₄⟩ ↦ a₁ - a₂ = a - c ∧ a₃ - a₄ = b - c) : ℝ)
       ≤ #(((B ×ˢ B) ×ˢ B ×ˢ B).filter fun ⟨⟨a₁, a₂⟩, a₃, a₄⟩ ↦ (a₁ - a₂) - (a₃ - a₄) = a - b) := by
   rw [← h, Nat.cast_le]
-  refine card_le_card_of_injOn Sigma.snd ?_ ?_
-  · simp only [not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter, Sigma.forall]
-    intro c a₁ a₂ a₃ a₄ _ _ _ ha₁ ha₂ ha₃ ha₄ h₁ h₂
-    simp [*]
-  simp only [Set.InjOn, not_and, mem_product, and_imp, Prod.forall, mem_sigma, mem_filter,
-    Sigma.forall, Sigma.mk.inj_iff, heq_eq_eq, Prod.mk.injEq]
-  simp (config := {contextual := true})
+  refine card_le_card_of_injOn Sigma.snd (by simp +contextual [Set.MapsTo, *]) ?_
+  simp +contextual [Set.InjOn]
   aesop
 
 end
@@ -93,7 +88,8 @@ lemma thing_one : (𝟭_[R] B ○ 𝟭 A) x = ∑ y, 𝟭 A y * 𝟭 B (x + y) :
 lemma thing_one_right : (𝟭_[R] A ○ 𝟭 B) x = #(A ∩ (x +ᵥ B)) := by
   rw [indicate_dconv_indicate_apply]
   congr 1
-  apply card_nbij' Prod.fst (fun a ↦ (a, a - x)) <;> aesop (add simp [mem_vadd_finset])
+  apply card_nbij' Prod.fst (fun a ↦ (a, a - x)) <;>
+    aesop (add simp [Set.MapsTo, Set.LeftInvOn, Set.mem_vadd_set])
 
 lemma thing_two : ∑ s, (𝟭_[R] A ○ 𝟭 B) s = #A * #B := by
   simp only [sum_dconv, conj_indicate_apply, sum_indicate]
@@ -264,8 +260,8 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K) (hE : K⁻¹ * (#A ^ 2 * #
     ← filter_mem_eq_inter]
   refine Nat.cast_le.2 <| card_le_card ?_
   rintro ⟨a, b⟩
-  simp (config := { contextual := true }) only [not_le, mem_product, mem_inter, and_imp,
-    Prod.forall, not_lt, mem_filter, H_choice, filter_congr_decidable, and_self, true_and, X]
+  simp +contextual only [not_le, mem_product, mem_inter, and_imp, mem_filter, H_choice, and_self,
+    true_and, X]
   rintro _ _ _ _ h
   -- I'd like automation to handle the rest of this
   refine h.le.trans ?_
@@ -338,7 +334,7 @@ lemma quadruple_bound_left {a b : G} {K : ℝ} {H : Finset (G × G)}
     _ ≤ ∑ c ∈ X with (a, c) ∈ H ∧ (b, c) ∈ H, (#(((B ×ˢ B) ×ˢ B ×ˢ B).filter
         fun ((a₁, a₂), a₃, a₄) ↦ a₁ - a₂ = a - c ∧ a₃ - a₄ = b - c) : ℝ) := by
       gcongr with i hi
-      simp only [not_and, mem_filter] at hi
+      simp only [mem_filter] at hi
       exact quadruple_bound_other hi.2.1 hi.2.2 hH
     _ = _ := by rw [card_sigma, Nat.cast_sum]
 

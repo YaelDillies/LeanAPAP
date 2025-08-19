@@ -16,7 +16,7 @@ def energy (n : ℕ) (s : Finset G) (ν : G → ℂ) : ℝ :=
 lemma energy_nonneg (n : ℕ) (s : Finset G) (ν : G → ℂ) : 0 ≤ energy n s ν := by
   unfold energy; positivity
 
-lemma energy_nsmul (m n : ℕ) (s : Finset G) (ν : G → ℂ) :
+lemma energy_nsmul (m n : ℕ) (s : Finset G) (ν : G → ℂ) : 
     energy n s (m • ν) = m • energy n s ν := by
   simp only [energy, nsmul_eq_mul, mul_sum, Pi.natCast_def, Pi.mul_apply, norm_mul,
     Complex.norm_natCast]
@@ -57,8 +57,7 @@ lemma cLpNorm_dft_indicate_pow [MeasurableSpace G] [DiscreteMeasurableSpace G] (
     simp_rw [pow_mul', ← norm_pow _ n, Complex.ofReal_expect, Complex.ofReal_pow,
       ← Complex.conj_mul', wInner_cWeight_eq_expect, inner_apply', dft_iterConv_apply]
   · simp only [wInner_one_eq_sum, inner_apply, boringEnergy_eq, Complex.ofReal_mul,
-      Complex.ofReal_natCast, Complex.ofReal_sum, Complex.ofReal_pow, mul_eq_mul_left_iff,
-      Nat.cast_eq_zero, Fintype.card_ne_zero, or_false, sq, Complex.ofReal_iterConv,
+      Complex.ofReal_sum, sq, Complex.ofReal_iterConv,
       (((indicate_isSelfAdjoint _).iterConv _).apply _).conj_eq, Complex.ofReal_comp_indicate]
 
 lemma cL2Norm_dft_indicate [MeasurableSpace G] [DiscreteMeasurableSpace G] (s : Finset G) :

@@ -194,10 +194,11 @@ example [Finite G] : Finite (AddChar G ℂ) := by infer_instance
 
 open scoped Classical in
 noncomputable instance [Finite G] : SupSet (BohrSet G) where
-  sSup B :=
-    { frequencies := {ψ | ⨆ i ∈ B, i.ewidth ψ < ⊤},
-      ewidth := fun ψ => ⨆ i ∈ B, ewidth i ψ
-      mem_frequencies := fun ψ => by simp [mem_frequencies] }
+  sSup B := {
+    frequencies := {ψ | ⨆ i ∈ B, i.ewidth ψ < ⊤},
+    ewidth ψ := ⨆ i ∈ B, ewidth i ψ
+    mem_frequencies := by simp
+  }
 
 lemma iInf_lt_top {α β : Type*} [CompleteLattice β] {S : Set α} {f : α → β}:
     (⨅ i ∈ S, f i) < ⊤ ↔ ∃ i ∈ S, f i < ⊤ := by
@@ -205,15 +206,15 @@ lemma iInf_lt_top {α β : Type*} [CompleteLattice β] {S : Set α} {f : α → 
 
 open scoped Classical in
 noncomputable instance [Finite G] : InfSet (BohrSet G) where
-  sInf B :=
-    { frequencies := {ψ | ∃ i ∈ B, i.ewidth ψ < ⊤},
-      ewidth := fun ψ => ⨅ i ∈ B, ewidth i ψ
-      mem_frequencies := by simp [iInf_lt_top] }
+  sInf B := {
+    frequencies := {ψ | ∃ i ∈ B, i.ewidth ψ < ⊤},
+    ewidth ψ := ⨅ i ∈ B, ewidth i ψ
+    mem_frequencies := by simp
+  }
 
 noncomputable def minimalAxioms [Finite G] :
     CompletelyDistribLattice.MinimalAxioms (BohrSet G) :=
-  Function.Injective.completelyDistribLatticeMinimalAxioms .of BohrSet.ewidth
-    ewidth_injective
+  ewidth_injective.completelyDistribLatticeMinimalAxioms .of BohrSet.ewidth
     (fun _ _ => rfl)
     (fun _ _ => rfl)
     (fun B => by
@@ -270,7 +271,7 @@ open scoped Classical
 noncomputable instance instSMul : SMul ℝ (BohrSet G) where
   smul ρ B := BohrSet.mk B.frequencies
       (fun ψ => if ψ ∈ B.frequencies then Real.nnabs ρ * B.ewidth ψ else ⊤) fun ψ => by
-        simp only [lt_top_iff_ne_top, ite_ne_right_iff, Classical.not_imp, iff_self_and]
+        simp only [lt_top_iff_ne_top, ite_ne_right_iff, iff_self_and]
         intro hψ
         refine ENNReal.mul_ne_top (by simp) ?_
         rwa [←lt_top_iff_ne_top, ←mem_frequencies]
@@ -302,8 +303,8 @@ end smul
 lemma eq_zero_of_ewidth_eq_zero {B : BohrSet G} [Finite G] (h : B.ewidth = 0) :
     B.chordSet = {0} := by
   rw [Set.eq_singleton_iff_unique_mem]
-  simp only [zero_mem, true_and, mem_chordSet_iff_nnnorm_width, map_zero_eq_one, sub_self,
-    norm_zero, true_and, NNReal.zero_le_coe, implies_true, nnnorm_zero, zero_le]
+  simp only [mem_chordSet_iff_nnnorm_width, map_zero_eq_one, sub_self, nnnorm_zero, zero_le,
+    implies_true, true_and]
   intro x hx
   by_contra!
   rw [←AddChar.exists_apply_ne_zero] at this

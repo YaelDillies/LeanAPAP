@@ -163,14 +163,14 @@ lemma indicate_iterConv_apply (s : Finset G) (n : ℕ) (a : G) :
 lemma indicate_iterConv_conv (s : Finset G) (n : ℕ) (f : G → R) :
     𝟭 s ∗^ n ∗ f = ∑ a ∈ s ^^ n, τ (∑ i, a i) f := by
   ext b
-  simp only [conv_eq_sum_sub', indicate_iterConv_apply, mem_piFinset, Finset.sum_apply,
-    translate_apply, ← nsmul_eq_mul, ← sum_const, Finset.sum_fiberwise']
+  simp only [conv_eq_sum_sub', indicate_iterConv_apply, Finset.sum_apply, translate_apply,
+    ← nsmul_eq_mul, ← sum_const, Finset.sum_fiberwise']
 
 lemma conv_indicate_iterConv (f : G → R) (s : Finset G) (n : ℕ) :
     f ∗ 𝟭 s ∗^ n = ∑ a ∈ s ^^ n, τ (∑ i, a i) f := by
   ext b
-  simp only [conv_eq_sum_sub, indicate_iterConv_apply, mem_piFinset, Finset.sum_apply,
-    translate_apply, ← nsmul_eq_mul', ← sum_const, Finset.sum_fiberwise']
+  simp only [conv_eq_sum_sub, indicate_iterConv_apply, Finset.sum_apply, translate_apply,
+    ← nsmul_eq_mul', ← sum_const, Finset.sum_fiberwise']
 
 variable [StarRing R]
 

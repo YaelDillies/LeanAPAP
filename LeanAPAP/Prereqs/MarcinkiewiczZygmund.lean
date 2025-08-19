@@ -73,7 +73,7 @@ private lemma step_two_aux (A : Finset ι) (f : ι → ℝ) (ε : Fin n → ℝ)
     intro xy
     exact (fun i ↦ if ε i = 1 then xy.1 i else xy.2 i, fun i ↦ if ε i = 1 then xy.2 i else xy.1 i)
   have h₁ : ∀ a ∈ (A ^^ n) ×ˢ (A ^^ n), swapper a ∈ (A ^^ n) ×ˢ (A ^^ n) := by
-    simp only [mem_product, and_imp, mem_piFinset, ← forall_and, swapper]
+    simp only [mem_product, mem_piFinset, ← forall_and, swapper]
     intro a h i
     split_ifs
     · exact h i
@@ -110,7 +110,7 @@ private lemma step_three (f : ι → ℝ) :
       ∑ a ∈ A ^^ n, ∑ b ∈ A ^^ n, ∑ k ∈ piAntidiag univ (2 * m),
           (multinomial univ k * ∏ t, (f (a t) - f (b t)) ^ k t) *
             ∑ ε ∈ ({-1, 1} : Finset ℝ)^^n, ∏ t, ε t ^ k t := by
-  simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A ^^ n), ← Complex.norm_pow, sum_pow_eq_sum_piAntidiag]
+  simp only [@sum_comm _ _ (Fin n → ℝ) _ _ (A ^^ n), sum_pow_eq_sum_piAntidiag]
   refine sum_congr rfl fun a _ ↦ ?_
   refine sum_congr rfl fun b _ ↦ ?_
   simp only [mul_pow, prod_mul_distrib, @sum_comm _ _ (Fin n → ℝ), ← mul_sum, ← sum_mul]

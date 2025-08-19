@@ -80,8 +80,7 @@ lemma dLpNorm_mul_le (p q : ℝ≥0∞) (hr₀ : r ≠ 0) [hpqr : ENNReal.Holder
   have hq₀ : q ≠ 0 := sorry
   simp only [ENNReal.some_eq_coe] at *
   norm_cast at hr₀
-  have : (‖(f * g) ·‖ ^ (r : ℝ)) = (‖f ·‖ ^ (r : ℝ)) * (‖g ·‖ ^ (r : ℝ)) := by
-    ext; simp [mul_rpow, abs_mul]
+  have : (‖(f * g) ·‖ ^ (r : ℝ)) = (‖f ·‖ ^ (r : ℝ)) * (‖g ·‖ ^ (r : ℝ)) := by ext; simp [mul_rpow]
   rw [dLpNorm_eq_dL1Norm_rpow, NNReal.rpow_inv_le_iff_of_pos, this, ← NNReal.coe_le_coe]
   any_goals positivity
   push_cast

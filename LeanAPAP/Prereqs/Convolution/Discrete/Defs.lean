@@ -144,7 +144,7 @@ lemma conv_eq_sum_add' (f g : G → R) (a : G) : (f ∗ g) a = ∑ t, f (-t) * g
 
 lemma conv_apply_add (f g : G → R) (a b : G) : (f ∗ g) (a + b) = ∑ t, f (a + t) * g (b - t) :=
   (conv_eq_sum_sub _ _ _).trans <| Fintype.sum_equiv (Equiv.subLeft b) _ _ fun t ↦ by
-    simp [add_sub_assoc, ← sub_add]
+    simp [add_sub_assoc]
 
 lemma sum_conv_mul (f g h : G → R) : ∑ a, (f ∗ g) a * h a = ∑ a, ∑ b, f a * g b * h (a + b) := by
   simp_rw [conv_eq_sum_sub', sum_mul]
@@ -437,17 +437,15 @@ lemma map_iterConv [CommSemiring S] (m : R →+* S) (f : G → R) (a : G) (n : �
     m ((f ∗^ n) a) = (m ∘ f ∗^ n) a := congr_fun (comp_iterConv m _ _) _
 
 lemma sum_iterConv (f : G → R) : ∀ n, ∑ a, (f ∗^ n) a = (∑ a, f a) ^ n
-  | 0 => by simp [filter_eq']
-  | n + 1 => by simp only [iterConv_succ, sum_conv, sum_iterConv, pow_succ]
+  | 0 => by simp
+  | n + 1 => by simp [iterConv_succ, sum_conv, sum_iterConv, pow_succ]
 
 @[simp] lemma iterConv_trivChar : ∀ n, (trivChar : G → R) ∗^ n = trivChar
   | 0 => rfl
   | _n + 1 => (conv_trivChar _).trans <| iterConv_trivChar _
 
 lemma support_iterConv_subset (f : G → R) : ∀ n, support (f ∗^ n) ⊆ n • support f
-  | 0 => by
-    simp only [iterConv_zero, zero_smul, support_subset_iff, Ne, ite_eq_right_iff, not_forall,
-      exists_prop, Set.mem_zero, and_imp, forall_eq, eq_self_iff_true, imp_true_iff, trivChar_apply]
+  | 0 => by simp
   | n + 1 =>
     (support_conv_subset _ _).trans <| Set.add_subset_add_right <| support_iterConv_subset _ _
 

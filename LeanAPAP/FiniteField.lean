@@ -259,7 +259,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
       (ε / 2) (by positivity) (div_le_one_of_le₀ (hε₁.le.trans <| by norm_num) <| by norm_num)
       (card G • (balance (μ A) ○ balance (μ A))) (sqrt (card G) • balance (μ A)) (μ univ) ?_ ?_ ?_
     · ext a : 1
-      simp [smul_dconv, dconv_smul, smul_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
+      simp [smul_dconv, dconv_smul, ← mul_assoc, ← sq, ← Complex.ofReal_pow]
     · simp
     · have global_dichotomy := global_dichotomy hA₀ hγC hγ hAC
       simpa [wLpNorm_nsmul, ← nsmul_eq_mul, div_le_iff₀' (show (0 : ℝ) < card G by positivity),
@@ -417,7 +417,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
         rw [← wInner_one_dconv_eq_conv_wInner_one, dconv_right_comm, conv_dconv_right_comm (μ A),
           wInner_one_dconv_eq_conv_wInner_one, ← dconv_wInner_one_eq_wInner_one_conv,
           ← conj_wInner_symm]
-        simp [wInner_one_eq_sum, inner_apply', smul_sum, mul_assoc]
+        simp [wInner_one_eq_sum, smul_sum, mul_assoc]
         congr! 1
         group
       _ ≤ card G • (‖μ_[ℝ] (Set.toFinset V) ∗ μ A‖_[∞] * ‖μ_[ℝ] A ∗ μ A₂ ○ μ A₁‖_[1]) := by
@@ -476,7 +476,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
         2⁻¹ ≤ card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
     induction' i with i ih hi
     · exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp [n], hA,
-        by simp [α], by simp [α, nnratCast_dens, Fintype.card_subtype, subset_iff]⟩
+        by simp [α], by simp [α, nnratCast_dens]⟩
     obtain ⟨V, _, _, _, _, B, hV, hB, hαβ, hBV⟩ := ih
     obtain hB' | hB' := le_or_gt 2⁻¹ (card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
     · exact ⟨V, inferInstance, inferInstance, inferInstance, inferInstance, B,

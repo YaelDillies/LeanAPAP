@@ -24,8 +24,7 @@ lemma cL1Norm_mul (f g : ι → 𝕜) : ‖f * g‖ₙ_[1] = ⟪fun i ↦ ‖f i
 /-- **Cauchy-Schwarz inequality** -/
 lemma wInner_cWeight_le_cL2Norm_mul_cL2Norm (f g : ι → ℝ) : ⟪f, g⟫ₙ_[ℝ] ≤ ‖f‖ₙ_[2] * ‖g‖ₙ_[2] := by
   simp only [wInner_cWeight_eq_smul_wInner_one, cL2Norm_eq_expect_nnnorm, ← NNReal.coe_mul, expect,
-    NNReal.coe_nnqsmul, ← NNRat.cast_smul_eq_nnqsmul ℝ≥0, smul_eq_mul, ← NNReal.mul_rpow,
-    mul_mul_mul_comm, ← sq]
+    ← NNRat.cast_smul_eq_nnqsmul ℝ≥0, smul_eq_mul, ← NNReal.mul_rpow, mul_mul_mul_comm, ← sq]
   simp only [NNReal.mul_rpow, ← dL2Norm_eq_sum_nnnorm, card_univ]
   rw [← NNReal.rpow_two, NNReal.rpow_rpow_inv two_ne_zero, NNReal.smul_def, smul_eq_mul]
   push_cast
@@ -101,8 +100,7 @@ lemma cLpNorm_mul_le (p q : ℝ≥0∞) (hr₀ : r ≠ 0) [hpqr : ENNReal.Holder
   have hq₀ : q ≠ 0 := sorry
   simp only [ENNReal.some_eq_coe] at *
   norm_cast at hr₀
-  have : (‖(f * g) ·‖ ^ (r : ℝ)) = (‖f ·‖ ^ (r : ℝ)) * (‖g ·‖ ^ (r : ℝ)) := by
-    ext; simp [mul_rpow, abs_mul]
+  have : (‖(f * g) ·‖ ^ (r : ℝ)) = (‖f ·‖ ^ (r : ℝ)) * (‖g ·‖ ^ (r : ℝ)) := by ext; simp [mul_rpow]
   rw [cLpNorm_eq_cL1Norm_rpow, NNReal.rpow_inv_le_iff_of_pos, this, ← NNReal.coe_le_coe]
   any_goals positivity
   push_cast

@@ -13,20 +13,20 @@ open Function Real MeasureTheory
 open Complex (I re im)
 open scoped BigOperators Nat NNReal ENNReal ComplexConjugate ComplexOrder
 
-variable {α : Type*} [Fintype α] [AddCommGroup α] {p : ℕ}
+variable {G : Type*} [Fintype G] [AddCommGroup G] {p : ℕ}
 
-variable [MeasurableSpace α] [DiscreteMeasurableSpace α]
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- **Rudin's inequality**, exponential form. -/
-lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated <| support <| cft f) :
+lemma rudin_exp_ineq (f : G → ℂ) (hf : AddDissociated <| support <| cft f) :
     𝔼 a, exp (f a).re ≤ exp (‖f‖ₙ_[2] ^ 2 / 2) := by
   have (z : ℂ) : exp (re z) ≤ cosh ‖z‖ + re (z / ‖z‖) * sinh ‖z‖ :=
     calc
-      _ = _ := by obtain rfl | hz := eq_or_ne z 0 <;> simp [norm_pos_iff.2, *]
+      _ = _ := by obtain rfl | hz := eq_or_ne z 0 <;> simp [*]
       _ ≤ _ := exp_mul_le_cosh_add_mul_sinh (by simpa using z.abs_re_div_norm_le_one) _
   choose c hc hcf using fun ψ ↦ Complex.exists_norm_mul_eq_self (cft f ψ)
   have hc₀ (ψ) : c ψ ≠ 0 := fun h ↦ by simpa [h] using hc ψ
-  have (a) :
+  have (a : G) :
     exp (f a).re ≤ ∏ ψ, (cosh ‖cft f ψ‖ + (c ψ * sinh ‖cft f ψ‖ * ψ a).re) :=
     calc
       _ = ∏ ψ, exp ((cft f ψ * ψ a).re) := by simp_rw [← exp_sum, ← Complex.re_sum, cft_inversion]
@@ -50,7 +50,7 @@ lemma rudin_exp_ineq (f : α → ℂ) (hf : AddDissociated <| support <| cft f) 
     _ = _ := by simp_rw [← exp_sum, ← sum_div, ← dL2Norm_cft, dL2Norm_sq_eq_sum_norm]
 
 /-- **Rudin's inequality**, exponential form with absolute values. -/
-lemma rudin_exp_abs_ineq (f : α → ℂ) (hf : AddDissociated <| support <| cft f) :
+lemma rudin_exp_abs_ineq (f : G → ℂ) (hf : AddDissociated <| support <| cft f) :
     𝔼 a, exp |(f a).re| ≤ 2 * exp (‖f‖ₙ_[2] ^ 2 / 2) := by
   calc
     _ ≤ 𝔼 a, (exp (f a).re + exp (-f a).re) := expect_le_expect fun _ _ ↦ exp_abs_le _
@@ -59,7 +59,7 @@ lemma rudin_exp_abs_ineq (f : α → ℂ) (hf : AddDissociated <| support <| cft
         add_le_add (rudin_exp_ineq f hf) (rudin_exp_ineq (-f) <| by simpa using hf)
     _ = _ := by simp [two_mul]
 
-private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated <| support <| cft f) :
+private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : G → ℂ) (hf : AddDissociated <| support <| cft f) :
     ‖re ∘ f‖ₙ_[p] ≤ 2 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] := by
   wlog hfp : ‖f‖ₙ_[2] = sqrt p with H
   · obtain rfl | hf := eq_or_ne f 0
@@ -88,7 +88,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociate
   all_goals positivity
 
 /-- **Rudin's inequality**, usual form. -/
-lemma rudin_ineq (hp : 2 ≤ p) (f : α → ℂ) (hf : AddDissociated <| support <| cft f) :
+lemma rudin_ineq (hp : 2 ≤ p) (f : G → ℂ) (hf : AddDissociated <| support <| cft f) :
     ‖f‖ₙ_[p] ≤ 4 * exp 2⁻¹ * sqrt p * ‖f‖ₙ_[2] := by
   have hp₁ : (1 : ℝ≥0∞) ≤ p := by exact_mod_cast one_le_two.trans hp
   calc

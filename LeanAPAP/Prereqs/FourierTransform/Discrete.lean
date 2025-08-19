@@ -68,7 +68,7 @@ lemma dft_inversion' (f : α → ℂ) : 𝔼 ψ, dft f ψ • ⇑ψ = f := by ex
 
 lemma dft_dft_doubleDualEmb (f : α → ℂ) (a : α) :
     dft (dft f) (doubleDualEmb a) = card α * f (-a) := by
-  simp only [← dft_inversion f (-a), mul_comm (conj _), dft_apply, wInner_one_eq_sum, inner_apply,
+  simp only [← dft_inversion f (-a), dft_apply, wInner_one_eq_sum, inner_apply,
     map_neg_eq_inv, AddChar.inv_apply_eq_conj, doubleDualEmb_apply, ← Fintype.card_mul_expect,
     AddChar.card_eq]
 
@@ -105,7 +105,7 @@ lemma dft_comp_neg_apply (f : α → ℂ) (ψ : AddChar α ℂ) :
   simp only [balance, Pi.sub_apply, dft_sub, dft_const _ hψ, sub_zero]
 
 @[simp] lemma dft_trivChar [DecidableEq α] : dft (trivChar : α → ℂ) = 1 := by
-  ext; simp [trivChar_apply, dft_apply, wInner_one_eq_sum, ← map_sum]
+  ext; simp [trivChar_apply, dft_apply, wInner_one_eq_sum]
 
 @[simp] lemma dft_one : dft (1 : α → ℂ) = card α • trivChar :=
   dft_injective <| by classical rw [dft_smul, dft_trivChar, dft_dft, Pi.one_comp, nsmul_eq_mul]
@@ -121,9 +121,7 @@ lemma dft_conv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) : dft (f ∗ g) ψ
     univ_product_univ]
   refine Fintype.sum_equiv ((Equiv.prodComm _ _).trans <|
     ((Equiv.refl _).prodShear Equiv.subRight).trans <| Equiv.prodComm _ _)  _ _ fun (a, b) ↦ ?_
-  simp only [Equiv.trans_apply, Equiv.prodComm_apply, Equiv.prodShear_apply, Prod.fst_swap,
-    Equiv.refl_apply, Prod.snd_swap, Equiv.subRight_apply, Prod.swap_prod_mk, Prod.forall]
-  rw [mul_mul_mul_comm, ← map_mul, ← map_add_eq_mul, add_sub_cancel]
+  simp [mul_mul_mul_comm, ← map_mul, ← map_add_eq_mul]
 
 lemma dft_dconv_apply (f g : α → ℂ) (ψ : AddChar α ℂ) :
     dft (f ○ g) ψ = dft f ψ * conj (dft g ψ) := by

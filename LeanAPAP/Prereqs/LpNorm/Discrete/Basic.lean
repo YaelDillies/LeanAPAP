@@ -22,7 +22,7 @@ lemma dLpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖_[p
   have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) =
     ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := fun x ↦ by split_ifs <;> simp
   simp [dLpNorm_rpow_eq_sum_nnnorm, hp, indicate_apply, apply_ite nnnorm, -sum_const,
-    card_eq_sum_ones, this]
+    card_eq_sum_ones]
 
 lemma dLpNorm_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖_[p] = #s ^ (p⁻¹ : ℝ) := by
   refine (NNReal.eq_rpow_inv_iff ?_).2 (dLpNorm_rpow_indicate ?_ _) <;> positivity
@@ -72,8 +72,7 @@ lemma dLpNorm_translate [NormedAddCommGroup E] (a : G) (f : G → E) : ‖τ a f
   · simp only [dLinftyNorm_eq_iSup_nnnorm, ENNReal.none_eq_top, translate_apply]
     exact (Equiv.subRight _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [dLpNorm_exponent_zero, translate_apply, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero,
-      Nat.cast_inj]
+  · simp only [dLpNorm_exponent_zero, ENNReal.some_eq_coe, ENNReal.coe_zero]
   · simp only [dLpNorm_eq_sum_nnnorm hp, ENNReal.some_eq_coe, translate_apply]
     congr 1
     exact Fintype.sum_equiv (Equiv.subRight _) _ _ fun _ ↦ rfl
@@ -81,10 +80,10 @@ lemma dLpNorm_translate [NormedAddCommGroup E] (a : G) (f : G → E) : ‖τ a f
 @[simp] lemma dLpNorm_conjneg [RCLike E] (f : G → E) : ‖conjneg f‖_[p] = ‖f‖_[p] := by
   simp only [conjneg, dLpNorm_conj]
   obtain p | p := p
-  · simp only [dLinftyNorm_eq_iSup_nnnorm, ENNReal.none_eq_top, conjneg, RCLike.norm_conj]
+  · simp only [dLinftyNorm_eq_iSup_nnnorm, ENNReal.none_eq_top]
     exact (Equiv.neg _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [dLpNorm_exponent_zero, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
+  · simp only [dLpNorm_exponent_zero, ENNReal.some_eq_coe, ENNReal.coe_zero]
   · simp only [dLpNorm_eq_sum_nnnorm hp, ENNReal.some_eq_coe]
     congr 1
     exact Fintype.sum_equiv (Equiv.neg _) _ _ fun _ ↦ rfl

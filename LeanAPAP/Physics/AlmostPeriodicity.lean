@@ -62,7 +62,7 @@ lemma my_markov (hc : 0 < c) (hg : ∀ a ∈ A, 0 ≤ g a) (h : ∑ a ∈ A, g a
   have := h.trans'
     (sum_le_sum_of_subset_of_nonneg (filter_subset (¬g · ≤ c) A) fun i hi _ ↦ hg _ hi)
   have :=
-    (card_nsmul_le_sum _ _ c (by simp (config := { contextual := true }) [le_of_lt])).trans this
+    (card_nsmul_le_sum _ _ c (by simp +contextual [le_of_lt])).trans this
   rw [nsmul_eq_mul, mul_right_comm] at this
   have := le_of_mul_le_mul_right this hc
   rw [filter_not, cast_card_sdiff (filter_subset _ _)] at this
@@ -135,7 +135,7 @@ lemma lemma28_part_one (hm : 1 ≤ m) (x : G) :
   refine (RCLike.marcinkiewicz_zygmund (by linarith only [hm]) f' ?_).trans_eq' ?_
   · intro i
     rw [Fintype.sum_piFinset_apply, sum_sub_distrib]
-    simp only [sub_eq_zero, sum_const, indicate_apply]
+    simp only [sum_const]
     rw [← Pi.smul_apply (card A), ← smul_conv, card_smul_mu, conv_eq_sum_sub']
     simp only [boole_mul, indicate_apply]
     rw [← sum_filter, filter_mem_eq_inter, univ_inter, sub_self, smul_zero]
@@ -155,7 +155,7 @@ lemma big_shifts_step2 (L : Finset (Fin k → G)) (hk : k ≠ 0) :
     refine fun f ↦ sum_congr rfl fun x hx ↦ ?_
     exact sum_congr rfl fun y hy ↦ if_pos <| add_mem_add hx hy
   rw [this]
-  have (x y) :
+  have (x y : Fin k → G) :
       ∑ s₁ ∈ S.piDiag (Fin k), ∑ s₂ ∈ S.piDiag (Fin k), ite (y + s₂ = x + s₁) (1 : ℝ) 0 =
         ite (x - y ∈ univ.piDiag (Fin k)) 1 0 *
           ∑ s₁ ∈ S.piDiag (Fin k), ∑ s₂ ∈ S.piDiag (Fin k), ite (s₂ = x + s₁ - y) 1 0 := by
@@ -200,8 +200,7 @@ lemma big_shifts (S : Finset G) (L : Finset (Fin k → G)) (hk : k ≠ 0)
     refine (card_le_card (add_subset_add_right hL)).trans ?_
     rw [← Fintype.card_piFinset_const]
     refine card_le_card fun i hi ↦ ?_
-    simp only [mem_add, mem_piDiag, Fintype.mem_piFinset, exists_prop, exists_and_left,
-      exists_exists_and_eq_and] at hi ⊢
+    simp only [mem_add, mem_piDiag, Fintype.mem_piFinset, exists_exists_and_eq_and] at hi ⊢
     obtain ⟨y, hy, a, ha, rfl⟩ := hi
     intro j
     exact ⟨y j, hy _, a, ha, rfl⟩
@@ -219,7 +218,6 @@ lemma big_shifts (S : Finset G) (L : Finset (Fin k → G)) (hk : k ≠ 0)
   exact exists_le_of_sum_le hL' this
 
 variable [MeasurableSpace G]
-
 
 namespace AlmostPeriodicity
 
@@ -302,9 +300,7 @@ lemma lemma28 (hε : 0 < ε) (hm : 1 ≤ m) (hk : (64 : ℝ) * m / ε ^ 2 ≤ k)
       (8 * m) ^ m * k ^ (m - 1) * ∑ a ∈ A ^^ k, ∑ i, (2 * ‖f‖_[2 * m]) ^ (2 * m) :=
     lemma28_part_two hm hA
   refine le_trans (mod_cast this) ?_
-  simp only [sum_const, Fintype.card_piFinset_const, nsmul_eq_mul, Nat.cast_pow]
-  refine (lemma28_end hε hm hk).trans_eq' ?_
-  simp [mul_assoc, card_fin]
+  simpa [mul_assoc] using lemma28_end hε hm hk
 
 open MeasureTheory in
 lemma just_the_triangle_inequality {t : G} {a : Fin k → G} (ha : a ∈ l k m ε f A)
@@ -406,7 +402,7 @@ lemma almost_periodicity (ε : ℝ) (hε : 0 < ε) (hε' : ε ≤ 1) (m : ℕ) (
     exact T_bound hK₂ #L #S #A #(A + S) _ rfl hL' this
       (by rw [← cast_addConst_mul_card]; gcongr) hA.card_pos hε hε' hm
   intro t ht
-  simp only [exists_prop, exists_eq_right, mem_filter, mem_univ, true_and] at ht
+  simp only [mem_filter, mem_univ, true_and] at ht
   have := just_the_triangle_inequality ha ht hk.bot_lt hm
   rwa [neg_neg, mul_div_cancel₀ _ (two_ne_zero' ℝ)] at this
 
@@ -440,7 +436,7 @@ theorem linfty_almost_periodicity (ε : ℝ) (hε₀ : 0 < ε) (hε₁ : ε ≤ 
       _ = _ := by simp [div_div_eq_mul_div, ← mul_div_right_comm, mul_right_comm, div_pow]
       _ ≤ _ := hKT
   set F : G → ℂ := τ t (μ A ∗ 𝟭 B) - μ A ∗ 𝟭 B
-  have (x) :=
+  have (x : G) :=
     calc
       (τ t (μ A ∗ 𝟭 B ∗ μ C) - μ A ∗ 𝟭 B ∗ μ C : G → ℂ) x
         = (F ∗ μ C) x := by simp [sub_conv, F]

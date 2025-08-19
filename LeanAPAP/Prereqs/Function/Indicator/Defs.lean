@@ -126,7 +126,7 @@ variable [Semiring R] [PartialOrder R] [IsOrderedRing R] {s : Finset α}
 @[simp] lemma indicate_nonneg : 0 ≤ 𝟭_[R] s := fun a ↦ by rw [indicate_apply]; split_ifs <;> simp
 
 @[simp] lemma indicate_pos [Nontrivial R] : 0 < 𝟭_[R] s ↔ s.Nonempty := by
-  simp [indicate_apply, Pi.lt_def, funext_iff, lt_iff_le_and_ne, @eq_comm R 0,
+  simp [indicate_apply, funext_iff, lt_iff_le_and_ne, @eq_comm R 0,
     Finset.Nonempty]
 
 protected alias ⟨_, Finset.Nonempty.indicate_pos⟩ := indicate_pos
@@ -243,7 +243,7 @@ section LinearOrderedSemifield
 variable [Semifield K] [LinearOrder K] [IsStrictOrderedRing K] {s : Finset α}
 
 @[simp] lemma mu_nonneg : 0 ≤ μ_[K] s := fun a ↦ by rw [mu_apply]; split_ifs <;> simp
-@[simp] lemma mu_pos : 0 < μ_[K] s ↔ s.Nonempty := mu_nonneg.gt_iff_ne.trans mu_ne_zero
+@[simp] lemma mu_pos : 0 < μ_[K] s ↔ s.Nonempty := mu_nonneg.lt_iff_ne'.trans mu_ne_zero
 
 protected alias ⟨_, Finset.Nonempty.mu_pos⟩ := mu_pos
 

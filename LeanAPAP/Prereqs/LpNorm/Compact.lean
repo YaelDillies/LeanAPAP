@@ -137,15 +137,13 @@ variable [DiscreteMeasurableSpace α]
 lemma cLpNorm_eq_expect_norm' (hp₀ : p ≠ 0) (hp : p ≠ ∞) (f : α → E) :
     ‖f‖ₙ_[p] = (𝔼 i, ‖f i‖ ^ p.toReal) ^ p.toReal⁻¹ := by
   simp [cLpNorm, uniformOn, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete,
-    integral_fintype, tsum_eq_sum' (s := univ) (by simp), ENNReal.coe_rpow_of_nonneg, cond_apply,
-    expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum, Measure.real]
+    integral_fintype, cond_apply, expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum, Measure.real]
 
 lemma cLpNorm_eq_expect_nnnorm' (hp₀ : p ≠ 0) (hp : p ≠ ∞) (f : α → E) :
     ‖f‖ₙ_[p] = (𝔼 i, ‖f i‖₊ ^ p.toReal) ^ p.toReal⁻¹ := by
   ext
   simp [cLpNorm, uniformOn, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete,
-    integral_fintype, tsum_eq_sum' (s := univ) (by simp), ENNReal.coe_rpow_of_nonneg, cond_apply,
-    expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum, Measure.real]
+    integral_fintype, cond_apply, expect_eq_sum_div_card, div_eq_inv_mul, ← mul_sum, Measure.real]
 
 lemma cLpNorm_toNNReal_eq_expect_norm {p : ℝ} (hp : 0 < p) (f : α → E) :
     ‖f‖ₙ_[p.toNNReal] = (𝔼 i, ‖f i‖ ^ p) ^ p⁻¹ := by
@@ -362,7 +360,7 @@ lemma cLpNorm_rpow_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖ₙ
   have : ∀ x, (ite (x ∈ s) 1 0 : ℝ) ^ (p : ℝ) =
     ite (x ∈ s) (1 ^ (p : ℝ)) (0 ^ (p : ℝ)) := fun x ↦ by split_ifs <;> simp
   simp [cLpNorm_rpow_eq_expect_nnnorm, hp, indicate_apply, apply_ite nnnorm, expect_const,
-    sum_boole, this, zero_rpow, filter_mem_eq_inter, nnratCast_dens, hs]
+    nnratCast_dens, hs]
 
 lemma cLpNorm_indicate (hp : p ≠ 0) (s : Finset ι) : ‖𝟭_[R] s‖ₙ_[p] = s.dens ^ (p⁻¹ : ℝ) := by
   refine (NNReal.eq_rpow_inv_iff ?_).2 (cLpNorm_rpow_indicate ?_ _) <;> positivity
@@ -394,8 +392,7 @@ lemma cLpNorm_translate [NormedAddCommGroup E] (a : G) (f : G → E) : ‖τ a f
   · simp only [cLinftyNorm_eq_iSup_nnnorm, ENNReal.none_eq_top, translate_apply]
     exact (Equiv.subRight _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [cLpNorm_exponent_zero, translate_apply, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero,
-      Nat.cast_inj]
+  · simp only [cLpNorm_exponent_zero, ENNReal.some_eq_coe, ENNReal.coe_zero]
   · simp only [cLpNorm_eq_expect_nnnorm hp, ENNReal.some_eq_coe, translate_apply]
     congr 1
     exact Fintype.expect_equiv (Equiv.subRight _) _ _ fun _ ↦ rfl
@@ -403,10 +400,10 @@ lemma cLpNorm_translate [NormedAddCommGroup E] (a : G) (f : G → E) : ‖τ a f
 @[simp] lemma cLpNorm_conjneg [RCLike E] (f : G → E) : ‖conjneg f‖ₙ_[p] = ‖f‖ₙ_[p] := by
   simp only [conjneg, cLpNorm_conj]
   obtain p | p := p
-  · simp only [cLinftyNorm_eq_iSup_nnnorm, ENNReal.none_eq_top, conjneg, RCLike.norm_conj]
+  · simp only [cLinftyNorm_eq_iSup_nnnorm, ENNReal.none_eq_top]
     exact (Equiv.neg _).iSup_congr fun _ ↦ rfl
   obtain rfl | hp := eq_or_ne p 0
-  · simp only [cLpNorm_exponent_zero, Ne, ENNReal.some_eq_coe, ENNReal.coe_zero, Nat.cast_inj]
+  · simp only [cLpNorm_exponent_zero, ENNReal.some_eq_coe, ENNReal.coe_zero]
   · simp only [cLpNorm_eq_expect_nnnorm hp, ENNReal.some_eq_coe]
     congr 1
     exact Fintype.expect_equiv (Equiv.neg _) _ _ fun _ ↦ rfl

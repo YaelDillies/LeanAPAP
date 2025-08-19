@@ -65,9 +65,8 @@ variable [DiscreteMeasurableSpace α]
 
 lemma wLpNorm_eq_sum_norm (hp₀ : p ≠ 0) (hp : p ≠ ∞) (w : α → ℝ≥0) (f : α → E) :
     ‖f‖_[p, w] = (∑ i, w i • ‖f i‖ ^ p.toReal) ^ p.toReal⁻¹ := by
-  simp [wLpNorm, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete, one_div,
-    integral_finset_sum_measure, tsum_eq_sum' (s := univ) (by simp), ENNReal.coe_rpow_of_nonneg,
-    ENNReal.toReal_inv, NNReal.smul_def]
+  simp [wLpNorm, coe_nnLpNorm_eq_integral_norm_rpow_toReal hp₀ hp .of_discrete, NNReal.smul_def,
+    integral_finset_sum_measure]
 
 lemma wLpNorm_eq_sum_nnnorm (hp₀ : p ≠ 0) (hp : p ≠ ∞) (w : α → ℝ≥0) (f : α → E) :
     ‖f‖_[p, w] = (∑ i, w i • ‖f i‖₊ ^ p.toReal) ^ p.toReal⁻¹ := by
@@ -75,11 +74,11 @@ lemma wLpNorm_eq_sum_nnnorm (hp₀ : p ≠ 0) (hp : p ≠ ∞) (w : α → ℝ�
 
 lemma wLpNorm_toNNReal_eq_sum_norm {p : ℝ} (hp : 0 < p) (w : α → ℝ≥0) (f : α → E) :
     ‖f‖_[p.toNNReal, w] = (∑ i, w i • ‖f i‖ ^ p) ^ p⁻¹ := by
-  rw [wLpNorm_eq_sum_norm] <;> simp [hp, hp.ne', hp.le, NNReal.smul_def]
+  rw [wLpNorm_eq_sum_norm] <;> simp [hp, hp.le, NNReal.smul_def]
 
 lemma wLpNorm_toNNReal_eq_sum {p : ℝ} (hp : 0 < p) (w : α → ℝ≥0) (f : α → E) :
     ‖f‖_[p.toNNReal, w] = (∑ i, w i • ‖f i‖₊ ^ p) ^ p⁻¹ := by
-  rw [wLpNorm_eq_sum_nnnorm] <;> simp [hp, hp.ne', hp.le, NNReal.smul_def]
+  rw [wLpNorm_eq_sum_nnnorm] <;> simp [hp, hp.le]
 
 lemma wLpNorm_rpow_eq_sum_nnnorm {p : ℝ≥0} (hp : p ≠ 0) (w : α → ℝ≥0) (f : α → E) :
     ‖f‖_[p, w] ^ (p : ℝ) = ∑ i, w i • ‖f i‖₊ ^ (p : ℝ) := by simp [wLpNorm_eq_sum_nnnorm, hp]
