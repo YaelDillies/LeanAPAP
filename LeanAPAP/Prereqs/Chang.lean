@@ -114,7 +114,7 @@ lemma general_hoelder (hη : 0 ≤ η) (ν : G → ℝ≥0) (hfν : ∀ x, f x �
   simp_rw [mul_pow] at this
   rw [rpow_inv_natCast_pow _ hm, ← rpow_mul_natCast, one_sub_mul,
     inv_mul_cancel₀, ← Nat.cast_pred, rpow_natCast, mul_assoc, mul_left_comm, ← pow_sub_one_mul,
-    mul_assoc, mul_le_mul_left] at this
+    mul_assoc, mul_le_mul_iff_right₀] at this
   any_goals positivity
   replace hfν : ∀ x, ‖f x‖ ≤ ‖f x‖ * sqrt (ν x) := by
     rintro x

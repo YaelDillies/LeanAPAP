@@ -182,7 +182,7 @@ lemma claim_six (c : ℝ) (hc : 0 ≤ c) :
   · simp
   calc
     _ ≤ (#B : ℝ) * (#A ^ 2 * (c / 2 * (E[A, B] ^ 2 / (#A ^ 3 * #B ^ 2)))) := by gcongr
-    _ = c / 2 * (E[A, B] ^ 2 / (#A * #B)) := by field_simp; ring
+    _ = c / 2 * (E[A, B] ^ 2 / (#A * #B)) := by field_simp
 
 lemma claim_seven (c : ℝ) (hc : 0 ≤ c) (hA : (0 : ℝ) < #A) (hB : (0 : ℝ) < #B) :
     ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s *
@@ -193,7 +193,6 @@ lemma claim_seven (c : ℝ) (hc : 0 ≤ c) (hA : (0 : ℝ) < #A) (hB : (0 : ℝ)
     ∑ x : G, (𝟭_[ℝ] A ○ 𝟭 B) x * (card ((A ∩ (x +ᵥ B)) ×ˢ (A ∩ (x +ᵥ B)) ∩ H_choice A B c)) := by
         simp only [mul_add, sum_add_distrib, ← sum_mul, thing_two, ← mul_pow]
         field_simp
-        ring
        _ ≤ _ := by
         refine (add_le_add_left (claim_six c hc) _).trans ?_
         rw [← add_mul, add_halves]
@@ -228,17 +227,17 @@ lemma test_case {E A B : ℕ} {K : ℝ} (hK : 0 < K) (hE : K⁻¹ * (A ^ 2 * B) 
   · positivity
   refine hE.trans_eq ?_
   field_simp
-  ring
+  simp
 
 lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K) (hE : K⁻¹ * (#A ^ 2 * #B) ≤ E[A, B])
     (hA : (0 : ℝ) < #A) (hB : (0 : ℝ) < #B) :
     ∃ s : G, ∃ X ⊆ A ∩ (s +ᵥ B), #A / (Real.sqrt 2 * K) ≤ #X ∧
       (1 - c) * #X ^ 2 ≤
-        #((X ×ˢ X).filter (fun ⟨a, b⟩ ↦ c / 2 * (K ^ 2)⁻¹ * #A ≤ (𝟭 B ○ 𝟭 B) (a - b))) := by
+        #((X ×ˢ X).filter fun ⟨a, b⟩ ↦ c / 2 * (K ^ 2)⁻¹ * #A ≤ (𝟭 B ○ 𝟭 B) (a - b)) := by
   obtain ⟨s, hs⟩ := claim_eight c hc.le hA hB
   set X := A ∩ (s +ᵥ B)
   refine ⟨s, X, subset_rfl, ?_, ?_⟩
-  · have : (2 : ℝ)⁻¹ * (E[A, B] / (#A * #B)) ^ 2 ≤ (card X) ^ 2 := by
+  · have : (2 : ℝ)⁻¹ * (E[A, B] / (#A * #B)) ^ 2 ≤ card X ^ 2 := by
       refine le_of_mul_le_mul_left ?_ hc
       exact ((le_add_of_nonneg_right (Nat.cast_nonneg _)).trans hs).trans_eq' (by ring)
     replace := Real.sqrt_le_sqrt this
@@ -253,25 +252,19 @@ lemma lemma_one {c K : ℝ} (hc : 0 < c) (hK : 0 < K) (hE : K⁻¹ * (#A ^ 2 * #
     · positivity
     refine hE.trans_eq ?_
     field_simp
-    ring
+    simp
   rw [one_sub_mul, sub_le_comm]
   refine ((le_add_of_nonneg_left (by positivity)).trans hs).trans' ?_
   rw [sq, ← Nat.cast_mul, ← card_product, ← cast_card_sdiff (filter_subset _ _), ← filter_not,
     ← filter_mem_eq_inter]
-  refine Nat.cast_le.2 <| card_le_card ?_
+  gcongr ↑(#?_)
   rintro ⟨a, b⟩
   simp +contextual only [not_le, mem_product, mem_inter, and_imp, mem_filter, H_choice, and_self,
     true_and, X]
   rintro _ _ _ _ h
-  -- I'd like automation to handle the rest of this
-  refine h.le.trans ?_
-  rw [mul_assoc]
-  gcongr _ * ?_
+  grw [h, ← hE]
+  apply le_of_eq
   field_simp [hA, hB, hK, le_div_iff₀, div_le_iff₀] at hE ⊢
-  convert_to (#A ^ 2 * #B) ^ 2 ≤ (E[A, B] * K) ^ 2
-  · ring_nf
-  · ring_nf
-  gcongr
 
 lemma lemma_one' {c K : ℝ} (hc : 0 < c) (hK : 0 < K)
     (hE : K⁻¹ * (#A ^ 2 * #B) ≤ E[A, B])
@@ -420,7 +413,6 @@ theorem BSG_self {K : ℝ} (hK : 0 ≤ K) (hA : A.Nonempty) (hAK : K⁻¹ * #A ^
   convert BSG hK hA ?_ using 5
   · have := hA.card_pos
     field_simp
-    ring
   · ring_nf
     assumption
 
@@ -434,6 +426,5 @@ theorem BSG_self' {K : ℝ} (hK : 0 ≤ K) (hA : A.Nonempty) (hAK : K⁻¹ * #A 
   obtain rfl | hK := hK.eq_or_lt
   · simp
   · field_simp
-    ring
 
 end lemma2

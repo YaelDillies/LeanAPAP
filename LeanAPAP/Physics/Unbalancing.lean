@@ -1,6 +1,7 @@
+import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Group.PosPart
+import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.RCLike.Inner
-import Mathlib.Data.Complex.ExponentialBounds
 import LeanAPAP.Prereqs.Convolution.Discrete.Defs
 import LeanAPAP.Prereqs.Function.Indicator.Complex
 import LeanAPAP.Prereqs.LpNorm.Weighted
@@ -167,7 +168,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
         mul_div_mul_right, ← exp_log (_ : 0 < ε / 3), ← exp_mul, ← inv_div, log_inv, neg_mul,
         mul_div_left_comm, div_mul_cancel_right₀ (log_ε_pos hε₀ hε₁).ne']
       field_simp
-      ring
+      ring_nf
       all_goals positivity
     any_goals positivity
     calc
@@ -202,11 +203,7 @@ lemma unbalancing' (p : ℕ) (hp : p ≠ 0) (ε : ℝ) (hε₀ : 0 < ε) (hε₁
     (hν₁ : ‖((↑) ∘ ν : G → ℝ)‖_[1] = 1) (hε : ε ≤ ‖f‖_[p, ν]) :
     ∃ p' : ℕ, p' ≤ 2 ^ 10 * ε⁻¹ ^ 2 * p ∧ 1 + ε / 2 ≤ ‖f + 1‖_[p', ν] := by
   have := log_ε_pos hε₀ hε₁
-  have :=
-    calc
-      5 = 2 * 1 + 3 := by norm_num
-      _ ≤ 2 * p + 3
-        := add_le_add_right (mul_le_mul_left' (Nat.one_le_iff_ne_zero.2 hp) _) _
+  have : 5 ≤ 2 * p + 3 := by omega
   rw [← Nat.one_le_iff_ne_zero] at hp
   refine ⟨⌈120 / ε * log (3 / ε) * p⌉₊, ?_, ?_⟩
   · calc

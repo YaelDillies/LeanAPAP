@@ -150,15 +150,15 @@ end Field
 section CommSemiring
 variable [CommSemiring R] {f g : G → R} {n : ℕ}
 
-lemma indicate_iterConv_apply (s : Finset G) (n : ℕ) (a : G) :
-    (𝟭_[R] s ∗^ n) a = #{x ∈ s ^^ n | ∑ i, x i = a} := by
-  induction' n with n ih generalizing a
-  · simp [apply_ite card, eq_comm]
-  simp_rw [iterConv_succ', conv_eq_sum_sub', ih, indicate_apply, boole_mul, sum_ite,
-    filter_univ_mem, sum_const_zero, add_zero, ← Nat.cast_sum, ← Finset.card_sigma]
-  congr 1
-  refine card_equiv ((Equiv.sigmaEquivProd ..).trans <| Fin.consEquiv fun _ ↦ G) ?_
-  aesop (add simp [Fin.sum_cons, Fin.forall_fin_succ])
+lemma indicate_iterConv_apply (s : Finset G) :
+    ∀ (n : ℕ) (a : G), (𝟭_[R] s ∗^ n) a = #{x ∈ s ^^ n | ∑ i, x i = a}
+  | 0, a => by simp [apply_ite card, eq_comm]
+  | n + 1, a => by
+    simp_rw [iterConv_succ', conv_eq_sum_sub', indicate_iterConv_apply, indicate_apply, boole_mul,
+      sum_ite, filter_univ_mem, sum_const_zero, add_zero, ← Nat.cast_sum, ← Finset.card_sigma]
+    congr 1
+    refine card_equiv ((Equiv.sigmaEquivProd ..).trans <| Fin.consEquiv fun _ ↦ G) ?_
+    aesop (add simp [Fin.sum_cons, Fin.forall_fin_succ])
 
 lemma indicate_iterConv_conv (s : Finset G) (n : ℕ) (f : G → R) :
     𝟭 s ∗^ n ∗ f = ∑ a ∈ s ^^ n, τ (∑ i, a i) f := by

@@ -1,6 +1,6 @@
 import Mathlib.Analysis.RCLike.Basic
 import Mathlib.Data.Complex.Basic
-import Mathlib.Data.Complex.Module
+import Mathlib.LinearAlgebra.Complex.Module
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 
 open Finset Function

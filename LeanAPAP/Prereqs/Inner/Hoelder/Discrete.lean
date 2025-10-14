@@ -100,23 +100,24 @@ lemma dL1Norm_mul_le (p q : ℝ≥0∞) [hpq : ENNReal.HolderConjugate p q] :
 lemma dLpNorm_prod_le {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {p : ι → ℝ≥0} (hp : ∀ i, p i ≠ 0)
     (q : ℝ≥0) (hpq : ∑ i ∈ s, ((p i)⁻¹ : ℝ≥0∞) = (q : ℝ≥0∞)⁻¹) (f : ι → α → 𝕜) :
     ‖∏ i ∈ s, f i‖_[q] ≤ ∏ i ∈ s, ‖f i‖_[p i] := by
-  induction' s using Finset.cons_induction with i s hi ih generalizing q
-  · cases not_nonempty_empty hs
-  obtain rfl | hs := s.eq_empty_or_nonempty
-  · simp only [sum_cons, sum_empty, add_zero, inv_inj] at hpq
-    simp [← hpq]
-  simp_rw [prod_cons]
-  rw [sum_cons, ← inv_inv (∑ _ ∈ _, _)] at hpq
-  have : ENNReal.HolderTriple (p i) ↑(∑ i ∈ s, (p i)⁻¹)⁻¹ q := ⟨sorry⟩
-  refine (dLpNorm_mul_le _ _ ?_).trans (mul_le_mul_left' (ih hs (∑ i ∈ s, (p i)⁻¹)⁻¹ ?_) _)
-  · norm_cast
-    rintro rfl
-    simp [hp] at hpq
-  · rw [← ENNReal.coe_inv, inv_inv]
-    · push_cast
-      congr! with i
-      exact (ENNReal.coe_inv <| hp _).symm
-    · simpa [hp]
+  induction s using Finset.cons_induction generalizing q with
+  | empty => cases not_nonempty_empty hs
+  | cons i s hi ih =>
+    obtain rfl | hs := s.eq_empty_or_nonempty
+    · simp only [sum_cons, sum_empty, add_zero, inv_inj] at hpq
+      simp [← hpq]
+    simp_rw [prod_cons]
+    rw [sum_cons, ← inv_inv (∑ _ ∈ _, _)] at hpq
+    have : ENNReal.HolderTriple (p i) ↑(∑ i ∈ s, (p i)⁻¹)⁻¹ q := ⟨sorry⟩
+    refine (dLpNorm_mul_le _ _ ?_).trans (mul_le_mul_left' (ih hs (∑ i ∈ s, (p i)⁻¹)⁻¹ ?_) _)
+    · norm_cast
+      rintro rfl
+      simp [hp] at hpq
+    · rw [← ENNReal.coe_inv, inv_inv]
+      · push_cast
+        congr! with i
+        exact (ENNReal.coe_inv <| hp _).symm
+      · simpa [hp]
 
 end Hoelder
 end MeasureTheory

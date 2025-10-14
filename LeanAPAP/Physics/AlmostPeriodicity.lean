@@ -1,6 +1,6 @@
 import Mathlib.Algebra.Order.Chebyshev
+import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Combinatorics.Additive.DoublingConst
-import Mathlib.Data.Complex.ExponentialBounds
 import Mathlib.Data.Finset.CastCard
 import Mathlib.Tactic.Bound
 import LeanAPAP.Prereqs.Convolution.Discrete.Basic

@@ -410,8 +410,9 @@ lemma cLpNorm_translate [NormedAddCommGroup E] (a : G) (f : G → E) : ‖τ a f
 
 lemma cLpNorm_translate_sum_sub_le [NormedAddCommGroup E] (hp : 1 ≤ p) {ι : Type*} (s : Finset ι)
     (a : ι → G) (f : G → E) : ‖τ (∑ i ∈ s, a i) f - f‖ₙ_[p] ≤ ∑ i ∈ s, ‖τ (a i) f - f‖ₙ_[p] := by
-  induction' s using Finset.cons_induction with i s ih hs
-  · simp
+  induction s using Finset.cons_induction with
+  | empty => simp
+  | cons i s ih hs =>
   calc
     _ = ‖τ (∑ j ∈ s, a j) (τ (a i) f - f) + (τ (∑ j ∈ s, a j) f - f)‖ₙ_[p] := by
         rw [sum_cons, translate_add', translate_sub_right, sub_add_sub_cancel]

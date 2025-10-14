@@ -474,9 +474,11 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
         ∧ α ≤ B.dens ∧
       (B.dens < (65 / 64 : ℝ) ^ i * α →
         2⁻¹ ≤ card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
-    induction' i with i ih hi
-    · exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp [n], hA,
+    induction i with
+    | zero =>
+      exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp [n], hA,
         by simp [α], by simp [α, nnratCast_dens]⟩
+    | succ i ih =>
     obtain ⟨V, _, _, _, _, B, hV, hB, hαβ, hBV⟩ := ih
     obtain hB' | hB' := le_or_gt 2⁻¹ (card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ])
     · exact ⟨V, inferInstance, inferInstance, inferInstance, inferInstance, B,
