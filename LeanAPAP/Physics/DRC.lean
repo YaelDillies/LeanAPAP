@@ -134,7 +134,7 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
   rw [← sum_mul, lemma_0, nsmul_eq_mul, Nat.cast_mul, ← sum_mul, mul_right_comm, ← hgB,
     mul_left_comm, ← mul_assoc]
   simp only [indicate_apply, boole_mul, mem_filter, mem_univ, true_and, ← sum_filter,
-    mul_lt_mul_right hf, Function.comp_apply]
+    mul_lt_mul_iff_left₀ hf, Function.comp_apply]
   by_cases h : ∀ s, g s ≠ 0 → M ^ 2 ≤ g s
   · rw [← sum_filter_ne_zero (s := filter _ _), Finset.filter_comm,
       filter_true_of_mem fun s hs ↦ h s (mem_filter.1 hs).2, ← sum_filter_ne_zero]
