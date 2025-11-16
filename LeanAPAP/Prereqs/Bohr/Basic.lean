@@ -75,9 +75,6 @@ lemma ext_width {B B' : BohrSet G} (freq : B.frequencies = B'.frequencies)
 
 /-! ### Coercion, membership -/
 
--- instance instMem : Membership G (BohrSet G) :=
---   ⟨fun x B ↦ ∀ ψ, ‖1 - ψ x‖₊ ≤ B.ewidth ψ⟩
-
 /-- The set corresponding to a Bohr set `B` is `{x | ∀ ψ ∈ B.frequencies, ‖1 - ψ x‖ ≤ B.width ψ}`.
 This is the *chord-length* convention. The arc-length convention would instead be
 `{x | ∀ ψ ∈ B.frequencies, |arg (ψ x)| ≤ B.width ψ}`.
@@ -120,7 +117,7 @@ lemma mem_chordSet_iff_norm_width :
 -- TODO: This lemma needs `Finite G` because we are using `AddChar G ℂ` rather than `AddChar G ℂˣ`
 -- as the dual group.
 @[simp] lemma neg_mem [Finite G] : -x ∈ B.chordSet ↔ x ∈ B.chordSet :=
-  forall₂_congr fun ψ hψ ↦ by rw [Iff.comm, ← RCLike.nnnorm_conj, map_sub, map_one, map_neg_eq_conj]
+  forall_congr' fun ψ ↦ by rw [Iff.comm, ← RCLike.nnnorm_conj, map_sub, map_one, map_neg_eq_conj]
 
 /-! ### Lattice structure -/
 
@@ -131,40 +128,34 @@ noncomputable instance : Max (BohrSet G) where
       mem_frequencies := fun ψ => by simp [mem_frequencies] }
 
 noncomputable instance : Min (BohrSet G) where
-  min B₁ B₂ :=
-    { frequencies := B₁.frequencies ∪ B₂.frequencies,
-      ewidth := fun ψ => B₁.ewidth ψ ⊓ B₂.ewidth ψ,
-      mem_frequencies := fun ψ => by simp [mem_frequencies] }
+  min B₁ B₂ := {
+    frequencies := B₁.frequencies ∪ B₂.frequencies,
+    ewidth ψ := B₁.ewidth ψ ⊓ B₂.ewidth ψ,
+    mem_frequencies ψ := by simp [mem_frequencies]
+  }
 
 noncomputable instance [Finite G] : Bot (BohrSet G) where
-  bot :=
-    { frequencies := ⊤,
-      ewidth := 0,
-      mem_frequencies := by simp }
+  bot.frequencies := ⊤
+  bot.ewidth := 0
+  bot.mem_frequencies := by simp
 
 noncomputable instance : Top (BohrSet G) where
-  top :=
-    { frequencies := ⊥,
-      ewidth := ⊤,
-      mem_frequencies := by simp }
+  top.frequencies := ⊥
+  top.ewidth := ⊤
+  top.mem_frequencies := by simp
 
 noncomputable instance : DistribLattice (BohrSet G) :=
-  Function.Injective.distribLattice BohrSet.ewidth
-    ewidth_injective
-    (fun _ _ => rfl)
-    (fun _ _ => rfl)
+  ewidth_injective.distribLattice BohrSet.ewidth (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
 
 lemma le_iff_ewidth {B₁ B₂ : BohrSet G} : B₁ ≤ B₂ ↔ ∀ ⦃ψ⦄, B₁.ewidth ψ ≤ B₂.ewidth ψ := Iff.rfl
 
 @[gcongr]
-lemma frequencies_anti {B₁ B₂ : BohrSet G} (h : B₁ ≤ B₂) :
-    B₂.frequencies ⊆ B₁.frequencies := by
+lemma frequencies_anti {B₁ B₂ : BohrSet G} (h : B₁ ≤ B₂) : B₂.frequencies ⊆ B₁.frequencies := by
   intro ψ hψ
   simp only [mem_frequencies] at hψ ⊢
   exact (h ψ).trans_lt hψ
 
-lemma frequencies_antitone : Antitone (frequencies : BohrSet G → _) :=
-  fun _ _ => frequencies_anti
+lemma frequencies_antitone : Antitone (frequencies : BohrSet G → _) := fun _ _ ↦ frequencies_anti
 
 lemma le_iff_width {B₁ B₂ : BohrSet G} : B₁ ≤ B₂ ↔
     B₂.frequencies ⊆ B₁.frequencies ∧ ∀ ⦃ψ⦄, ψ ∈ B₂.frequencies → B₁.width ψ ≤ B₂.width ψ := by

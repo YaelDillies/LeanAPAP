@@ -55,7 +55,10 @@ private lemma curlog_mul_le (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy₀ : 0 < y) (h
     𝓛 (x * y) ≤ x⁻¹ * 𝓛 y := by
   suffices h : log x⁻¹ - (x⁻¹ - 1) ≤ (x⁻¹ - 1) * log y⁻¹ by
     rw [← sub_nonneg] at h ⊢
-    exact h.trans_eq (by rw [mul_inv, log_mul]; ring; all_goals positivity)
+    convert h using 1
+    rw [mul_inv, log_mul]
+    any_goals positivity
+    ring
   calc
     log x⁻¹ - (x⁻¹ - 1) ≤ 0 := sub_nonpos.2 <| log_le_sub_one_of_pos <| by positivity
     _ ≤ (x⁻¹ - 1) * log y⁻¹ := mul_nonneg (sub_nonneg.2 <| (one_le_inv₀ hx₀).2 hx₁) <| by bound
@@ -68,7 +71,10 @@ private lemma curlog_rpow_le' (hx₀ : 0 < x) (hx₁ : x ≤ 1) (hy₀ : 0 < y) 
     𝓛 (x ^ y) ≤ y⁻¹ * 𝓛 x := by
   suffices h : 1 - y⁻¹ ≤ (y⁻¹ - y) * log x⁻¹ by
     rw [← sub_nonneg] at h ⊢
-    exact h.trans_eq (by rw [← inv_rpow, log_rpow]; ring; all_goals positivity)
+    convert h using 1
+    rw [← inv_rpow, log_rpow]
+    any_goals positivity
+    ring
   calc
     1 - y⁻¹ ≤ 0 := sub_nonpos.2 <| (one_le_inv₀ hy₀).2 hy₁
     _ ≤ (y⁻¹ - y) * log x⁻¹ := mul_nonneg (sub_nonneg.2 <| hy₁.trans <| by bound) <| by bound
@@ -298,28 +304,33 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
       _ = 2 ^ 17 * 𝓛 γ / ε ^ 3 := by ring
   obtain ⟨A₁, A₂, hA, hA₁, hA₂⟩ : ∃ (A₁ A₂ : Finset G),
       1 - ε / 32 ≤ ∑ x ∈ s q' (ε / 16) univ univ A, (μ A₁ ○ μ A₂) x ∧
-        (4⁻¹ : ℝ) * A.dens ^ (2 * q') ≤ A₁.dens ∧ (4⁻¹ : ℝ) * A.dens ^ (2 * q') ≤ A₂.dens :=
-    sifting_cor (ε := ε / 16) (δ := ε / 32) (by positivity) (by linarith) (by positivity) (p := q')
-    (even_two_mul _) (le_mul_of_one_le_right zero_le_two (by simp; positivity)) (by
-      calc
-        (ε / 16)⁻¹ * log (2 / (ε / 32)) = 2 ^ 4 * ε⁻¹ ^ 1 * log (64 / ε) := by ring_nf
-        _ ≤ 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε) := by
-          gcongr
-          · norm_num
-          · norm_num
-          · exact (one_le_inv₀ hε₀).2 hε₁.le
-          · norm_num
-        _ ≤ ⌈2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊ := Nat.le_ceil _
-        _ = ↑(1 * ⌈0 + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊) := by rw [one_mul, zero_add]
-        _ ≤ q' := by
-          unfold q'
-          gcongr
-          · norm_num
-          · positivity) hA₀
+        (4⁻¹ : ℝ) * A.dens ^ (2 * q') ≤ A₁.dens ∧ (4⁻¹ : ℝ) * A.dens ^ (2 * q') ≤ A₂.dens := by
+    refine sifting_cor (ε := ε / 16) (δ := ε / 32) (by positivity) (by linarith)
+      (by positivity) (p := q') (even_two_mul _)
+      (le_mul_of_one_le_right zero_le_two <| by simp; positivity) ?_ hA₀
+    calc
+      (ε / 16)⁻¹ * log (2 / (ε / 32)) = 2 ^ 4 * ε⁻¹ ^ 1 * log (64 / ε) := by ring_nf
+      _ ≤ 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε) := by
+        gcongr
+        · norm_num
+        · norm_num
+        · exact (one_le_inv₀ hε₀).2 hε₁.le
+        · norm_num
+      _ ≤ ⌈2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊ := Nat.le_ceil _
+      _ = ↑(1 * ⌈0 + 2 ^ 8 * ε⁻¹ ^ 2 * log (64 / ε)⌉₊) := by rw [one_mul, zero_add]
+      _ ≤ q' := by
+        unfold q'
+        gcongr
+        · norm_num
+        · positivity
   have :=
     calc
       p' = 1 * ⌈(p' + 0 : ℝ)⌉₊ := by simp
-      _ ≤ q' := by unfold q'; gcongr; norm_num; positivity
+      _ ≤ q' := by
+        unfold q'
+        gcongr
+        · norm_num
+        · positivity
   have : card G • (f ○ f) + 1 = card G • (μ A ○ μ A) := by
     unfold f
     rw [← balance_dconv, balance, smul_sub, smul_const, Fintype.card_smul_expect]

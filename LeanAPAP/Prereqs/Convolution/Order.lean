@@ -13,10 +13,14 @@ variable [CommSemiring R] [PartialOrder R] [IsOrderedRing R] {f g : G → R}
 lemma conv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ∗ g :=
   fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) (hg _)
 
+lemma conv_apply_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) (a : G) : 0 ≤ (f ∗ g) a := conv_nonneg hf hg _
+
 variable [StarRing R] [StarOrderedRing R]
 
 lemma dconv_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) : 0 ≤ f ○ g :=
   fun _a ↦ sum_nonneg fun _x _ ↦ mul_nonneg (hf _) <| star_nonneg_iff.2 <| hg _
+
+lemma dconv_apply_nonneg (hf : 0 ≤ f) (hg : 0 ≤ g) (a : G) : 0 ≤ (f ○ g) a := dconv_nonneg hf hg _
 
 end OrderedCommSemiring
 

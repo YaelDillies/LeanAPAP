@@ -101,7 +101,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
       _ = _ := by simp [mul_sum, mul_left_comm (2 : ℝ)]
   set P : Finset _ := {i | 0 ≤ f i}
   set T : Finset _ := {i | 3 / 4 * ε ≤ f i}
-  have hTP : T ⊆ P := monotone_filter_right _ fun i ↦ le_trans <| by positivity
+  have hTP : T ⊆ P := by unfold P T; gcongr; positivity
   have : 2⁻¹ * ε ^ p ≤ ∑ i ∈ P, ↑(ν i) * (f ^ p) i := by
     rw [inv_mul_le_iff₀ (zero_lt_two' ℝ), sum_filter]
     convert this using 3
@@ -159,7 +159,8 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
   set p' := 24 / ε * log (3 / ε) * p
   have hp' : 0 < p' := p'_pos hp hε₀ hε₁
   have : 1 - 8⁻¹ * ε ≤ (∑ i ∈ T, ↑(ν i)) ^ p'⁻¹ := by
-    rw [← div_le_iff₀, mul_div_assoc, ← div_pow, le_sqrt, mul_pow, ← pow_mul'] at this
+    rw [← div_le_iff₀ (by positivity), mul_div_assoc, ← div_pow,
+      le_sqrt (by positivity) (by positivity), mul_pow, ← pow_mul'] at this
     calc
       _ ≤ exp (-(8⁻¹ * ε)) := one_sub_le_exp_neg _
       _ = ((ε / 3) ^ p * (ε / 3) ^ (2 * p)) ^ p'⁻¹ := ?_
@@ -167,9 +168,9 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
     · rw [← pow_add, ← one_add_mul _ p, ← rpow_natCast, Nat.cast_mul, ← rpow_mul, ← div_eq_mul_inv,
         mul_div_mul_right, ← exp_log (_ : 0 < ε / 3), ← exp_mul, ← inv_div, log_inv, neg_mul,
         mul_div_left_comm, div_mul_cancel_right₀ (log_ε_pos hε₀ hε₁).ne']
+      any_goals positivity
       field_simp
       ring_nf
-      all_goals positivity
     any_goals positivity
     calc
       _ ≤ (1 / 3 : ℝ) ^ p := by gcongr

@@ -112,12 +112,12 @@ lemma claim_two :
   have hf : ∀ s, f s ^ 2 = (𝟭_[ℝ] A ○ 𝟭 B) s := by
     intro s
     rw [Real.sq_sqrt]
-    exact dconv_nonneg (R := ℝ) indicate_nonneg indicate_nonneg s -- why do I need the annotation??
+    exact dconv_apply_nonneg indicate_nonneg indicate_nonneg s
   have := sum_mul_sq_le_sq_mul_sq univ f (fun s ↦ f s * #(A ∩ (s +ᵥ B)))
   refine div_le_of_le_mul₀ (by positivity) ?_ ?_
   · refine sum_nonneg fun i _ ↦ ?_
     -- indicate nonneg should be a positivity lemma
-    exact mul_nonneg (dconv_nonneg indicate_nonneg indicate_nonneg _) (by positivity)
+    exact mul_nonneg (dconv_apply_nonneg indicate_nonneg indicate_nonneg _) (by positivity)
   simp only [← sq, ← mul_assoc, hf, thing_two, mul_pow, claim_one] at this
   refine this.trans ?_
   rw [mul_comm]
@@ -148,8 +148,9 @@ lemma claim_four (ab : G × G) :
   have : ∑ s : G, (𝟭_[ℝ] A ○ 𝟭 B) s * (𝟭 B ((a, b).1 - s) * 𝟭 B ((a, b).2 - s)) ≤
       #B * ∑ s : G, (𝟭 B ((a, b).1 - s) * 𝟭 B ((a, b).2 - s)) := by
     rw [mul_sum]
-    refine sum_le_sum fun i _ ↦ ?_
-    exact mul_le_mul_of_nonneg_right (this _) (mul_nonneg (indicate_nonneg _) (indicate_nonneg _))
+    gcongr with s hs
+    · exact mul_nonneg indicate_apply_nonneg indicate_apply_nonneg
+    · exact this _
   refine this.trans_eq ?_
   congr 1
   simp only [dconv_eq_sum_add]

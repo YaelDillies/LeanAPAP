@@ -120,10 +120,9 @@ lemma drc (hp₂ : 2 ≤ p) (f : G → ℝ≥0) (hf : ∃ x, x ∈ B₁ - B₂ �
         mul_nonneg (sum_nonneg fun x _ ↦ mul_nonneg (this _) <| by positivity) <| by positivity
     have : (4 : ℝ) ⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ (2 * p) / #A ^ (2 * p)
       ≤ #(A₁ s) / #B₁ * (#(A₂ s) / #B₂) := by
-      rw [div_mul_div_comm, le_div_iff₀]
+      rw [div_mul_div_comm, le_div_iff₀ (by positivity)]
       simpa [hg_def, hM_def, mul_pow, div_pow, pow_mul', show (2 : ℝ) ^ 2 = 4 by norm_num,
         mul_div_right_comm] using h
-      positivity
     refine ⟨(lt_of_mul_lt_mul_left (hs.trans_eq' ?_) <| hg s).le, this.trans <|
       mul_le_of_le_one_right ?_ <| div_le_one_of_le₀ ?_ ?_, this.trans <|
       mul_le_of_le_one_left ?_ <| div_le_one_of_le₀ ?_ ?_⟩
@@ -209,13 +208,13 @@ lemma sifting (B₁ B₂ : Finset G) (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0
         ∑ x ∈ (s p ε B₁ B₂ A)ᶜ,
           (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p := by
       gcongr with x hx
-      · exact Pi.le_def.1 (dconv_nonneg (R := ℝ) mu_nonneg mu_nonneg) x
-      · exact dconv_nonneg indicate_nonneg indicate_nonneg _
+      · exact dconv_apply_nonneg mu_nonneg mu_nonneg x
+      · exact dconv_apply_nonneg indicate_nonneg indicate_nonneg _
       · simpa using hx
     _ ≤ ∑ x, (μ B₁ ○ μ B₂) x * ((1 - ε) * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂]) ^ p := by
       gcongr
       · intros
-        exact mul_nonneg (dconv_nonneg (mu_nonneg (K := ℝ)) mu_nonneg _) <| hp.pow_nonneg _
+        exact mul_nonneg (dconv_apply_nonneg mu_nonneg mu_nonneg _) <| hp.pow_nonneg _
       · exact subset_univ _
     _ = ‖μ_[ℝ] B₁‖_[1] * ‖μ_[ℝ] B₂‖_[1] * ((1 - ε) ^ p * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ B₁ ○ μ B₂] ^ p)
         := ?_
@@ -248,12 +247,11 @@ lemma sifting_cor (hε : 0 < ε) (hε₁ : ε ≤ 1) (hδ : 0 < δ) (hp : Even p
         4⁻¹ * ‖𝟭_[ℝ] A ○ 𝟭 A‖_[p, μ univ] ^ (2 * p) / #A ^ (2 * p) := by
       rw [mul_div_assoc, ← div_pow]
       gcongr
-      rw [nnratCast_dens, le_div_iff₀, ← mul_div_right_comm]
+      rw [nnratCast_dens, le_div_iff₀ (by positivity), ← mul_div_right_comm]
       calc
         _ = (‖𝟭_[ℝ] A ○ 𝟭 A‖_[1, μ univ] : ℝ) := by
           simp [mu, wLpNorm_smul_right, dL1Norm_dconv, card_univ, inv_mul_eq_div]
         _ ≤ _ := wLpNorm_mono_right (one_le_two.trans <| by norm_cast) _ _
-      · exact Nat.cast_pos.2 hA.card_pos
     obtain ⟨A₁, -, A₂, -, h, hcard₁, hcard₂⟩ :=
       sifting univ univ hε hε₁ hδ hp hp₂ hpε (by simp) hA (by simpa)
     exact ⟨A₁, A₂, h, this.trans <| by simpa [nnratCast_dens] using hcard₁,

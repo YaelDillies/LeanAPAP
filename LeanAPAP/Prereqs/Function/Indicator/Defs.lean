@@ -1,7 +1,6 @@
-import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Algebra.Field.Defs
 import Mathlib.Algebra.Group.Action.Pointwise.Finset
-import Mathlib.Algebra.Order.Field.Defs
 import Mathlib.Algebra.Star.Pi
 import Mathlib.Data.Fintype.Lattice
 import Mathlib.Data.Nat.Cast.Order.Ring
@@ -121,9 +120,11 @@ variable [StarRing R]
 end CommSemiring
 
 section OrderedSemiring
-variable [Semiring R] [PartialOrder R] [IsOrderedRing R] {s : Finset α}
+variable [Semiring R] [PartialOrder R] [IsOrderedRing R] {s : Finset α} {a : α}
 
 @[simp] lemma indicate_nonneg : 0 ≤ 𝟭_[R] s := fun a ↦ by rw [indicate_apply]; split_ifs <;> simp
+
+@[simp] lemma indicate_apply_nonneg : 0 ≤ 𝟭_[R] s a := indicate_nonneg _
 
 @[simp] lemma indicate_pos [Nontrivial R] : 0 < 𝟭_[R] s ↔ s.Nonempty := by
   simp [indicate_apply, funext_iff, lt_iff_le_and_ne, @eq_comm R 0,

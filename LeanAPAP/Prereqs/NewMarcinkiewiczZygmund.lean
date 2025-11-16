@@ -1,6 +1,6 @@
 /-
 Copyright (c) 2023 Yaël Dillies, Bhavik Mehta. All rights reserved.
-Released under Apache 2.0 license as described ∈ the file LICENSE.
+Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Bhavik Mehta
 -/
 import Mathlib.Data.Nat.Choose.Multinomial
@@ -28,7 +28,7 @@ can be obtained from this specific one by nesting of Lp norms.
 -/
 
 open Finset Fintype Function Nat MeasureTheory ProbabilityTheory Real
-open scoped NNReal
+open scoped NNReal ENNReal
 
 variable {ι Ω E : Type*} {A : Finset ι} {m n : ℕ} [MeasurableSpace Ω] {μ : Measure Ω}
   [IsFiniteMeasure μ] [mE : MeasurableSpace E] [NormedAddCommGroup E] [InnerProductSpace ℝ E]
@@ -42,16 +42,16 @@ noncomputable def marcinkiewiczZygmundSymmConst (p : ℝ≥0) : ℝ := (p / 2) ^
 
 /-- The **Marcinkiewicz-Zygmund inequality** for symmetric random variables, with a slightly better
 constant than `marcinkiewicz_zygmund`. -/
-theorem marcinkiewicz_zygmund_symmetric
-    (iIndepFun_X : iIndepFun X μ)
+theorem marcinkiewicz_zygmund_symmetric (iIndepFun_X : iIndepFun X μ)
     (identDistrib_neg_X : ∀ i, IdentDistrib (X i) (-X i) μ μ)
-    (MemLp_X : ∀ i ∈ A, MemLp (X i) (2 * m) μ) :
+    (memLp_X : ∀ i ∈ A, MemLp (X i) (2 * m) μ) :
     ∫ ω, ‖∑ i ∈ A, X i ω‖ ^ (2 * m) ∂μ ≤
       marcinkiewiczZygmundSymmConst (2 * m) * ∫ ω, (∑ i ∈ A, ‖X i ω‖ ^ 2) ^ m ∂μ := by
   have : DecidableEq ι := Classical.decEq _
   -- Turn the `L^p` assumption on the `X i` into various integrability conditions.
   have integrable_prod_norm_X I (hI : I ∈ A ×ˢ A ^^ m) :
-    Integrable (fun ω ↦ ∏ k, ‖X (I k).1 ω‖ * ‖X (I k).2 ω‖) μ := sorry
+    Integrable (fun ω ↦ ∏ k, ‖X (I k).1 ω‖ * ‖X (I k).2 ω‖) μ := by
+    sorry
   have integrable_prod_inner_X I (hI : I ∈ A ×ˢ A ^^ m) :
     Integrable (fun ω ↦ ∏ k, inner ℝ (X (I k).1 ω) (X (I k).2 ω)) μ := sorry
   -- Call a family of indices `i₁, ..., iₙ, j₁, ..., jₙ` *even* if each `i ∈ A` appears an even
@@ -85,7 +85,7 @@ theorem marcinkiewicz_zygmund_symmetric
         · simpa [Y, hji] using .refl (identDistrib_neg_X _).aemeasurable_fst
       -- To show that `𝔼 ∏ k, ⟨X iₖ, X jₖ⟩ = 0`, we will show
       -- `𝔼 ∏ k, ⟨X iₖ, X jₖ⟩ = 𝔼 ∏ k, ⟨Y iₖ, Y jₖ⟩ = -𝔼 ∏ k, ⟨X iₖ, X jₖ⟩`.
-      rw [← neg_eq_self ℝ, ← integral_neg, eq_comm]
+      rw [← neg_eq_self, ← integral_neg, eq_comm]
       calc
         -- `𝔼 ∏ k, ⟨X iₖ, X jₖ⟩ = 𝔼 ∏ k, ⟨Y iₖ, Y jₖ⟩` because `𝔼 ∏ k, ⟨X iₖ, X jₖ⟩` and
         -- `∏ k, ⟨Y iₖ, Y jₖ⟩` are identically distributed.
@@ -168,10 +168,9 @@ noncomputable def marcinkiewiczZygmundConst (p : ℝ≥0) : ℝ :=
 /-- The **Marcinkiewicz-Zygmund inequality** for random variables with zero mean.
 
 For symmetric random variables, `marcinkiewicz_zygmund` provides a slightly better constant. -/
-theorem marcinkiewicz_zygmund
-    (iIndepFun_X : iIndepFun X μ)
+theorem marcinkiewicz_zygmund (iIndepFun_X : iIndepFun X μ)
     (integral_X : ∀ i, ∫ ω, X i ω ∂μ = 0)
-    (MemLp_X : ∀ i ∈ A, MemLp (X i) (2 * m) μ) :
+    (memLp_X : ∀ i ∈ A, MemLp (X i) (2 * m) μ) :
     ∫ ω, ‖∑ i ∈ A, X i ω‖ ^ (2 * m) ∂μ ≤
       marcinkiewiczZygmundConst (2 * m) * ∫ ω, (∑ i ∈ A, ‖X i ω‖ ^ 2) ^ m ∂μ := by
   let X₁ i : Ω × Ω → E := X i ∘ Prod.fst
