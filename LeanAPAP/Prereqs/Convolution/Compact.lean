@@ -103,7 +103,7 @@ lemma smul_cconv [DistribSMul H R] [IsScalarTower H R R] [SMulCommClass H R R] (
   ext a
   simp only [Pi.smul_apply, smul_expect, cconv_apply, smul_mul_assoc]
 
-lemma cconv_smul [DistribSMul H R] [IsScalarTower H R R] [SMulCommClass H R R] (c : H)
+lemma cconv_smul [DistribSMul H R] [SMulCommClass H R R] (c : H)
     (f g : G → R) : f ∗ₙ c • g = c • (f ∗ₙ g) := by
   have := SMulCommClass.symm H R R
   ext a
@@ -265,7 +265,7 @@ lemma smul_cdconv [DistribSMul H R] [IsScalarTower H R R] [SMulCommClass H R R] 
   ext a
   simp only [Pi.smul_apply, smul_expect, cdconv_apply, smul_mul_assoc]
 
-lemma cdconv_smul [Star H] [DistribSMul H R] [IsScalarTower H R R] [SMulCommClass H R R]
+lemma cdconv_smul [Star H] [DistribSMul H R] [SMulCommClass H R R]
     [StarModule H R] (c : H) (f g : G → R) : f ○ₙ c • g = star c • (f ○ₙ g) := by
   have := SMulCommClass.symm H R R
   ext a
