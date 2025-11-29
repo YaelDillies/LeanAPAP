@@ -12,21 +12,33 @@ The rank of $\nu$, denoted by $\mathrm{rk}(\nu)$, is defined to be the size of t
 \end{definition}
 
 \begin{lemma}
-\label{bohr-size}
-\uses{bohr-set}
-\lean{BohrSet.le_card_smul}
-\leanok
-If $\rho\in (0,1)$ and $\nu:\widehat{G}\to \mathbb{R}$ then
-\[\abs{\mathrm{Bohr}(\rho\cdot \nu)}\geq (\rho/4)^{\mathrm{rk}(\nu)}\abs{\mathrm{Bohr}(\nu)}.\]
+  \label{bohr-size}
+  \uses{bohr-set}
+  % \lean{BohrSet.le_card_smul}
+  % \leanok
+
+  If $\rho\in (0,1)$ and $\nu:\widehat{G}\to \mathbb{R}$ then
+  \[\abs{\mathrm{Bohr}(\rho\cdot \nu)}\geq (\rho/4)^{\mathrm{rk}(\nu)}\abs{\mathrm{Bohr}(\nu)}.\]
 \end{lemma}
 \begin{proof}
-There are at most $\lceil 4/\rho\rceil$ many $z_i$ such that if $\lvert 1-w\rvert \leq \nu(\gamma)$ then $\lvert z_i-w\rvert\leq \rho\nu(\gamma)/2$ for some $i$. Let $\Gamma=\{ \gamma : \nu(\gamma) <2\}$ and define a function $f:\mathrm{Bohr}(\nu)\to \lceil 2/\rho\rceil^{\mathrm{rk}(\nu)}$ where for $\gamma\in \Gamma$ we assign the $\gamma$-coordinate of $f(x)$ as whichever $j$ has $\lvert z_j-\gamma(x)\rvert \leq \rho\nu(\gamma)/2$.
+  There are at most $\lceil 4/\rho\rceil$ many $z_i$ such that if $\lvert 1-w\rvert \leq \nu(\gamma)$ then $\lvert z_i-w\rvert\leq \rho\nu(\gamma)/2$ for some $i$.
+  Let $\Gamma=\{ \gamma : \nu(\gamma) <2\}$
+  and define a function $f:\mathrm{Bohr}(\nu)\to \lceil 2/\rho\rceil^{\mathrm{rk}(\nu)}$
+  where for $\gamma\in \Gamma$ we assign the $\gamma$-coordinate of $f(x)$
+  as whichever $j$ has $\lvert z_j-\gamma(x)\rvert \leq \rho\nu(\gamma)/2$.
 
-By the pigeonhole principle there must exist some $(j_1,\ldots,j_{d})$ such that $f^{-1}(j_1,\ldots,j_d)$ has size at least $(\lceil 2/\rho\rceil)^{-\mathrm{rk}(\nu)}\abs{\mathrm{Bohr}(\nu)}$. Call this set $B'$. It must be non-empty, so fix some $x\in B'$. We claim that $B'-x\subseteq \abs{\mathrm{Bohr}(\rho\cdot \nu)}$, which completes the proof.
+  By the pigeonhole principle there must exist some $(j_1,\ldots,j_{d})$ such that
+  $f^{-1}(j_1,\ldots,j_d)$ has size at least
+  $(\lceil 2/\rho\rceil)^{-\mathrm{rk}(\nu)}\abs{\mathrm{Bohr}(\nu)}$. Call this set $B'$.
+  It must be non-empty, so fix some $x\in B'$.
+  We claim that $B'-x\subseteq \abs{\mathrm{Bohr}(\rho\cdot \nu)}$, which completes the proof.
 
-Suppose that $z=x+y$ with $x,y\in B'$, and fix some $\gamma\in \Gamma$. By assumption there is some $z_j\in \mathbb{C}$ such that $\lvert z_j-\gamma(x)\rvert \leq \rho \nu(\gamma)/2$ and $\lvert z_j-\gamma(y)\rvert \leq \rho \nu(\gamma)/2$. Then by the triangle inequality,
-\[\lvert 1-\gamma(y-x)\rvert=\lvert \gamma(x)-\gamma(y)\rvert \leq \rho \nu(\gamma)\]
-and so $z=y-x\in \mathrm{Bohr}(\rho\cdot \nu)$.
+  Suppose that $z=x+y$ with $x,y\in B'$, and fix some $\gamma\in \Gamma$.
+  By assumption there is some $z_j\in \mathbb{C}$ such that
+  $\lvert z_j-\gamma(x)\rvert \leq \rho \nu(\gamma)/2$ and
+  $\lvert z_j-\gamma(y)\rvert \leq \rho \nu(\gamma)/2$. Then by the triangle inequality,
+  \[\lvert 1-\gamma(y-x)\rvert=\lvert \gamma(x)-\gamma(y)\rvert \leq \rho \nu(\gamma)\]
+  and so $z=y-x\in \mathrm{Bohr}(\rho\cdot \nu)$.
 \end{proof}
 
 \begin{definition}[Regularity]

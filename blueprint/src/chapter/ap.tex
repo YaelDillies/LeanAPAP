@@ -52,12 +52,17 @@ Test.
 
 
 \begin{lemma}
-\label{random_approx_expect}
-\lean{lemma28}
-\leanok
-Let $\epsilon>0$ and $m\geq 1$. Let $A\subseteq G$ and $f:G\to \bbc$. If $k\geq 64m\epsilon^{-2}$ then the set
-\[L=\{ \tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^kf(x-a_i)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}\}.\]
-has size at least $\lvert A \rvert^k/2$.
+  \label{random_approx_expect}
+  \lean{AlmostPeriodicity.lemma28}
+  \leanok
+
+  Let $\epsilon>0$ and $m\geq 1$. Let $A\subseteq G$ and $f:G\to \bbc$.
+  If $k\geq 64m\epsilon^{-2}$ then the set
+  \[
+    L = \{\tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^k f(x-a_i)-\mu_A\ast f\|_{2m}
+      \le \epsilon \| f\|_{2m}\}.
+  \]
+  has size at least $\lvert A \rvert^k/2$.
 \end{lemma}
 
 \begin{proof}
@@ -85,13 +90,17 @@ In particular, if $k\geq 64\epsilon^{-2}m$ then the right-hand side is at most $
 
 
 \begin{lemma}
-\label{aps_in_translates}
-\lean{just_the_triangle_inequality}
-\leanok
-Let $A\subseteq G$ and $f:G\to \bbc$. Let $\epsilon>0$ and $m\geq 1$ and $k\geq 1$. Let
-\[L=\{ \tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^kf(x-a_i)-\mu_A\ast f\|_{2m}\leq \epsilon \| f\|_{2m}\}.\]
-If $t\in G$ is such that $\tup{a}\in L$ and $\tup{a}+(t,\ldots,t)\in L$ then
-\[\| \tau_t(\mu_A\ast f)-\mu_A\ast f\|_{2m}\leq 2\epsilon \|f\|_{2m}.\]
+  \label{aps_in_translates}
+  \lean{AlmostPeriodicity.just_the_triangle_inequality}
+  \leanok
+
+  Let $A\subseteq G$ and $f:G\to \bbc$. Let $\epsilon>0$ and $m\geq 1$ and $k\geq 1$. Let
+  \[
+    L = \{\tup{a}\in A^k : \|\tfrac{1}{k}\sum_{i=1}^k f(x-a_i) - \mu_A\ast f\|_{2m}
+      \leq \epsilon \| f\|_{2m}\}.
+  \]
+  If $t\in G$ is such that $\tup{a}\in L$ and $\tup{a}+(t,\ldots,t)\in L$ then
+  \[\| \tau_t(\mu_A\ast f)-\mu_A\ast f\|_{2m}\leq 2\epsilon \|f\|_{2m}.\]
 \end{lemma}
 
 \begin{proof}
