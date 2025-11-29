@@ -1,7 +1,7 @@
-import Mathlib.Algebra.Group.Translate
-import Mathlib.Algebra.Star.Conjneg
 import LeanAPAP.Prereqs.Function.Indicator.Defs
 import LeanAPAP.Prereqs.LpNorm.Discrete.Defs
+import Mathlib.Algebra.Group.Translate
+import Mathlib.Algebra.Star.Conjneg
 
 /-!
 # Lp norms
@@ -95,10 +95,9 @@ lemma dLpNorm_translate_sum_sub_le [NormedAddCommGroup E] (hp : 1 ≤ p) {ι : T
   | cons i s ih hs =>
   calc
     _ = ‖τ (∑ j ∈ s, a j) (τ (a i) f - f) + (τ (∑ j ∈ s, a j) f - f)‖_[p] := by
-        rw [sum_cons, translate_add', translate_sub_right, sub_add_sub_cancel]
-    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖_[p] + ‖(τ (∑ j ∈ s, a j) f - f)‖_[p] := dLpNorm_add_le hp
-    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖_[p] + ∑ j ∈ s, ‖(τ (a j) f - f)‖_[p] :=
-        add_le_add_left hs _
+      rw [sum_cons, translate_add', translate_sub_right, sub_add_sub_cancel]
+    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖_[p] + ∑ j ∈ s, ‖(τ (a j) f - f)‖_[p] := by
+      grw [dLpNorm_add_le hp, hs]
     _ = _ := by rw [dLpNorm_translate, sum_cons]
 
 end dLpNorm

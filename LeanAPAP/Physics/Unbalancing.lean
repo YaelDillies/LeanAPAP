@@ -64,7 +64,7 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
   simp only [dL1Norm_eq_sum_nnnorm, NNReal.nnnorm_eq, Function.comp_apply] at hν₁
   obtain hf₁ | hf₁ := le_total 2 ‖f + 1‖_[2 * p, ν]
   · calc
-      1 + ε / 2 ≤ 1 + 1 / 2 := add_le_add_left (div_le_div_of_nonneg_right hε₁ zero_le_two) _
+      1 + ε / 2 ≤ 1 + 1 / 2 := by grw [hε₁]
       _ ≤ 2 := by norm_num
       _ ≤ ‖f + 1‖_[2 * p, ν] := hf₁
       _ ≤ _ := wLpNorm_mono_right ?_ _ _
@@ -180,16 +180,14 @@ private lemma unbalancing'' (p : ℕ) (hp : 5 ≤ p) (hp₁ : Odd p) (hε₀ : 0
     all_goals norm_num
   calc
     1 + ε / 2 = 1 + 2⁻¹ * ε := by rw [div_eq_inv_mul]
-    _ ≤ 1 + 17 / 32 * ε := (add_le_add_left (mul_le_mul_of_nonneg_right (by norm_num) hε₀.le) _)
+    _ ≤ 1 + 17 / 32 * ε := by gcongr; norm_num
     _ = 1 + 5 / 8 * ε - 3 / 32 * ε * 1 := by ring
     _ ≤ 1 + 5 / 8 * ε - 3 / 32 * ε * ε := (sub_le_sub_left (mul_le_mul_of_nonneg_left hε₁ ?_) _)
     _ = (1 - 8⁻¹ * ε) * (1 + 3 / 4 * ε) := by ring
     _ ≤ (∑ i ∈ T, ↑(ν i)) ^ p'⁻¹ * (1 + 3 / 4 * ε) := (mul_le_mul_of_nonneg_right ‹_› ?_)
     _ = (∑ i ∈ T, ↑(ν i) * |3 / 4 * ε + 1| ^ p') ^ p'⁻¹ := by
       rw [← sum_mul, mul_rpow, rpow_rpow_inv, abs_of_nonneg, add_comm] <;> positivity
-    _ ≤ (∑ i ∈ T, ↑(ν i) * |f i + 1| ^ p') ^ p'⁻¹ :=
-        rpow_le_rpow ?_ (sum_le_sum fun i hi ↦ mul_le_mul_of_nonneg_left (rpow_le_rpow ?_
-          (abs_le_abs_of_nonneg ?_ <| add_le_add_right (mem_filter.1 hi).2 _) ?_) ?_) ?_
+    _ ≤ (∑ i ∈ T, ↑(ν i) * |f i + 1| ^ p') ^ p'⁻¹ := by gcongr with i hi; exact (mem_filter.1 hi).2
     _ ≤ (∑ i, ↑(ν i) * |f i + 1| ^ p') ^ p'⁻¹ :=
         rpow_le_rpow ?_ (sum_le_sum_of_subset_of_nonneg (subset_univ _) fun i _ _ ↦ ?_) ?_
     _ = _ := by

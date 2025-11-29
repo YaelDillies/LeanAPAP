@@ -190,16 +190,16 @@ lemma claim_seven (c : ℝ) (hc : 0 ≤ c) (hA : (0 : ℝ) < #A) (hB : (0 : ℝ)
         ((c / 2) * (E[A, B] ^ 2 / (#A ^ 2 * #B ^ 2)) +
           #((A ∩ (s +ᵥ B)) ×ˢ (A ∩ (s +ᵥ B)) ∩ H_choice A B c)) ≤
       ∑ s, (𝟭_[ℝ] A ○ 𝟭 B) s * (c * #(A ∩ (s +ᵥ B)) ^ 2) :=
-  calc _ = (c / 2 * (E[A, B] ^ 2 / (#A * #B))) +
-    ∑ x : G, (𝟭_[ℝ] A ○ 𝟭 B) x * (card ((A ∩ (x +ᵥ B)) ×ˢ (A ∩ (x +ᵥ B)) ∩ H_choice A B c)) := by
+  calc
+    _ = (c / 2 * (E[A, B] ^ 2 / (#A * #B))) +
+          ∑ x : G, (𝟭_[ℝ] A ○ 𝟭 B) x * #((A ∩ (x +ᵥ B)) ×ˢ (A ∩ (x +ᵥ B)) ∩ H_choice A B c) := by
         simp only [mul_add, sum_add_distrib, ← sum_mul, thing_two, ← mul_pow]
         field_simp
-       _ ≤ _ := by
-        refine (add_le_add_left (claim_six c hc) _).trans ?_
-        rw [← add_mul, add_halves]
-        simp only [mul_left_comm _ c, ← mul_sum]
-        gcongr
-        exact claim_two
+    _ ≤ _ := by
+      grw [claim_six c hc, ← add_mul, add_halves]
+      simp only [mul_left_comm _ c, ← mul_sum]
+      gcongr
+      exact claim_two
 
 lemma claim_eight (c : ℝ) (hc : 0 ≤ c) (hA : (0 : ℝ) < #A) (hB : (0 : ℝ) < #B) :
     ∃ s : G, ((c / 2) * (E[A, B] ^ 2 / (#A ^ 2 * #B ^ 2)) +

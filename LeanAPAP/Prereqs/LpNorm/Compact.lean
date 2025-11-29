@@ -416,10 +416,8 @@ lemma cLpNorm_translate_sum_sub_le [NormedAddCommGroup E] (hp : 1 ≤ p) {ι : T
   calc
     _ = ‖τ (∑ j ∈ s, a j) (τ (a i) f - f) + (τ (∑ j ∈ s, a j) f - f)‖ₙ_[p] := by
         rw [sum_cons, translate_add', translate_sub_right, sub_add_sub_cancel]
-    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖ₙ_[p] + ‖(τ (∑ j ∈ s, a j) f - f)‖ₙ_[p] :=
-      cLpNorm_add_le hp
-    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖ₙ_[p] + ∑ j ∈ s, ‖(τ (a j) f - f)‖ₙ_[p] :=
-        add_le_add_left hs _
+    _ ≤ ‖τ (∑ j ∈ s, a j) (τ (a i) f - f)‖ₙ_[p] + ∑ j ∈ s, ‖(τ (a j) f - f)‖ₙ_[p] := by
+      grw [cLpNorm_add_le hp, hs]
     _ = _ := by rw [cLpNorm_translate, sum_cons]
 
 end cLpNorm

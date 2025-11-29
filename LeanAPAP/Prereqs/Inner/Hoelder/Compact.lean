@@ -16,7 +16,7 @@ variable [RCLike 𝕜] {mι : MeasurableSpace ι} [DiscreteMeasurableSpace ι] {
 @[simp] lemma wInner_cWeight_self (f : ι → 𝕜) :
     ⟪f, f⟫ₙ_[𝕜] = ((‖f‖ₙ_[2] : ℝ) : 𝕜) ^ 2 := by
   simp_rw [← algebraMap.coe_pow, ← NNReal.coe_pow]
-  simp [cL2Norm_sq_eq_expect_nnnorm, wInner_cWeight_eq_expect, RCLike.mul_conj]
+  simp [cL2Norm_sq_eq_expect_nnnorm, wInner_cWeight_eq_expect]
 
 lemma cL1Norm_mul (f g : ι → 𝕜) : ‖f * g‖ₙ_[1] = ⟪fun i ↦ ‖f i‖, fun i ↦ ‖g i‖⟫ₙ_[ℝ] := by
   simp [wInner_cWeight_eq_expect, cL1Norm_eq_expect_nnnorm, mul_comm]
@@ -125,15 +125,15 @@ lemma cLpNorm_prod_le {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {p : ι →
   simp_rw [prod_cons]
   rw [sum_cons, ← inv_inv (∑ _ ∈ _, _)] at hpq
   have : ENNReal.HolderTriple (p i) ↑(∑ i ∈ s, (p i)⁻¹)⁻¹ q := ⟨sorry⟩
-  refine (cLpNorm_mul_le _ _ ?_).trans (mul_le_mul_left' (ih (∑ i ∈ s, (p i)⁻¹)⁻¹ ?_) _)
-  · norm_cast
-    rintro rfl
-    simp [hp] at hpq
+  grw [cLpNorm_mul_le (p i) ↑(∑ i ∈ s, (p i)⁻¹)⁻¹ , ih]
   · rw [← ENNReal.coe_inv, inv_inv]
     · push_cast
       congr! with i
       exact (ENNReal.coe_inv <| hp _).symm
     · simpa [hp]
+  · norm_cast
+    rintro rfl
+    simp [hp] at hpq
 
 end Hoelder
 end MeasureTheory
