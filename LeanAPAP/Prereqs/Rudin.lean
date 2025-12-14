@@ -1,7 +1,7 @@
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import LeanAPAP.Prereqs.FourierTransform.Compact
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import Mathlib.Combinatorics.Additive.Randomisation
-import LeanAPAP.Prereqs.FourierTransform.Compact
 
 /-!
 # Rudin's inequality
