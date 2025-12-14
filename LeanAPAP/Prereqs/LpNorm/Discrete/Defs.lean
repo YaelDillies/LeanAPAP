@@ -322,7 +322,7 @@ lemma dLpNorm_eq_dL1Norm_rpow (hp : p ≠ 0) (f : α → 𝕜) :
 lemma dLpNorm_rpow' {p : ℝ≥0∞} (hp₀ : p ≠ 0) (hp : p ≠ ∞) (hq : q ≠ 0) (f : α → 𝕜) :
     ‖f‖_[p] ^ (q : ℝ) = ‖(fun a ↦ ‖f a‖) ^ (q : ℝ)‖_[p / q] := by
   lift p to ℝ≥0 using hp
-  simp at hp₀
+  simp only [ne_eq, ENNReal.coe_eq_zero] at hp₀
   rw [← ENNReal.coe_div hq, dLpNorm_rpow (div_ne_zero hp₀ hq) hq (fun _ ↦ norm_nonneg _),
     dLpNorm_norm, ← ENNReal.coe_mul, div_mul_cancel₀ _ hq]
 

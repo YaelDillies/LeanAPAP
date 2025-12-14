@@ -76,7 +76,7 @@ lemma my_other_markov (hc : 0 ≤ c) (hε : 0 ≤ ε) (hg : ∀ a ∈ A, 0 ≤ g
   classical
   rw [one_sub_mul, sub_le_comm, ← cast_card_sdiff (filter_subset _ A), ← filter_not,
     filter_false_of_mem]
-  · simp; positivity
+  · simp only [card_empty, CharP.cast_eq_zero]; positivity
   intro i hi
   rw [(sum_eq_zero_iff_of_nonneg hg).1 (h.antisymm (sum_nonneg hg)) i hi]
   simp

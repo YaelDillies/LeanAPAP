@@ -25,7 +25,7 @@ private lemma curlog_pos (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 0 < 𝓛 x := by
 
 private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻¹ ^ (𝓛 x)⁻¹ ≤ exp 1 := by
   obtain rfl | hx₀ := hx₀.eq_or_lt
-  · simp; positivity
+  · simp only [inv_zero, log_zero, add_zero, inv_one, rpow_one]; positivity
   obtain rfl | hx₁ := hx₁.eq_or_lt
   · simp
   have hx := (one_lt_inv₀ hx₀).2 hx₁

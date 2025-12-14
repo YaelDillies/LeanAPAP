@@ -228,7 +228,7 @@ lemma IsSelfAdjoint.conv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfA
 lemma IsSelfAdjoint.dconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ○ g) :=
   (conj_dconv _ _).trans <| congr_arg₂ _ hf hg
 
-@[simp]lemma conjneg_conv (f g : G → R) : conjneg (f ∗ g) = conjneg f ∗ conjneg g := by
+@[simp] lemma conjneg_conv (f g : G → R) : conjneg (f ∗ g) = conjneg f ∗ conjneg g := by
   funext a
   simp only [conv_apply, conjneg_apply, map_sum, map_mul]
   exact sum_equiv (Equiv.neg _) (by simp [← neg_eq_iff_eq_neg, add_comm]) (by simp)

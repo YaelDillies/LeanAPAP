@@ -76,7 +76,7 @@ private lemma rudin_ineq_aux (hp : 2 ≤ p) (f : G → ℂ) (hf : AddDissociated
   have : (‖re ∘ f‖ₙ_[↑p] / p) ^ p ≤ (2 * exp 2⁻¹) ^ p := by
     calc
       _ = 𝔼 a, |(f a).re| ^ p / p ^ p := by
-          simp [div_pow, cLpNorm_pow_eq_expect_norm hp₀]; rw [expect_div]
+          simp [div_pow, cLpNorm_pow_eq_expect_norm hp₀, expect_div]
       _ ≤ 𝔼 a, |(f a).re| ^ p / p ! := by gcongr; norm_cast; exact p.factorial_le_pow
       _ ≤ 𝔼 a, exp |(f a).re| := by gcongr; exact pow_div_factorial_le_exp _ (abs_nonneg _) _
       _ ≤ _ := rudin_exp_abs_ineq f hf

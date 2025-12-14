@@ -65,7 +65,7 @@ private lemma step_one' (hA : A.Nonempty) (f : ι → ℝ) (hf : ∀ i, ∑ a �
 -- when the corresponding ε is -1
 -- but the order here is a bit subtle (ie this explanation is an oversimplification)
 private lemma step_two_aux (A : Finset ι) (f : ι → ℝ) (ε : Fin n → ℝ)
-    (hε : ε ∈ ({-1, 1} : Finset ℝ)^^n) (g : (Fin n → ℝ) → ℝ) :
+    (hε : ε ∈ ({-1, 1} : Finset ℝ) ^^ n) (g : (Fin n → ℝ) → ℝ) :
     ∑ a ∈ A ^^ n, ∑ b ∈ A ^^ n, g (ε * (f ∘ a - f ∘ b)) =
       ∑ a ∈ A ^^ n, ∑ b ∈ A ^^ n, g (f ∘ a - f ∘ b) := by
   rw [← sum_product', ← sum_product']

@@ -241,7 +241,7 @@ lemma IsSelfAdjoint.cconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelf
 lemma IsSelfAdjoint.cdconv (hf : IsSelfAdjoint f) (hg : IsSelfAdjoint g) : IsSelfAdjoint (f ○ₙ g) :=
   (conj_cdconv _ _).trans <| congr_arg₂ _ hf hg
 
-@[simp]lemma conjneg_cconv (f g : G → R) : conjneg (f ∗ₙ g) = conjneg f ∗ₙ conjneg g := by
+@[simp] lemma conjneg_cconv (f g : G → R) : conjneg (f ∗ₙ g) = conjneg f ∗ₙ conjneg g := by
   funext a
   simp only [cconv_apply, conjneg_apply, map_expect, map_mul]
   exact Finset.expect_equiv (Equiv.neg (G × G)) (by simp [eq_comm, ← neg_eq_iff_eq_neg, add_comm])

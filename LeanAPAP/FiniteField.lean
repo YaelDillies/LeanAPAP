@@ -21,7 +21,7 @@ open Finset hiding card
 open scoped ENNReal NNReal BigOperators Combinatorics.Additive Pointwise mu
 
 universe u
-variable {G : Type u} [AddCommGroup G] [DecidableEq G] [Fintype G] {A C : Finset G} {x y γ ε : ℝ}
+variable {G : Type u} [AddCommGroup G] [Fintype G] {A C : Finset G} {x y γ ε : ℝ}
 
 local notation "𝓛" x:arg => 1 + log x⁻¹
 
@@ -37,6 +37,7 @@ private lemma curlog_pos (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : 0 < 𝓛 x := by
   have : 0 ≤ log x⁻¹ := by bound
   positivity
 
+set_option linter.flexible false in
 private lemma rpow_inv_neg_curlog_le (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) : x⁻¹ ^ (𝓛 x)⁻¹ ≤ exp 1 := by
   obtain rfl | hx₀ := hx₀.eq_or_lt
   · simp; positivity
@@ -87,8 +88,9 @@ private lemma curlog_rpow_le (hx₀ : 0 < x) (hy : 1 ≤ y) : 𝓛 (x ^ y) ≤ y
 private lemma curlog_pow_le {n : ℕ} (hx₀ : 0 < x) (hn : n ≠ 0) : 𝓛 (x ^ n) ≤ n * 𝓛 x := by
   rw [← rpow_natCast]; exact curlog_rpow_le hx₀ <| mod_cast Nat.one_le_iff_ne_zero.2 hn
 
-lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.Nonempty)
-    (hγC : γ ≤ C.dens) (hγ : 0 < γ) (hAC : ε ≤ |card G * ⟪μ_[ℝ] A ∗ μ A, μ C⟫_[ℝ] - 1|) :
+lemma global_dichotomy [DecidableEq G] [MeasurableSpace G] [DiscreteMeasurableSpace G]
+    (hA : A.Nonempty) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
+    (hAC : ε ≤ |card G * ⟪μ_[ℝ] A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ε / (2 * card G) ≤ ‖balance (μ_[ℝ] A) ○ balance (μ A)‖_[↑(2 * ⌈𝓛 γ⌉₊), μ univ] := by
   have hC : C.Nonempty := by simpa using hγ.trans_le hγC
   have hγ₁ : γ ≤ 1 := hγC.trans (by norm_cast; exact dens_le_one)
@@ -140,8 +142,9 @@ lemma global_dichotomy [MeasurableSpace G] [DiscreteMeasurableSpace G] (hA : A.N
 
 variable {q n : ℕ} [Module (ZMod q) G] {A₁ A₂ : Finset G} (S : Finset G) {α : ℝ}
 
-lemma ap_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε)
-    (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens) (hαA₂ : α ≤ A₂.dens) :
+set_option linter.flexible false in
+lemma ap_in_ff [DecidableEq G] (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹)
+    (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens) (hαA₂ : α ≤ A₂.dens) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤ 2 ^ 32 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 ∧
           |∑ x ∈ S, (μ (Set.toFinset V) ∗ μ A₁ ∗ μ A₂) x - ∑ x ∈ S, (μ A₁ ∗ μ A₂) x| ≤ ε := by
@@ -237,16 +240,18 @@ lemma ap_in_ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α �
     have : ∑ x ∈ S, (μ_[ℝ] A₁ ∗ μ A₂) x = (μ_[ℝ] A₁ ∗ μ A₂ ○ 𝟭 S) 0 := by simp [dconv_indicate]
     sorry
 
-lemma ap_in_ff' (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹) (hε₀ : 0 < ε)
-    (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens) (hαA₂ : α ≤ A₂.dens) :
+lemma ap_in_ff' [DecidableEq G] (hq₃ : 3 ≤ q) (hq : q.Prime) (hα₀ : 0 < α) (hα₂ : α ≤ 2⁻¹)
+    (hε₀ : 0 < ε) (hε₁ : ε ≤ 1) (hαA₁ : α ≤ A₁.dens) (hαA₂ : α ≤ A₂.dens) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤ 2 ^ 32 * 𝓛 α ^ 2 * 𝓛 (ε * α) ^ 2 * ε⁻¹ ^ 2 ∧
           |∑ x ∈ S, (μ (Set.toFinset V) ∗ μ A₁ ○ μ A₂) x - ∑ x ∈ S, (μ A₁ ○ μ A₂) x| ≤ ε := by
   simpa [← conjneg_mu] using ap_in_ff S hq₃ hq (A₂ := -A₂) hα₀ hα₂ hε₀ hε₁ hαA₁ (by simpa)
 
+set_option linter.flexible false in
 set_option maxHeartbeats 400000 in
-lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q) (hq : q.Prime)
-    (hε₀ : 0 < ε) (hε₁ : ε < 1) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
+-- FIXME: Get rid of raised heartbeats
+lemma di_in_ff [DecidableEq G] [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
+    (hq : q.Prime) (hε₀ : 0 < ε) (hε₁ : ε < 1) (hγC : γ ≤ C.dens) (hγ : 0 < γ)
     (hAC : ε ≤ |card G * ⟪μ_[ℝ] A ∗ μ A, μ C⟫_[ℝ] - 1|) :
     ∃ (V : Submodule (ZMod q) G) (_ : DecidablePred (· ∈ V)),
         ↑(finrank (ZMod q) G - finrank (ZMod q) V) ≤
@@ -446,6 +451,7 @@ lemma di_in_ff [MeasurableSpace G] [DiscreteMeasurableSpace G] (hq₃ : 3 ≤ q)
         · exact conv_nonneg mu_nonneg mu_nonneg
         · exact mu_nonneg
 
+set_option linter.flexible false in
 theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFree (α := G) A) :
     finrank (ZMod q) G ≤ 2 ^ 156 * 𝓛 A.dens ^ 9 := by
   let n : ℝ := finrank (ZMod q) G
@@ -487,6 +493,7 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
         2⁻¹ ≤ card V * ⟪μ_[ℝ] B ∗ μ B, μ (B.image (2 • ·))⟫_[ℝ]) := by
     induction i with
     | zero =>
+      classical
       exact ⟨G, inferInstance, inferInstance, inferInstance, inferInstance, A, by simp [n], hA,
         by simp [α], by simp [α, nnratCast_dens]⟩
     | succ i ih =>
@@ -520,7 +527,6 @@ theorem ff (hq₃ : 3 ≤ q) (hq : q.Prime) (hA₀ : A.Nonempty) (hA : ThreeAPFr
       · congr 1 with x
         simp
       · simp
-    simp at hx
     refine ⟨V', inferInstance, inferInstance, inferInstance, inferInstance, B', ?_, ?_, ?_,
       fun h ↦ ?_⟩
     · calc

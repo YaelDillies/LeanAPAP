@@ -191,7 +191,7 @@ noncomputable instance [Finite G] : SupSet (BohrSet G) where
     mem_frequencies := by simp
   }
 
-lemma iInf_lt_top {α β : Type*} [CompleteLattice β] {S : Set α} {f : α → β}:
+lemma iInf_lt_top {α β : Type*} [CompleteLattice β] {S : Set α} {f : α → β} :
     (⨅ i ∈ S, f i) < ⊤ ↔ ∃ i ∈ S, f i < ⊤ := by
   simp [lt_top_iff_ne_top]
 
@@ -256,8 +256,6 @@ lemma nnreal_smul_ne_top_iff {x : ℝ≥0} {y : ℝ≥0∞} (hx : x ≠ 0) : x �
     intro h
     by_contra hy
     simp [hy, ENNReal.smul_top, hx] at h
-
-open scoped Classical
 
 noncomputable instance instSMul : SMul ℝ (BohrSet G) where
   smul ρ B := BohrSet.mk B.frequencies
@@ -341,7 +339,6 @@ lemma smul_add_smul_subset [Finite G] {B : BohrSet G} {ρ₁ ρ₂ : ℝ} (hρ�
     (ρ₁ • B).chordSet + (ρ₂ • B).chordSet ⊆ ((ρ₁ + ρ₂) • B).chordSet :=
   add_subset_of_ewidth fun ψ => by
     simp only [Pi.add_apply, ewidth_smul]; split <;> simp [add_nonneg, add_mul, *]
-
 
 end BohrSet
 

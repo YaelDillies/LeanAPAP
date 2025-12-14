@@ -95,7 +95,6 @@ lemma dLpNorm_conv_le {p : ℝ≥0} (hp : 1 ≤ p) (f g : G → 𝕜) : ‖f ∗
       simp
     · have : 1 - (p : ℝ)⁻¹ ≠ 0 := sub_ne_zero.2 (inv_ne_one.2 <| NNReal.coe_ne_one.2 hp.ne').symm
       simp [NNReal.mul_rpow, hp₀.ne', this]
-
   calc
     ∑ x, ‖∑ y, f y * g (x - y)‖₊ ^ (p : ℝ) ≤
         ∑ x, (∑ y, ‖f y‖₊ ^ (p : ℝ) * ‖g (x - y)‖₊) * (∑ y, ‖g (x - y)‖₊) ^ (p - 1 : ℝ) :=
