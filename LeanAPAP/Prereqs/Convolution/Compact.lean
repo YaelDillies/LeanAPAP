@@ -368,13 +368,13 @@ end Field
 section Semifield
 variable [Semifield R] [CharZero R]
 
-@[simp] lemma indicate_univ_cconv_indicate_univ : 𝟭_[R] (univ : Finset G) ∗ₙ 𝟭 univ = 𝟭 univ := by
-  ext; simp [indicate_apply, cconv_eq_expect_add, *]
+@[simp] lemma one_cconv_one : (1 : G → R) ∗ₙ 1 = 1 := by
+  ext; simp [cconv_eq_expect_add, *]
 
 variable [StarRing R]
 
-@[simp] lemma indicate_univ_cdconv_mu_univ : 𝟭_[R] (univ : Finset G) ○ₙ 𝟭 univ = 𝟭 univ := by
-  ext; simp [indicate_apply, cdconv_eq_expect_add, *]
+@[simp] lemma one_cdconv_one : (1 : G → R) ○ₙ 1 = 1 := by
+  ext; simp [cdconv_eq_expect_add, *]
 
 end Semifield
 
